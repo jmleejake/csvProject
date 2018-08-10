@@ -8,12 +8,15 @@
 <link rel="stylesheet" href="./resources/ag-grid/ag-grid.css">
 <link rel="stylesheet" href="./resources/ag-grid/ag-theme-balham.css">
 
+<script src="./resources/jquery/jquery.min.js"></script>
 <script src="./resources/bootstrap-datepicker-1.6.4/bootstrap-datepicker.min.js"></script>
 <script src="./resources/bootstrap-datepicker-1.6.4/bootstrap-datepicker.ja.min.js"></script>
 <script src="./resources/ag-grid/ag-grid.min.noStyle.js"></script>
 
 <script>
 $(document).ready(function() {
+	$("#rFile").addClass("active");
+	
 	$("#r_order_date").datepicker({
 		language: "ja"
 		, autoclose: true
@@ -23,7 +26,9 @@ $(document).ready(function() {
 
 </head>
 <body>
-<div class="well container">
+<jsp:include page="../top.jsp"></jsp:include>
+<div class="container-fluid">
+<div class="well container-fluid">
 	<div class="col-sm-4">
 	<label>登録日付</label>
 	<!-- datepicker -->
@@ -49,9 +54,10 @@ $(document).ready(function() {
 	<button type="button" class="btn btn-default" style="width: 120px; margin-top: 18px;">検索</button>
 	</div>
 </div>
-<div class="well container">
+<div class="well container-fluid">
 <button id="btn_rdown" type="button" class="btn btn-default" style="width: 140px; margin-bottom: 10px;">楽天更新ファイル</button>
 <div id="rFileDownGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
+</div>
 </div>
 <script src="./resources/menu/rFileDown.js"></script>
 </body>

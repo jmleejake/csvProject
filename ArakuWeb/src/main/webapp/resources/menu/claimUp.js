@@ -3,22 +3,31 @@
  */
 // specify the columns
 var columnDefs = [
-    {headerName: "Make", field: "make", width: 120
-		, cellStyle: {cursor: 'pointer'}
+	{headerName: "受注番号", field: "order_no", width: 230}
+	, {headerName: "受注ステータス", field: "order_status", width: 130}
+	, {headerName: "お届け日指定", field: "delivery_date_sel", width: 130}
+	, {headerName: "合計金額", field: "total_amt", width: 100}
+	, {headerName: "お荷物伝票番号", field: "baggage_claim_no", width: 170
+		, editable: true
+    	, cellEditor: 'agPopupTextCellEditor'
+	}
+	, {headerName: "名前", field: "delivery_name", width: 120}
+	, {headerName: "電話番号", field: "delivery_tel", width: 120}
+	, {headerName: "商品名", field: "product_name", width: 400}
+	, {headerName: "項目・選択肢", field: "product_option", width: 400}
+	, {headerName: "登録日付", field: "register_date", width: 100}
+	, {headerName: "あす楽希望", field: "tomorrow_hope", width: 100
 		, cellRenderer: function(params) {
-		        return '<a onclick="getInfo('+params.node.data.id+');">'+params.value+'</a>';
+			if (params.value == 1) {
+				console.log("true in");
+				return '<img src="./resources/img/fastDelivery.png" alt="logo" style="width:40px; margin-left:10px;">';
+			}
 		}
-    }
-    , {headerName: "Model", field: "model", width: 120, editable: true}
-    , {headerName: "Price", field: "price", width: 120}
+	}
 ];
 
 // specify the data
-var rowData = [
-    {make: "Toyota", model: "Celica", price: 35000, id:11},
-    {make: "Ford", model: "Mondeo", price: 32000, id:22},
-    {make: "Porsche", model: "Boxter", price: 72000, id:33}
-];
+var rowData = [];
 
 var previousData, afterData;
 var modifiedData = [];
@@ -53,23 +62,43 @@ var claimUpGridOptions = {
     }
 };
 
-function isFirstColumn(params) {
-	var displayedColumns = params.columnApi.getAllDisplayedColumns();
-	var thisIsFirstColumn = displayedColumns[0] === params.column;
-	return thisIsFirstColumn;
-}
-
-function onRowSelected(event) {
-	console.log("row selected");
-	console.log(event.node.data);
-}
-
 // lookup the container we want the Grid to use
 var eGridDiv = document.querySelector('#claimUpGrid');
 
 // create the grid passing in the div to use together with the columns & data we want to use
 new agGrid.Grid(eGridDiv, claimUpGridOptions);
 
+var d = new Date();
+var yesterday = d.getFullYear() +'/'+ (d.getMonth()+1) + '/' + (d.getDate());
+
+$.ajax({
+    url: "showRList"
+    , dataType: "json"  
+    , contentType : "application/json"
+    , data:{start_date: yesterday}
+    , success: setRowData
+});
+
+function setRowData(result) {
+	for (var i=0; i<result.length; i++) {
+		var row = {
+				req_id: result[i].req_id
+				, order_no: result[i].order_no
+				, order_status:result[i].order_status
+				, delivery_date_sel:result[i].delivery_date_sel
+				, total_amt:'¥' + result[i].total_amt
+				, baggage_claim_no:result[i].baggage_claim_no
+				, delivery_name:result[i].delivery_surname + ' ' + result[i].delivery_name
+				, delivery_tel:result[i].delivery_tel1 + '-' +  result[i].delivery_tel2 + '-' +  result[i].delivery_tel3
+				, product_name:result[i].product_name
+				, product_option:result[i].product_option
+				, tomorrow_hope:result[i].tomorrow_hope
+				, register_date:result[i].register_date
+		}
+		rowData.push(row);
+	}
+	claimUpGridOptions.api.setRowData(rowData);
+}
 
 $("#btn_sel").on("click", function() {
         var selectedRows = claimUpGridOptions.api.getSelectedRows();
@@ -87,33 +116,25 @@ $("#btn_sel").on("click", function() {
 });
 
 $("#btn_mod").on("click", function() {
-        if (modifiedData.length == 0) {
-                alert("no modified data!");
-                return;
-        }
 
-        var param = [];
-        for (var i=0; i<modifiedData.length; i++) {
-                var data = modifiedData[i];
-                param.push({"id":data.id, "make":data.make});
-        }
-
-        $.ajax({
-                url: "dataMod"
-                , dataType: "json"      
-                , contentType : "application/json"
-                , data:{data:JSON.stringify(param)}
-                , success: function(result){
-                        console.log(result);
-        }
-        });
 });
 
+function isFirstColumn(params) {
+	var displayedColumns = params.columnApi.getAllDisplayedColumns();
+	var thisIsFirstColumn = displayedColumns[0] === params.column;
+	return thisIsFirstColumn;
+}
+
+function onRowSelected(event) {
+	console.log("row selected");
+	console.log(event.node.data);
+}
+
 function getInfo(data) {
-        console.log("getInfo");
-        console.log(data);
-        $('form').attr('action', "getInfo");
-        $('form').attr('method', "post");
-        $("#car_id").val(data);
-        $("form").submit();
+    console.log("getInfo");
+    console.log(data);
+    $('form').attr('action', "getInfo");
+    $('form').attr('method', "post");
+    $("#car_id").val(data);
+    $("form").submit();
 }

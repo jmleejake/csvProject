@@ -2,21 +2,30 @@
  * javascript for 商品名置換
  */
 var columnDefs = [
-    {headerName: "商品名・項目・選択肢 置換前", field: "preTrans", width: 300}
-    , {headerName: "商品名・項目・選択肢 置換後", field: "afterTrans", width: 300, editable: true}
+    {headerName: "商品名・項目・選択肢 置換前", field: "beforeTrans", width: 300
+    	, editable: true
+    	, cellEditor: 'agLargeTextCellEditor'
+    	, cellEditorParams: {
+            maxLength: '500',
+            cols: '50',
+            rows: '6'
+        }
+    }
+    , {headerName: "商品名・項目・選択肢 置換後", field: "afterTrans", width: 300
+    	, editable: true
+    	, cellEditor: 'agLargeTextCellEditor'
+    	, cellEditorParams: {
+            maxLength: '500',
+            cols: '50',
+            rows: '6'
+        }
+    }
 ];
-
-// specify the data
-//var rowData = [
-//    {preTrans: "ホンチョ３本セット", afterTrans: "ホンチョ sa⋇３"},
-//    {preTrans: "ミチョ3本セット", afterTrans: "ミチョ sa⋇３"}
-//];
 
 // init rowData
 var rowData = [];
 
 var previousData, afterData;
-var modifiedData = [];
 
 // let the grid know which columns and what data to use
 var transGridOptions = {
@@ -42,8 +51,6 @@ var transGridOptions = {
         console.log("after : " + afterData);
         if (!(previousData == afterData)) {
                 console.log("modified!");
-                modifiedData.push(event.node.data);
-                console.log(modifiedData);
         }
     }
 };
@@ -66,11 +73,20 @@ var eGridDiv = document.querySelector('#translateGrid');
 new agGrid.Grid(eGridDiv, transGridOptions);
 
 $('#btn_srch').on('click', function() {
-	console.log("!!");
+	console.log("search");
 	var rowData = [
-	    {preTrans: "ホンチョ３本セット", afterTrans: "ホンチョ sa⋇３"},
-	    {preTrans: "ミチョ3本セット", afterTrans: "ミチョ sa⋇３"}
+	    {beforeTrans: "ホンチョ３本セット", afterTrans: "ホンチョ sa⋇３"},
+	    {beforeTrans: "ミチョ3本セット", afterTrans: "ミチョ sa⋇３"}
 	];
-	
 	transGridOptions.api.setRowData(rowData);
+});
+
+$("#btn_create").on("click", function() {
+	console.log("create");
+	var rowData = {beforeTrans: "置換前", afterTrans: "置換後"};
+	transGridOptions.api.updateRowData({add:[rowData]});
+});
+
+$("#btn_delete").on("click", function() {
+	console.log("delete");
 });

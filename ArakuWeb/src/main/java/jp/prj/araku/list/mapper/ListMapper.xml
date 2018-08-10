@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.prj.araku.list.mapper.IListMapper">
+
+<select id="getRList" resultType="RakutenSearch">
+select 
+	seq_id
+	, order_no
+	, order_status
+	, delivery_date_sel
+	, total_amt
+	, baggage_claim_no
+	, delivery_surname
+	, delivery_name
+	, delivery_surname_kana
+	, delivery_name_kana
+	, delivery_tel1
+	, delivery_tel2
+	, delivery_tel3
+	, product_name
+	, product_option
+	, unit_no
+	, tomorrow_hope
+	, date_format(register_date, '%Y/%m/%d') register_date
+from
+	rakuten_info
+</select>
+
+</mapper>

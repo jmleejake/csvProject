@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+		<typeAlias type="jp.prj.araku.file.vo.RakutenVO" alias="Rakuten" />
+		<typeAlias type="jp.prj.araku.list.vo.RakutenSearchVO" alias="RakutenSearch" />
+	</typeAliases>
+	<mappers>
+		<mapper resource="jp/prj/araku/file/mapper/FileMapper.xml" />
+		<mapper resource="jp/prj/araku/list/mapper/ListMapper.xml" />
+	</mappers>
+</configuration>

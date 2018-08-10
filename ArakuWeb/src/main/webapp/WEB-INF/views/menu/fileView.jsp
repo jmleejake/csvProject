@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
 <!DOCTYPE html>
 <html>
@@ -8,26 +7,30 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <link rel="stylesheet" href="./resources/menu/fileView.css">
+<script src="./resources/jquery/jquery.min.js"></script>
+<!-- <script src="./resources/menu/fileView.js"></script> -->
 
 <script>
 $(document).ready(function() {
+	$("#home").addClass("active");
+	
 	$('#rak-csv').on('click', 'button', function () {
         $('#rak-upload').click();
         return false;
     });
-
-    $('#rak-upload').on('change', function() {
-        //選択したファイル情報を取得し変数に格納
-        var file = $(this).prop('files')[0];
-        //アイコンを選択中に変更
-        $('#rak-csv').find('.icon').addClass('select').html('選択中');
-        //未選択→選択の場合（.filenameが存在しない場合）はファイル名表示用の<div>タグを追加
-        if(!($('.rak-filename').length)){
-            $('#rak-csv').append('<div class="rak-filename"></div>');
-        };
-        //ファイル名を表示
-        $('.rak-filename').html('ファイル名：' + file.name);
-    });
+	
+	$('#rak-upload').on('change', function() {
+	    //選択したファイル情報を取得し変数に格納
+	    var file = $(this).prop('files')[0];
+	    //アイコンを選択中に変更
+	    $('#rak-csv').find('.icon').addClass('select').html('選択中');
+	    //未選択→選択の場合（.filenameが存在しない場合）はファイル名表示用の<div>タグを追加
+	    if(!($('.rak-filename').length)){
+	        $('#rak-csv').append('<div class="rak-filename"></div>');
+	    };
+	    //ファイル名を表示
+	    $('.rak-filename').html('ファイル名：' + file.name);
+	});
     
     $('#ama-txt').on('click', 'button', function () {
         $('#ama-upload').click();
@@ -65,41 +68,30 @@ $(document).ready(function() {
         $('.yu-filename').html('ファイル名：' + file.name);
     });
     
-    $("#btn_rak").on("click", function() {
-    	var file = $('#rak-upload').val();
-    	
-    	if(file.length == 0) return false;
-    	
-    	$("#rak-frm").submit();
-    });
 });
 </script>
 </head>
 <body>
-<div class="well container">
-<form id="rak-frm" action="csvUpload" method="post" enctype="multipart/form-data">
+<jsp:include page="../top.jsp"></jsp:include>
+<div class="container-fluid">
+<div class="well container-fluid">
+<form id="rak-frm" action="csvUpload" method="post" enctype="multipart/form-data" onsubmit="return preCheck('rak');" >
 <div id="rak-csv" class="file-up col-sm-8">
-<!-- 非表示にするボタン -->
-<input type="file" id="rak-upload" name="upload" multiple="multiple" style="display:none">
-<!-- オリジナルボタン -->
+<input type="file" id="rak-upload" name="rakUpload" multiple="multiple" style="display:none">
 <button class="original_btn">楽天CSV</button>
-<!-- アイコン -->
 <span class="icon">未選択</span>
 </div>
 <div class="col-sm-4">
-<button id="btn_rak" class="original_btn">アップロード</button>
+<input type="submit" class="original_btn" value="アップロード">
 </div>
 </form>
 </div>
 
-<div class="well container">
-<form id="ama-frm" action="csvUpload" method="post" enctype="multipart/form-data">
+<div class="well container-fluid">
+<form id="ama-frm" action="txtUpload" method="post" enctype="multipart/form-data" onsubmit="return preCheck('ama');">
 <div id="ama-txt" class="file-up col-sm-8">
-<!-- 非表示にするボタン -->
 <input type="file" id="ama-upload" name="upload" multiple="multiple" style="display:none">
-<!-- オリジナルボタン -->
 <button class="original_btn">アマゾンCSV</button>
-<!-- アイコン -->
 <span class="icon">未選択</span>
 </div>
 <div class="col-sm-4">
@@ -109,13 +101,10 @@ $(document).ready(function() {
 </div>
 
 <div class="well container-fluid">
-<form id="yu-frm" action="csvUpload" method="post" enctype="multipart/form-data">
+<form id="yu-frm" action="csvUpload" method="post" enctype="multipart/form-data" onsubmit="return preCheck('yu');">
 <div id="yu-txt" class="file-up col-sm-8">
-<!-- 非表示にするボタン -->
 <input type="file" id="yu-upload" name="upload" multiple="multiple" style="display:none">
-<!-- オリジナルボタン -->
 <button class="original_btn">郵便局TXT</button>
-<!-- アイコン -->
 <span class="icon">未選択</span>
 </div>
 <div class="col-sm-4">
@@ -123,6 +112,6 @@ $(document).ready(function() {
 </div>
 </form>
 </div>
-
+</div>
 </body>
 </html>

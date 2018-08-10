@@ -20,11 +20,39 @@ public class HomeController {
 	/**
 	 * Simply selects the home view to render by returning its name.
 	 */
-	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String home(Locale locale, Model model) {
+	@RequestMapping(value = "/")
+	public String home(Locale locale) {
 		logger.info("Welcome home! The client locale is {}.", locale);
-		// Araku home
-		return "home";
+		return "redirect:fileView";
+	}
+	
+	@RequestMapping(value = "/fileView")
+	public String fileView() {
+		return "menu/fileView";
+	}
+	
+	@RequestMapping(value = "/orderView")
+	public String orderView() {
+		return "menu/orderInfo";
+	}
+	
+	@RequestMapping(value = "/translationView")
+	public String translationView() {
+		return "menu/translation";
+	}
+	
+	@RequestMapping(value = "/claimNoView")
+	public String claimNoView() {
+		return "menu/claimNoUpdate";
+	}
+	
+	@RequestMapping(value = "/rFileDownView")
+	public String rFileDownView() {
+		return "menu/rakutenFileDown";
+	}
+	
+	public String yuView() {
+		return "menu/";
 	}
 	
 }

@@ -1,14 +1,13 @@
 package jp.prj.araku.file.controller;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 
-import jp.prj.araku.file.vo.CSVUser;
+import jp.prj.araku.file.dao.FileDAO;
+import jp.prj.araku.file.vo.RakutenVO;
 
 @Controller
 public class FileController {
@@ -27,37 +27,50 @@ public class FileController {
 	@Value("${FILE_ENCODING}")
 	private String file_encoding;
 	
+	@Autowired
+	FileDAO dao;
+	
 	@RequestMapping(value="/csvUpload", method=RequestMethod.POST)
-	public void processCsvUpload(MultipartFile upload) {
-		log.info("processUpload :: encoding : {}", file_encoding);
-		log.info("contentType: {}", upload.getContentType());
-		log.info("name: {}", upload.getName());
-		log.info("original name: {}", upload.getOriginalFilename());
-		log.info("size: {}", upload.getSize());
+	public String processCsvUpload(MultipartFile rakUpload) throws IOException {
+		log.info("processCsvUpload");
+		log.debug("encoding : {}", file_encoding);
+		log.debug("contentType: {}", rakUpload.getContentType());
+		log.debug("name: {}", rakUpload.getName());
+		log.debug("original name: {}", rakUpload.getOriginalFilename());
+		log.debug("size: {}", rakUpload.getSize());
 		
+		BufferedReader reader = null;
 		try  {
-			BufferedReader bufferedReader = new BufferedReader(
-					new InputStreamReader(upload.getInputStream(), file_encoding));
+			reader = new BufferedReader(
+					new InputStreamReader(rakUpload.getInputStream(), file_encoding));
 			
-			CsvToBean<CSVUser> csvToBean = new CsvToBeanBuilder(bufferedReader)
-                    .withType(CSVUser.class)
+			CsvToBean<RakutenVO> csvToBean = new CsvToBeanBuilder<RakutenVO>(reader)
+                    .withType(RakutenVO.class)
+                    .withSkipLines(1)
                     .withIgnoreLeadingWhiteSpace(true)
                     .build();
 
-            Iterator<CSVUser> csvUserIterator = csvToBean.iterator();
+            Iterator<RakutenVO> iterator = csvToBean.iterator();
 
-            while (csvUserIterator.hasNext()) {
-                CSVUser csvUser = csvUserIterator.next();
-                log.info(csvUser.toString());
-                log.info("==========================");
+            while (iterator.hasNext()) {
+            	RakutenVO vo = iterator.next();
+            	dao.insertRakutenInfo(vo);
+            	log.debug("registered id :: {}", vo.getSeq_id());
+                log.debug(vo.toString());
+                log.debug("==========================");
             }
 	            
-		} catch(IOException e) {
-        }
+		} finally {
+			if (reader != null) {
+				reader.close();
+			}
+		}
+		
+		return "redirect:/";
 	}
 	
 	@RequestMapping(value="/txtUpload", method=RequestMethod.POST)
-	public void processTxtUpload(MultipartFile upload) {
+	public void processTxtUpload(MultipartFile upload) throws IOException {
 		BufferedReader reader = null;
         try {
                 reader = new BufferedReader(
@@ -66,22 +79,16 @@ public class FileController {
                 String splitBy = "      ";
 
                 while ((line = reader.readLine()) != null) {
-                        System.out.println(String.format("\none line\n%s", line));
+                	log.debug(String.format("\none line\n%s", line));
                         String[] whatArr = line.split(splitBy);
                         for (String what : whatArr) {
-                                System.out.println(String.format("%s", what));
+                        	log.debug(String.format("%s", what));
                         }
                 }
-        } catch (UnsupportedEncodingException ue) {
-        } catch (FileNotFoundException fe) {
-        } catch (IOException e) {
         } finally {
-                if (reader != null) {
-                        try {
-                                reader.close();
-                        } catch (IOException e) {
-                        }
-                }
+            if (reader != null) {
+                reader.close();
+            }
         }
 	}
 }
