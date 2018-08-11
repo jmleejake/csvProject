@@ -25,7 +25,7 @@ var columnDefs = [
 // init rowData
 var rowData = [];
 
-var previousData, afterData;
+var selectedData, startBeforeTrans, stopBeforeTrans, startAfterTrans, stopAfterTrans;
 
 // let the grid know which columns and what data to use
 var transGridOptions = {
@@ -42,15 +42,34 @@ var transGridOptions = {
     onRowSelected: onRowSelected,
     rowData: rowData,
     onCellEditingStarted: function(event) {
-        previousData = event.node.data.afterTrans;
+        previousData = event.node.data;
+        console.log("editing start pre");
+        startBeforeTrans = previousData.beforeTrans;
+        startAfterTrans = previousData.afterTrans;
+        console.log(startBeforeTrans + ' -- ' + startAfterTrans);
     },
     onCellEditingStopped: function(event) {
-        afterData = event.node.data.afterTrans;
-
-        console.log("previous : " + previousData);
-        console.log("after : " + afterData);
-        if (!(previousData == afterData)) {
-                console.log("modified!");
+    	console.log("editing stop");
+        afterData = event.node.data;
+        stopBeforeTrans = afterData.beforeTrans;
+        stopAfterTrans = afterData.afterTrans;
+        console.log(stopBeforeTrans + ' -- ' + stopAfterTrans);
+        
+        if (!(startBeforeTrans == stopBeforeTrans) || 
+        		!(startAfterTrans == stopAfterTrans)) {
+        	console.log("modified!");
+        	console.log(afterData);
+        	$.ajax({
+        		url: "modTrans"
+        			, dataType: "json"  
+        				, contentType : "application/json"
+        					, data:{
+        						seq_id:afterData.seq_id
+        						, before_trans:afterData.beforeTrans
+        						, after_trans:afterData.afterTrans
+        					}
+        	, success: setRowData
+        	});
         }
     }
 };
@@ -63,7 +82,8 @@ function isFirstColumn(params) {
 
 function onRowSelected(event) {
 	console.log("row selected");
-	console.log(event.node.data);
+	selectedData = event.node.data;
+	console.log(selectedData);
 }
 
 // lookup the container we want the Grid to use
@@ -72,13 +92,50 @@ var eGridDiv = document.querySelector('#translateGrid');
 // create the grid passing in the div to use together with the columns & data we want to use
 new agGrid.Grid(eGridDiv, transGridOptions);
 
+alertify.set({
+	labels : {
+		ok     : "はい",
+		cancel : "いいえ"
+	},
+	delay : 5000,
+	buttonReverse : true,
+	buttonFocus   : "ok"
+});
+
+$.ajax({
+    url: "getTrans"
+    , dataType: "json"  
+    , contentType : "application/json"
+    , success: setRowData
+});
+
+function setRowData(result) {
+	rowData = [];
+	
+	for (var i=0; i<result.length; i++) {
+		var row = {
+				seq_id: result[i].seq_id
+				, beforeTrans:result[i].before_trans
+				, afterTrans:result[i].after_trans
+				, register_date:result[i].register_date
+		}
+		rowData.push(row);
+	}
+	transGridOptions.api.setRowData(rowData);
+}
+
 $('#btn_srch').on('click', function() {
 	console.log("search");
-	var rowData = [
-	    {beforeTrans: "ホンチョ３本セット", afterTrans: "ホンチョ sa⋇３"},
-	    {beforeTrans: "ミチョ3本セット", afterTrans: "ミチョ sa⋇３"}
-	];
-	transGridOptions.api.setRowData(rowData);
+	var form = $("#transForm");
+    var url = form.attr('action');
+    
+    $.ajax({
+        type: "post",
+        url: url,
+        data: form.serialize(), // serializes the form's elements.
+        success: setRowData
+    });
+	
 });
 
 $("#btn_create").on("click", function() {
@@ -89,4 +146,18 @@ $("#btn_create").on("click", function() {
 
 $("#btn_delete").on("click", function() {
 	console.log("delete");
+	
+	alertify.confirm("本当に「"+selectedData.beforeTrans+"」を削除しますか？", function (e) {
+		if (e) {
+			$.ajax({
+			    url: "delTrans"
+			    , dataType: "json"  
+			    , contentType : "application/json"
+			    , data:{seq_id:selectedData.seq_id}
+			    , success: setRowData
+			});
+		} else {
+			return false;
+		}
+	});
 });

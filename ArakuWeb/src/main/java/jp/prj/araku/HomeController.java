@@ -51,8 +51,9 @@ public class HomeController {
 		return "menu/rakutenFileDown";
 	}
 	
+	@RequestMapping(value = "/yuView")
 	public String yuView() {
-		return "menu/";
+		return "menu/yuUpload";
 	}
 	
 }

@@ -62,9 +62,11 @@ $.ajax({
 });
 
 function setRowData(result) {
+	rowData = [];
+	
 	for (var i=0; i<result.length; i++) {
 		var row = {
-				req_id: result[i].req_id
+				seq_id: result[i].seq_id
 				, order_no: result[i].order_no
 				, order_status:result[i].order_status
 				, delivery_date_sel:result[i].delivery_date_sel
@@ -101,3 +103,16 @@ function getInfo(data) {
         $("#car_id").val(data);
         $("form").submit();
 }
+
+$("#btn_srch").on("click", function() {
+	var form = $("#rFileDownForm");
+    var url = form.attr('action');
+    
+    $.ajax({
+        type: "post",
+        url: url,
+        data: form.serialize(), // serializes the form's elements.
+        success: setRowData
+    });
+
+});

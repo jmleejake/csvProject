@@ -29,8 +29,7 @@ var columnDefs = [
 // specify the data
 var rowData = [];
 
-var previousData, afterData;
-var modifiedData = [];
+var afterData;
 
 // let the grid know which columns and what data to use
 var claimUpGridOptions = {
@@ -46,19 +45,20 @@ var claimUpGridOptions = {
     columnDefs: columnDefs,
 //    onRowSelected: onRowSelected,
     rowData: rowData,
-    onCellEditingStarted: function(event) {
-        previousData = event.node.data.model;
-    },
     onCellEditingStopped: function(event) {
-        afterData = event.node.data.model;
-
-        console.log("previous : " + previousData);
-        console.log("after : " + afterData);
-        if (!(previousData == afterData)) {
-                console.log("modified!");
-                modifiedData.push(event.node.data);
-                console.log(modifiedData);
-        }
+        afterData = event.node.data;
+        console.log("modified!");
+        console.log(afterData);
+        $.ajax({
+            url: "modRakuten"
+            , dataType: "json"  
+            , contentType : "application/json"
+            , data:{
+            	seq_id:afterData.seq_id
+            	, baggage_claim_no:afterData.baggage_claim_no
+            }
+            , success: setRowData
+        });
     }
 };
 
@@ -75,14 +75,15 @@ $.ajax({
     url: "showRList"
     , dataType: "json"  
     , contentType : "application/json"
-    , data:{start_date: yesterday}
     , success: setRowData
 });
 
 function setRowData(result) {
+	rowData = [];
+	
 	for (var i=0; i<result.length; i++) {
 		var row = {
-				req_id: result[i].req_id
+				seq_id: result[i].seq_id
 				, order_no: result[i].order_no
 				, order_status:result[i].order_status
 				, delivery_date_sel:result[i].delivery_date_sel
@@ -100,6 +101,19 @@ function setRowData(result) {
 	claimUpGridOptions.api.setRowData(rowData);
 }
 
+$("#btn_srch").on("click", function() {
+	var form = $("#claimForm");
+    var url = form.attr('action');
+    
+    $.ajax({
+        type: "post",
+        url: url,
+        data: form.serialize(), // serializes the form's elements.
+        success: setRowData
+    });
+
+});
+
 $("#btn_sel").on("click", function() {
         var selectedRows = claimUpGridOptions.api.getSelectedRows();
         
@@ -113,10 +127,6 @@ $("#btn_sel").on("click", function() {
 
                 console.log(data);
         }
-});
-
-$("#btn_mod").on("click", function() {
-
 });
 
 function isFirstColumn(params) {

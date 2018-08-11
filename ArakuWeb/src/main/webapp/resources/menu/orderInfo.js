@@ -70,14 +70,16 @@ $.ajax({
     url: "showRList"
     , dataType: "json"  
     , contentType : "application/json"
-    , data:{start_date: yesterday}
+    , data:{}
     , success: setRowData
 });
 
 function setRowData(result) {
+	rowData = [];
+	
 	for (var i=0; i<result.length; i++) {
 		var row = {
-				req_id: result[i].req_id
+				seq_id: result[i].seq_id
 				, order_no: result[i].order_no
 				, order_status:result[i].order_status
 				, delivery_date_sel:result[i].delivery_date_sel
@@ -107,7 +109,16 @@ function onRowSelected(event) {
 	console.log(event.node.data);
 }
 
-$("#btn_mod").on("click", function() {
+$("#btn_srch").on("click", function() {
+	var form = $("#orderForm");
+    var url = form.attr('action');
+    
+    $.ajax({
+        type: "post",
+        url: url,
+        data: form.serialize(), // serializes the form's elements.
+        success: setRowData
+    });
 
 });
 
@@ -144,8 +155,8 @@ $("#btn_trans").on("click", function() {
     
     alertify.set({
 		labels : {
-			ok     : "確認",
-			cancel : "キャンセル"
+			ok     : "はい",
+			cancel : "いいえ"
 		},
 		delay : 5000,
 		buttonReverse : true,

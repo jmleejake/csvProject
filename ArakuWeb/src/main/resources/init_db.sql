@@ -190,7 +190,7 @@ create table rakuten_info (
 	, delivery_tel3 varchar(4) /*送付先電話番号３*/
 	, product_id varchar(8) /*商品ID*/
 	, product_name varchar(1500) /*商品名*/
-	, product_no varchar(20) /*商品番号*/
+	, product_no varchar(30) /*商品番号*/
 	, product_url varchar(50) /*商品URL*/
 	, unit_price varchar(10) /*単価*/
 	, unit_no varchar(10) /*個数*/
@@ -216,13 +216,13 @@ create table rakuten_info (
 	, membership_program varchar(1) /*メンバーシッププログラム*/
 ) default charset = utf8;
 
-
 /*置換情報*/
 drop table translation_info;
 
 create table translation_info (
 	seq_id bigint unsigned primary key  auto_increment /*区分ID*/
 	, register_date datetime default now() /*データ登録日*/
+	, update_date datetime default now() /*データ修正日*/
 	, before_trans varchar(3000) /*商品名・項目・選択肢 置換前*/
 	, after_trans varchar(50) /*商品名・項目・選択肢 置換後*/
 ) default charset = utf8;
@@ -277,7 +277,42 @@ create table amazon_info (
 
 
 update rakuten_info
-set register_date = adddate(now(), -1)
+set register_date = adddate(now(), -3)
 
-select * from rakuten_info
 
+insert into translation_info (before_trans, after_trans)
+values ('ホンチョ３本セット', 'ホンチョ sa⋇３')
+, ('ミチョ3本セット', 'ミチョ sa⋇３');
+
+select 
+	seq_id
+	, before_trans
+	, after_trans
+	, date_format(register_date, '%Y/%m/%d') register_date
+from
+	translation_info
+
+
+select 
+	seq_id
+	, order_no
+	, order_status
+	, delivery_date_sel
+	, total_amt
+	, baggage_claim_no
+	, delivery_surname
+	, delivery_name
+	, delivery_surname_kana
+	, delivery_name_kana
+	, delivery_tel1
+	, delivery_tel2
+	, delivery_tel3
+	, product_name
+	, product_option
+	, unit_no
+	, tomorrow_hope
+	, date_format(register_date, '%Y/%m/%d') register_date
+from
+	rakuten_info
+where
+	register_date between str_to_date('2018/08/09 00:00:00', '%Y/%m/%d %H:%i:%s') and now()

@@ -27,6 +27,98 @@ select
 	, date_format(register_date, '%Y/%m/%d') register_date
 from
 	rakuten_info
+<where>
+	<choose>
+		<when test="search_type =='srch'">
+		<trim prefixOverrides="AND |OR ">
+		<if test="register_date != null and register_date != ''">
+		register_date between str_to_date(concat(#{register_date},' ','00:00:00'), '%Y/%m/%d %H:%i:%S')  
+		and str_to_date(concat(#{register_date},' ','23:59:59'), '%Y/%m/%d %H:%i:%S')
+		</if>
+		<if test="delivery_surname != null and delivery_surname != ''">
+		and (delivery_surname like '%${delivery_surname}%' 
+		or delivery_surname_kana like '%${delivery_surname}%')
+		</if>
+		<if test="delivery_name != null and delivery_name != ''">
+		and (delivery_name like '%${delivery_name}%' 
+		or delivery_name_kana like '%${delivery_name}%')
+		</if>
+		<if test="delivery_tel1 != null and delivery_tel1 != ''">
+		and delivery_tel1 like '%${delivery_tel1}%'
+		</if>
+		<if test="delivery_tel2 != null and delivery_tel2 != ''">
+		and delivery_tel2 like '%${delivery_tel2}%'
+		</if>
+		<if test="delivery_tel3 != null and delivery_tel3 != ''">
+		and delivery_tel3 like '%${delivery_tel3}%'
+		</if>
+		<if test="order_no != null and order_no != ''">
+		and order_no like '%${order_no}%'
+		</if>
+		<if test="baggage_claim_no != null and baggage_claim_no != ''">
+		and baggage_claim_no like '%${baggage_claim_no}%'
+		</if>
+		</trim>
+		</when>
+		<otherwise>
+		register_date between str_to_date(#{start_date}, '%Y/%m/%d %H:%i:%s') and now()
+		</otherwise>
+	</choose>
+</where>
 </select>
+
+<select id="getTransInfo" resultType="Trans" parameterType="Trans">
+select 
+	seq_id
+	, before_trans
+	, after_trans
+	, date_format(register_date, '%Y/%m/%d') register_date
+from
+	translation_info
+<where>
+	<choose>
+		<when test="search_type =='srch'">
+		(before_trans like '%${keyword}%' or after_trans like '%${keyword}%')
+		</when>
+		<otherwise>
+		register_date between str_to_date(#{start_date}, '%Y/%m/%d %H:%i:%s') and now()
+		</otherwise>
+	</choose>
+</where>	
+</select>
+
+<insert id="addTransInfo" parameterType="Trans">
+insert into translation_info (before_trans, after_trans)
+values (#{before_trans}, #{after_trans})
+</insert>
+
+<update id="modTransInfo" parameterType="Trans">
+update 
+	translation_info
+set
+	before_trans = #{before_trans}
+	, after_trans = #{after_trans}
+	, update_date = now()
+where
+	seq_id = #{seq_id}
+</update>
+
+<delete id="delTransInfo" parameterType="String">
+delete from
+	translation_info
+where
+	seq_id = #{seq_id}
+</delete>
+
+<update id="modRakutenInfo" parameterType="RakutenSearch">
+update
+	rakuten_info
+set
+	<if test="baggage_claim_no != null and baggage_claim_no !=''">
+	baggage_claim_no = #{baggage_claim_no}
+	</if>
+where
+	seq_id = #{seq_id}
+</update>
 
 </mapper>

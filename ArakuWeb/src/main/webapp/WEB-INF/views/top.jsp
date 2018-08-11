@@ -8,6 +8,16 @@
 <link rel="stylesheet" href="./resources/bootstrap-3.3.7/bootstrap.min.css">
 <!-- <link rel="stylesheet" href="./resources/bootswatch-theme/bootstrap.min.css"> -->
 <script src="./resources/bootstrap-3.3.7/bootstrap.min.js"></script>
+<link rel="stylesheet" href="./resources/common.css">
+
+<script>
+$(document).ready(function() {
+	$(".loader").fadeOut("slow");
+});
+</script>
+
+<!-- for loading image -->
+<div class="loader"></div>
 
 <nav class="navbar navbar-default">
 	<div class="container-fluid">
@@ -42,7 +52,7 @@
 				<a class="nav-link" href="rFileDownView">楽天更新ファイル</a>
 				</li>
 				<li id="yuUp" class="nav-item">
-				<a class="nav-link" href="">ゆプリある</a>
+				<a class="nav-link" href="yuView">ゆプリある</a>
 				</li>
 			</ul>
 		</div>

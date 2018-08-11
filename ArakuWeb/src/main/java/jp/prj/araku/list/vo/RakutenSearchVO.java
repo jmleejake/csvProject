@@ -44,7 +44,7 @@ public class RakutenSearchVO {
 	/**検索用*/
 	private String start_date;
 	/**検索用*/
-	private String end_date;
+	private String search_type;
 	
 	public String getSeq_id() {
 		return seq_id;
@@ -161,11 +161,11 @@ public class RakutenSearchVO {
 	public void setStart_date(String start_date) {
 		this.start_date = start_date;
 	}
-	public String getEnd_date() {
-		return end_date;
+	public String getSearch_type() {
+		return search_type;
 	}
-	public void setEnd_date(String end_date) {
-		this.end_date = end_date;
+	public void setSearch_type(String search_type) {
+		this.search_type = search_type;
 	}
 	
 	@Override
@@ -177,7 +177,7 @@ public class RakutenSearchVO {
 				+ ", delivery_name_kana=" + delivery_name_kana + ", delivery_tel1=" + delivery_tel1 + ", delivery_tel2="
 				+ delivery_tel2 + ", delivery_tel3=" + delivery_tel3 + ", product_name=" + product_name
 				+ ", product_option=" + product_option + ", unit_no=" + unit_no + ", tomorrow_hope=" + tomorrow_hope
-				+ ", start_date=" + start_date + ", end_date=" + end_date + "]";
+				+ ", start_date=" + start_date + ", search_type="+search_type+"]";
 	}
 	
 }
