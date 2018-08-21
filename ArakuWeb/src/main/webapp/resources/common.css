@@ -20,3 +20,11 @@
 .ag-row {
 	font-size: 14px;
 }
+
+.ag-theme-balham .trans-created {
+	background-color: #ff8533; !important;
+}
+
+.ag-theme-balham .trans-modified {
+	background-color: #99ccff; !important;
+}

@@ -88,6 +88,7 @@ drop table rakuten_info;
 create table rakuten_info (
 	seq_id bigint unsigned primary key  auto_increment /*区分ID*/
 	, register_date datetime default now() /*データ登録日*/
+	, update_date datetime /*データ修正日*/
 	, order_no varchar(25) /*受注番号*/
 	, order_status varchar(10) /*受注ステータス*/
 	, card_pay_status varchar(10) /*カード決済ステータス*/
@@ -123,7 +124,7 @@ create table rakuten_info (
 	, enclosed_total_amt varchar(10) /*同梱合計金額*/
 	, enclosed_rbank_transfer_fee varchar(10) /*同梱楽天バンク決済振替手数料*/
 	, enclosed_total_point_usage varchar(10) /*同梱ポイント利用合計*/
-	, mail_flag varchar(1) /*メールフラグ*/
+	, mail_flag varchar(3) /*メールフラグ*/
 	, order_date varchar(10) /*注文日*/
 	, order_time varchar(20) /*注文時間*/
 	, mobile_carrier_payment_no varchar(10) /*モバイルキャリア決済番号*/
@@ -146,7 +147,7 @@ create table rakuten_info (
 	, order_tel3 varchar(4) /*注文者電話番号３*/
 	, mail_address varchar(60) /*メールアドレス*/
 	, order_sex varchar(3) /*注文者性別*/
-	, order_birth varchar(10) /*注文者誕生日*/
+	, order_birth varchar(15) /*注文者誕生日*/
 	, payment_method varchar(10) /*決済方法*/
 	, credit_type varchar(10) /*クレジットカード種類*/
 	, credit_no varchar(10) /*クレジットカード番号*/
@@ -201,7 +202,7 @@ create table rakuten_info (
 	, point_percent varchar(2) /*ポイント倍率*/
 	, point_type varchar(1) /*ポイントタイプ*/
 	, record_no varchar(10) /*レコードナンバー*/
-	, delivery_info varchar(30) /*納期情報*/
+	, delivery_info varchar(100) /*納期情報*/
 	, inventory_type varchar(1) /*在庫タイプ*/
 	, wrap_type_paper varchar(10) /*ラッピング種類(包装紙)*/
 	, wrap_type_ribbon varchar(10) /*ラッピング種類(リボン)*/
@@ -216,15 +217,28 @@ create table rakuten_info (
 	, membership_program varchar(1) /*メンバーシッププログラム*/
 ) default charset = utf8;
 
+
 /*置換情報*/
 drop table translation_info;
 
 create table translation_info (
 	seq_id bigint unsigned primary key  auto_increment /*区分ID*/
 	, register_date datetime default now() /*データ登録日*/
-	, update_date datetime default now() /*データ修正日*/
+	, update_date datetime /*データ修正日*/
 	, before_trans varchar(3000) /*商品名・項目・選択肢 置換前*/
 	, after_trans varchar(50) /*商品名・項目・選択肢 置換後*/
+) default charset = utf8;
+
+
+/*置換結果*/
+drop table translation_result;
+
+create table translation_result (
+	seq_id bigint unsigned primary key  auto_increment /*区分ID*/
+	, register_date datetime default now() /*データ登録日*/
+	, trans_target_id bigint /*楽天・アマゾン区分ID*/
+	, trans_target_type varchar(1) /*R:楽天・A:アマゾン*/
+	, result_text varchar(200) /*置換結果テキスト*/
 ) default charset = utf8;
 
 
@@ -232,8 +246,9 @@ create table translation_info (
 drop table amazon_info;
 
 create table amazon_info (
-	seq_id bigint unsigned primary key  auto_increment
-	, register_date datetime default now()
+	seq_id bigint unsigned primary key  auto_increment /*区分ID*/
+	, register_date datetime default now() /*データ登録日*/
+	, update_date datetime /*データ修正日*/
 	, order_id varchar(20)
 	, order_item_id varchar(14)
 	, purchase_date varchar(30)
@@ -277,18 +292,27 @@ create table amazon_info (
 
 
 update rakuten_info
+/*
 set register_date = adddate(now(), -3)
+*/
+set register_date = now()
+
+update translation_info
+set register_date = now()
 
 
-insert into translation_info (before_trans, after_trans)
-values ('ホンチョ３本セット', 'ホンチョ sa⋇３')
-, ('ミチョ3本セット', 'ミチョ sa⋇３');
-
+select after_trans
+/*
+ ミチョ　
+ パイン
+ カラ
+ マス
 select 
 	seq_id
 	, before_trans
 	, after_trans
 	, date_format(register_date, '%Y/%m/%d') register_date
+*/
 from
 	translation_info
 
@@ -316,3 +340,17 @@ from
 	rakuten_info
 where
 	register_date between str_to_date('2018/08/09 00:00:00', '%Y/%m/%d %H:%i:%s') and now()
+	
+	
+select
+	tr.seq_id
+	, date_format(tr.register_date, '%Y/%m/%d') register_date
+	, result_text
+	, product_name
+	, product_option
+	, delivery_surname
+	, delivery_name
+	, unit_no
+from
+	translation_result tr
+inner join rakuten_info ri on ri.seq_id = tr.trans_target_id

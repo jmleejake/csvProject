@@ -76,5 +76,9 @@ $(document).ready(function() {
 </div>
 </div>
 <script src="./resources/menu/rFileDown.js"></script>
+
+<form id="frm_rFileDown" action="rFileDown" method="post">
+<input type="hidden" id="seq_id_list" name="id_lst">
+</form>
 </body>
 </html>

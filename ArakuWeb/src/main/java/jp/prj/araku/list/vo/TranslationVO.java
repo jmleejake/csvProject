@@ -1,5 +1,7 @@
 package jp.prj.araku.list.vo;
 
+import java.util.ArrayList;
+
 public class TranslationVO {
 	/**区分ID*/
 	private String seq_id;
@@ -9,6 +11,8 @@ public class TranslationVO {
 	private String before_trans;
 	/**商品名・項目・選択肢 置換後*/
 	private String after_trans;
+	/**データ修正日*/
+	private String update_date;
 	
 	/**検索用*/
 	private String start_date;
@@ -16,6 +20,8 @@ public class TranslationVO {
 	private String keyword;
 	/**検索用*/
 	private String search_type;
+	
+	private ArrayList<String> seq_id_list;
 	
 	public String getSeq_id() {
 		return seq_id;
@@ -59,12 +65,27 @@ public class TranslationVO {
 	public void setSearch_type(String search_type) {
 		this.search_type = search_type;
 	}
+	public String getUpdate_date() {
+		return update_date;
+	}
+	public void setUpdate_date(String update_date) {
+		this.update_date = update_date;
+	}
+	
+	public ArrayList<String> getSeq_id_list() {
+		return seq_id_list;
+	}
+	public void setSeq_id_list(ArrayList<String> seq_id_list) {
+		this.seq_id_list = seq_id_list;
+	}
 	
 	@Override
 	public String toString() {
 		return "TranslationVO [seq_id=" + seq_id + ", register_date=" + register_date + ", before_trans=" + before_trans
-				+ ", after_trans=" + after_trans + ", start_date=" + start_date + ", keyword=" + keyword
-				+ ", search_type=" + search_type + "]";
+				+ ", after_trans=" + after_trans + ", update_date=" + update_date + ", start_date=" + start_date
+				+ ", keyword=" + keyword + ", search_type=" + search_type + ", seq_id_list=" + seq_id_list + "]";
 	}
+	
+	
 	
 }

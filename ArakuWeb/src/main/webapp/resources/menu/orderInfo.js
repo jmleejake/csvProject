@@ -11,8 +11,19 @@ var columnDefs = [
 	, {headerName: "お荷物伝票番号", field: "baggage_claim_no", width: 170}
 	, {headerName: "名前", field: "delivery_name", width: 120}
 	, {headerName: "電話番号", field: "delivery_tel", width: 120}
-	, {headerName: "商品名", field: "product_name", width: 400}
-	, {headerName: "項目・選択肢", field: "product_option", width: 400}
+	, {headerName: "商品名", field: "product_name", width: 400
+		// 길이가 긴 항목에 대해서 툴팁 추가.  
+		, tooltip: function(params) {
+			return params.value;
+		}
+	}
+	, {headerName: "項目・選択肢", field: "product_option", width: 400
+		// 길이가 긴 항목에 대해서 툴팁 추가.  
+		, tooltip: function(params) {
+			return params.value;
+		}
+	}
+	, {headerName: "個数", field: "unit_no", width: 100}
 	, {headerName: "登録日付", field: "register_date", width: 100}
 	, {headerName: "あす楽希望", field: "tomorrow_hope", width: 100
 		, cellRenderer: function(params) {
@@ -26,6 +37,9 @@ var columnDefs = [
 
 // specify the data
 var rowData = [];
+
+// 수정데이터 배열
+var modifiedData = [];
 
 var previousData, afterData;
 
@@ -62,10 +76,6 @@ var eGridDiv = document.querySelector('#orderGrid');
 // create the grid passing in the div to use together with the columns & data we want to use
 new agGrid.Grid(eGridDiv, orderGridOptions);
 
-
-var d = new Date();
-var yesterday = d.getFullYear() +'/'+ (d.getMonth()+1) + '/' + (d.getDate());
-
 $.ajax({
     url: "showRList"
     , dataType: "json"  
@@ -89,6 +99,7 @@ function setRowData(result) {
 				, delivery_tel:result[i].delivery_tel1 + '-' +  result[i].delivery_tel2 + '-' +  result[i].delivery_tel3
 				, product_name:result[i].product_name
 				, product_option:result[i].product_option
+				, unit_no:result[i].unit_no
 				, tomorrow_hope:result[i].tomorrow_hope
 				, register_date:result[i].register_date
 		}
@@ -126,73 +137,22 @@ $("#btn_trans").on("click", function() {
     var selectedRows = orderGridOptions.api.getSelectedRows();
     
     if (selectedRows.length == 0) {
-        $.notify({
-			// options
-			message: '情報を選択してください。' 
-		},{
-			// settings
-			placement: {
-        		from: "top",
-        		align: "left"
-    		},
-    		z_index: 1031,
-        	delay: 2000,
-        	timer: 1000,
-        	animate: {
-        		enter: 'animated fadeInDown',
-        		exit: 'animated fadeOutUp'
-        	},
-			type: 'danger'
-		});
+    	pleaseSelectNotify('情報を選択してください。');
         return;
     }
-
-    for (var i=0; i<selectedRows.length; i++) {
-            var data = selectedRows[i];
-
-            console.log(data);
-    }
     
-    alertify.set({
-		labels : {
-			ok     : "はい",
-			cancel : "いいえ"
-		},
-		delay : 5000,
-		buttonReverse : true,
-		buttonFocus   : "ok"
+    $.ajax({
+		url: "executeTrans"
+		, type:"post"
+		, dataType: "json"
+		, contentType: 'application/json'
+		, data:JSON.stringify(selectedRows)
+		, success: function(params){
+			console.log(params);
+			$("#hid_data").val(params);
+			$("#order_frm").submit();
+    	}
 	});
-    
-	alertify.confirm("the information that order name and options before and after translation", function (e) {
-		if (e) {
-			$.notify({
-				// options
-				message: '注文情報の置換を完了しました。' 
-			},{
-				// settings
-				placement: {
-		    		from: "top",
-		    		align: "left"
-				},
-				z_index: 1031,
-		    	delay: 2000,
-		    	timer: 1000,
-		    	animate: {
-		    		enter: 'animated fadeInDown',
-		    		exit: 'animated fadeOutUp'
-		    	},
-		    	onClosed: function() {
-		    		// 노티스가 닫히고 나서
-		    		console.log("closed");
-		    		$("#btn_down").prop("disabled", "");
-		    	},
-				type: 'success'
-			});
-		} else {
-			return false;
-		}
-	});
-	
 });
 
 $("#btn_down").on("click", function() {

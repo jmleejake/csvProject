@@ -7,11 +7,25 @@ var columnDefs = [
 	, {headerName: "受注ステータス", field: "order_status", width: 130}
 	, {headerName: "お届け日指定", field: "delivery_date_sel", width: 130}
 	, {headerName: "合計金額", field: "total_amt", width: 100}
-	, {headerName: "お荷物伝票番号", field: "baggage_claim_no", width: 170}
+	, {headerName: "お荷物伝票番号", field: "baggage_claim_no", width: 170
+		, editable: true
+    	, cellEditor: 'agPopupTextCellEditor'
+	}
 	, {headerName: "名前", field: "delivery_name", width: 120}
 	, {headerName: "電話番号", field: "delivery_tel", width: 120}
-	, {headerName: "商品名", field: "product_name", width: 400}
-	, {headerName: "項目・選択肢", field: "product_option", width: 400}
+	, {headerName: "商品名", field: "product_name", width: 400
+		// 길이가 긴 항목에 대해서 툴팁 추가.  
+		, tooltip: function(params) {
+			return params.value;
+		}
+	}
+	, {headerName: "項目・選択肢", field: "product_option", width: 400
+		// 길이가 긴 항목에 대해서 툴팁 추가.  
+		, tooltip: function(params) {
+			return params.value;
+		}
+	}
+	, {headerName: "個数", field: "unit_no", width: 100}
 	, {headerName: "登録日付", field: "register_date", width: 100}
 	, {headerName: "あす楽希望", field: "tomorrow_hope", width: 100
 		, cellRenderer: function(params) {
@@ -41,7 +55,22 @@ var rFileDownGridOptions = {
     rowSelection: 'multiple',
     columnDefs: columnDefs,
 //    onRowSelected: onRowSelected,
-    rowData: rowData
+    rowData: rowData,
+    onCellEditingStopped: function(event) {
+        afterData = event.node.data;
+        console.log("modified!");
+        console.log(afterData);
+        $.ajax({
+            url: "modRakuten"
+            , dataType: "json"  
+            , contentType : "application/json"
+            , data:{
+            	seq_id:afterData.seq_id
+            	, baggage_claim_no:afterData.baggage_claim_no
+            }
+            , success: setRowData
+        });
+    }
 };
 
 // lookup the container we want the Grid to use
@@ -76,6 +105,7 @@ function setRowData(result) {
 				, delivery_tel:result[i].delivery_tel1 + '-' +  result[i].delivery_tel2 + '-' +  result[i].delivery_tel3
 				, product_name:result[i].product_name
 				, product_option:result[i].product_option
+				, unit_no:result[i].unit_no
 				, tomorrow_hope:result[i].tomorrow_hope
 				, register_date:result[i].register_date
 		}
@@ -115,4 +145,22 @@ $("#btn_srch").on("click", function() {
         success: setRowData
     });
 
+});
+
+$("#btn_rdown").on("click", function() {
+	var selectedRows = rFileDownGridOptions.api.getSelectedRows();
+    
+    if (selectedRows.length == 0) {
+    	pleaseSelectNotify('情報を選択してください。');
+        return;
+    }
+    
+    var id_lst = [];
+    
+    for (var i=0; i<selectedRows.length; i++) {
+		id_lst.push(selectedRows[i].seq_id);
+	}
+    
+	$("#seq_id_list").val(id_lst);
+	$("#frm_rFileDown").submit();
 });

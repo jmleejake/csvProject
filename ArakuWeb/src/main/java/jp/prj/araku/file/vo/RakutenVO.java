@@ -1,5 +1,7 @@
 package jp.prj.araku.file.vo;
 
+import java.util.ArrayList;
+
 import com.opencsv.bean.CsvBindByPosition;
 
 /**
@@ -10,6 +12,8 @@ public class RakutenVO {
 	private String seq_id;
 	/**データ登録日*/
 	private String register_date;
+	/**データ修正日*/
+	private String update_date;
 	/**受注番号*/
 	@CsvBindByPosition(position=0)
 	private String order_no;
@@ -388,6 +392,9 @@ public class RakutenVO {
 	/**メンバーシッププログラム*/
 	@CsvBindByPosition(position=125)
 	private String membership_program;
+	
+	/**ゆプリあるダウンロード*/
+	private ArrayList<String> seq_id_list;
 	
 	public String getSeq_id() {
 		return seq_id;
@@ -1170,6 +1177,18 @@ public class RakutenVO {
 	}
 	public void setMembership_program(String membership_program) {
 		this.membership_program = membership_program;
+	}
+	public String getUpdate_date() {
+		return update_date;
+	}
+	public void setUpdate_date(String update_date) {
+		this.update_date = update_date;
+	}
+	public ArrayList<String> getSeq_id_list() {
+		return seq_id_list;
+	}
+	public void setSeq_id_list(ArrayList<String> seq_id_list) {
+		this.seq_id_list = seq_id_list;
 	}
 	
 }

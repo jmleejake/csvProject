@@ -34,15 +34,16 @@ $(document).ready(function() {
 	</form>
 </div>
 <div class="well container-fluid">
-<div id="translateGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
 <div class="row">
 	<div class="col-sm-6" style="margin-top: 7px;">
-	<button id="btn_create" type="button" class="btn btn-default" style="width: 120px;">登録</button>
+	<button id="btn_create" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">列追加</button>
+	<button id="btn_commit" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">登録</button>
 	</div>
 	<div class="col-sm-6" style="margin-top: 7px;">
-	<button id="btn_delete" type="button" class="btn btn-default" style="width: 120px;">削除</button>
+	<button id="btn_delete" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">削除</button>
 	</div>
 </div>
+<div id="translateGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
 </div>
 </div>
 <script src="./resources/menu/translation.js"></script>

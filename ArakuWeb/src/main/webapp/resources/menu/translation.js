@@ -10,6 +10,10 @@ var columnDefs = [
             cols: '50',
             rows: '6'
         }
+	    // 길이가 긴 항목에 대해서 툴팁 추가.  
+		, tooltip: function(params) {
+			return params.value;
+		}
     }
     , {headerName: "商品名・項目・選択肢 置換後", field: "afterTrans", width: 300
     	, editable: true
@@ -22,14 +26,17 @@ var columnDefs = [
     }
 ];
 
-// init rowData
+// rowData 초기화
 var rowData = [];
 
+// 수정 전후를 파악할 변수 선언 / 선택된 데이터 변수
 var selectedData, startBeforeTrans, stopBeforeTrans, startAfterTrans, stopAfterTrans;
 
-// let the grid know which columns and what data to use
+//수정데이터 배열
+var modifiedData = [];
+
 var transGridOptions = {
-	// checkbox on first column
+	// 첫번째 컬럼 체크박스 세팅
 	defaultColDef: {
         width: 100,
         headerCheckboxSelection: isFirstColumn,
@@ -41,34 +48,33 @@ var transGridOptions = {
     columnDefs: columnDefs,
     onRowSelected: onRowSelected,
     rowData: rowData,
+    rowClassRules: {
+    	'trans-created': function(params) {
+    		var target = params.data.register_date;
+    		return target === getDate(0);
+    	},
+    	'trans-modified': function(params) {
+    		var target = params.data.update_date;
+    		return target === getDate(0);
+    	}
+    },
     onCellEditingStarted: function(event) {
-        previousData = event.node.data;
-        console.log("editing start pre");
+        var previousData = event.node.data;
         startBeforeTrans = previousData.beforeTrans;
         startAfterTrans = previousData.afterTrans;
-        console.log(startBeforeTrans + ' -- ' + startAfterTrans);
     },
     onCellEditingStopped: function(event) {
-    	console.log("editing stop");
-        afterData = event.node.data;
+        var afterData = event.node.data;
         stopBeforeTrans = afterData.beforeTrans;
         stopAfterTrans = afterData.afterTrans;
-        console.log(stopBeforeTrans + ' -- ' + stopAfterTrans);
         
         if (!(startBeforeTrans == stopBeforeTrans) || 
         		!(startAfterTrans == stopAfterTrans)) {
         	console.log("modified!");
-        	console.log(afterData);
-        	$.ajax({
-        		url: "modTrans"
-        			, dataType: "json"  
-        				, contentType : "application/json"
-        					, data:{
-        						seq_id:afterData.seq_id
-        						, before_trans:afterData.beforeTrans
-        						, after_trans:afterData.afterTrans
-        					}
-        	, success: setRowData
+        	modifiedData.push({
+        		seq_id:afterData.seq_id
+				, before_trans:afterData.beforeTrans
+				, after_trans:afterData.afterTrans
         	});
         }
     }
@@ -81,9 +87,7 @@ function isFirstColumn(params) {
 }
 
 function onRowSelected(event) {
-	console.log("row selected");
 	selectedData = event.node.data;
-	console.log(selectedData);
 }
 
 // lookup the container we want the Grid to use
@@ -118,6 +122,7 @@ function setRowData(result) {
 				, beforeTrans:result[i].before_trans
 				, afterTrans:result[i].after_trans
 				, register_date:result[i].register_date
+				, update_date:result[i].update_date
 		}
 		rowData.push(row);
 	}
@@ -141,13 +146,51 @@ $('#btn_srch').on('click', function() {
 $("#btn_create").on("click", function() {
 	console.log("create");
 	var rowData = {beforeTrans: "置換前", afterTrans: "置換後"};
-	transGridOptions.api.updateRowData({add:[rowData]});
+	transGridOptions.api.updateRowData({add:[rowData], addIndex:0});
+});
+
+$("#btn_commit").on("click", function() {
+	if (modifiedData.length == 0) {
+		pleaseSelectNotify('情報を修正してください。');
+		return;
+	}
+	
+	$.ajax({
+		url: "modTrans"
+		, type:"post"
+		, dataType: "json"
+		, contentType: 'application/json'
+		, data:JSON.stringify(modifiedData)
+		, success: function(result){
+			var rowData = [];
+			for (var i=0; i<result.length; i++) {
+				rowData.push({
+					seq_id: result[i].seq_id
+					, beforeTrans:result[i].before_trans
+					, afterTrans:result[i].after_trans
+					, register_date:result[i].register_date
+					, update_date:result[i].update_date});
+			}
+			
+			transGridOptions.api.setRowData(rowData);
+				
+			// 수정데이터 초기화
+			modifiedData = [];
+    	}
+	});
 });
 
 $("#btn_delete").on("click", function() {
-	console.log("delete");
+	var selectedRows = transGridOptions.api.getSelectedRows();
+    
+    if (selectedRows.length == 0) {
+    	pleaseSelectNotify('情報を選択してください。');
+        return;
+    }
 	
-	alertify.confirm("本当に「"+selectedData.beforeTrans+"」を削除しますか？", function (e) {
+	var delArr = [];
+	delArr.push();
+	alertify.confirm("本当に削除しますか？", function (e) {
 		if (e) {
 			$.ajax({
 			    url: "delTrans"

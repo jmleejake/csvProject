@@ -8,6 +8,8 @@
 <link rel="stylesheet" href="./resources/bootstrap-3.3.7/bootstrap.min.css">
 <!-- <link rel="stylesheet" href="./resources/bootswatch-theme/bootstrap.min.css"> -->
 <script src="./resources/bootstrap-3.3.7/bootstrap.min.js"></script>
+<script src="./resources/bootstrap-notify/bootstrap-notify.min.js"></script>
+<script src="./resources/common.js"></script>
 <link rel="stylesheet" href="./resources/common.css">
 
 <script>
@@ -44,9 +46,6 @@ $(document).ready(function() {
 				</li>
 				<li id="order" class="nav-item">
 				<a class="nav-link" href="orderView">注文情報</a>
-				</li>
-				<li id="claimNo" class="nav-item">
-				<a class="nav-link" href="claimNoView">荷物伝票番号更新</a>
 				</li>
 				<li id="rFile" class="nav-item">
 				<a class="nav-link" href="rFileDownView">楽天更新ファイル</a>

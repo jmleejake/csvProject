@@ -13,8 +13,19 @@ var columnDefs = [
 	}
 	, {headerName: "名前", field: "delivery_name", width: 120}
 	, {headerName: "電話番号", field: "delivery_tel", width: 120}
-	, {headerName: "商品名", field: "product_name", width: 400}
-	, {headerName: "項目・選択肢", field: "product_option", width: 400}
+	, {headerName: "商品名", field: "product_name", width: 400
+		// 길이가 긴 항목에 대해서 툴팁 추가.  
+		, tooltip: function(params) {
+			return params.value;
+		}
+	}
+	, {headerName: "項目・選択肢", field: "product_option", width: 400
+		// 길이가 긴 항목에 대해서 툴팁 추가.  
+		, tooltip: function(params) {
+			return params.value;
+		}
+	}
+	, {headerName: "個数", field: "unit_no", width: 100}
 	, {headerName: "登録日付", field: "register_date", width: 100}
 	, {headerName: "あす楽希望", field: "tomorrow_hope", width: 100
 		, cellRenderer: function(params) {
@@ -43,7 +54,6 @@ var claimUpGridOptions = {
     suppressRowClickSelection: false,
     rowSelection: 'multiple',
     columnDefs: columnDefs,
-//    onRowSelected: onRowSelected,
     rowData: rowData,
     onCellEditingStopped: function(event) {
         afterData = event.node.data;
@@ -93,6 +103,7 @@ function setRowData(result) {
 				, delivery_tel:result[i].delivery_tel1 + '-' +  result[i].delivery_tel2 + '-' +  result[i].delivery_tel3
 				, product_name:result[i].product_name
 				, product_option:result[i].product_option
+				, unit_no:result[i].unit_no
 				, tomorrow_hope:result[i].tomorrow_hope
 				, register_date:result[i].register_date
 		}
@@ -133,18 +144,4 @@ function isFirstColumn(params) {
 	var displayedColumns = params.columnApi.getAllDisplayedColumns();
 	var thisIsFirstColumn = displayedColumns[0] === params.column;
 	return thisIsFirstColumn;
-}
-
-function onRowSelected(event) {
-	console.log("row selected");
-	console.log(event.node.data);
-}
-
-function getInfo(data) {
-    console.log("getInfo");
-    console.log(data);
-    $('form').attr('action', "getInfo");
-    $('form').attr('method', "post");
-    $("#car_id").val(data);
-    $("form").submit();
 }

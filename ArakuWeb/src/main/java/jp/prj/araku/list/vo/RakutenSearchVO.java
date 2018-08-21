@@ -40,6 +40,8 @@ public class RakutenSearchVO {
 	private String unit_no;
 	/**あす楽希望*/
 	private String tomorrow_hope;
+	/**データ修正日*/
+	private String update_date;
 	
 	/**検索用*/
 	private String start_date;
@@ -154,6 +156,12 @@ public class RakutenSearchVO {
 	public void setTomorrow_hope(String tomorrow_hope) {
 		this.tomorrow_hope = tomorrow_hope;
 	}
+	public String getUpdate_date() {
+		return update_date;
+	}
+	public void setUpdate_date(String update_date) {
+		this.update_date = update_date;
+	}
 	
 	public String getStart_date() {
 		return start_date;
@@ -177,7 +185,7 @@ public class RakutenSearchVO {
 				+ ", delivery_name_kana=" + delivery_name_kana + ", delivery_tel1=" + delivery_tel1 + ", delivery_tel2="
 				+ delivery_tel2 + ", delivery_tel3=" + delivery_tel3 + ", product_name=" + product_name
 				+ ", product_option=" + product_option + ", unit_no=" + unit_no + ", tomorrow_hope=" + tomorrow_hope
-				+ ", start_date=" + start_date + ", search_type="+search_type+"]";
+				+ ", update_date=" + update_date + ", start_date=" + start_date + ", search_type=" + search_type + "]";
 	}
 	
 }

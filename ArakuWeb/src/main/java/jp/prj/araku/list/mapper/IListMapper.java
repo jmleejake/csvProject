@@ -3,6 +3,7 @@ package jp.prj.araku.list.mapper;
 import java.util.ArrayList;
 
 import jp.prj.araku.list.vo.RakutenSearchVO;
+import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
 
 public interface IListMapper {
@@ -12,4 +13,6 @@ public interface IListMapper {
 	public int modTransInfo(TranslationVO vo);
 	public int delTransInfo(String seq_id);
 	public int modRakutenInfo(RakutenSearchVO vo);
+	public int addTransResult(TranslationResultVO vo);
+	public ArrayList<TranslationResultVO> getTransResult(TranslationResultVO vo);
 }

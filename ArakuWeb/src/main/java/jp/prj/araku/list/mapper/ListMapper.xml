@@ -58,6 +58,9 @@ from
 		<if test="baggage_claim_no != null and baggage_claim_no != ''">
 		and baggage_claim_no like '%${baggage_claim_no}%'
 		</if>
+		<if test="product_name != null and product_name != ''">
+		and product_name like '%${product_name}%'
+		</if>
 		</trim>
 		</when>
 		<otherwise>
@@ -73,12 +76,24 @@ select
 	, before_trans
 	, after_trans
 	, date_format(register_date, '%Y/%m/%d') register_date
+	, date_format(update_date, '%Y/%m/%d') update_date
 from
 	translation_info
 <where>
 	<choose>
 		<when test="search_type =='srch'">
-		(before_trans like '%${keyword}%' or after_trans like '%${keyword}%')
+		<trim prefixOverrides="AND |OR ">
+		<if test="keyword != null and keyword != ''"> 
+		and (before_trans like '%${keyword}%' or after_trans like '%${keyword}%')
+		</if>
+		<if test="seq_id_list != null">
+			and seq_id in
+			<foreach item="item" index="index" collection="seq_id_list"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		</trim>
 		</when>
 		<otherwise>
 		register_date between str_to_date(#{start_date}, '%Y/%m/%d %H:%i:%s') and now()
@@ -87,7 +102,7 @@ from
 </where>	
 </select>
 
-<insert id="addTransInfo" parameterType="Trans">
+<insert id="addTransInfo" parameterType="Trans" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
 insert into translation_info (before_trans, after_trans)
 values (#{before_trans}, #{after_trans})
 </insert>
@@ -120,5 +135,35 @@ set
 where
 	seq_id = #{seq_id}
 </update>
+
+<insert id="addTransResult" parameterType="TransResult" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
+insert into translation_result (trans_target_id, trans_target_type, result_text)
+values (#{trans_target_id}, #{trans_target_type}, #{result_text})
+</insert>
+
+<select id="getTransResult" resultType="TransResult" parameterType="TransResult">
+select
+	tr.seq_id
+	, date_format(tr.register_date, '%Y/%m/%d') register_date
+	, result_text
+	, order_no
+	, product_name
+	, product_option
+	, unit_no
+	, delivery_surname
+	, delivery_name
+from
+	translation_result tr
+inner join rakuten_info ri on ri.seq_id = tr.trans_target_id
+<where>
+	<if test="seq_id_list != null">
+		tr.seq_id in
+		<foreach item="item" index="index" collection="seq_id_list"
+			open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+</where>
+</select>
 
 </mapper>

@@ -15,7 +15,6 @@
 <script src="./resources/bootstrap-datepicker-1.6.4/bootstrap-datepicker.min.js"></script>
 <script src="./resources/bootstrap-datepicker-1.6.4/bootstrap-datepicker.ja.min.js"></script>
 <script src="./resources/ag-grid/ag-grid.min.noStyle.js"></script>
-<script src="./resources/bootstrap-notify/bootstrap-notify.min.js"></script>
 
 <script>
 $(document).ready(function() {
@@ -77,9 +76,11 @@ $(document).ready(function() {
 <div class="well container-fluid">
 <button id="btn_trans" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">置換</button>
 <div id="orderGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
-<button id="btn_down" type="button" class="btn btn-default" style="width: 120px; margin-top: 10px;" disabled="disabled">ダウンロード</button>
 </div>
 </div>
 <script src="./resources/menu/orderInfo.js"></script>
+<form action="resultView" id="order_frm" method="post">
+<input type="hidden" id="hid_data" name="list" >
+</form>
 </body>
 </html>

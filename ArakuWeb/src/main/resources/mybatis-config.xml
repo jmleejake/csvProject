@@ -5,8 +5,10 @@
 <configuration>
 	<typeAliases>
 		<typeAlias type="jp.prj.araku.file.vo.RakutenVO" alias="Rakuten" />
+		<typeAlias type="jp.prj.araku.file.vo.RCSVDownVO" alias="RCSVDown" />
 		<typeAlias type="jp.prj.araku.list.vo.RakutenSearchVO" alias="RakutenSearch" />
 		<typeAlias type="jp.prj.araku.list.vo.TranslationVO" alias="Trans" />
+		<typeAlias type="jp.prj.araku.list.vo.TranslationResultVO" alias="TransResult" />
 	</typeAliases>
 	<mappers>
 		<mapper resource="jp/prj/araku/file/mapper/FileMapper.xml" />

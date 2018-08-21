@@ -5,19 +5,7 @@
 
 <mapper namespace="jp.prj.araku.file.mapper.IFileMapper">
 
-<select id="getList" resultType="Rakuten">
-select
-	seq_id
-	, name
-	, email
-	, phoneNo
-	, country
-	, date_format(register_date, '%Y/%m/%d') register_date
-from
-	test
-</select>
-
-<insert id="insertRakutenInfo" parameterType="Rakuten">
+<insert id="insertRakutenInfo" parameterType="Rakuten" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
 insert into rakuten_info (
 order_no
 , order_status
@@ -273,5 +261,176 @@ values(
 , #{rakuten_super_deal}
 , #{membership_program})
 </insert>
+
+<select id="getRCSVDownList" resultType="RCSVDown">
+select 
+	seq_id
+	, order_no
+	, order_status
+	, seq_id process_no
+	, baggage_claim_no
+	, delivery_surname
+	, delivery_name
+	, delivery_surname_kana
+	, delivery_name_kana
+	, delivery_tel1
+	, delivery_tel2
+	, delivery_tel3
+	, delivery_company
+	, '' free_space
+from
+	rakuten_info
+<where>
+	<if test="seq_id_list != null">
+		seq_id in
+		<foreach item="item" index="index" collection="seq_id_list"
+			open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+</where>
+</select>
+
+<select id="getYUCSVDownList" resultType="Rakuten">
+select
+	order_no
+	, order_status
+	, card_pay_status
+	, deposit_date
+	, delivery_date
+	, delivery_time
+	, delivery_date_sel
+	, person_in_charge
+	, note
+	, note_to_customer
+	, init_purchase_amt
+	, terminal
+	, mail_carrier_code
+	, gift_check
+	, order_comment
+	, order_datetime
+	, multi_destination_flag
+	, warning_flag
+	, rmember_flag
+	, total
+	, consume_tax
+	, shipping_cost
+	, substitute_cost
+	, billing_amt
+	, total_amt
+	, enclosed_id
+	, enclosed_status
+	, enclosed_goods_total_amt
+	, enclosed_total_shipping
+	, enclosed_total_substitue
+	, enclosed_total_consume
+	, enclosed_billing_amt
+	, enclosed_total_amt
+	, enclosed_rbank_transfer_fee
+	, enclosed_total_point_usage
+	, mail_flag
+	, order_date
+	, order_time
+	, mobile_carrier_payment_no
+	, purchase_hist_mod_type
+	, purchase_hist_mod_icon
+	, purchase_hist_mod_prompt_mail
+	, destination_match_flag
+	, point_usage
+	, order_post_no1
+	, order_post_no2
+	, order_address1
+	, order_address2
+	, order_address3
+	, order_surname
+	, order_name
+	, order_surname_kana
+	, order_name_kana
+	, order_tel1
+	, order_tel2
+	, order_tel3
+	, mail_address
+	, order_sex
+	, order_birth
+	, payment_method
+	, credit_type
+	, credit_no
+	, credit_user
+	, credit_expire
+	, credit_installment
+	, credit_installment_note
+	, delivery_method
+	, delivery_type
+	, point_usage_person
+	, point_usage_condition
+	, point_status
+	, rbank_payment_status
+	, rbank_payment_transfer_fee
+	, rbank_payment_fee
+	, wrap_paper_title
+	, wrap_paper_name
+	, wrap_paper_fee
+	, wrap_paper_tax_include
+	, wrap_ribbon_title
+	, wrap_ribbon_name
+	, wrap_ribbon_fee
+	, wrap_ribbon_tax_include
+	, delivery_cost
+	, delivery_substitute_cost
+	, delivery_consume
+	, baggage_claim_no
+	, delivery_goods_total_amt
+	, indicates
+	, delivery_post_no1
+	, delivery_post_no2
+	, delivery_address1
+	, delivery_address2
+	, delivery_address3
+	, delivery_surname
+	, delivery_name
+	, delivery_surname_kana
+	, delivery_name_kana
+	, delivery_tel1
+	, delivery_tel2
+	, delivery_tel3
+	, product_id
+	, result_text product_name
+	, product_no
+	, product_url
+	, unit_price
+	, unit_no
+	, delivery_cost_include
+	, tax_exclude
+	, substitute_fee_include
+	, product_option
+	, point_percent
+	, point_type
+	, record_no
+	, delivery_info
+	, inventory_type
+	, wrap_type_paper
+	, wrap_type_ribbon
+	, tomorrow_hope
+	, coupon_usage
+	, store_coupon_usage
+	, rcoupon_usage
+	, enclosed_coupon_usage
+	, delivery_company
+	, pharm_flag
+	, rakuten_super_deal
+	, membership_program
+from
+	rakuten_info ri
+inner join translation_result tr on ri.seq_id = tr.trans_target_id
+<where>
+	<if test="seq_id_list != null">
+		tr.seq_id in
+		<foreach item="item" index="index" collection="seq_id_list"
+			open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+</where>
+</select>
 
 </mapper>
