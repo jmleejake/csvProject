@@ -25,6 +25,7 @@ select
 	, unit_no
 	, tomorrow_hope
 	, date_format(register_date, '%Y/%m/%d') register_date
+	, date_format(update_date, '%Y/%m/%d') update_date
 from
 	rakuten_info
 <where>
@@ -132,6 +133,7 @@ set
 	<if test="baggage_claim_no != null and baggage_claim_no !=''">
 	baggage_claim_no = #{baggage_claim_no}
 	</if>
+	, update_date = now()
 where
 	seq_id = #{seq_id}
 </update>

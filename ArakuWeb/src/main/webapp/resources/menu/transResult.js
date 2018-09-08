@@ -6,12 +6,26 @@ var columnDefs = [
 	{headerName: "受注番号", field: "order_no", width: 230}
 	, {headerName: "名前", field: "delivery_name", width: 120}
 	, {headerName: "置換結果", field: "result_text", width: 300
+		, editable: true
+    	, cellEditor: 'agLargeTextCellEditor'
+    	, cellEditorParams: {
+            maxLength: '500',
+            cols: '50',
+            rows: '6'
+        }
 		// 길이가 긴 항목에 대해서 툴팁 추가.  
 		, tooltip: function(params) {
 			return params.value;
 		}
 	}
 	, {headerName: "商品名", field: "product_name", width: 400
+		, editable: true
+    	, cellEditor: 'agLargeTextCellEditor'
+    	, cellEditorParams: {
+            maxLength: '500',
+            cols: '50',
+            rows: '6'
+        }
 		// 길이가 긴 항목에 대해서 툴팁 추가.  
 		, tooltip: function(params) {
 			return params.value;

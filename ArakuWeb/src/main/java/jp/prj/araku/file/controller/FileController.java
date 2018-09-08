@@ -38,7 +38,13 @@ public class FileController {
 	
 	@RequestMapping(value="/txtUpload", method=RequestMethod.POST)
 	public void processTxtUpload(MultipartFile amaUpload) throws IOException {
-		log.info("processCsvUpload");
+		log.info("processTxtUpload");
+		dao.insertAmazonInfo(amaUpload, fileEncoding);
+	}
+	
+	@RequestMapping(value="/yuUpload", method=RequestMethod.POST)
+	public void processYuUpload(MultipartFile amaUpload) throws IOException {
+		log.info("processYuUpload");
 		dao.insertAmazonInfo(amaUpload, fileEncoding);
 	}
 	
@@ -51,13 +57,12 @@ public class FileController {
 		id_lst = id_lst.replace("]", "");
 		String[] seq_id_list = id_lst.split(",");
 		try {
-			 //TODO 다운로드시 상품명을 치환한 결과를 update하여 csv파일형태로 다운로드 한다.
-			try {
 				dao.yupuriDownload(response, seq_id_list, fileEncoding);
-			} catch (CsvDataTypeMismatchException | CsvRequiredFieldEmptyException e) {
-				log.error(e.toString());
-			}
 		} catch (IOException e) {
+			log.error(e.toString());
+		} catch (CsvDataTypeMismatchException e) {
+			log.error(e.toString());
+		} catch (CsvRequiredFieldEmptyException e) {
 			log.error(e.toString());
 		}
 	}

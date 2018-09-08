@@ -52,7 +52,7 @@ public class ListController {
 	}
 	
 	@RequestMapping(value="/modRakuten")
-	public String modRakutenInfo(RakutenSearchVO vo) {
+	public String modRakutenInfo(@RequestBody ArrayList<RakutenSearchVO> vo) {
 		log.info("modRakutenInfo");
 		dao.modRakutenInfo(vo);
 		return "redirect:showRList";

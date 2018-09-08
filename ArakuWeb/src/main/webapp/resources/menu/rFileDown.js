@@ -37,10 +37,14 @@ var columnDefs = [
 	}
 ];
 
-// specify the data
+// rowData 초기화
 var rowData = [];
 
-var previousData, afterData;
+//수정 전후를 파악할 변수 선언
+var startData, stopData, id;
+
+//수정데이터 배열
+var modifiedData = [];
 
 // let the grid know which columns and what data to use
 var rFileDownGridOptions = {
@@ -56,10 +60,36 @@ var rFileDownGridOptions = {
     columnDefs: columnDefs,
 //    onRowSelected: onRowSelected,
     rowData: rowData,
+    rowClassRules: {
+    	'trans-created': function(params) {
+    		var target = params.data.register_date;
+    		return target === getDate(0);
+    	},
+    	'trans-modified': function(params) {
+    		var target = params.data.update_date;
+    		return target === getDate(0);
+    	}
+    },
+    onCellEditingStarted: function(event) {
+    	var start = event.node.data;
+    	startData = start.baggage_claim_no;
+    	console.log("start?");
+    	console.log(startData);
+    },
     onCellEditingStopped: function(event) {
-        afterData = event.node.data;
-        console.log("modified!");
-        console.log(afterData);
+    	var stop = event.node.data;
+    	stopData = stop.baggage_claim_no;
+    	id = stop.seq_id;
+    	console.log("stop?");
+    	console.log(stopData);
+    	if (!(startData == stopData)) {
+    		console.log("modified!");
+    		modifiedData.push({
+    			seq_id: id
+    			, baggage_claim_no: stopData
+    		});
+    	}
+    	/*
         $.ajax({
             url: "modRakuten"
             , dataType: "json"  
@@ -70,6 +100,7 @@ var rFileDownGridOptions = {
             }
             , success: setRowData
         });
+        */
     }
 };
 
@@ -108,6 +139,7 @@ function setRowData(result) {
 				, unit_no:result[i].unit_no
 				, tomorrow_hope:result[i].tomorrow_hope
 				, register_date:result[i].register_date
+				, update_date:result[i].update_date
 		}
 		rowData.push(row);
 	}
@@ -163,4 +195,45 @@ $("#btn_rdown").on("click", function() {
     
 	$("#seq_id_list").val(id_lst);
 	$("#frm_rFileDown").submit();
+});
+
+$("#btn_commit").on("click", function() {
+	if (modifiedData.length == 0) {
+		pleaseSelectNotify('情報を修正してください。');
+		return;
+	}
+	
+	$.ajax({
+		url: "modRakuten"
+		, type:"post"
+		, dataType: "json"
+		, contentType: 'application/json'
+		, data:JSON.stringify(modifiedData)
+		, success: function(result){
+			var rowData = [];
+			for (var i=0; i<result.length; i++) {
+				rowData.push({
+					seq_id: result[i].seq_id
+					, order_no: result[i].order_no
+					, order_status:result[i].order_status
+					, delivery_date_sel:result[i].delivery_date_sel
+					, total_amt:'¥' + result[i].total_amt
+					, baggage_claim_no:result[i].baggage_claim_no
+					, delivery_name:result[i].delivery_surname + ' ' + result[i].delivery_name
+					, delivery_tel:result[i].delivery_tel1 + '-' +  result[i].delivery_tel2 + '-' +  result[i].delivery_tel3
+					, product_name:result[i].product_name
+					, product_option:result[i].product_option
+					, unit_no:result[i].unit_no
+					, tomorrow_hope:result[i].tomorrow_hope
+					, register_date:result[i].register_date
+					, update_date:result[i].update_date
+				});
+			}
+			
+			rFileDownGridOptions.api.setRowData(rowData);
+				
+			// 수정데이터 초기화
+			modifiedData = [];
+    	}
+	});
 });

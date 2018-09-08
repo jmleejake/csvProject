@@ -17,6 +17,7 @@ public class CommonUtil {
 	public static final String TRANS_TARGET_A = "A"; /*A:アマゾン*/
 	
 	public static final String ORDER_STATUS_COMPLETE = "出荷準備済";
+	public static final String TOMORROW_MORNING = "午前中";
 	
 	public static String getStartDate() {
 		Calendar cal = Calendar.getInstance( );
@@ -26,8 +27,9 @@ public class CommonUtil {
 		return sdf.format(today) + " 00:00:00";
 	}
 	
-	public static String getDate(String format) { 
+	public static String getDate(String format, int day) { 
 		Calendar cal = Calendar.getInstance( ); 
+		cal.add(Calendar.DAY_OF_MONTH, day);
 		Date today = cal.getTime(); 
 		SimpleDateFormat sdf = new SimpleDateFormat(format); 
 		return sdf.format(today); 

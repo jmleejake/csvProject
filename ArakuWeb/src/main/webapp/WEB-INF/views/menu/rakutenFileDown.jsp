@@ -71,7 +71,13 @@ $(document).ready(function() {
 	</form>
 </div>
 <div class="well container-fluid">
-<button id="btn_rdown" type="button" class="btn btn-default" style="width: 140px; margin-bottom: 10px;">楽天更新ファイル</button>
+<div class="row">
+	<div class="col-sm-6" style="margin-top: 7px;">
+	<button id="btn_commit" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">登録</button>
+	<button id="btn_rdown" type="button" class="btn btn-default" style="width: 140px; margin-bottom: 10px;">楽天更新ファイル</button>
+	</div>
+</div>
+
 <div id="rFileDownGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
 </div>
 </div>

@@ -35,6 +35,10 @@ import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
 import jp.prj.araku.util.CommonUtil;
 
+/**
+ * @comment
+ * [MOD-0826] 콜론으로만 델리미터를 처리할 예정이므로 일단 주석처리
+ */
 @Repository
 public class FileDAO {
 	@Autowired
@@ -89,6 +93,14 @@ public class FileDAO {
             		// 이미 존재하는 受注番号가 있으면 다음 레코드로 진행
             		continue;
         		}
+        		
+        		// あす楽希望이 1인 경우
+        		if (vo.getTomorrow_hope().equals("1")) {
+        			// お届け日指定 컬럼에 데이터 등록일 +1
+        			vo.setDelivery_date_sel(CommonUtil.getDate("yyyy/MM/dd", 1));
+        			// お届け時間帯 컬럼에 午前中
+        			vo.setDelivery_time(CommonUtil.TOMORROW_MORNING);
+        		}
             	
         		fileMapper.insertRakutenInfo(vo);
                 log.debug("inserted rakuten seq_id :: {}", vo.getSeq_id());
@@ -111,14 +123,17 @@ public class FileDAO {
 					HashSet<String> set = new HashSet<>();
 					for (int i=0; i<arr.length; i++) {
 						log.debug(String.format("[%d] :: %s", i, arr[i]));
-					String[] data = arr[i].split(CommonUtil.SPLIT_BY_COLON);
-					String value = null;
-					if (data.length > 1) {
+					String[] dataArr = arr[i].split(CommonUtil.SPLIT_BY_COLON);
+					String data = null;
+					if (dataArr.length > 1) {
 						// 예외적인 경우로 콜론 바로 뒤에 데이터가 있는것이 아니라 콜론 두개 뒤에 있는 경우가 있어 스플릿 결과의 맨 마지막 값을 가져올 수 있도록 처리
-						value = data[data.length-1];
-						log.debug(String.format("option value1 :: %s", value));
-						set.add(value.trim());
-					} else {
+						data = dataArr[dataArr.length-1];
+						log.debug(String.format("option value1 :: %s", data));
+						set.add(data.trim());
+					} 
+					/*
+					// [MOD-0826]
+					else {
 						// 콜론이 아닌 일본어자판 컴마로 나뉘어져있는 경우가 있어 처리
 						data = arr[i].split(CommonUtil.JPCOMMA);
 						for (String value2 : data) {
@@ -135,7 +150,9 @@ public class FileDAO {
 					    		set.add(value3.trim());
 					    	}
 					    }
+					    */
 					}
+					
 					log.debug("final option set :: {}", set);
 					
 					for (String value : set) {
@@ -171,7 +188,7 @@ public class FileDAO {
 		CSVWriter csvWriter = null;
 		
 		try {
-			String csvFileName = "YU" + CommonUtil.getDate("YYYY-MM-dd HH:mm:ss") + ".csv";
+			String csvFileName = "YU" + CommonUtil.getDate("YYYY-MM-dd HH:mm:ss", 0) + ".csv";
 
 			response.setContentType("text/csv");
 
@@ -328,15 +345,17 @@ public class FileDAO {
 			vo.setSeq_id_list(seq_id_list);
 			ArrayList<RakutenVO> list = mapper.getYUCSVDownList(vo);
 			
-			//TODO \n에 대해서 개행문자로 인식하지 않게하는 코드가 필요할듯
 			for (RakutenVO tmp : list) {
 				String comment = tmp.getOrder_comment();
-				comment = comment.replace("\n", "\\n");
+				comment = comment.replace("\n", "");
 				tmp.setOrder_comment(comment);
 				
 				String option = tmp.getProduct_option();
-				option = option != null ?  option.replace("\n", "\\n") : "";
-				tmp.setProduct_option(option);
+				if (option != null) {
+					option = option.replace("\n", "");
+					tmp.setProduct_option(option);
+				}
+				tmp.setDelivery_name(tmp.getDelivery_name() + "様");
 			}
 			
 			executeYUDownload(csvWriter, writer, header, list);
@@ -364,7 +383,7 @@ public class FileDAO {
 		CSVWriter csvWriter = null;
 		
 		try {
-			String csvFileName = "R" + CommonUtil.getDate("YYYY-MM-dd HH:mm:ss") + ".csv";
+			String csvFileName = "R" + CommonUtil.getDate("YYYY-MM-dd HH:mm:ss", 0) + ".csv";
 
 			response.setContentType("text/csv");
 
@@ -383,7 +402,6 @@ public class FileDAO {
 					, CSVWriter.DEFAULT_ESCAPE_CHARACTER
 					, CSVWriter.DEFAULT_LINE_END);
 			
-			// TODO 쇼리방고는 시퀀스 프리항목은 비워도 됨
 			String[] header = {"受注番号", "受注ステータス", "処理番号", "お荷物伝票番号", "配送会社", "フリー項目01"};
 			
 			RCSVDownVO vo = new RCSVDownVO();
@@ -460,5 +478,9 @@ public class FileDAO {
                 reader.close();
             }
         }
+	}
+	
+	public void updateRakutenInfo(MultipartFile amaUpload, String fileEncoding) {
+		
 	}
 }

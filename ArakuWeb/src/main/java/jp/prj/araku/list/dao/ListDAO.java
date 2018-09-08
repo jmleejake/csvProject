@@ -18,6 +18,11 @@ import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
 import jp.prj.araku.util.CommonUtil;
 
+/**
+ * @comment
+ * [MOD-0819] 상품명에서 추출하는 개수는 계산하는데 필요없다
+ * [MOD-0826] 콜론으로만 델리미터를 처리할 예정이므로 일단 주석처리
+ */
 @Repository
 public class ListDAO {
 	@Autowired
@@ -81,11 +86,13 @@ public class ListDAO {
 		return mapper.delTransInfo(seq_id);
 	}
 	
-	public int modRakutenInfo(RakutenSearchVO vo) {
+	public void modRakutenInfo(ArrayList<RakutenSearchVO> list) {
 		log.info("modRakutenInfo");
-		log.debug("{}", vo);
+		log.debug("{}", list);
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
-		return mapper.modRakutenInfo(vo);
+		for (RakutenSearchVO vo : list) {
+			mapper.modRakutenInfo(vo);
+		}
 	}
 	
 	@Transactional
@@ -110,7 +117,7 @@ public class ListDAO {
 			// 치환후 상품명
 			transedName = searchRet.get(0).getAfter_trans();
 			// 상품세트수
-			// [MOD819-1] 상품명에서 추출하는 개수는 계산하는데 필요없다
+			// [MOD-0819]
 //			String[] arr = transedName.split(CommonUtil.SPLIT_BY_STAR);
 //			productSetNo = Integer.parseInt(arr[1]);
 			// 상품개수
@@ -133,8 +140,16 @@ public class ListDAO {
 						// 예외적인 경우로 콜론 바로 뒤에 데이터가 있는것이 아니라 콜론 두개 뒤에 있는 경우가 있어 스플릿 결과의 맨 마지막 값을 가져올 수 있도록 처리
 						value = data[data.length-1];
 						log.debug(String.format("option value1 :: %s", value));
-						list.add(value.trim());
-					} else {
+						
+						transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+						transVO.setKeyword(value);
+						searchRet = mapper.getTransInfo(transVO);
+						
+						list.add(searchRet.get(0).getAfter_trans().trim());
+					} 
+					/*
+					// [MOD-0826]
+					else {
 						// 콜론이 아닌 일본어자판 컴마로 나뉘어져있는 경우가 있어 처리
 						data = strArr[i].split(CommonUtil.JPCOMMA);
 						for (String value2 : data) {
@@ -151,6 +166,7 @@ public class ListDAO {
 							list.add(value3.trim());
 						}
 					}
+					*/
 				}
 				log.debug("option list {}", list);
 				
@@ -171,7 +187,7 @@ public class ListDAO {
 				buf.append(" ");
 				for (String optionName : optionNames) {
 					// 옵션개수, 상품개수를 곱하여 치환결과에 반영
-//					buf.append(optionName + "*" + (map.get(optionName)*productSetNo*unitNo));[MOD819-1]
+//					buf.append(optionName + "*" + (map.get(optionName)*productSetNo*unitNo));[MOD-0819]
 					buf.append(optionName + "*" + (map.get(optionName)*unitNo));
 					if (optionNames.size() > 1) {
 						buf.append(";");
@@ -179,7 +195,7 @@ public class ListDAO {
 				}
 			} else {
 				// 옵션이 없는 경우, 상품세트수와 상품개수를 곱하여 치환결과에 반영
-//				buf = new StringBuffer(arr[0] + "*" + (productSetNo*unitNo));[MOD819-1]
+//				buf = new StringBuffer(arr[0] + "*" + (productSetNo*unitNo));[MOD-0819]
 				buf = new StringBuffer(transedName + "*" + unitNo);
 			}
 			
