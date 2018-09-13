@@ -72,4 +72,10 @@ public class ListController {
 		return dao.getTransResult(id_lst);
 	}
 	
+	@RequestMapping(value="/modTransResult")
+	public void modTransResult(TranslationResultVO vo) {
+		log.info("modTransResult");
+		dao.modTransResult(vo);
+	}
+	
 }

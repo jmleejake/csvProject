@@ -56,18 +56,16 @@ var orderGridOptions = {
 	rowSelection: 'multiple',
 	columnDefs: columnDefs,
 	rowData: rowData,
-	onCellEditingStarted: function(event) {
-		previousData = event.node.data.model;
-	},
-	onCellEditingStopped: function(event) {
-		afterData = event.node.data.model;
-		
-		console.log("previous : " + previousData);
-		console.log("after : " + afterData);
-		if (!(previousData == afterData)) {
-			console.log("modified!");
-		}
-	}
+	rowClassRules: {
+    	'trans-created': function(params) {
+    		var target = params.data.register_date;
+    		return target === getDate(0);
+    	},
+    	'trans-modified': function(params) {
+    		var target = params.data.update_date;
+    		return target === getDate(0);
+    	}
+    }
 };
 
 // lookup the container we want the Grid to use
@@ -102,6 +100,7 @@ function setRowData(result) {
 				, unit_no:result[i].unit_no
 				, tomorrow_hope:result[i].tomorrow_hope
 				, register_date:result[i].register_date
+				, update_date:result[i].update_date
 		}
 		rowData.push(row);
 	}
@@ -155,15 +154,18 @@ $("#btn_trans").on("click", function() {
 	});
 });
 
-$("#btn_down").on("click", function() {
-	console.log("download clicked");
-});
-
-function getInfo(data) {
-        console.log("getInfo");
-        console.log(data);
-        $('form').attr('action', "getInfo");
-        $('form').attr('method', "post");
-        $("#car_id").val(data);
-        $("form").submit();
+function errMsg(errSize) {
+	if (errSize == "0" || errSize == "") {
+		return false;
+	}
+	
+	alertInit();
+	alertify.confirm(errSize + "つのエラーが発生しました。　ファイルをダウンロードしますか？", function (e) {
+		if (e) {
+			$("#edown_frm").submit();
+			alertify.confirm().destroy();
+		} else {
+			return false;
+		}
+	});
 }

@@ -8,7 +8,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
@@ -31,7 +33,6 @@ import jp.prj.araku.file.vo.RCSVDownVO;
 import jp.prj.araku.file.vo.RakutenVO;
 import jp.prj.araku.list.mapper.IListMapper;
 import jp.prj.araku.list.vo.RakutenSearchVO;
-import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
 import jp.prj.araku.util.CommonUtil;
 
@@ -47,7 +48,7 @@ public class FileDAO {
 	private static final Logger log = LoggerFactory.getLogger(FileDAO.class);
 	
 	@Transactional
-	public void insertRakutenInfo(MultipartFile rakUpload, String fileEncoding) throws IOException {
+	public void insertRakutenInfo(MultipartFile rakUpload, String fileEncoding, HttpServletRequest req) throws IOException {
 		log.info("insertRakutenInfo");
 		IFileMapper fileMapper = sqlSession.getMapper(IFileMapper.class);
 		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
@@ -59,6 +60,7 @@ public class FileDAO {
 		log.debug("size: {}", rakUpload.getSize());
 		
 		BufferedReader reader = null;
+		ArrayList<RakutenVO> errList = new ArrayList<>();
 		try  {
 			reader = new BufferedReader(
 					new InputStreamReader(rakUpload.getInputStream(), fileEncoding));
@@ -101,8 +103,15 @@ public class FileDAO {
         			// お届け時間帯 컬럼에 午前中
         			vo.setDelivery_time(CommonUtil.TOMORROW_MORNING);
         		}
-            	
-        		fileMapper.insertRakutenInfo(vo);
+        		
+        		try {
+        			fileMapper.insertRakutenInfo(vo);
+        		} catch (Exception e) {
+        			// 에러 발생시 에러리스트에 넣은후 다음 데이터로 진행
+        			log.debug("[ERR]: {}", vo.getOrder_no());
+        			errList.add(vo);
+        			continue;
+				}
                 log.debug("inserted rakuten seq_id :: {}", vo.getSeq_id());
                 log.debug("==========================");
                 
@@ -161,7 +170,7 @@ public class FileDAO {
 						
 						transList = listMapper.getTransInfo(transVO);
 						if (transList.size() == 0) {
-							listMapper.addTransInfo(transVO);
+								listMapper.addTransInfo(transVO);
 					    }
 					}
 					log.debug("==========================");
@@ -172,23 +181,36 @@ public class FileDAO {
 			if (reader != null) {
 				reader.close();
 			}
+			
+			HttpSession session = req.getSession();
+			session.setAttribute("errSize", errList.size());
+			session.setAttribute("errList", errList);
 		}
 	}
 	
-	public void yupuriDownload(HttpServletResponse response, String[] id_lst, String fileEncoding) 
+	public void rakutenFormatCSVDownload(HttpServletResponse response, String[] id_lst, String fileEncoding, String type) 
 			throws IOException
 			, CsvDataTypeMismatchException
 			, CsvRequiredFieldEmptyException {
-		log.info("yupuriDownload");
-		log.debug("seq_id_list : {}", id_lst.toString());
+		rakutenFormatCSVDownload(null, response, id_lst, fileEncoding, type);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void rakutenFormatCSVDownload(HttpServletRequest request, HttpServletResponse response, String[] id_lst, String fileEncoding, String type) 
+			throws IOException
+			, CsvDataTypeMismatchException
+			, CsvRequiredFieldEmptyException {
+		log.info("rakutenFormatCSVDownload");
+		
 		log.debug("encoding : {}", fileEncoding);
+		log.debug("type : {}", type);
 		
 		IFileMapper mapper = sqlSession.getMapper(IFileMapper.class);
 		BufferedWriter writer = null;
 		CSVWriter csvWriter = null;
 		
 		try {
-			String csvFileName = "YU" + CommonUtil.getDate("YYYY-MM-dd HH:mm:ss", 0) + ".csv";
+			String csvFileName = type + CommonUtil.getDate("YYYY-MM-dd HH:mm:ss", 0) + ".csv";
 
 			response.setContentType("text/csv");
 
@@ -337,13 +359,27 @@ public class FileDAO {
 				,"メンバーシッププログラム"
 			};
 			
-			RakutenVO vo = new RakutenVO();
-			ArrayList<String> seq_id_list = new ArrayList<>();
-			for (String seq_id : id_lst) {
-				seq_id_list.add(seq_id);
+			ArrayList<RakutenVO> list = null;
+			if ("YU".equals(type)) {
+				log.debug("seq_id_list : {}", id_lst.toString());
+				RakutenVO vo = new RakutenVO();
+				ArrayList<String> seq_id_list = new ArrayList<>();
+				for (String seq_id : id_lst) {
+					seq_id_list.add(seq_id);
+				}
+				vo.setSeq_id_list(seq_id_list);
+				list = mapper.getYUCSVDownList(vo);
+				
+				for (RakutenVO tmp : list) {
+					tmp.setDelivery_name(tmp.getDelivery_name() + " 様");
+				}
+				
+			} else if ("ERR".equals(type)) {
+				HttpSession session = request.getSession();
+				list = (ArrayList<RakutenVO>) session.getAttribute("errList");
+				session.setAttribute("errSize", "");
+				session.setAttribute("errList", "");
 			}
-			vo.setSeq_id_list(seq_id_list);
-			ArrayList<RakutenVO> list = mapper.getYUCSVDownList(vo);
 			
 			for (RakutenVO tmp : list) {
 				String comment = tmp.getOrder_comment();
@@ -355,7 +391,6 @@ public class FileDAO {
 					option = option.replace("\n", "");
 					tmp.setProduct_option(option);
 				}
-				tmp.setDelivery_name(tmp.getDelivery_name() + "様");
 			}
 			
 			executeYUDownload(csvWriter, writer, header, list);
@@ -480,7 +515,50 @@ public class FileDAO {
         }
 	}
 	
-	public void updateRakutenInfo(MultipartFile amaUpload, String fileEncoding) {
+	public void updateRakutenInfo(MultipartFile yuUpload, String fileEncoding) throws IOException {
+		log.info("updateRakutenInfo");
+		
+		log.debug("encoding : {}", fileEncoding);
+		log.debug("contentType: {}", yuUpload.getContentType());
+		log.debug("name: {}", yuUpload.getName());
+		log.debug("original name: {}", yuUpload.getOriginalFilename());
+		log.debug("size: {}", yuUpload.getSize());
+		
+		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
+		
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(
+					new InputStreamReader(yuUpload.getInputStream(), fileEncoding));
+			
+			CsvToBean<RCSVDownVO> csvToBean = new CsvToBeanBuilder<RCSVDownVO>(reader)
+	                .withType(RCSVDownVO.class)
+	                .withSkipLines(1)
+	                .withIgnoreLeadingWhiteSpace(true)
+	                .build();
+
+	        Iterator<RCSVDownVO> iterator = csvToBean.iterator();
+	        
+	        while (iterator.hasNext()) {
+	        	RCSVDownVO vo = iterator.next();
+            	
+            	// 受注番号 검색하여 お荷物伝票番号를 update
+            	RakutenSearchVO searchVO = new RakutenSearchVO();
+            	searchVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+            	searchVO.setOrder_no(vo.getOrder_no());
+            	
+            	ArrayList<RakutenSearchVO> searchResult = listMapper.getRList(searchVO);
+            	String seq_id = searchResult.get(0).getSeq_id();
+            	
+            	searchVO.setSeq_id(seq_id);
+            	searchVO.setBaggage_claim_no(vo.getBaggage_claim_no());
+            	listMapper.modRakutenInfo(searchVO);
+	        }
+		} finally {
+			if (reader != null) {
+                reader.close();
+            }
+		}
 		
 	}
 }

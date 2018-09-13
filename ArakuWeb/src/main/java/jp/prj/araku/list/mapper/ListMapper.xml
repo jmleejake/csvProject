@@ -158,6 +158,9 @@ from
 	translation_result tr
 inner join rakuten_info ri on ri.seq_id = tr.trans_target_id
 <where>
+	<if test="trans_target_id != null">
+		trans_target_id = #{trans_target_id}
+	</if>
 	<if test="seq_id_list != null">
 		tr.seq_id in
 		<foreach item="item" index="index" collection="seq_id_list"
@@ -167,5 +170,21 @@ inner join rakuten_info ri on ri.seq_id = tr.trans_target_id
 	</if>
 </where>
 </select>
+
+<update id="modTransResult" parameterType="TransResult" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
+update 
+	translation_result
+set
+	result_text = #{result_text}
+	, register_date = now()
+<where>
+	<if test="seq_id != null"> 
+		seq_id = #{seq_id}
+	</if>
+	<if test="trans_target_id != null">
+		trans_target_id = #{trans_target_id}
+	</if>
+</where>	
+</update>
 
 </mapper>

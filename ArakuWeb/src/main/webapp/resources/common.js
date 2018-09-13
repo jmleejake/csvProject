@@ -35,3 +35,15 @@ function pleaseSelectNotify(msg) {
 		type: 'danger'
 	});
 }
+
+function alertInit() {
+	alertify.set({
+		labels : {
+			ok     : "はい",
+			cancel : "いいえ"
+		},
+		delay : 5000,
+		buttonReverse : true,
+		buttonFocus   : "ok"
+	});
+}

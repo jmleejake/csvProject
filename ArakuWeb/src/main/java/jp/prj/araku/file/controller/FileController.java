@@ -2,6 +2,7 @@ package jp.prj.araku.file.controller;
 
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
@@ -30,9 +31,9 @@ public class FileController {
 	FileDAO dao;
 	
 	@RequestMapping(value="/csvUpload", method=RequestMethod.POST)
-	public String processCsvUpload(MultipartFile rakUpload) throws IOException {
+	public String processCsvUpload(MultipartFile rakUpload, HttpServletRequest req) throws IOException {
 		log.info("processCsvUpload");
-		dao.insertRakutenInfo(rakUpload, fileEncoding);
+		dao.insertRakutenInfo(rakUpload, fileEncoding, req);
 		return "redirect:orderView";
 	}
 	
@@ -43,9 +44,10 @@ public class FileController {
 	}
 	
 	@RequestMapping(value="/yuUpload", method=RequestMethod.POST)
-	public void processYuUpload(MultipartFile amaUpload) throws IOException {
+	public String processYuUpload(MultipartFile yuUpload) throws IOException {
 		log.info("processYuUpload");
-		dao.insertAmazonInfo(amaUpload, fileEncoding);
+		dao.updateRakutenInfo(yuUpload, fileEncoding);
+		return "redirect:orderView";
 	}
 	
 	@RequestMapping(value="/yuDown", method=RequestMethod.POST)
@@ -57,7 +59,7 @@ public class FileController {
 		id_lst = id_lst.replace("]", "");
 		String[] seq_id_list = id_lst.split(",");
 		try {
-				dao.yupuriDownload(response, seq_id_list, fileEncoding);
+				dao.rakutenFormatCSVDownload(response, seq_id_list, fileEncoding, "YU");
 		} catch (IOException e) {
 			log.error(e.toString());
 		} catch (CsvDataTypeMismatchException e) {
@@ -76,5 +78,25 @@ public class FileController {
 		} catch (CsvDataTypeMismatchException | CsvRequiredFieldEmptyException | IOException e) {
 			log.error(e.toString());
 		}
+	}
+	
+	@RequestMapping(value="/errListDown", method=RequestMethod.POST)
+	public String processErrListDownload(
+			HttpServletResponse response, HttpServletRequest request) {
+		log.info("processErrListDownload");
+		
+		String[] seq_id_list = {};
+		
+		try {
+				dao.rakutenFormatCSVDownload(request, response, seq_id_list, fileEncoding, "ERR");
+		} catch (IOException e) {
+			log.error(e.toString());
+		} catch (CsvDataTypeMismatchException e) {
+			log.error(e.toString());
+		} catch (CsvRequiredFieldEmptyException e) {
+			log.error(e.toString());
+		}
+		
+		return "redirect:orderView";
 	}
 }

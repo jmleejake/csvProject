@@ -15,4 +15,5 @@ public interface IListMapper {
 	public int modRakutenInfo(RakutenSearchVO vo);
 	public int addTransResult(TranslationResultVO vo);
 	public ArrayList<TranslationResultVO> getTransResult(TranslationResultVO vo);
+	public int modTransResult(TranslationResultVO vo);
 }

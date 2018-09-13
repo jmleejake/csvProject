@@ -19,13 +19,6 @@ var columnDefs = [
 		}
 	}
 	, {headerName: "商品名", field: "product_name", width: 400
-		, editable: true
-    	, cellEditor: 'agLargeTextCellEditor'
-    	, cellEditorParams: {
-            maxLength: '500',
-            cols: '50',
-            rows: '6'
-        }
 		// 길이가 긴 항목에 대해서 툴팁 추가.  
 		, tooltip: function(params) {
 			return params.value;
@@ -44,6 +37,8 @@ var columnDefs = [
 // specify the data
 var rowData = [];
 
+var startResultTxt, stopResultTxt;
+
 // let the grid know which columns and what data to use
 var gridOptions = {
 	enableColResize: true,
@@ -51,6 +46,31 @@ var gridOptions = {
 	rowSelection: 'multiple',
 	columnDefs: columnDefs,
 	rowData: rowData,
+	onCellEditingStarted: function(event) {
+		var start = event.node.data;
+		startResultTxt = start.result_text;
+	},
+	onCellEditingStopped: function(event) {
+		var stop = event.node.data;
+		stopResultTxt = stop.result_text;
+		
+		console.log("start");
+		console.log(startResultTxt);
+		console.log("stop");
+		console.log(stopResultTxt);
+		if (!(startResultTxt == stopResultTxt)) {
+			console.log("modified!");
+			$.ajax({
+			    url: "modTransResult"
+			    , dataType: "json"  
+			    , contentType : "application/json"
+			    , data:{
+			    	seq_id : stop.seq_id
+			    	, result_text : stopResultTxt
+			    }
+			});
+		}
+	}
 };
 
 // lookup the container we want the Grid to use

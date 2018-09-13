@@ -24,6 +24,8 @@ $(document).ready(function() {
 		language: "ja"
 		, autoclose: true
 	});
+	
+	errMsg("${errSize}");
 });
 </script>
 
@@ -82,5 +84,7 @@ $(document).ready(function() {
 <form action="resultView" id="order_frm" method="post">
 <input type="hidden" id="hid_data" name="list" >
 </form>
+<form action="errListDown" id="edown_frm" method="post"></form>
+<form action="orderView" id="callView"></form>
 </body>
 </html>

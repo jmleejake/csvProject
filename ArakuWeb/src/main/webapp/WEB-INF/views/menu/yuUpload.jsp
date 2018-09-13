@@ -42,10 +42,10 @@ $(document).ready(function() {
 <div class="container-fluid">
 
 <div class="well container-fluid">
-<form id="yu-frm" action="csvUpload" method="post" enctype="multipart/form-data" onsubmit="return preCheck('yu');">
+<form id="yu-frm" action="yuUpload" method="post" enctype="multipart/form-data" onsubmit="return preCheck('yu');">
 <div id="yu-txt" class="file-up col-sm-8">
-<input type="file" id="yu-upload" name="upload" multiple="multiple" style="display:none">
-<button class="original_btn">郵便局TXT</button>
+<input type="file" id="yu-upload" name="yuUpload" multiple="multiple" style="display:none">
+<button class="original_btn">郵便局</button>
 <span class="icon">未選択</span>
 </div>
 <div class="col-sm-4">

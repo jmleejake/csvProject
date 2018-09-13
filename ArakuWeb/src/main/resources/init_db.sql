@@ -285,6 +285,93 @@ create table amazon_info (
 
 
 
+/*地域区分コードマスタ*/
+drop table region_master;
+create table region_master (
+seq_id int primary key  auto_increment /*区分ID*/
+, register_date datetime default now() /*データ登録日*/
+, p_id int /*地域ID*/
+, region_name varchar(8) /*名称*/
+, region_name_en varchar(15) /*名称(英語)*/
+, delivery_company varchar(4) /*配送会社*/
+) default charset = utf8;
+
+insert into region_master (p_id, region_name, delivery_company) values
+(0, '北海道', 1003)
+, (0, '北東北', 1003)
+, (0, '南東北', 1003)
+, (0, '関東', 1003)
+, (0, '信越', 1003)
+, (0, '北陸', 1003)
+, (0, '中部', 1003)
+, (0, '関西', 1003)
+, (0, '中国', 1003)
+, (0, '四国', 1003)
+, (0, '九州', 1003)
+, (0, '沖縄', 1003);
+
+insert into region_master (p_id, region_name, region_name_en, delivery_company) values
+(1, '北海道', 'Hokkaido', 1003)
+, (2, '青森県', 'Aomori', 1003)
+, (2, '秋田県', 'Akita', 1003)
+, (2, '岩手県', 'Iwate', 1003)
+, (3, '宮城県', 'Miyagi', 1003)
+, (3, '山形県', 'Yamagata', 1003)
+, (3, '福島県', 'Fukushima', 1003)
+, (4, '茨城県', 'Ibaraki ', 1003)
+, (4, '栃木県', 'Tochigi', 1003)
+, (4, '群馬県', 'Gunma', 1003)
+, (4, '埼玉県', 'Saitama', 1003)
+, (4, '千葉県', 'Chiba', 1003)
+, (4, '神奈川県', 'Kanagawa', 1003)
+, (4, '東京都', 'Tokyo', 1003)
+, (4, '山梨県', 'Yamanashi', 1003)
+, (5, '新潟県', 'Niigata', 1003)
+, (5, '長野県', 'Nagano', 1003)
+, (6, '富山県', 'Toyama', 1003)
+, (6, '石川県', 'Ishikawa', 1003)
+, (6, '福井県', 'Fukui', 1003)
+, (7, '静岡県', 'Shizuoka', 1003)
+, (7, '愛知県', 'Aichi', 1003)
+, (7, '三重県', 'Mie', 1003)
+, (7, '岐阜県', 'Gifu', 1003)
+, (8, '大阪府', 'Osaka', 1003)
+, (8, '京都府', 'Kyoto', 1003)
+, (8, '滋賀県', 'Shiga', 1003)
+, (8, '奈良県', 'Nara', 1003)
+, (8, '和歌山県', 'Wakayama', 1003)
+, (8, '兵庫県', 'Hyogo', 1003)
+, (9, '岡山県', 'Okayama', 1003)
+, (9, '広島県', 'Hiroshima', 1003)
+, (9, '山口県', 'Yamaguchi', 1003)
+, (9, '鳥取県', 'Tottori', 1003)
+, (9, '島根県', 'Shimane', 1003)
+, (10, '香川県', 'Kagawa', 1003)
+, (10, '徳島県', 'Tokushima', 1003)
+, (10, '愛媛県', 'Ehime', 1003)
+, (10, '高知県', 'Kochi', 1003)
+, (11, '福岡県', 'Fukuoka', 1003)
+, (11, '佐賀県', 'Saga', 1003)
+, (11, '長崎県', 'Nagasaki', 1003)
+, (11, '熊本県', 'Kumamoto', 1003)
+, (11, '大分県', 'Oita', 1003)
+, (11, '宮崎県', 'Miyazaki', 1003)
+, (11, '鹿児島県', 'Kagoshima', 1003)
+, (12, '沖縄県', 'Okinawa', 1003);
+
+
+
+
+
+select b.seq_id, a.region_name parent_region_name, b.region_name, b.region_name_en
+from region_master a
+inner join region_master b on a.seq_id = b.p_id
+
+
+
+
+
+
 
 
 

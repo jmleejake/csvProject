@@ -96,16 +96,6 @@ var eGridDiv = document.querySelector('#translateGrid');
 // create the grid passing in the div to use together with the columns & data we want to use
 new agGrid.Grid(eGridDiv, transGridOptions);
 
-alertify.set({
-	labels : {
-		ok     : "はい",
-		cancel : "いいえ"
-	},
-	delay : 5000,
-	buttonReverse : true,
-	buttonFocus   : "ok"
-});
-
 $.ajax({
     url: "getTrans"
     , dataType: "json"  
@@ -188,6 +178,7 @@ $("#btn_delete").on("click", function() {
         return;
     }
 	
+    alertInit();
 	var delArr = [];
 	delArr.push();
 	alertify.confirm("本当に削除しますか？", function (e) {

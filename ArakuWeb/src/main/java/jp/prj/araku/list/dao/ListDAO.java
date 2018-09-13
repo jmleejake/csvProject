@@ -212,9 +212,21 @@ public class ListDAO {
 			resultVO.setTrans_target_id(vo.getSeq_id());
 			resultVO.setTrans_target_type(CommonUtil.TRANS_TARGET_R);
 			resultVO.setResult_text(finalStr);
-			mapper.addTransResult(resultVO);
-			log.debug("seq_id? {}", resultVO.getSeq_id());
-			ret.add(resultVO.getSeq_id());
+			
+			// 이미 치환된 결과가 있는 trans_target_id이면 update, 아니면 insert
+			ArrayList<TranslationResultVO> transResult = mapper.getTransResult(resultVO);
+			if (transResult.size() > 0) {
+				mapper.modTransResult(resultVO);
+				
+				log.debug("seq_id? {}", transResult.get(0).getSeq_id());
+				ret.add(transResult.get(0).getSeq_id());
+			} else {
+				mapper.addTransResult(resultVO);
+				
+				log.debug("seq_id? {}", resultVO.getSeq_id());
+				ret.add(resultVO.getSeq_id());
+			}
+			
 		}
 		
 		return ret;
@@ -235,5 +247,12 @@ public class ListDAO {
 		vo.setSeq_id_list(list);
 		
 		return mapper.getTransResult(vo);
+	}
+	
+	public int modTransResult(TranslationResultVO vo) {
+		log.info("modTransResult");
+		log.debug("{}", vo);
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		return mapper.modTransResult(vo);
 	}
 }
