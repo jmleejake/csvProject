@@ -9,6 +9,20 @@
 <!-- <link rel="stylesheet" href="./resources/bootswatch-theme/bootstrap.min.css"> -->
 <script src="./resources/bootstrap-3.3.7/bootstrap.min.js"></script>
 <script src="./resources/bootstrap-notify/bootstrap-notify.min.js"></script>
+
+<link rel="stylesheet" href="./resources/alertfy-js-0.3.11/alertify.core.css">
+<link rel="stylesheet" href="./resources/alertfy-js-0.3.11/alertify.default.css">
+<script src="./resources/alertfy-js-0.3.11/alertify.min.js"></script>
+
+<link rel="stylesheet" href="./resources/ag-grid/ag-grid.css">
+<link rel="stylesheet" href="./resources/ag-grid/ag-theme-balham.css">
+<script src="./resources/ag-grid/ag-grid.min.noStyle.js"></script>
+
+<link rel="stylesheet" href="./resources/bootstrap-datepicker-1.6.4/bootstrap-datepicker.min.css">
+<link rel="stylesheet" href="./resources/bootstrap-datepicker-1.6.4/bootstrap-datepicker3.min.css">
+<script src="./resources/bootstrap-datepicker-1.6.4/bootstrap-datepicker.min.js"></script>
+<script src="./resources/bootstrap-datepicker-1.6.4/bootstrap-datepicker.ja.min.js"></script>
+
 <script src="./resources/common.js"></script>
 <link rel="stylesheet" href="./resources/common.css">
 
@@ -52,6 +66,9 @@ $(document).ready(function() {
 				</li>
 				<li id="yuUp" class="nav-item">
 				<a class="nav-link" href="yuView">ゆプリある</a>
+				</li>
+				<li id="region" class="nav-item">
+				<a class="nav-link" href="regionView">地域区分マスタ</a>
 				</li>
 			</ul>
 		</div>

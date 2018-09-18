@@ -6,10 +6,6 @@
 <html>
 <head>
 <script src="./resources/jquery/jquery.min.js"></script>
-<link rel="stylesheet" href="./resources/ag-grid/ag-grid.css">
-<link rel="stylesheet" href="./resources/ag-grid/ag-theme-balham.css">
-<script src="./resources/ag-grid/ag-grid.min.noStyle.js"></script>
-
 <script>
 $(document).ready(function() {
 	$("#claimNo").addClass("active");

@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jp.prj.araku.list.mapper.IListMapper;
 import jp.prj.araku.list.vo.RakutenSearchVO;
+import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
 import jp.prj.araku.util.CommonUtil;
@@ -208,6 +209,20 @@ public class ListDAO {
 			}
 			log.debug("final String : {}", finalStr);
 			
+			// 지역별 배송코드 세팅 (csv다운로드 기능)
+			RakutenSearchVO rVO = new RakutenSearchVO();
+			rVO.setSeq_id(vo.getSeq_id());
+			ArrayList<RakutenSearchVO> regionAdd = mapper.getRList(rVO);
+			rVO.setDelivery_address1(regionAdd.get(0).getDelivery_address1());
+			
+			RegionMasterVO rmVO = new RegionMasterVO();
+			rmVO.setKeyword(regionAdd.get(0).getDelivery_address1());
+			ArrayList<RegionMasterVO> regionM = mapper.getRegionMaster(rmVO);
+			
+			rVO.setDelivery_company(regionM.get(0).getDelivery_company());
+			log.debug("Update Rakuten info : {}", rVO);
+			mapper.modRakutenInfo(rVO);
+			
 			TranslationResultVO resultVO = new TranslationResultVO();
 			resultVO.setTrans_target_id(vo.getSeq_id());
 			resultVO.setTrans_target_type(CommonUtil.TRANS_TARGET_R);
@@ -254,5 +269,30 @@ public class ListDAO {
 		log.debug("{}", vo);
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
 		return mapper.modTransResult(vo);
+	}
+	
+	public ArrayList<RegionMasterVO> showRegionMaster(RegionMasterVO vo) {
+		log.info("showRegionMaster");
+		log.debug("{}", vo);
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		return mapper.getRegionMaster(vo);
+	}
+	
+	public ArrayList<RegionMasterVO> modRegionMaster(ArrayList<RegionMasterVO> list) {
+		log.info("modRegionMaster");
+		log.debug("{}", list);
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		
+		ArrayList<String> idList = new ArrayList<>();
+		for (RegionMasterVO rm : list) {
+			log.debug("update target : {}", rm);
+			mapper.modRegionMaster(rm);
+			idList.add(rm.getSeq_id());
+		}
+		
+		RegionMasterVO vo = new RegionMasterVO();
+		vo.setSeq_id_list(idList);
+		
+		return mapper.getRegionMaster(vo);
 	}
 }

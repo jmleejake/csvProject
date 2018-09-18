@@ -2,6 +2,8 @@ package jp.prj.araku.list.controller;
 
 import java.util.ArrayList;
 
+import javax.swing.plaf.synth.Region;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import jp.prj.araku.list.dao.ListDAO;
 import jp.prj.araku.list.vo.RakutenSearchVO;
+import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
 
@@ -76,6 +79,20 @@ public class ListController {
 	public void modTransResult(TranslationResultVO vo) {
 		log.info("modTransResult");
 		dao.modTransResult(vo);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/showRegionMaster")
+	public ArrayList<RegionMasterVO> showRegionMaster(RegionMasterVO vo) {
+		log.info("showRegionMaster");
+		return dao.showRegionMaster(vo);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/modRegionMaster")
+	public ArrayList<RegionMasterVO> modRegionMaster(@RequestBody ArrayList<RegionMasterVO> list) {
+		log.info("modRegionMaster");
+		return dao.modRegionMaster(list);
 	}
 	
 }

@@ -430,6 +430,9 @@ inner join translation_result tr on ri.seq_id = tr.trans_target_id
 			#{item}
 		</foreach>
 	</if>
+	<if test="delivery_company != null">
+	and delivery_company = #{delivery_company}
+	</if>
 </where>
 </select>
 

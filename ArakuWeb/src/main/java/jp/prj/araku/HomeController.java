@@ -64,6 +64,12 @@ public class HomeController {
 		return "menu/yuUpload";
 	}
 	
+	@RequestMapping(value = "/regionView")
+	public String regionView() {
+		log.info("Welcome to region master view");
+		return "menu/regionMaster";
+	}
+	
 	@RequestMapping(value = "/resultView", method=RequestMethod.POST)
 	public String resultView(String[] list, Model model ) {
 		log.info("Welcome to translation result view");

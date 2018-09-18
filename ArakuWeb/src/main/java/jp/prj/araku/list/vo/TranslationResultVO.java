@@ -26,6 +26,8 @@ public class TranslationResultVO {
 	private String product_option;
 	/**個数*/
 	private String unit_no;
+	/**配送会社*/
+	private String delivery_company;
 	
 	/**検索用*/
 	private ArrayList<String> seq_id_list;
@@ -103,12 +105,18 @@ public class TranslationResultVO {
 	public void setOrder_no(String order_no) {
 		this.order_no = order_no;
 	}
+	public String getDelivery_company() {
+		return delivery_company;
+	}
+	public void setDelivery_company(String delivery_company) {
+		this.delivery_company = delivery_company;
+	}
 	
 	@Override
 	public String toString() {
 		return "TranslationResultVO [seq_id=" + seq_id + ", register_date=" + register_date + ", trans_target_id="
 				+ trans_target_id + ", trans_target_type=" + trans_target_type + ", result_text=" + result_text
-				+ ", seq_id_list=" + seq_id_list + "]";
+				+ ", seq_id_list=" + seq_id_list + " , delivery_company=" + delivery_company + "]";
 	}
 	
 }

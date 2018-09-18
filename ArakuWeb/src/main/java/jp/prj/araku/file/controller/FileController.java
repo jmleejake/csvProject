@@ -52,14 +52,18 @@ public class FileController {
 	
 	@RequestMapping(value="/yuDown", method=RequestMethod.POST)
 	public void processYupuriDownload(
-			HttpServletResponse response, @RequestParam(value="id_lst") String id_lst) {
+			HttpServletResponse response
+			, @RequestParam(value="id_lst") String id_lst
+			, @RequestParam(value="company") String delivery_company) {
 		log.info("processYupuriDownload");
-		log.debug("{}", id_lst);
+		log.debug("id list {}", id_lst);
+		log.debug("delivery company {}", delivery_company);
+		
 		id_lst = id_lst.replace("[", "");
 		id_lst = id_lst.replace("]", "");
 		String[] seq_id_list = id_lst.split(",");
 		try {
-				dao.rakutenFormatCSVDownload(response, seq_id_list, fileEncoding, "YU");
+				dao.rakutenFormatCSVDownload(response, seq_id_list, fileEncoding, "YU", delivery_company);
 		} catch (IOException e) {
 			log.error(e.toString());
 		} catch (CsvDataTypeMismatchException e) {
@@ -88,7 +92,7 @@ public class FileController {
 		String[] seq_id_list = {};
 		
 		try {
-				dao.rakutenFormatCSVDownload(request, response, seq_id_list, fileEncoding, "ERR");
+				dao.rakutenFormatCSVDownload(request, response, seq_id_list, fileEncoding, "ERR", null);
 		} catch (IOException e) {
 			log.error(e.toString());
 		} catch (CsvDataTypeMismatchException e) {
@@ -98,5 +102,28 @@ public class FileController {
 		}
 		
 		return "redirect:orderView";
+	}
+	
+	@RequestMapping(value="/yaDown", method=RequestMethod.POST)
+	public void processYamatoDownload(
+			HttpServletResponse response
+			, @RequestParam(value="id_lst") String id_lst
+			, @RequestParam(value="company") String delivery_company) {
+		log.info("processYamatoDownload");
+		log.debug("id list {}", id_lst);
+		log.debug("delivery company {}", delivery_company);
+		
+		id_lst = id_lst.replace("[", "");
+		id_lst = id_lst.replace("]", "");
+		String[] seq_id_list = id_lst.split(",");
+		try {
+				dao.yamatoFormatDownload(response, seq_id_list, fileEncoding, delivery_company);
+		} catch (IOException e) {
+			log.error(e.toString());
+		} catch (CsvDataTypeMismatchException e) {
+			log.error(e.toString());
+		} catch (CsvRequiredFieldEmptyException e) {
+			log.error(e.toString());
+		}
 	}
 }

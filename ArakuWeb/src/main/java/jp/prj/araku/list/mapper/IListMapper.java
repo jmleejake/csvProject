@@ -3,6 +3,7 @@ package jp.prj.araku.list.mapper;
 import java.util.ArrayList;
 
 import jp.prj.araku.list.vo.RakutenSearchVO;
+import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
 
@@ -16,4 +17,6 @@ public interface IListMapper {
 	public int addTransResult(TranslationResultVO vo);
 	public ArrayList<TranslationResultVO> getTransResult(TranslationResultVO vo);
 	public int modTransResult(TranslationResultVO vo);
+	public ArrayList<RegionMasterVO> getRegionMaster(RegionMasterVO vo);
+	public int modRegionMaster(RegionMasterVO vo);
 }

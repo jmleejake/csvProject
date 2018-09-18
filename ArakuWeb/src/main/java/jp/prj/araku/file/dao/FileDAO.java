@@ -31,6 +31,7 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import jp.prj.araku.file.mapper.IFileMapper;
 import jp.prj.araku.file.vo.RCSVDownVO;
 import jp.prj.araku.file.vo.RakutenVO;
+import jp.prj.araku.file.vo.YamatoVO;
 import jp.prj.araku.list.mapper.IListMapper;
 import jp.prj.araku.list.vo.RakutenSearchVO;
 import jp.prj.araku.list.vo.TranslationVO;
@@ -188,15 +189,26 @@ public class FileDAO {
 		}
 	}
 	
-	public void rakutenFormatCSVDownload(HttpServletResponse response, String[] id_lst, String fileEncoding, String type) 
+	public void rakutenFormatCSVDownload(
+			HttpServletResponse response
+			, String[] id_lst
+			, String fileEncoding
+			, String type
+			, String delivery_company) 
 			throws IOException
 			, CsvDataTypeMismatchException
 			, CsvRequiredFieldEmptyException {
-		rakutenFormatCSVDownload(null, response, id_lst, fileEncoding, type);
+		rakutenFormatCSVDownload(null, response, id_lst, fileEncoding, type, delivery_company);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void rakutenFormatCSVDownload(HttpServletRequest request, HttpServletResponse response, String[] id_lst, String fileEncoding, String type) 
+	public void rakutenFormatCSVDownload(
+			HttpServletRequest request
+			, HttpServletResponse response
+			, String[] id_lst
+			, String fileEncoding
+			, String type
+			, String delivery_company) 
 			throws IOException
 			, CsvDataTypeMismatchException
 			, CsvRequiredFieldEmptyException {
@@ -368,10 +380,12 @@ public class FileDAO {
 					seq_id_list.add(seq_id);
 				}
 				vo.setSeq_id_list(seq_id_list);
+				vo.setDelivery_company(delivery_company);
+				
 				list = mapper.getYUCSVDownList(vo);
 				
 				for (RakutenVO tmp : list) {
-					tmp.setDelivery_name(tmp.getDelivery_name() + " 様");
+					tmp.setDelivery_name(tmp.getDelivery_name() + " " + CommonUtil.TITLE_SAMA);
 				}
 				
 			} else if ("ERR".equals(type)) {
@@ -559,6 +573,212 @@ public class FileDAO {
                 reader.close();
             }
 		}
+	}
+	
+	public void yamatoFormatDownload(
+			HttpServletResponse response
+			, String[] id_lst
+			, String fileEncoding
+			, String delivery_company) 
+			throws IOException
+			, CsvDataTypeMismatchException
+			, CsvRequiredFieldEmptyException {
+		log.info("yamatoFormatDownload");
 		
+		log.debug("encoding : {}", fileEncoding);
+		
+		IFileMapper mapper = sqlSession.getMapper(IFileMapper.class);
+		BufferedWriter writer = null;
+		CSVWriter csvWriter = null;
+		
+		try {
+			String csvFileName = "YAM" + CommonUtil.getDate("YYYY-MM-dd HH:mm:ss", 0) + ".csv";
+
+			response.setContentType("text/csv");
+
+			// creates mock data
+			String headerKey = "Content-Disposition";
+			String headerValue = String.format("attachment; filename=\"%s\"",
+					csvFileName);
+			response.setHeader(headerKey, headerValue);
+			response.setCharacterEncoding(fileEncoding);
+			
+			writer = new BufferedWriter(response.getWriter());
+			
+			csvWriter = new CSVWriter(writer
+					, CSVWriter.DEFAULT_SEPARATOR
+					, CSVWriter.NO_QUOTE_CHARACTER
+					, CSVWriter.DEFAULT_ESCAPE_CHARACTER
+					, CSVWriter.DEFAULT_LINE_END);
+			
+			String[] header = 
+			{
+				"お客様管理番号"
+				, "送り状種類"
+				, "クール区分"
+				, "伝票番号"
+				, "出荷予定日"
+				, "お届け予定日"
+				, "配達時間帯"
+				, "お届け先コード"
+				, "お届け先電話番号"
+				, "お届け先電話番号枝番"
+				, "お届け先郵便番号"
+				, "お届け先住所"
+				, "お届け先アパートマンション名"
+				, "お届け先会社・部門１"
+				, "お届け先会社・部門２"
+				, "お届け先名"
+				, "お届け先名(ｶﾅ)"
+				, "敬称"
+				, "ご依頼主コード"
+				, "ご依頼主電話番号"
+				, "ご依頼主郵便番号"
+				, "ご依頼主住所"
+				, "ご依頼主アパートマンション"
+				, "ご依頼主名"
+				, "ご依頼主名(ｶﾅ)"
+				, "品名コード１"
+				, "品名１"
+				, "品名コード２"
+				, "品名２"
+				, "荷扱い１"
+				, "荷扱い２"
+				, "記事"
+				, "ｺﾚｸﾄ代金引換額（税込)"
+				, "内消費税額等"
+				, "止置き"
+				, "営業所コード"
+				, "発行枚数"
+				, "個数口表示フラグ"
+				, "請求先顧客コード"
+				, "請求先分類コード"
+				, "運賃管理番号"
+				, "クロネコwebコレクトデータ登録"
+				, "クロネコwebコレクト加盟店番号"
+				, "クロネコwebコレクト申込受付番号１"
+				, "クロネコwebコレクト申込受付番号２"
+				, "クロネコwebコレクト申込受付番号３"
+				, "お届け予定ｅメール利用区分"
+				, "お届け予定ｅメールe-mailアドレス"
+				, "入力機種"
+				, "お届け予定ｅメールメッセージ"
+				, "お届け完了ｅメール利用区分"
+				, "お届け完了ｅメールe-mailアドレス"
+				, "お届け完了ｅメールメッセージ"
+				, "クロネコ収納代行利用区分"
+				, "予備"
+				, "収納代行請求金額(税込)"
+				, "収納代行内消費税額等"
+				, "収納代行請求先郵便番号"
+				, "収納代行請求先住所"
+				, "収納代行請求先住所（アパートマンション名）"
+				, "収納代行請求先会社・部門名１"
+				, "収納代行請求先会社・部門名２"
+				, "収納代行請求先名(漢字)"
+				, "収納代行請求先名(カナ)"
+				, "収納代行問合せ先名(漢字)"
+				, "収納代行問合せ先郵便番号"
+				, "収納代行問合せ先住所"
+				, "収納代行問合せ先住所（アパートマンション名）"
+				, "収納代行問合せ先電話番号"
+				, "収納代行管理番号"
+				, "収納代行品名"
+				, "収納代行備考"
+				, "複数口くくりキー"
+				, "検索キータイトル1"
+				, "検索キー1"
+				, "検索キータイトル2"
+				, "検索キー2"
+				, "検索キータイトル3"
+				, "検索キー3"
+				, "検索キータイトル4"
+				, "検索キー4"
+				, "検索キータイトル5"
+				, "検索キー5"
+				, "予備"
+				, "予備"
+				, "投函予定メール利用区分"
+				, "投函予定メールe-mailアドレス"
+				, "投函予定メールメッセージ"
+				, "投函完了メール（お届け先宛）利用区分"
+				, "投函完了メール（お届け先宛）e-mailアドレス"
+				, "投函完了メール（お届け先宛）メールメッセージ"
+				, "投函完了メール（ご依頼主宛）利用区分"
+				, "投函完了メール（ご依頼主宛）e-mailアドレス"
+				, "投函完了メール（ご依頼主宛）メールメッセージ"
+			};
+			
+			// 야마토 포맷으로 바꾸기 전 치환된 결과와 함께 라쿠텐정보 얻기
+			log.debug("seq_id_list : {}", id_lst.toString());
+			RakutenVO vo = new RakutenVO();
+			ArrayList<String> seq_id_list = new ArrayList<>();
+			for (String seq_id : id_lst) {
+				seq_id_list.add(seq_id);
+			}
+			vo.setSeq_id_list(seq_id_list);
+			vo.setDelivery_company(delivery_company);
+			
+			ArrayList<RakutenVO> list = mapper.getYUCSVDownList(vo);
+			ArrayList<YamatoVO> yList = new ArrayList<>();
+			
+			for (RakutenVO tmp : list) {
+				YamatoVO yVO = new YamatoVO();
+				yVO.setCustomer_no(tmp.getOrder_no());
+//				yVO.setComment();
+				yVO.setCollect_cash(tmp.getTotal_amt());
+				
+				yVO.setClient_post_no(tmp.getOrder_post_no1() + tmp.getOrder_post_no2());
+				yVO.setClient_add(tmp.getOrder_address1() + " " + tmp.getOrder_address2() + " " + tmp.getOrder_address3());
+				yVO.setClient_name(tmp.getOrder_surname() + " " + tmp.getOrder_name());
+				yVO.setClient_name_kana(tmp.getOrder_surname_kana() + " " + tmp.getOrder_name_kana());
+				yVO.setClient_tel(tmp.getOrder_tel1() + "-" + tmp.getOrder_tel2() + "-" + tmp.getOrder_tel3());
+				
+				yVO.setDelivery_post_no(tmp.getDelivery_post_no1() + tmp.getDelivery_post_no2());
+				yVO.setDelivery_add(tmp.getDelivery_address1() + " " + tmp.getDelivery_address2() + " " + tmp.getDelivery_address3());
+				yVO.setDelivery_name(tmp.getDelivery_surname() + " " + tmp.getDelivery_name());
+				yVO.setDelivery_name_kana(tmp.getDelivery_surname_kana() + " " + tmp.getDelivery_name_kana());
+				yVO.setDelivery_name_title(CommonUtil.TITLE_SAMA);
+				yVO.setDelivery_tel(tmp.getDelivery_tel1() + "-" + tmp.getDelivery_tel2() + "-" + tmp.getDelivery_tel3());
+				
+				// あす楽希望이 1인 경우
+        		if (tmp.getTomorrow_hope().equals("1")) {
+        			yVO.setDelivery_time(CommonUtil.TOMORROW_MORNING_CODE);
+        		}
+				
+				yVO.setProduct_name1(tmp.getProduct_name());
+				
+				// csv작성을 위한 리스트작성
+				yList.add(yVO);
+			}
+			
+			executeYamatoDownload(csvWriter, writer, header, yList);
+			
+		} finally {
+			if (csvWriter != null) {
+				csvWriter.close();
+			}
+			
+			if (writer != null) {
+				writer.close();
+			}
+		}
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void executeYamatoDownload(
+			CSVWriter csvWriter
+			, BufferedWriter writer
+			, String[] header
+			, ArrayList<YamatoVO> list) 
+					throws CsvDataTypeMismatchException
+					, CsvRequiredFieldEmptyException {
+		StatefulBeanToCsv<YamatoVO> beanToCSV = new StatefulBeanToCsvBuilder(writer)
+	            .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
+	            .build();
+		
+		csvWriter.writeNext(header);
+		
+		beanToCSV.write(list);
 	}
 }

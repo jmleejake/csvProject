@@ -3,10 +3,11 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link rel="stylesheet" href="./resources/menu/regionMaster.css">
 <script src="./resources/jquery/jquery.min.js"></script>
 <script>
 $(document).ready(function() {
-	$("#trans").addClass("active");
+	$("#region").addClass("active");
 });
 </script>
 </head>
@@ -14,11 +15,10 @@ $(document).ready(function() {
 <jsp:include page="../top.jsp"></jsp:include>
 <div class="container-fluid">
 <div class="well container-fluid">
-	<form action="getTrans" id="transForm">
-	<input type="hidden" name="search_type" value="srch">
+	<form id="regionFrm" action="showRegionMaster">
 	<div class="col-sm-6">
-	<label>商品名</label>
-	<input type="text" name="keyword" class="form-control" style="width: 400px;">
+	<label>地域名称</label>
+	<input type="text" name="keyword" class="form-control" style="width: 300px;">
 	</div>
 	<div class="col-sm-6" style="margin-top: 7px;">
 	<button id="btn_srch" type="button" class="btn btn-default" style="width: 120px; margin-top: 18px;">検索</button>
@@ -28,16 +28,13 @@ $(document).ready(function() {
 <div class="well container-fluid">
 <div class="row">
 	<div class="col-sm-6" style="margin-top: 7px;">
-	<button id="btn_create" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">列追加</button>
 	<button id="btn_commit" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">登録</button>
 	</div>
-	<div class="col-sm-6" style="margin-top: 7px;">
-	<button id="btn_delete" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">削除</button>
-	</div>
 </div>
-<div id="translateGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
+
+<div id="regionGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
 </div>
 </div>
-<script src="./resources/menu/translation.js"></script>
+<script src="./resources/menu/regionMaster.js"></script>
 </body>
 </html>

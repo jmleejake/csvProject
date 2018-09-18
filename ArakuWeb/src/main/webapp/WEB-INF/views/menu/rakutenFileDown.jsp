@@ -3,16 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="./resources/bootstrap-datepicker-1.6.4/bootstrap-datepicker.min.css">
-<link rel="stylesheet" href="./resources/bootstrap-datepicker-1.6.4/bootstrap-datepicker3.min.css">
-<link rel="stylesheet" href="./resources/ag-grid/ag-grid.css">
-<link rel="stylesheet" href="./resources/ag-grid/ag-theme-balham.css">
-
 <script src="./resources/jquery/jquery.min.js"></script>
-<script src="./resources/bootstrap-datepicker-1.6.4/bootstrap-datepicker.min.js"></script>
-<script src="./resources/bootstrap-datepicker-1.6.4/bootstrap-datepicker.ja.min.js"></script>
-<script src="./resources/ag-grid/ag-grid.min.noStyle.js"></script>
-
 <script>
 $(document).ready(function() {
 	$("#rFile").addClass("active");

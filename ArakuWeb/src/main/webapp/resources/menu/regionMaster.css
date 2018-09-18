@@ -1,0 +1,9 @@
+@charset "UTF-8";
+
+.header-cell {
+	background-color: #817e77;
+	color: #fff;
+	font-size: 18px;
+	text-align: center;
+	padding-top: 5px;
+}

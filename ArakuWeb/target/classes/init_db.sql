@@ -285,6 +285,479 @@ create table amazon_info (
 
 
 
+/*地域区分コードマスタ*/
+drop table region_master;
+create table region_master (
+seq_id int primary key  auto_increment /*区分ID*/
+, register_date datetime default now() /*データ登録日*/
+, p_id int /*地域ID*/
+, region_name varchar(8) /*名称*/
+, region_name_en varchar(15) /*名称(英語)*/
+, delivery_company varchar(4) /*配送会社*/
+) default charset = utf8;
+
+insert into region_master (p_id, region_name, delivery_company) values
+(0, '北海道', 1003)
+, (0, '北東北', 1003)
+, (0, '南東北', 1003)
+, (0, '関東', 1003)
+, (0, '信越', 1003)
+, (0, '北陸', 1003)
+, (0, '中部', 1003)
+, (0, '関西', 1003)
+, (0, '中国', 1003)
+, (0, '四国', 1003)
+, (0, '九州', 1003)
+, (0, '沖縄', 1003);
+
+insert into region_master (p_id, region_name, region_name_en, delivery_company) values
+(1, '北海道', 'Hokkaido', 1003)
+, (2, '青森県', 'Aomori', 1003)
+, (2, '秋田県', 'Akita', 1003)
+, (2, '岩手県', 'Iwate', 1003)
+, (3, '宮城県', 'Miyagi', 1003)
+, (3, '山形県', 'Yamagata', 1003)
+, (3, '福島県', 'Fukushima', 1003)
+, (4, '茨城県', 'Ibaraki ', 1003)
+, (4, '栃木県', 'Tochigi', 1003)
+, (4, '群馬県', 'Gunma', 1003)
+, (4, '埼玉県', 'Saitama', 1001)
+, (4, '千葉県', 'Chiba', 1003)
+, (4, '神奈川県', 'Kanagawa', 1003)
+, (4, '東京都', 'Tokyo', 1003)
+, (4, '山梨県', 'Yamanashi', 1003)
+, (5, '新潟県', 'Niigata', 1003)
+, (5, '長野県', 'Nagano', 1003)
+, (6, '富山県', 'Toyama', 1003)
+, (6, '石川県', 'Ishikawa', 1003)
+, (6, '福井県', 'Fukui', 1003)
+, (7, '静岡県', 'Shizuoka', 1003)
+, (7, '愛知県', 'Aichi', 1003)
+, (7, '三重県', 'Mie', 1003)
+, (7, '岐阜県', 'Gifu', 1003)
+, (8, '大阪府', 'Osaka', 1003)
+, (8, '京都府', 'Kyoto', 1003)
+, (8, '滋賀県', 'Shiga', 1003)
+, (8, '奈良県', 'Nara', 1003)
+, (8, '和歌山県', 'Wakayama', 1003)
+, (8, '兵庫県', 'Hyogo', 1003)
+, (9, '岡山県', 'Okayama', 1003)
+, (9, '広島県', 'Hiroshima', 1003)
+, (9, '山口県', 'Yamaguchi', 1003)
+, (9, '鳥取県', 'Tottori', 1003)
+, (9, '島根県', 'Shimane', 1003)
+, (10, '香川県', 'Kagawa', 1003)
+, (10, '徳島県', 'Tokushima', 1003)
+, (10, '愛媛県', 'Ehime', 1003)
+, (10, '高知県', 'Kochi', 1003)
+, (11, '福岡県', 'Fukuoka', 1003)
+, (11, '佐賀県', 'Saga', 1002)
+, (11, '長崎県', 'Nagasaki', 1003)
+, (11, '熊本県', 'Kumamoto', 1003)
+, (11, '大分県', 'Oita', 1003)
+, (11, '宮崎県', 'Miyazaki', 1003)
+, (11, '鹿児島県', 'Kagoshima', 1003)
+, (12, '沖縄県', 'Okinawa', 1003);
+
+
+/*YAMATO情報*/
+create table yamato_info (
+seq_id bigint unsigned primary key  auto_increment /*区分ID*/
+, register_date datetime default now() /*データ登録日*/
+, customer_no varchar(50) /*お客様管理番号
+半角英数字50文字*/
+, invoice_type varchar(1) /*送り状種類
+半角数字1文字
+ 0 : 発払い
+ 2 : コレクト
+ 3 : ＤＭ便
+ 4 : タイム ※新規追加
+ 5 : 着払い ※新規追加
+ 7 : ネコポス
+ 8 : 宅急便コンパクト
+ 9 : 宅急便コンパクトコレクト
+
+(※宅急便_必須項目)
+(※ＤＭ便_必須項目)
+(※ネコポス_必須項目)
+*/
+, cool_type varchar(1) /*クール区分
+半角数字1文字
+0または空白 : 通常
+ 1 : クール冷凍
+ 2 : クール冷蔵*/
+, slip_no varchar(12) /*伝票番号
+半角数字12文字
+
+※B2クラウドにて付与*/
+, estimate_ship_date varchar(10) /*出荷予定日
+半角10文字
+｢YYYY/MM/DD｣で入力してください。
+
+(※宅急便_必須項目)
+(※ＤＭ便_必須項目)
+(※ネコポス_必須項目)
+
+
+出荷予定日は本日～30日後までの範囲で指定して下さい。*/
+, estimate_delivery_date varchar(10) /*お届け予定日
+半角10文字
+｢YYYY/MM/DD｣で入力してください。
+
+※入力なしの場合、印字されません。
+※「最短日」と入力可*/
+, delivery_time varchar(4) /*配達時間帯
+半角4文字
+タイム、ＤＭ便以外
+ 空白 : 指定なし
+ 0812 : 午前中
+ 1416 : 14～16時
+ 1618 : 16～18時
+ 1820 : 18～20時
+ 1921 : 19～21時
+
+タイム
+ 0010 : 午前10時まで
+ 0017 : 午後5時まで*/
+, delivery_code varchar(20) /*お届け先コード
+半角英数字20文字*/
+, delivery_tel varchar(15) /*お届け先電話番号
+半角数字15文字ハイフン含む
+
+(※宅急便_必須項目)
+(※ＤＭ便_必須項目)
+(※ネコポス_必須項目)*/
+, delivery_tel_branch varchar(2) /*お届け先電話番号枝番
+半角数字2文字*/
+, delivery_post_no varchar(8) /*お届け先郵便番号
+半角数字8文字
+ハイフンなし7文字も可
+
+(※宅急便_必須項目)
+(※ＤＭ便_必須項目)
+(※ネコポス_必須項目)*/
+, delivery_add varchar(64) /*お届け先住所
+全角/半角
+都道府県（４文字）
+市区郡町村（１２文字）
+町・番地（１６文字）
+
+(※宅急便_必須項目)
+(※ＤＭ便_必須項目)
+(※ネコポス_必須項目)*/
+, delivery_building varchar(32) /*お届け先アパートマンション名
+全角/半角 
+16文字/32文字 */
+, delivery_company1 varchar(50) /*お届け先会社・部門１
+全角/半角
+25文字/50文字 */
+, delivery_company2 varchar(50) /*お届け先会社・部門２
+全角/半角 
+25文字/50文字 */
+, delivery_name varchar(32) /*お届け先名
+全角/半角
+16文字/32文字 
+
+(※宅急便_必須項目)
+(※ＤＭ便_必須項目)
+(※ネコポス_必須項目)*/
+, delivery_name_kana varchar(50) /*お届け先名(ｶﾅ)
+半角カタカナ 50文字 */
+, delivery_name_title varchar(4) /*敬称
+全角/半角 2文字/4文字
+ＤＭ便の場合に指定可能
+【入力例】
+様・御中・殿・行・係・宛・先生・なし*/
+, client_code varchar(20) /*ご依頼主コード
+半角英数字 20文字 */
+, client_tel varchar(15) /*ご依頼主電話番号
+半角数字15文字ハイフン含む
+
+(※宅急便_必須項目)
+(※ネコポス_必須項目)*/
+, client_tel_branch varchar(2) /*ご依頼主電話番号枝番
+半角数字 2文字 */
+, client_post_no varchar(8) /*ご依頼主郵便番号
+半角数字8文字
+ハイフンなし半角7文字も可 
+
+(※宅急便_必須項目)
+(※ネコポス_必須項目)*/
+, client_add varchar(64) /*ご依頼主住所
+全角/半角32文字/64文字
+都道府県（４文字）
+市区郡町村（１２文字）
+町・番地（１６文字）
+
+(※宅急便_必須項目)
+(※ネコポス_必須項目)*/
+, client_building varchar(32) /*ご依頼主アパートマンション
+全角/半角 16文字/32文字 */
+, client_name varchar(32) /*ご依頼主名
+全角/半角 16文字/32文字 
+
+(※宅急便_必須項目)
+(※ネコポス_必須項目)*/
+, client_name_kana varchar(50) /*ご依頼主名(ｶﾅ)
+半角カタカナ 50文字*/
+, product_code1 varchar(30) /*品名コード１
+半角英数字 30文字 */
+, product_name1 varchar(50) /*品名１
+全角/半角 25文字/50文字 
+
+(※宅急便_必須項目)
+(※ネコポス_必須項目)*/
+, product_code2 varchar(30) /*品名コード２
+半角英数字 30文字*/
+, product_name2 varchar(50) /*品名２
+全角/半角 25文字/50文字 */
+, product_handle1 varchar(20) /*荷扱い１
+全角/半角 10文字/20文字 
+
+
+
+精密機器
+ワレ物注意
+下積厳禁
+天地無用
+ナマモノ*/
+, product_handle2 varchar(20) /*荷扱い２
+全角/半角 10文字/20文字 
+
+
+
+精密機器
+ワレ物注意
+下積厳禁
+天地無用
+ナマモノ*/
+, comment varchar(44) /*記事
+全角/半角 22文字/44文字 */
+, collect_cash varchar(7) /*ｺﾚｸﾄ代金引換額（税込)
+半角数字 7文字
+
+※コレクトの場合は必須
+300,000円以下　1円以上
+※但し、宅急便コンパクトコレクトの場合は
+30,000円以下　　1円以上*/
+, interval_consume_tax varchar(7) /*内消費税額等
+半角数字 7文字
+
+※コレクトの場合は必須 
+※コレクト代金引換額（税込)以下*/
+, stop_and_leave varchar(1) /*止置き
+半角数字 1文字
+0 : 利用しない
+1 : 利用する */
+, office_code varchar(6) /*営業所コード
+半角数字 6文字
+
+※止置きを利用する場合は必須 */
+, issued_no varchar(2) /*発行枚数
+半角数字 2文字
+
+※発払いのみ指定可能*/
+, show_no_flag varchar(1) /*個数口表示フラグ
+半角数字 1文字
+1 : 印字する
+2 : 印字しない 
+3 : 枠と口数を印字する
+
+※宅急便コンパクト、宅急便コンパクトコレクトは対象外*/
+, bill_customer_code varchar(12) /*請求先顧客コード
+半角数字12文字
+
+(※宅急便_必須項目)
+(※ネコポス_必須項目)*/
+, bill_class_code varchar(3) /*請求先分類コード
+空白または半角数字3文字
+*/
+, fare_manage_no varchar(2) /*運賃管理番号
+半角数字2文字
+
+(※宅急便_必須項目)
+(※ネコポス_必須項目)*/
+, kuroneko_collect_register varchar(1) /*クロネコwebコレクトデータ登録
+半角数字 1文字
+0 : 無し
+1 : 有り */
+, kuroneko_collect_member_no varchar(9) /*クロネコwebコレクト加盟店番号
+半角英数字 9文字 
+
+※クロネコwebコレクトデータ有りの場合は必須 */
+, kuroneko_collect_apply_no1 varchar(23) /*クロネコwebコレクト申込受付番号１
+半角英数字 23文字
+
+※クロネコwebコレクトデータ有りの場合は必須 */
+, kuroneko_collect_apply_no2 varchar(23) /*クロネコwebコレクト申込受付番号２
+半角英数字 23文字*/
+, kuroneko_collect_apply_no3 varchar(23) /*クロネコwebコレクト申込受付番号３
+半角英数字 23文字*/
+, email_status_usage varchar(1) /*お届け予定ｅメール利用区分
+半角数字 1文字
+0 : 利用しない
+1 : 利用する */
+, email_status_add varchar(60) /*お届け予定ｅメールe-mailアドレス
+半角英数字＆記号 60文字
+
+※お届け予定eメールを利用する場合は必須 */
+, input_type varchar(1) /*入力機種
+半角数字 1文字
+1 : ＰＣ
+2 : 携帯電話
+
+※お届け予定eメールを利用する場合は必須*/
+, email_status_msg varchar(74) /*お届け予定ｅメールメッセージ
+全角 74文字
+
+
+※お届け予定eメールを利用する場合は必須*/
+, email_complete_usage varchar(1) /*お届け完了ｅメール利用区分
+半角数字 1文字
+0 : 利用しない
+1 : 利用する */
+, email_complete_add varchar(60) /*お届け完了ｅメールe-mailアドレス
+半角英数字 60文字
+
+※お届け完了eメールを利用する場合は必須 */
+, email_complete_msg varchar(159) /*お届け完了ｅメールメッセージ
+全角 159文字 
+
+※お届け完了eメールを利用する場合は必須 */
+, kuroneko_substitute_usage varchar(1) /*クロネコ収納代行利用区分
+半角数字１文字*/
+, reserved_cal1 varchar(1) /*予備
+半角数字１文字*/
+, substitute_amount varchar(7) /*収納代行請求金額(税込)
+半角数字７文字*/
+, substitute_tax varchar(7) /*収納代行内消費税額等
+半角数字７文字*/
+, substitute_bill_post_no varchar(8) /*収納代行請求先郵便番号
+半角数字＆ハイフン8文字*/
+, substitute_bill_add varchar(64) /*収納代行請求先住所
+全角/半角　32文字/64文字
+都道府県（４文字）
+市区郡町村（１２文字）
+町・番地（１６文字）*/
+, substitute_bill_building varchar(32) /*収納代行請求先住所（アパートマンション名）
+全角/半角　16文字/32文字*/
+, substitute_bill_company1 varchar(50) /*収納代行請求先会社・部門名１
+全角/半角　25文字/50文字*/
+, substitute_bill_company2 varchar(50) /*収納代行請求先会社・部門名２
+全角/半角　25文字/50文字*/
+, substitute_bill_name varchar(32) /*収納代行請求先名(漢字)
+全角/半角　16文字/32文字*/
+, substitute_bill_name_kana varchar(50) /*収納代行請求先名(カナ)
+半角カタカナ50文字*/
+, substitute_contact_name varchar(32) /*収納代行問合せ先名(漢字)
+全角/半角　16文字/32文字*/
+, substitute_contact_post_no varchar(8) /*収納代行問合せ先郵便番号
+半角数字＆ハイフン8文字*/
+, substitute_contact_add varchar(64) /*収納代行問合せ先住所
+全角/半角　32文字/64文字
+都道府県（４文字）
+市区郡町村（１２文字）
+町・番地（１６文字）*/
+, substitute_contact_building varchar(32) /*収納代行問合せ先住所（アパートマンション名）
+全角/半角　16文字/32文字*/
+, substitute_contact_tel varchar(15) /*収納代行問合せ先電話番号
+半角数字＆ハイフン15文字*/
+, substitute_manage_no varchar(20) /*収納代行管理番号
+半角英数字20文字*/
+, substitute_product_name varchar(50) /*収納代行品名
+全角/半角　25文字/50文字*/
+, substitute_note varchar(28) /*収納代行備考
+全角/半角　14文字/28文字*/
+, multiple_key varchar(20) /*複数口くくりキー
+半角英数字20文字
+
+※「出荷予定個数」が2以上で「個数口枠の印字」で 「3 : 枠と口数を印字する」を選択し、且つ「複数口くくりキー」が空白の場合は、送り状発行時に「B2」という文言を自動補完する。
+
+出荷予定個数:1*/
+, search_key_title1 varchar(20) /*検索キータイトル1
+全角/半角 
+10文字/20文字 */
+, search_key1 varchar(20) /*検索キー1
+半角英数字
+20文字*/
+, search_key_title2 varchar(20) /*検索キータイトル2
+全角/半角 
+10文字/20文字 */
+, search_key2 varchar(20) /*検索キー2
+半角英数字
+20文字*/
+, search_key_title3 varchar(20) /*検索キータイトル3
+全角/半角 
+10文字/20文字 */
+, search_key3 varchar(20) /*検索キー3
+半角英数字
+20文字*/
+, search_key_title4 varchar(20) /*検索キータイトル4
+全角/半角 
+10文字/20文字 */
+, search_key4 varchar(20) /*検索キー4
+半角英数字
+20文字*/
+, search_key_title5 varchar(20) /*検索キータイトル5
+
+※入力時は不要。出力時に自動反映。
+※「ユーザーID」という文言を送り状発行時に固定で自動補完する。*/
+, search_key5 varchar(20) /*検索キー5
+
+※入力時は不要。出力時に自動反映。
+※送り状発行時のユーザーIDを固定で自動補完する。*/
+, reserved_cal2 varchar(50) /*予備*/
+, reserved_cal3 varchar(50) /*予備*/
+, posting_status_mail_usage varchar(1) /*投函予定メール利用区分
+半角数字
+1文字
+0 : 利用しない
+1 : 利用する PC宛て
+2 : 利用する モバイル宛て*/
+, posting_status_mail_add varchar(60) /*投函予定メールe-mailアドレス
+半角英数字＆記号
+60文字*/
+, posting_status_mail_msg varchar(148) /*投函予定メールメッセージ
+全角/半角
+74文字/148文字
+
+※半角カタカナ及び半角スペースは使えません。*/
+, posting_delivery_complete_mail_usage varchar(1) /*投函完了メール（お届け先宛）利用区分
+半角数字
+1文字
+0 : 利用しない
+1 : 利用する PC宛て
+2 : 利用する モバイル宛て*/
+, posting_delivery_complete_mail_add varchar(60) /*投函完了メール（お届け先宛）e-mailアドレス
+半角英数字＆記号
+60文字*/
+, posting_delivery_complete_mail_msg varchar(318) /*投函完了メール（お届け先宛）メールメッセージ
+全角/半角
+159文字/318文字
+
+※半角カタカナ及び半角スペースは使えません。*/
+, posting_client_complete_mail_usage varchar(1) /*投函完了メール（ご依頼主宛）利用区分
+半角数字
+1文字
+0 : 利用しない
+1 : 利用する PC宛て
+2 : 利用する モバイル宛て*/
+, posting_client_complete_mail_add varchar(60) /*投函完了メール（ご依頼主宛）e-mailアドレス
+半角英数字＆記号
+60文字*/
+, posting_client_complete_mail_msg varchar(318) /*投函完了メール（ご依頼主宛）メールメッセージ
+全角/半角
+159文字/318文字
+
+※半角カタカナ及び半角スペースは使えません。*/
+) default charset = utf8;
+
+
+
+
+
+
+
 
 
 
@@ -354,3 +827,6 @@ select
 from
 	translation_result tr
 inner join rakuten_info ri on ri.seq_id = tr.trans_target_id
+
+update rakuten_info
+set register_date = now()

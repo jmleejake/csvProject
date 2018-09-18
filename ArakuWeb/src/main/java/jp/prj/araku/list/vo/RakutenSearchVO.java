@@ -1,5 +1,7 @@
 package jp.prj.araku.list.vo;
 
+import com.opencsv.bean.CsvBindByPosition;
+
 /**
  * 楽天CSVファイル(検索用)
  * */
@@ -32,6 +34,10 @@ public class RakutenSearchVO {
 	private String delivery_tel2;
 	/**送付先電話番号３*/
 	private String delivery_tel3;
+	/**送付先住所：都道府県*/
+	private String delivery_address1;
+	/**配送会社*/
+	private String delivery_company;
 	/**商品名*/
 	private String product_name;
 	/**項目・選択肢*/
@@ -176,6 +182,19 @@ public class RakutenSearchVO {
 		this.search_type = search_type;
 	}
 	
+	public String getDelivery_address1() {
+		return delivery_address1;
+	}
+	public void setDelivery_address1(String delivery_address1) {
+		this.delivery_address1 = delivery_address1;
+	}
+	public String getDelivery_company() {
+		return delivery_company;
+	}
+	public void setDelivery_company(String delivery_company) {
+		this.delivery_company = delivery_company;
+	}
+	
 	@Override
 	public String toString() {
 		return "RakutenSearchVO [seq_id=" + seq_id + ", register_date=" + register_date + ", order_no=" + order_no
@@ -183,9 +202,10 @@ public class RakutenSearchVO {
 				+ total_amt + ", baggage_claim_no=" + baggage_claim_no + ", delivery_surname=" + delivery_surname
 				+ ", delivery_name=" + delivery_name + ", delivery_surname_kana=" + delivery_surname_kana
 				+ ", delivery_name_kana=" + delivery_name_kana + ", delivery_tel1=" + delivery_tel1 + ", delivery_tel2="
-				+ delivery_tel2 + ", delivery_tel3=" + delivery_tel3 + ", product_name=" + product_name
-				+ ", product_option=" + product_option + ", unit_no=" + unit_no + ", tomorrow_hope=" + tomorrow_hope
-				+ ", update_date=" + update_date + ", start_date=" + start_date + ", search_type=" + search_type + "]";
+				+ delivery_tel2 + ", delivery_tel3=" + delivery_tel3 + ", delivery_address1=" + delivery_address1
+				+ ", delivery_company=" + delivery_company + ", product_name=" + product_name + ", product_option="
+				+ product_option + ", unit_no=" + unit_no + ", tomorrow_hope=" + tomorrow_hope + ", update_date="
+				+ update_date + ", start_date=" + start_date + ", search_type=" + search_type + "]";
 	}
 	
 }

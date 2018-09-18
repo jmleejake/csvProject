@@ -31,6 +31,7 @@ var columnDefs = [
 		}
 	}
 	, {headerName: "個数", field: "unit_no", width: 100}
+	, {headerName: "配送会社", field: "delivery_company", width: 80}
 	, {headerName: "登録日付", field: "register_date", width: 100}
 ];
 
@@ -102,6 +103,7 @@ function setRowData(result) {
 				, unit_no:result[i].unit_no
 				, register_date:result[i].register_date
 				, result_text:result[i].result_text
+				, delivery_company:result[i].delivery_company
 		}
 		rowData.push(row);
 	}
@@ -109,8 +111,25 @@ function setRowData(result) {
 }
 
 // 유프리아루 CSV파일 다운로드
-$("#btn_down").on("click", function() {
-	console.log("download button clicked");
-	console.log($("#id_lst").val());
-	$("#frm_down").submit();
+$("#btn_yu_down").on("click", function() {
+	console.log("yupuri download button clicked");
+	$("#yu_code").val("1003");
+	console.log("code : " + $("#yu_code").val());
+	$("#frm_down3").submit();
+});
+
+//야마토 CSV파일 다운로드
+$("#btn_ya_down").on("click", function() {
+	console.log("yamato download button clicked");
+	$("#ya_code").val("1001");
+	console.log("code : " + $("#ya_code").val());
+	$("#frm_down1").submit();
+});
+
+//사가와 CSV파일 다운로드
+$("#btn_sa_down").on("click", function() {
+	console.log("sagawa download button clicked");
+	alertify.alert("구현예정!");
+	// $("#sa_code").val("1002");
+	// $("#frm_down2").submit();
 });

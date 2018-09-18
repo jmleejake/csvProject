@@ -18,6 +18,8 @@ public class CommonUtil {
 	
 	public static final String ORDER_STATUS_COMPLETE = "出荷準備済";
 	public static final String TOMORROW_MORNING = "午前中";
+	public static final String TOMORROW_MORNING_CODE = "0812";
+	public static final String TITLE_SAMA = "様";
 	
 	public static String getStartDate() {
 		Calendar cal = Calendar.getInstance( );
