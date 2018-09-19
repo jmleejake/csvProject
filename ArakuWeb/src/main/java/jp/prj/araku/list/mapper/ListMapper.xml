@@ -21,6 +21,7 @@ select
 	, delivery_tel2
 	, delivery_tel3
 	, delivery_address1
+	, product_id
 	, product_name
 	, product_option
 	, unit_no

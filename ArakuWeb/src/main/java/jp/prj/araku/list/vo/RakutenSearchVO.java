@@ -1,7 +1,5 @@
 package jp.prj.araku.list.vo;
 
-import com.opencsv.bean.CsvBindByPosition;
-
 /**
  * 楽天CSVファイル(検索用)
  * */
@@ -38,6 +36,8 @@ public class RakutenSearchVO {
 	private String delivery_address1;
 	/**配送会社*/
 	private String delivery_company;
+	/**商品ID*/
+	private String product_id;
 	/**商品名*/
 	private String product_name;
 	/**項目・選択肢*/
@@ -193,6 +193,12 @@ public class RakutenSearchVO {
 	}
 	public void setDelivery_company(String delivery_company) {
 		this.delivery_company = delivery_company;
+	}
+	public String getProduct_id() {
+		return product_id;
+	}
+	public void setProduct_id(String product_id) {
+		this.product_id = product_id;
 	}
 	
 	@Override

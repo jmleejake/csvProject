@@ -83,18 +83,19 @@ public class FileDAO {
             	searchVO.setOrder_no(vo.getOrder_no());
             	
             	ArrayList<RakutenSearchVO> dupCheckList = listMapper.getRList(searchVO);
-        		if (dupCheckList.size() > 1) {
-        			for (RakutenSearchVO dupVO : dupCheckList) {
-        				if (vo.getProduct_name().equals(dupVO.getProduct_name())) {
-        					// 이미 존재하는 受注番号가 2개 이상 있으면 상품명을 확인한 뒤 다음 레코드로 진행
-                    		continue;
-        				}
-        			}
-        		}
         		
+        		// 이미 존재하는 受注番号가 있으면
         		if (dupCheckList.size() == 1) {
-            		// 이미 존재하는 受注番号가 있으면 다음 레코드로 진행
-            		continue;
+        			// 商品ID가 같으면
+        			if (vo.getProduct_id().equals(dupCheckList.get(0).getProduct_id())) {
+        				// 다음 레코드로 진행
+                		continue;
+        			} else {
+        				// 商品ID가 다르면 한사람이 여러 상품을 주문한 것으로 간주, 에러리스트에 넣은후 다음 레코드로 진행
+        				log.debug("[ERR]: {}", vo.getOrder_no());
+        				errList.add(vo);
+            			continue;
+        			}
         		}
         		
         		// あす楽希望이 1인 경우
@@ -108,7 +109,7 @@ public class FileDAO {
         		try {
         			fileMapper.insertRakutenInfo(vo);
         		} catch (Exception e) {
-        			// 에러 발생시 에러리스트에 넣은후 다음 데이터로 진행
+        			// 에러 발생시 에러리스트에 넣은후 다음 레코드로 진행
         			log.debug("[ERR]: {}", vo.getOrder_no());
         			errList.add(vo);
         			continue;
@@ -725,7 +726,8 @@ public class FileDAO {
 			for (RakutenVO tmp : list) {
 				YamatoVO yVO = new YamatoVO();
 				yVO.setCustomer_no(tmp.getOrder_no());
-//				yVO.setComment();
+				yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_8);
+				yVO.setComment(tmp.getOrder_comment());
 				yVO.setCollect_cash(tmp.getTotal_amt());
 				
 				yVO.setClient_post_no(tmp.getOrder_post_no1() + tmp.getOrder_post_no2());
