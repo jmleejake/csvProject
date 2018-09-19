@@ -593,7 +593,7 @@ public class FileDAO {
 		CSVWriter csvWriter = null;
 		
 		try {
-			String csvFileName = "YAM" + CommonUtil.getDate("YYYY-MM-dd HH:mm:ss", 0) + ".csv";
+			String csvFileName = "YAM" + CommonUtil.getDate("YYYYMMdd", 0) + ".csv";
 
 			response.setContentType("text/csv");
 
@@ -725,30 +725,34 @@ public class FileDAO {
 			
 			for (RakutenVO tmp : list) {
 				YamatoVO yVO = new YamatoVO();
-				yVO.setCustomer_no(tmp.getOrder_no());
-				yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_8);
-				yVO.setComment(tmp.getOrder_comment());
-				yVO.setCollect_cash(tmp.getTotal_amt());
+				yVO.setCustomer_no(tmp.getOrder_no().replace("\"", ""));
+				yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_0);
+				yVO.setComment(tmp.getOrder_comment().replace("\n", "").replace("\"", "").replace("[配送日時指定:]", "").replace("[備考:]", ""));
+				yVO.setCollect_cash(tmp.getTotal_amt().replace("\"", ""));
+				yVO.setEstimate_ship_date(CommonUtil.getDate("YYYY/MM/dd", 0));
+				yVO.setBill_customer_code("048299821004-311");
+				yVO.setMultiple_key("1");
 				
-				yVO.setClient_post_no(tmp.getOrder_post_no1() + tmp.getOrder_post_no2());
-				yVO.setClient_add(tmp.getOrder_address1() + " " + tmp.getOrder_address2() + " " + tmp.getOrder_address3());
-				yVO.setClient_name(tmp.getOrder_surname() + " " + tmp.getOrder_name());
-				yVO.setClient_name_kana(tmp.getOrder_surname_kana() + " " + tmp.getOrder_name_kana());
-				yVO.setClient_tel(tmp.getOrder_tel1() + "-" + tmp.getOrder_tel2() + "-" + tmp.getOrder_tel3());
+				yVO.setClient_post_no("3330845");
+				yVO.setClient_add("埼玉県川口市上青木西１丁目19-39");
+				yVO.setClient_building("エレガンス滝澤ビル1F");
+				yVO.setClient_name("有限会社ItempiaJapan");
+//				yVO.setClient_name_kana(tmp.getOrder_surname_kana().replace("\"", "") + " " + tmp.getOrder_name_kana().replace("\"", ""));
+				yVO.setClient_tel("048-242-3801");
 				
-				yVO.setDelivery_post_no(tmp.getDelivery_post_no1() + tmp.getDelivery_post_no2());
-				yVO.setDelivery_add(tmp.getDelivery_address1() + " " + tmp.getDelivery_address2() + " " + tmp.getDelivery_address3());
-				yVO.setDelivery_name(tmp.getDelivery_surname() + " " + tmp.getDelivery_name());
-				yVO.setDelivery_name_kana(tmp.getDelivery_surname_kana() + " " + tmp.getDelivery_name_kana());
+				yVO.setDelivery_post_no(tmp.getDelivery_post_no1().replace("\"", "") + tmp.getDelivery_post_no2().replace("\"", ""));
+				yVO.setDelivery_add(tmp.getDelivery_address1().replace("\"", "") + "" + tmp.getDelivery_address2().replace("\"", "") + "" + tmp.getDelivery_address3().replace("\"", ""));
+				yVO.setDelivery_name(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
+//				yVO.setDelivery_name_kana(tmp.getDelivery_surname_kana().replace("\"", "") + " " + tmp.getDelivery_name_kana());
 				yVO.setDelivery_name_title(CommonUtil.TITLE_SAMA);
-				yVO.setDelivery_tel(tmp.getDelivery_tel1() + "-" + tmp.getDelivery_tel2() + "-" + tmp.getDelivery_tel3());
+				yVO.setDelivery_tel(tmp.getDelivery_tel1().replace("\"", "") + "-" + tmp.getDelivery_tel2().replace("\"", "") + "-" + tmp.getDelivery_tel3().replace("\"", ""));
 				
 				// あす楽希望이 1인 경우
         		if (tmp.getTomorrow_hope().equals("1")) {
         			yVO.setDelivery_time(CommonUtil.TOMORROW_MORNING_CODE);
         		}
 				
-				yVO.setProduct_name1(tmp.getProduct_name());
+				yVO.setProduct_name1(tmp.getProduct_name().replace("\"", ""));
 				
 				// csv작성을 위한 리스트작성
 				yList.add(yVO);
