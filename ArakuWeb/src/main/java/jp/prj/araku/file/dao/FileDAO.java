@@ -13,8 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.ibatis.session.SqlSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,7 +45,7 @@ public class FileDAO {
 	@Autowired
 	SqlSession sqlSession;
 	
-	private static final Logger log = LoggerFactory.getLogger(FileDAO.class);
+	private static final Logger log = Logger.getLogger("jp.prj.araku.file");
 	
 	@Transactional
 	public void insertRakutenInfo(MultipartFile rakUpload, String fileEncoding, HttpServletRequest req) throws IOException {
@@ -54,11 +53,11 @@ public class FileDAO {
 		IFileMapper fileMapper = sqlSession.getMapper(IFileMapper.class);
 		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
 		
-		log.debug("encoding : {}", fileEncoding);
-		log.debug("contentType: {}", rakUpload.getContentType());
-		log.debug("name: {}", rakUpload.getName());
-		log.debug("original name: {}", rakUpload.getOriginalFilename());
-		log.debug("size: {}", rakUpload.getSize());
+		log.debug("encoding : " + fileEncoding);
+		log.debug("contentType: " + rakUpload.getContentType());
+		log.debug("name: " + rakUpload.getName());
+		log.debug("original name: " + rakUpload.getOriginalFilename());
+		log.debug("size: " + rakUpload.getSize());
 		
 		BufferedReader reader = null;
 		ArrayList<RakutenVO> errList = new ArrayList<>();
@@ -92,7 +91,7 @@ public class FileDAO {
                 		continue;
         			} else {
         				// 商品ID가 다르면 한사람이 여러 상품을 주문한 것으로 간주, 에러리스트에 넣은후 다음 레코드로 진행
-        				log.debug("[ERR]: {}", vo.getOrder_no());
+        				log.debug("[ERR]: " + vo.getOrder_no());
         				errList.add(vo);
             			continue;
         			}
@@ -110,11 +109,11 @@ public class FileDAO {
         			fileMapper.insertRakutenInfo(vo);
         		} catch (Exception e) {
         			// 에러 발생시 에러리스트에 넣은후 다음 레코드로 진행
-        			log.debug("[ERR]: {}", vo.getOrder_no());
+        			log.debug("[ERR]: " + vo.getOrder_no());
         			errList.add(vo);
         			continue;
 				}
-                log.debug("inserted rakuten seq_id :: {}", vo.getSeq_id());
+                log.debug("inserted rakuten seq_id :: " + vo.getSeq_id());
                 log.debug("==========================");
                 
                 // 項目・選択肢 (상품옵션) 처리
@@ -164,7 +163,7 @@ public class FileDAO {
 					    */
 					}
 					
-					log.debug("final option set :: {}", set);
+					log.debug("final option set : " + set);
 					
 					for (String value : set) {
 						transVO.setKeyword(value);
@@ -215,8 +214,8 @@ public class FileDAO {
 			, CsvRequiredFieldEmptyException {
 		log.info("rakutenFormatCSVDownload");
 		
-		log.debug("encoding : {}", fileEncoding);
-		log.debug("type : {}", type);
+		log.debug("encoding : " + fileEncoding);
+		log.debug("type : " + type);
 		
 		IFileMapper mapper = sqlSession.getMapper(IFileMapper.class);
 		BufferedWriter writer = null;
@@ -374,7 +373,7 @@ public class FileDAO {
 			
 			ArrayList<RakutenVO> list = null;
 			if ("YU".equals(type)) {
-				log.debug("seq_id_list : {}", id_lst.toString());
+				log.debug("seq_id_list : " + id_lst.toString());
 				RakutenVO vo = new RakutenVO();
 				ArrayList<String> seq_id_list = new ArrayList<>();
 				for (String seq_id : id_lst) {
@@ -425,8 +424,8 @@ public class FileDAO {
 			, CsvDataTypeMismatchException
 			, CsvRequiredFieldEmptyException {
 		log.info("rCSVDownload");
-		log.debug("seq_id_list : {}", id_lst.toString());
-		log.debug("encoding : {}", fileEncoding);
+		log.debug("seq_id_list : " + id_lst.toString());
+		log.debug("encoding : " + fileEncoding);
 		
 		IFileMapper mapper = sqlSession.getMapper(IFileMapper.class);
 		BufferedWriter writer = null;
@@ -533,11 +532,11 @@ public class FileDAO {
 	public void updateRakutenInfo(MultipartFile yuUpload, String fileEncoding) throws IOException {
 		log.info("updateRakutenInfo");
 		
-		log.debug("encoding : {}", fileEncoding);
-		log.debug("contentType: {}", yuUpload.getContentType());
-		log.debug("name: {}", yuUpload.getName());
-		log.debug("original name: {}", yuUpload.getOriginalFilename());
-		log.debug("size: {}", yuUpload.getSize());
+		log.debug("encoding : " + fileEncoding);
+		log.debug("contentType: " + yuUpload.getContentType());
+		log.debug("name: " + yuUpload.getName());
+		log.debug("original name: " + yuUpload.getOriginalFilename());
+		log.debug("size: " + yuUpload.getSize());
 		
 		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
 		
@@ -586,7 +585,7 @@ public class FileDAO {
 			, CsvRequiredFieldEmptyException {
 		log.info("yamatoFormatDownload");
 		
-		log.debug("encoding : {}", fileEncoding);
+		log.debug("encoding : " + fileEncoding);
 		
 		IFileMapper mapper = sqlSession.getMapper(IFileMapper.class);
 		BufferedWriter writer = null;
@@ -711,7 +710,7 @@ public class FileDAO {
 			};
 			
 			// 야마토 포맷으로 바꾸기 전 치환된 결과와 함께 라쿠텐정보 얻기
-			log.debug("seq_id_list : {}", id_lst.toString());
+			log.debug("seq_id_list : " + id_lst.toString());
 			RakutenVO vo = new RakutenVO();
 			ArrayList<String> seq_id_list = new ArrayList<>();
 			for (String seq_id : id_lst) {

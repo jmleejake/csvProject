@@ -13,16 +13,42 @@
 	<!-- 출처: http://jace.tistory.com/111 [Jace's Blog] -->
 	<appender name="file" class="org.apache.log4j.DailyRollingFileAppender">
 	    <param name="datePattern" value="'.'yyyy-MM-dd" />
-	    <param name="file" value="C:/jmwork/02 araku/logs/cal.log" />
+	    <param name="file" value="${catalina.home}/araku/file.log" />
 	    <param name="append" value="true" />
 	    <layout class="org.apache.log4j.PatternLayout">
 	        <param name="ConversionPattern" value="[%-5p] %d{yyyy/MMM/dd HH:mm:ss.SSS} %l - %m%n"/>
 	    </layout>
 	</appender>
 	
-	<!-- Application Loggers -->
-	<logger name="jp.prj.araku">
+	<appender name="list" class="org.apache.log4j.DailyRollingFileAppender">
+	    <param name="datePattern" value="'.'yyyy-MM-dd" />
+	    <param name="file" value="${catalina.home}/araku/list.log" />
+	    <param name="append" value="true" />
+	    <layout class="org.apache.log4j.PatternLayout">
+	        <param name="ConversionPattern" value="[%-5p] %d{yyyy/MMM/dd HH:mm:ss.SSS} %l - %m%n"/>
+	    </layout>
+	</appender>
+	
+	<appender name="all" class="org.apache.log4j.DailyRollingFileAppender">
+	    <param name="datePattern" value="'.'yyyy-MM-dd" />
+	    <param name="file" value="${catalina.home}/araku/all.log" />
+	    <param name="append" value="true" />
+	    <layout class="org.apache.log4j.PatternLayout">
+	        <param name="ConversionPattern" value="[%-5p] %d{yyyy/MMM/dd HH:mm:ss.SSS} %l - %m%n"/>
+	    </layout>
+	</appender>
+	
+	<logger name="jp.prj.araku.file">
 		<level value="debug" />
+	</logger>
+	
+	<logger name="jp.prj.araku.list">
+		<level value="debug" />
+	</logger>
+	
+	<!-- application console log -->
+	<logger name="jp.prj.araku">
+		<level value="info" />
 	</logger>
 	
 	<!-- 3rdparty Loggers -->
@@ -45,12 +71,22 @@
 	<logger name="java.sql">
 		<level value="debug" />
 	</logger>
-
+	
+	<category name="jp.prj.araku.file" additivity="false">
+		<priority value="debug" /><!-- 요놈의 레벨이 바뀌면 파일에 쓰이는 레벨이 바뀐다 -->
+		<appender-ref ref="file"/>
+	</category>
+	
+	<category name="jp.prj.araku.list" additivity="false">
+		<priority value="debug" /><!-- 요놈의 레벨이 바뀌면 파일에 쓰이는 레벨이 바뀐다 -->
+		<appender-ref ref="list"/>
+	</category>
+	
 	<!-- Root Logger -->
 	<root>
 		<priority value="warn" />
 		<appender-ref ref="console" />
-		<appender-ref ref="file" />
+		<appender-ref ref="all" />
 	</root>
 	
 </log4j:configuration>

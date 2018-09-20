@@ -5,8 +5,7 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -22,7 +21,7 @@ import jp.prj.araku.file.dao.FileDAO;
 
 @Controller
 public class FileController {
-	private static final Logger log = LoggerFactory.getLogger(FileController.class);
+	private static final Logger log = Logger.getLogger("jp.prj.araku.file");
 	
 	@Value("${FILE_ENCODING}")
 	private String fileEncoding;
@@ -56,8 +55,8 @@ public class FileController {
 			, @RequestParam(value="id_lst") String id_lst
 			, @RequestParam(value="company") String delivery_company) {
 		log.info("processYupuriDownload");
-		log.debug("id list {}", id_lst);
-		log.debug("delivery company {}", delivery_company);
+		log.debug("id list : " + id_lst);
+		log.debug("delivery company : " + delivery_company);
 		
 		id_lst = id_lst.replace("[", "");
 		id_lst = id_lst.replace("]", "");
@@ -110,8 +109,9 @@ public class FileController {
 			, @RequestParam(value="id_lst") String id_lst
 			, @RequestParam(value="company") String delivery_company) {
 		log.info("processYamatoDownload");
-		log.debug("id list {}", id_lst);
-		log.debug("delivery company {}", delivery_company);
+		
+		log.debug("id list : " + id_lst);
+		log.debug("delivery company : " + delivery_company);
 		
 		id_lst = id_lst.replace("[", "");
 		id_lst = id_lst.replace("]", "");

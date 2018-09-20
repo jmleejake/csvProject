@@ -6,8 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.ibatis.session.SqlSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +28,7 @@ public class ListDAO {
 	@Autowired
 	SqlSession sqlSession;
 	
-	private static final Logger log = LoggerFactory.getLogger(ListDAO.class);
+	private static final Logger log = Logger.getLogger("jp.prj.araku.list");
 	
 	public ArrayList<RakutenSearchVO> getRList(RakutenSearchVO vo) {
 		log.info("getRList");
@@ -37,7 +36,7 @@ public class ListDAO {
 		if (!CommonUtil.SEARCH_TYPE_SRCH.equals(vo.getSearch_type())) {
 			vo.setStart_date(CommonUtil.getStartDate());
 		}
-		log.debug("{}", vo);
+		log.debug(vo);
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
 		return mapper.getRList(vo);
 	}
@@ -48,7 +47,7 @@ public class ListDAO {
 		if (!CommonUtil.SEARCH_TYPE_SRCH.equals(vo.getSearch_type())) {
 			vo.setStart_date(CommonUtil.getStartDate());
 		}
-		log.debug("{}", vo);
+		log.debug(vo);
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
 		return mapper.getTransInfo(vo);
 	}
@@ -56,7 +55,7 @@ public class ListDAO {
 	@Transactional
 	public ArrayList<TranslationVO> registerTransInfo(ArrayList<TranslationVO> transVO) {
 		log.info("registerTransInfo");
-		log.debug("{}", transVO);
+		log.debug(transVO);
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
 		
 		ArrayList<String> seq_id_list = new ArrayList<>();
@@ -82,14 +81,14 @@ public class ListDAO {
 	
 	public int delTransInfo(String seq_id) {
 		log.info("delTransInfo");
-		log.debug("del trans seq_id : {}", seq_id);
+		log.debug("del trans seq_id : " + seq_id);
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
 		return mapper.delTransInfo(seq_id);
 	}
 	
 	public void modRakutenInfo(ArrayList<RakutenSearchVO> list) {
 		log.info("modRakutenInfo");
-		log.debug("{}", list);
+		log.debug(list);
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
 		for (RakutenSearchVO vo : list) {
 			mapper.modRakutenInfo(vo);
@@ -98,7 +97,7 @@ public class ListDAO {
 	
 	public void delRakutenInfo(ArrayList<RakutenSearchVO> list) {
 		log.info("delRakutenInfo");
-		log.debug("{}", list);
+		log.debug(list);
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
 		for (RakutenSearchVO vo : list) {
 			mapper.delRakutenInfo(vo.getSeq_id());
@@ -108,7 +107,7 @@ public class ListDAO {
 	@Transactional
 	public ArrayList<String> executeTranslate(ArrayList<RakutenSearchVO> targetList) {
 		log.info("executeTranslate");
-		log.debug("{}", targetList);
+		log.debug(targetList);
 		
 		ArrayList<String> ret = new ArrayList<>();
 		
@@ -178,7 +177,7 @@ public class ListDAO {
 					}
 					*/
 				}
-				log.debug("option list {}", list);
+				log.debug("option list : " + list);
 				
 				for (String str : list) {
 					String trimmed = str.trim();
@@ -190,7 +189,7 @@ public class ListDAO {
 						map.put(trimmed, recnt+1);
 					}
 				}
-				log.debug("option map : {}", map);
+				log.debug("option map : " + map);
 				
 				Set<String> optionNames = map.keySet();
 				buf = new StringBuffer(transedName);
@@ -216,7 +215,7 @@ public class ListDAO {
 			} catch (StringIndexOutOfBoundsException e) {
 				finalStr = last;
 			}
-			log.debug("final String : {}", finalStr);
+			log.debug("final String : " + finalStr);
 			
 			// 지역별 배송코드 세팅 (csv다운로드 기능)
 			RakutenSearchVO rVO = new RakutenSearchVO();
@@ -229,7 +228,7 @@ public class ListDAO {
 			ArrayList<RegionMasterVO> regionM = mapper.getRegionMaster(rmVO);
 			
 			rVO.setDelivery_company(regionM.get(0).getDelivery_company());
-			log.debug("Update Rakuten info : {}", rVO);
+			log.debug("Update Rakuten info : " + rVO);
 			mapper.modRakutenInfo(rVO);
 			
 			TranslationResultVO resultVO = new TranslationResultVO();
@@ -242,12 +241,12 @@ public class ListDAO {
 			if (transResult.size() > 0) {
 				mapper.modTransResult(resultVO);
 				
-				log.debug("seq_id? {}", transResult.get(0).getSeq_id());
+				log.debug("seq_id : " + transResult.get(0).getSeq_id());
 				ret.add(transResult.get(0).getSeq_id());
 			} else {
 				mapper.addTransResult(resultVO);
 				
-				log.debug("seq_id? {}", resultVO.getSeq_id());
+				log.debug("seq_id : " + resultVO.getSeq_id());
 				ret.add(resultVO.getSeq_id());
 			}
 			
@@ -265,7 +264,7 @@ public class ListDAO {
 		for (String str : strArr) {
 			list.add(str);
 		}
-		log.debug("query id list :: {}", list);
+		log.debug("query id list : " + list);
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
 		TranslationResultVO vo = new TranslationResultVO();
 		vo.setSeq_id_list(list);
@@ -275,26 +274,26 @@ public class ListDAO {
 	
 	public int modTransResult(TranslationResultVO vo) {
 		log.info("modTransResult");
-		log.debug("{}", vo);
+		log.debug(vo);
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
 		return mapper.modTransResult(vo);
 	}
 	
 	public ArrayList<RegionMasterVO> showRegionMaster(RegionMasterVO vo) {
 		log.info("showRegionMaster");
-		log.debug("{}", vo);
+		log.debug(vo);
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
 		return mapper.getRegionMaster(vo);
 	}
 	
 	public ArrayList<RegionMasterVO> modRegionMaster(ArrayList<RegionMasterVO> list) {
 		log.info("modRegionMaster");
-		log.debug("{}", list);
+		log.debug(list);
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
 		
 		ArrayList<String> idList = new ArrayList<>();
 		for (RegionMasterVO rm : list) {
-			log.debug("update target : {}", rm);
+			log.debug("update target : " + rm);
 			mapper.modRegionMaster(rm);
 			idList.add(rm.getSeq_id());
 		}

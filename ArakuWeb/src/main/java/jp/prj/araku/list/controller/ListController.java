@@ -2,8 +2,7 @@ package jp.prj.araku.list.controller;
 
 import java.util.ArrayList;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +18,7 @@ import jp.prj.araku.list.vo.TranslationVO;
 
 @Controller
 public class ListController {
-	private static final Logger log = LoggerFactory.getLogger(ListController.class);
+	private static final Logger log = Logger.getLogger("jp.prj.araku.list");
 	
 	@Autowired
 	ListDAO dao;
