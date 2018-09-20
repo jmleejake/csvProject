@@ -1,5 +1,7 @@
 package jp.prj.araku.list.vo;
 
+import java.util.ArrayList;
+
 /**
  * 楽天CSVファイル(検索用)
  * */

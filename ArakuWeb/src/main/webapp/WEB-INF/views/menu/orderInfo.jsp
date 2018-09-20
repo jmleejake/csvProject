@@ -65,6 +65,7 @@ $(document).ready(function() {
 </div>
 <div class="well container-fluid">
 <button id="btn_trans" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">置換</button>
+<button id="btn_delete" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">削除</button>
 <div id="orderGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
 </div>
 </div>

@@ -96,6 +96,15 @@ public class ListDAO {
 		}
 	}
 	
+	public void delRakutenInfo(ArrayList<RakutenSearchVO> list) {
+		log.info("delRakutenInfo");
+		log.debug("{}", list);
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		for (RakutenSearchVO vo : list) {
+			mapper.delRakutenInfo(vo.getSeq_id());
+		}
+	}
+	
 	@Transactional
 	public ArrayList<String> executeTranslate(ArrayList<RakutenSearchVO> targetList) {
 		log.info("executeTranslate");

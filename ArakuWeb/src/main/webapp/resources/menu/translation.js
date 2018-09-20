@@ -177,17 +177,16 @@ $("#btn_delete").on("click", function() {
     	pleaseSelectNotify('情報を選択してください。');
         return;
     }
-	
+    
     alertInit();
-	var delArr = [];
-	delArr.push();
 	alertify.confirm("本当に削除しますか？", function (e) {
 		if (e) {
 			$.ajax({
 			    url: "delTrans"
+		    	, type:"post"
 			    , dataType: "json"  
 			    , contentType : "application/json"
-			    , data:{seq_id:selectedData.seq_id}
+			    , data:JSON.stringify(selectedRows)
 			    , success: setRowData
 			});
 		} else {

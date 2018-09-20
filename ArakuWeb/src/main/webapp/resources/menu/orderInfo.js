@@ -114,11 +114,6 @@ function isFirstColumn(params) {
 	return thisIsFirstColumn;
 }
 
-function onRowSelected(event) {
-	console.log("row selected");
-	console.log(event.node.data);
-}
-
 $("#btn_srch").on("click", function() {
 	var form = $("#orderForm");
     var url = form.attr('action');
@@ -169,3 +164,28 @@ function errMsg(errSize) {
 		}
 	});
 }
+
+$("#btn_delete").on("click", function() {
+	var selectedRows = orderGridOptions.api.getSelectedRows();
+    
+    if (selectedRows.length == 0) {
+    	pleaseSelectNotify('情報を選択してください。');
+        return;
+    }
+    
+    alertInit();
+	alertify.confirm("本当に削除しますか？", function (e) {
+		if (e) {
+			$.ajax({
+			    url: "delRakuten"
+		    	, type:"post"
+			    , dataType: "json"  
+			    , contentType : "application/json"
+			    , data:JSON.stringify(selectedRows)
+			    , success: setRowData
+			});
+		} else {
+			return false;
+		}
+	});
+});

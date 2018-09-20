@@ -148,6 +148,13 @@ where
 	seq_id = #{seq_id}
 </update>
 
+<delete id="delRakutenInfo" parameterType="String">
+delete from
+	rakuten_info
+where
+	seq_id = #{seq_id}
+</delete>
+
 <insert id="addTransResult" parameterType="TransResult" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
 insert into translation_result (trans_target_id, trans_target_type, result_text)
 values (#{trans_target_id}, #{trans_target_type}, #{result_text})

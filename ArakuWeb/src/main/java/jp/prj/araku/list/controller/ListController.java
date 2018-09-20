@@ -46,9 +46,11 @@ public class ListController {
 	}
 	
 	@RequestMapping(value="/delTrans")
-	public String delTransInfo(String seq_id) {
+	public String delTransInfo(@RequestBody ArrayList<TranslationVO> transVO) {
 		log.info("delTransInfo");
-		dao.delTransInfo(seq_id);
+		for (TranslationVO vo : transVO) {
+			dao.delTransInfo(vo.getSeq_id());
+		}
 		return "redirect:getTrans";
 	}
 	
@@ -56,6 +58,13 @@ public class ListController {
 	public String modRakutenInfo(@RequestBody ArrayList<RakutenSearchVO> vo) {
 		log.info("modRakutenInfo");
 		dao.modRakutenInfo(vo);
+		return "redirect:showRList";
+	}
+	
+	@RequestMapping(value="/delRakuten")
+	public String delRakutenInfo(@RequestBody ArrayList<RakutenSearchVO> vo) {
+		log.info("delRakutenInfo");
+		dao.delRakutenInfo(vo);
 		return "redirect:showRList";
 	}
 	

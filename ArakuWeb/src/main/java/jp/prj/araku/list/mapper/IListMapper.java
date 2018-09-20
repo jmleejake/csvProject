@@ -14,6 +14,7 @@ public interface IListMapper {
 	public int modTransInfo(TranslationVO vo);
 	public int delTransInfo(String seq_id);
 	public int modRakutenInfo(RakutenSearchVO vo);
+	public int delRakutenInfo(String seq_id);
 	public int addTransResult(TranslationResultVO vo);
 	public ArrayList<TranslationResultVO> getTransResult(TranslationResultVO vo);
 	public int modTransResult(TranslationResultVO vo);
