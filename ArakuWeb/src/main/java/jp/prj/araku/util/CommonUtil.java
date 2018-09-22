@@ -18,7 +18,8 @@ public class CommonUtil {
 	
 	public static final String ORDER_STATUS_COMPLETE = "出荷準備済";
 	public static final String TOMORROW_MORNING = "午前中";
-	public static final String TOMORROW_MORNING_CODE = "0812";
+	public static final String YA_TOMORROW_MORNING_CODE = "0812";
+	public static final String SA_TOMORROW_MORNING_CODE = "01";
 	public static final String TITLE_SAMA = "様";
 	public static final String INVOICE_TYPE_0 = "0";
 	

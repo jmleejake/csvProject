@@ -30,6 +30,7 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import jp.prj.araku.file.mapper.IFileMapper;
 import jp.prj.araku.file.vo.RCSVDownVO;
 import jp.prj.araku.file.vo.RakutenVO;
+import jp.prj.araku.file.vo.SagawaVO;
 import jp.prj.araku.file.vo.YamatoVO;
 import jp.prj.araku.list.mapper.IListMapper;
 import jp.prj.araku.list.vo.RakutenSearchVO;
@@ -748,7 +749,7 @@ public class FileDAO {
 				
 				// あす楽希望이 1인 경우
         		if (tmp.getTomorrow_hope().equals("1")) {
-        			yVO.setDelivery_time(CommonUtil.TOMORROW_MORNING_CODE);
+        			yVO.setDelivery_time(CommonUtil.YA_TOMORROW_MORNING_CODE);
         		}
 				
 				yVO.setProduct_name1(tmp.getProduct_name().replace("\"", ""));
@@ -786,4 +787,158 @@ public class FileDAO {
 		
 		beanToCSV.write(list);
 	}
+	
+	public void sagawaFormatDownload(
+			HttpServletResponse response
+			, String[] id_lst
+			, String fileEncoding
+			, String delivery_company) 
+			throws IOException
+			, CsvDataTypeMismatchException
+			, CsvRequiredFieldEmptyException {
+		log.info("sagawaFormatDownload");
+		
+		log.debug("encoding : " + fileEncoding);
+		
+		IFileMapper mapper = sqlSession.getMapper(IFileMapper.class);
+		BufferedWriter writer = null;
+		CSVWriter csvWriter = null;
+		
+		try {
+			String csvFileName = "SAGA" + CommonUtil.getDate("YYYYMMdd", 0) + ".csv";
+
+			response.setContentType("text/csv");
+
+			// creates mock data
+			String headerKey = "Content-Disposition";
+			String headerValue = String.format("attachment; filename=\"%s\"",
+					csvFileName);
+			response.setHeader(headerKey, headerValue);
+			response.setCharacterEncoding(fileEncoding);
+			
+			writer = new BufferedWriter(response.getWriter());
+			
+			csvWriter = new CSVWriter(writer
+					, CSVWriter.DEFAULT_SEPARATOR
+					, CSVWriter.NO_QUOTE_CHARACTER
+					, CSVWriter.DEFAULT_ESCAPE_CHARACTER
+					, CSVWriter.DEFAULT_LINE_END);
+			
+			String[] header = 
+			{
+					"住所録コード"
+					, "お届け先電話番号"
+					, "お届け先郵便番号"
+					, "お届け先住所１（必須）"
+					, "お届け先住所２"
+					, "お届け先住所３"
+					, "お届け先名称１（必須）"
+					, "お届け先名称２"
+					, "お客様管理ナンバー"
+					, "お客様コード"
+					, "部署・担当者"
+					, "荷送人電話番号"
+					, "ご依頼主電話番号"
+					, "ご依頼主郵便番号"
+					, "ご依頼主住所１"
+					, "ご依頼主住所２"
+					, "ご依頼主名称１"
+					, "ご依頼主名称２"
+					, "荷姿コード"
+					, "品名１"
+					, "品名２"
+					, "品名３"
+					, "品名４"
+					, "品名５"
+					, "出荷個数"
+					, "便種（スピードで選択）"
+					, "便種（商品）"
+					, "配達日"
+					, "配達指定時間帯"
+					, "配達指定時間（時分）"
+					, "代引金額"
+					, "消費税"
+					, "決済種別"
+					, "保険金額"
+					, "保険金額印字"
+					, "指定シール①"
+					, "指定シール②"
+					, "指定シール③"
+					, "営業店止め"
+					, "ＳＲＣ区分"
+					, "営業店コード"
+					, "元着区分"
+			};
+			
+			// 야마토 포맷으로 바꾸기 전 치환된 결과와 함께 라쿠텐정보 얻기
+			log.debug("seq_id_list : " + id_lst.toString());
+			RakutenVO vo = new RakutenVO();
+			ArrayList<String> seq_id_list = new ArrayList<>();
+			for (String seq_id : id_lst) {
+				seq_id_list.add(seq_id);
+			}
+			vo.setSeq_id_list(seq_id_list);
+			vo.setDelivery_company(delivery_company);
+			
+			ArrayList<RakutenVO> list = mapper.getYUCSVDownList(vo);
+			ArrayList<SagawaVO> sList = new ArrayList<>();
+			
+			for (RakutenVO tmp : list) {
+				SagawaVO sVO = new SagawaVO();
+				sVO.setDelivery_add1(tmp.getDelivery_address1().replace("\"", ""));
+				sVO.setDelivery_add2(tmp.getDelivery_address2().replace("\"", ""));
+				sVO.setDelivery_add3(tmp.getDelivery_address3().replace("\"", ""));
+				sVO.setDelivery_post_no(tmp.getDelivery_post_no1().replace("\"", "") + "-" +  tmp.getDelivery_post_no2().replace("\"", ""));
+				sVO.setDelivery_tel(tmp.getDelivery_tel1().replace("\"", "") + "-" + tmp.getDelivery_tel2().replace("\"", "") + "-" + tmp.getDelivery_tel3().replace("\"", ""));
+				sVO.setDelivery_name1(tmp.getDelivery_surname().replace("\"", ""));
+				sVO.setDelivery_name2(tmp.getDelivery_name().replace("\"", "") + " " + CommonUtil.TITLE_SAMA);
+				
+				sVO.setClient_add1("埼玉県川口市");
+				sVO.setClient_add2("上青木西１丁目19-39");
+				sVO.setClient_name1("有限会社");
+				sVO.setClient_name2("ItempiaJapan");
+				sVO.setClient_tel("048-242-3801");
+				
+				// あす楽希望이 1인 경우
+        		if (tmp.getTomorrow_hope().equals("1")) {
+        			sVO.setDelivery_time(CommonUtil.SA_TOMORROW_MORNING_CODE);
+        			sVO.setDelivery_date(tmp.getDelivery_date_sel());
+        		}
+				
+        		sVO.setProduct_name1(tmp.getProduct_name().replace("\"", ""));
+				
+				// csv작성을 위한 리스트작성
+				sList.add(sVO);
+			}
+			
+			executeSagawaDownload(csvWriter, writer, header, sList);
+			
+		} finally {
+			if (csvWriter != null) {
+				csvWriter.close();
+			}
+			
+			if (writer != null) {
+				writer.close();
+			}
+		}
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void executeSagawaDownload(
+			CSVWriter csvWriter
+			, BufferedWriter writer
+			, String[] header
+			, ArrayList<SagawaVO> list) 
+					throws CsvDataTypeMismatchException
+					, CsvRequiredFieldEmptyException {
+		StatefulBeanToCsv<SagawaVO> beanToCSV = new StatefulBeanToCsvBuilder(writer)
+	            .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
+	            .build();
+		
+		csvWriter.writeNext(header);
+		
+		beanToCSV.write(list);
+	}
+	
 }

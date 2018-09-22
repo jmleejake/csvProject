@@ -129,7 +129,7 @@ $("#btn_ya_down").on("click", function() {
 //사가와 CSV파일 다운로드
 $("#btn_sa_down").on("click", function() {
 	console.log("sagawa download button clicked");
-	alertify.alert("구현예정!");
-	// $("#sa_code").val("1002");
-	// $("#frm_down2").submit();
+	 $("#sa_code").val("1002");
+	console.log("code : " + $("#sa_code").val());
+	 $("#frm_down2").submit();
 });

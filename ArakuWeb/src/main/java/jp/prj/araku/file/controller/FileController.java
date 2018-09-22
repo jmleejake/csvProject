@@ -126,4 +126,28 @@ public class FileController {
 			log.error(e.toString());
 		}
 	}
+	
+	@RequestMapping(value="/saDown", method=RequestMethod.POST)
+	public void processSagawaDownload(
+			HttpServletResponse response
+			, @RequestParam(value="id_lst") String id_lst
+			, @RequestParam(value="company") String delivery_company) {
+		log.info("processSagawaDownload");
+		
+		log.debug("id list : " + id_lst);
+		log.debug("delivery company : " + delivery_company);
+		
+		id_lst = id_lst.replace("[", "");
+		id_lst = id_lst.replace("]", "");
+		String[] seq_id_list = id_lst.split(",");
+		try {
+				dao.sagawaFormatDownload(response, seq_id_list, fileEncoding, delivery_company);
+		} catch (IOException e) {
+			log.error(e.toString());
+		} catch (CsvDataTypeMismatchException e) {
+			log.error(e.toString());
+		} catch (CsvRequiredFieldEmptyException e) {
+			log.error(e.toString());
+		}
+	}
 }

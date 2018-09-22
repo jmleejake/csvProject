@@ -361,6 +361,7 @@ insert into region_master (p_id, region_name, region_name_en, delivery_company) 
 
 
 /*YAMATO情報*/
+drop table yamato_info;
 create table yamato_info (
 seq_id bigint unsigned primary key  auto_increment /*区分ID*/
 , register_date datetime default now() /*データ登録日*/
@@ -754,6 +755,58 @@ seq_id bigint unsigned primary key  auto_increment /*区分ID*/
 
 
 
+/*SAGAWA情報*/
+drop table sagawa_info;
+create table sagawa_info (
+seq_id bigint unsigned primary key  auto_increment /*区分ID*/
+, register_date datetime default now() /*データ登録日*/
+, add_book_code varchar(12) /*住所録コード*/
+, delivery_tel varchar(14) /*お届け先電話番号*/
+, delivery_post_no varchar(8) /*お届け先郵便番号*/
+, delivery_add1 varchar(16) /*お届け先住所１（必須）*/
+, delivery_add2 varchar(16) /*お届け先住所２*/
+, delivery_add3 varchar(16) /*お届け先住所３*/
+, delivery_name1 varchar(16) /*お届け先名称１（必須）*/
+, delivery_name2 varchar(16) /*お届け先名称２*/
+, client_manage_no varchar(16) /*お客様管理ナンバー*/
+, client_code varchar(12) /*お客様コード*/
+, transport_dept_charge varchar(16) /*部署・担当者*/
+, transport_tel varchar(14) /*荷送人電話番号*/
+, client_tel varchar(14) /*ご依頼主電話番号*/
+, client_post_no varchar(8) /*ご依頼主郵便番号*/
+, client_add1 varchar(16) /*ご依頼主住所１*/
+, client_add2 varchar(16) /*ご依頼主住所２*/
+, client_name1 varchar(16) /*ご依頼主名称１*/
+, client_name2 varchar(16) /*ご依頼主名称２*/
+, transport_code varchar(3) /*荷姿コード*/
+, product_name1 varchar(32) /*品名１*/
+, product_name2 varchar(32) /*品名２*/
+, product_name3 varchar(32) /*品名３*/
+, product_name4 varchar(32) /*品名４*/
+, product_name5 varchar(32) /*品名５*/
+, delivery_cnt varchar(3) /*出荷個数*/
+, speed_type varchar(3) /*便種（スピードで選択）*/
+, product_type varchar(3) /*便種（商品）*/
+, delivery_date varchar(8) /*配達日*/
+, delivery_time varchar(2) /*配達指定時間帯*/
+, delivery_time_detail varchar(4) /*配達指定時間（時分）*/
+, total_amt varchar(7) /*代引金額*/
+, consume_tax varchar(6) /*消費税*/
+, payment_method varchar(1) /*決済種別*/
+, insurance_amt varchar(8) /*保険金額*/
+, insurance_status varchar(1) /*保険金額印字*/
+, select_seal1 varchar(3) /*指定シール①*/
+, select_seal2 varchar(3) /*指定シール②*/
+, select_seal3 varchar(3) /*指定シール③*/
+, store_stop varchar(1) /*営業店止め*/
+, src_type varchar(1) /*ＳＲＣ区分*/
+, store_code varchar(4) /*営業店コード*/
+, origin_type varchar(1) /*元着区分*/
+) default charset = utf8;
+
+
+
+
 
 
 
@@ -830,3 +883,20 @@ inner join rakuten_info ri on ri.seq_id = tr.trans_target_id
 
 update rakuten_info
 set register_date = now()
+
+
+select * from rakuten_info
+where tomorrow_hope = 1
+
+
+
+
+
+select tr.seq_id , date_format(tr.register_date, '%Y/%m/%d') register_date 
+, result_text , order_no , product_name , product_option 
+, unit_no , delivery_surname , delivery_name , delivery_company 
+, ri.delivery_address1, ri.delivery_address2, ri.delivery_address3
+
+from translation_result tr 
+inner join rakuten_info ri on ri.seq_id = tr.trans_target_id 
+WHERE tr.seq_id in ( 1,2,3,4,5 ) 
