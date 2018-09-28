@@ -10,9 +10,11 @@
 		<typeAlias type="jp.prj.araku.list.vo.TranslationVO" alias="Trans" />
 		<typeAlias type="jp.prj.araku.list.vo.TranslationResultVO" alias="TransResult" />
 		<typeAlias type="jp.prj.araku.list.vo.RegionMasterVO" alias="RegionMaster" />
+		<typeAlias type="jp.prj.araku.amazon.vo.AmazonVO" alias="Amazon" />
 	</typeAliases>
 	<mappers>
 		<mapper resource="jp/prj/araku/file/mapper/FileMapper.xml" />
 		<mapper resource="jp/prj/araku/list/mapper/ListMapper.xml" />
+		<mapper resource="jp/prj/araku/amazon/mapper/AmazonMapper.xml" />
 	</mappers>
 </configuration>

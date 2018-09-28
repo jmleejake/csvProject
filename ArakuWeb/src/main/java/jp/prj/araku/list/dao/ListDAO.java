@@ -221,7 +221,6 @@ public class ListDAO {
 			RakutenSearchVO rVO = new RakutenSearchVO();
 			rVO.setSeq_id(vo.getSeq_id());
 			ArrayList<RakutenSearchVO> regionAdd = mapper.getRList(rVO);
-			rVO.setDelivery_address1(regionAdd.get(0).getDelivery_address1());
 			
 			RegionMasterVO rmVO = new RegionMasterVO();
 			rmVO.setKeyword(regionAdd.get(0).getDelivery_address1());

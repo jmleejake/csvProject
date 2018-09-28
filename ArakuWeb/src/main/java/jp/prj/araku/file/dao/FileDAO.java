@@ -35,6 +35,7 @@ import jp.prj.araku.file.vo.YamatoVO;
 import jp.prj.araku.list.mapper.IListMapper;
 import jp.prj.araku.list.vo.RakutenSearchVO;
 import jp.prj.araku.list.vo.TranslationVO;
+import jp.prj.araku.util.ArakuVO;
 import jp.prj.araku.util.CommonUtil;
 
 /**
@@ -508,28 +509,6 @@ public class FileDAO {
 		beanToCSV.write(list);
 	}
 	
-	public void insertAmazonInfo(MultipartFile amaUpload, String fileEncoding) throws IOException {
-		BufferedReader reader = null;
-        try {
-			reader = new BufferedReader(
-			                new InputStreamReader(amaUpload.getInputStream(), fileEncoding));
-			String line = "";
-			String splitBy = "";
-			
-			while ((line = reader.readLine()) != null) {
-				log.debug(String.format("\none line\n%s", line));
-			        String[] whatArr = line.split(splitBy);
-			        for (String what : whatArr) {
-			        	log.debug(String.format("%s", what));
-			        }
-			}
-        } finally {
-            if (reader != null) {
-                reader.close();
-            }
-        }
-	}
-	
 	public void updateRakutenInfo(MultipartFile yuUpload, String fileEncoding) throws IOException {
 		log.info("updateRakutenInfo");
 		
@@ -721,7 +700,7 @@ public class FileDAO {
 			vo.setDelivery_company(delivery_company);
 			
 			ArrayList<RakutenVO> list = mapper.getYUCSVDownList(vo);
-			ArrayList<YamatoVO> yList = new ArrayList<>();
+			ArrayList<ArakuVO> yList = new ArrayList<>();
 			
 			for (RakutenVO tmp : list) {
 				YamatoVO yVO = new YamatoVO();
@@ -758,7 +737,7 @@ public class FileDAO {
 				yList.add(yVO);
 			}
 			
-			executeYamatoDownload(csvWriter, writer, header, yList);
+			CommonUtil.executeCSVDownload(csvWriter, writer, header, yList);
 			
 		} finally {
 			if (csvWriter != null) {
@@ -769,23 +748,6 @@ public class FileDAO {
 				writer.close();
 			}
 		}
-	}
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void executeYamatoDownload(
-			CSVWriter csvWriter
-			, BufferedWriter writer
-			, String[] header
-			, ArrayList<YamatoVO> list) 
-					throws CsvDataTypeMismatchException
-					, CsvRequiredFieldEmptyException {
-		StatefulBeanToCsv<YamatoVO> beanToCSV = new StatefulBeanToCsvBuilder(writer)
-	            .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
-	            .build();
-		
-		csvWriter.writeNext(header);
-		
-		beanToCSV.write(list);
 	}
 	
 	public void sagawaFormatDownload(
@@ -870,7 +832,7 @@ public class FileDAO {
 					, "元着区分"
 			};
 			
-			// 야마토 포맷으로 바꾸기 전 치환된 결과와 함께 라쿠텐정보 얻기
+			// 사가와 포맷으로 바꾸기 전 치환된 결과와 함께 라쿠텐정보 얻기
 			log.debug("seq_id_list : " + id_lst.toString());
 			RakutenVO vo = new RakutenVO();
 			ArrayList<String> seq_id_list = new ArrayList<>();
@@ -881,7 +843,7 @@ public class FileDAO {
 			vo.setDelivery_company(delivery_company);
 			
 			ArrayList<RakutenVO> list = mapper.getYUCSVDownList(vo);
-			ArrayList<SagawaVO> sList = new ArrayList<>();
+			ArrayList<ArakuVO> sList = new ArrayList<>();
 			
 			for (RakutenVO tmp : list) {
 				SagawaVO sVO = new SagawaVO();
@@ -911,7 +873,7 @@ public class FileDAO {
 				sList.add(sVO);
 			}
 			
-			executeSagawaDownload(csvWriter, writer, header, sList);
+			CommonUtil.executeCSVDownload(csvWriter, writer, header, sList);
 			
 		} finally {
 			if (csvWriter != null) {
@@ -923,22 +885,4 @@ public class FileDAO {
 			}
 		}
 	}
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void executeSagawaDownload(
-			CSVWriter csvWriter
-			, BufferedWriter writer
-			, String[] header
-			, ArrayList<SagawaVO> list) 
-					throws CsvDataTypeMismatchException
-					, CsvRequiredFieldEmptyException {
-		StatefulBeanToCsv<SagawaVO> beanToCSV = new StatefulBeanToCsvBuilder(writer)
-	            .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
-	            .build();
-		
-		csvWriter.writeNext(header);
-		
-		beanToCSV.write(list);
-	}
-	
 }

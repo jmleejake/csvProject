@@ -36,12 +36,6 @@ public class FileController {
 		return "redirect:orderView";
 	}
 	
-	@RequestMapping(value="/txtUpload", method=RequestMethod.POST)
-	public void processTxtUpload(MultipartFile amaUpload) throws IOException {
-		log.info("processTxtUpload");
-		dao.insertAmazonInfo(amaUpload, fileEncoding);
-	}
-	
 	@RequestMapping(value="/yuUpload", method=RequestMethod.POST)
 	public String processYuUpload(MultipartFile yuUpload) throws IOException {
 		log.info("processYuUpload");

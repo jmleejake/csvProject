@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.prj.araku.amazon.mapper.IAmazonMapper">
+
+<insert id="insertAmazonInfo" parameterType="Amazon" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
+insert into amazon_info (
+order_id
+, order_item_id
+, purchase_date
+, payments_date
+, reporting_date
+, promise_date
+, days_past_promise
+, buyer_email
+, buyer_name
+, buyer_phone_number
+, sku
+, product_name
+, quantity_purchased
+, quantity_shipped
+, quantity_to_ship
+, ship_service_level
+, recipient_name
+, ship_address1
+, ship_address2
+, ship_address3
+, ship_city
+, ship_state
+, ship_postal_code
+, ship_country
+, payment_method
+, cod_collectible_amount
+, already_paid
+, payment_method_fee
+, scheduled_delivery_start_date
+, scheduled_delivery_end_date
+, points_granted
+, is_prime ) 
+values(
+#{order_id}
+, #{order_item_id}
+, #{purchase_date}
+, #{payments_date}
+, #{reporting_date}
+, #{promise_date}
+, #{days_past_promise}
+, #{buyer_email}
+, #{buyer_name}
+, #{buyer_phone_number}
+, #{sku}
+, #{product_name}
+, #{quantity_purchased}
+, #{quantity_shipped}
+, #{quantity_to_ship}
+, #{ship_service_level}
+, #{recipient_name}
+, #{ship_address1}
+, #{ship_address2}
+, #{ship_address3}
+, #{ship_city}
+, #{ship_state}
+, #{ship_postal_code}
+, #{ship_country}
+, #{payment_method}
+, #{cod_collectible_amount}
+, #{already_paid}
+, #{payment_method_fee}
+, #{scheduled_delivery_start_date}
+, #{scheduled_delivery_end_date}
+, #{points_granted}
+, #{is_prime} )
+</insert>
+
+<select id="getAmazonInfo" parameterType="Amazon" resultType="Amazon">
+select 
+	seq_id
+	, date_format(register_date, '%Y/%m/%d') register_date
+	, date_format(update_date, '%Y/%m/%d') update_date
+	, order_id
+	, order_item_id
+	, purchase_date
+	, payments_date
+	, reporting_date
+	, promise_date
+	, days_past_promise
+	, buyer_email
+	, buyer_name
+	, buyer_phone_number
+	, sku
+	, product_name
+	, quantity_purchased
+	, quantity_shipped
+	, quantity_to_ship
+	, ship_service_level
+	, recipient_name
+	, ship_address1
+	, ship_address2
+	, ship_address3
+	, ship_city
+	, ship_state
+	, ship_postal_code
+	, ship_country
+	, payment_method
+	, cod_collectible_amount
+	, already_paid
+	, payment_method_fee
+	, scheduled_delivery_start_date
+	, scheduled_delivery_end_date
+	, points_granted
+	, is_prime
+from
+	amazon_info
+<where>
+	<if test="order_id != null and order_id != '' and order_item_id != null and order_item_id != ''">
+	order_id = #{order_id}
+	and order_item_id = #{order_item_id}
+	</if>
+	<if test="seq_id_list != null">
+		seq_id in
+		<foreach item="item" index="index" collection="seq_id_list"
+			open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="delivery_company != null">
+	and delivery_company = #{delivery_company}
+	</if>
+</where>
+</select>
+
+<select id="getTransResult" resultType="Amazon" parameterType="TransResult">
+select 
+	tr.seq_id
+	, date_format(ai.register_date, '%Y/%m/%d') register_date
+	, date_format(ai.update_date, '%Y/%m/%d') update_date
+	, order_id
+	, order_item_id
+	, purchase_date
+	, payments_date
+	, reporting_date
+	, promise_date
+	, days_past_promise
+	, buyer_email
+	, buyer_name
+	, buyer_phone_number
+	, sku
+	, tr.result_text product_name
+	, quantity_purchased
+	, quantity_shipped
+	, quantity_to_ship
+	, ship_service_level
+	, recipient_name
+	, ship_address1
+	, ship_address2
+	, ship_address3
+	, ship_city
+	, ship_state
+	, ship_postal_code
+	, ship_country
+	, payment_method
+	, cod_collectible_amount
+	, already_paid
+	, payment_method_fee
+	, scheduled_delivery_start_date
+	, scheduled_delivery_end_date
+	, points_granted
+	, is_prime
+	, delivery_company
+from
+	translation_result tr 
+inner join amazon_info ai on ai.seq_id = tr.trans_target_id and tr.trans_target_type = 'A'
+<where>
+	<if test="trans_target_id != null">
+		trans_target_id = #{trans_target_id}
+	</if>
+	<if test="seq_id_list != null">
+		tr.seq_id in
+		<foreach item="item" index="index" collection="seq_id_list"
+			open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+</where>
+</select>
+
+<delete id="deleteAmazonInfo" parameterType="String">
+delete from
+	amazon_info
+where
+	seq_id = #{seq_id}
+</delete>
+
+<update id="updateAmazonInfo" parameterType="Amazon">
+update
+	amazon_info
+set
+	<if test="delivery_company != null and delivery_company !=''">
+	delivery_company = #{delivery_company}
+	</if>
+	, update_date = now()
+where
+	seq_id = #{seq_id}
+</update>
+
+</mapper>

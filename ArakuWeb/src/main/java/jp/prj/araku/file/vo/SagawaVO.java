@@ -2,7 +2,9 @@ package jp.prj.araku.file.vo;
 
 import com.opencsv.bean.CsvBindByPosition;
 
-public class SagawaVO {
+import jp.prj.araku.util.ArakuVO;
+
+public class SagawaVO extends ArakuVO {
 	
 	/**
 	*住所録コード

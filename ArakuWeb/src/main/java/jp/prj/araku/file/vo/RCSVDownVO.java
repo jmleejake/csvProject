@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 import com.opencsv.bean.CsvBindByPosition;
 
-public class RCSVDownVO {
+import jp.prj.araku.util.ArakuVO;
+
+public class RCSVDownVO extends ArakuVO {
 	/**受注番号*/
 	@CsvBindByPosition(position=0)
 	private String order_no;

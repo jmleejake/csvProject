@@ -1,8 +1,16 @@
 package jp.prj.araku.util;
 
+import java.io.BufferedWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+
+import com.opencsv.CSVWriter;
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 public class CommonUtil {
 	public static final String SEARCH_TYPE_SRCH = "srch";
@@ -37,5 +45,22 @@ public class CommonUtil {
 		Date today = cal.getTime(); 
 		SimpleDateFormat sdf = new SimpleDateFormat(format); 
 		return sdf.format(today); 
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static void executeCSVDownload(
+			CSVWriter csvWriter
+			, BufferedWriter writer
+			, String[] header
+			, ArrayList<ArakuVO> list) 
+					throws CsvDataTypeMismatchException
+					, CsvRequiredFieldEmptyException {
+		StatefulBeanToCsv<ArakuVO> beanToCSV = new StatefulBeanToCsvBuilder(writer)
+	            .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
+	            .build();
+		
+		csvWriter.writeNext(header);
+		
+		beanToCSV.write(list);
 	}
 }

@@ -6,9 +6,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-<link rel="stylesheet" href="./resources/menu/fileView.css">
+<link rel="stylesheet" href="./resources/fileView.css">
 <script src="./resources/jquery/jquery.min.js"></script>
-<script src="./resources/menu/fileView.js"></script>
+<script src="./resources/fileView.js"></script>
 <script src="./resources/bootstrap-notify/bootstrap-notify.min.js"></script>
 
 <script>

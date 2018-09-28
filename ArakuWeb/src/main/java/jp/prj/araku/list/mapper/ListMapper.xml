@@ -174,7 +174,7 @@ select
 	, delivery_company
 from
 	translation_result tr
-inner join rakuten_info ri on ri.seq_id = tr.trans_target_id
+inner join rakuten_info ri on ri.seq_id = tr.trans_target_id and tr.trans_target_type = 'R'
 <where>
 	<if test="trans_target_id != null">
 		trans_target_id = #{trans_target_id}

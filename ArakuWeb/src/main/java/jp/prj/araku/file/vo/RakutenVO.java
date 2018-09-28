@@ -4,10 +4,12 @@ import java.util.ArrayList;
 
 import com.opencsv.bean.CsvBindByPosition;
 
+import jp.prj.araku.util.ArakuVO;
+
 /**
  * 楽天CSVファイル
  */
-public class RakutenVO {
+public class RakutenVO extends ArakuVO {
 	/**区分ID*/
 	private String seq_id;
 	/**データ登録日*/

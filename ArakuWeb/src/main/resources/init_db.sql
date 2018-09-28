@@ -218,6 +218,8 @@ create table rakuten_info (
 ) default charset = utf8;
 
 
+
+
 /*置換情報*/
 drop table translation_info;
 
@@ -230,6 +232,8 @@ create table translation_info (
 ) default charset = utf8;
 
 
+
+
 /*置換結果*/
 drop table translation_result;
 
@@ -240,6 +244,8 @@ create table translation_result (
 	, trans_target_type varchar(1) /*R:楽天・A:アマゾン*/
 	, result_text varchar(200) /*置換結果テキスト*/
 ) default charset = utf8;
+
+
 
 
 /*AMAZON 情報*/
@@ -257,7 +263,7 @@ create table amazon_info (
 	, promise_date varchar(30)
 	, days_past_promise varchar(2)
 	, buyer_email varchar(50)
-	, buyer_name varchar(20)
+	, buyer_name varchar(100)
 	, buyer_phone_number varchar(13)
 	, sku varchar(13)
 	, product_name varchar(500)
@@ -265,13 +271,13 @@ create table amazon_info (
 	, quantity_shipped varchar(2)
 	, quantity_to_ship varchar(2)
 	, ship_service_level varchar(13)
-	, recipient_name varchar(20)
+	, recipient_name varchar(100)
 	, ship_address1 varchar(100)
 	, ship_address2 varchar(100)
 	, ship_address3 varchar(100)
-	, ship_city varchar(20)
-	, ship_state varchar(10)
-	, ship_postal_code varchar(20)
+	, ship_city varchar(50)
+	, ship_state varchar(50)
+	, ship_postal_code varchar(10)
 	, ship_country varchar(5)
 	, payment_method varchar(20)
 	, cod_collectible_amount varchar(20)
@@ -281,6 +287,7 @@ create table amazon_info (
 	, scheduled_delivery_end_date varchar(10)
 	, points_granted varchar(20)
 	, is_prime varchar(6)
+	, delivery_company varchar(4) /*配送会社*/
 ) default charset = utf8;
 
 
@@ -358,6 +365,8 @@ insert into region_master (p_id, region_name, region_name_en, delivery_company) 
 , (11, '宮崎県', 'Miyazaki', 1003)
 , (11, '鹿児島県', 'Kagoshima', 1003)
 , (12, '沖縄県', 'Okinawa', 1003);
+
+
 
 
 /*YAMATO情報*/
@@ -755,6 +764,7 @@ seq_id bigint unsigned primary key  auto_increment /*区分ID*/
 
 
 
+
 /*SAGAWA情報*/
 drop table sagawa_info;
 create table sagawa_info (
@@ -900,3 +910,5 @@ select tr.seq_id , date_format(tr.register_date, '%Y/%m/%d') register_date
 from translation_result tr 
 inner join rakuten_info ri on ri.seq_id = tr.trans_target_id 
 WHERE tr.seq_id in ( 1,2,3,4,5 ) 
+
+

@@ -2,7 +2,9 @@ package jp.prj.araku.file.vo;
 
 import com.opencsv.bean.CsvBindByPosition;
 
-public class YamatoVO {
+import jp.prj.araku.util.ArakuVO;
+
+public class YamatoVO extends ArakuVO {
 	/**お客様管理番号
 	半角英数字50文字*/
 	@CsvBindByPosition(position=0)

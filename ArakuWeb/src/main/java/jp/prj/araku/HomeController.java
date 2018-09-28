@@ -23,8 +23,8 @@ public class HomeController {
 	 */
 	@RequestMapping(value = "/")
 	public String home(Locale locale) {
-		log.info("Welcome home! The client locale is {}.", locale);
-		return "redirect:fileView";
+		log.info("Welcome araku mainpage! The client locale is {}.", locale);
+		return "arakuMain";
 	}
 	
 	@RequestMapping(value = "/fileView")
