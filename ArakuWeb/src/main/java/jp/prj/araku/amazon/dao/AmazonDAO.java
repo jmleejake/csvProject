@@ -351,15 +351,16 @@ public class AmazonDAO {
 			
 			// 야마토 포맷으로 바꾸기 전 치환된 결과와 함께 아마존 정보 얻기
 			log.debug("seq_id_list : " + id_lst.toString());
-			AmazonVO vo = new AmazonVO();
 			ArrayList<String> seq_id_list = new ArrayList<>();
 			for (String seq_id : id_lst) {
 				seq_id_list.add(seq_id);
 			}
-			vo.setSeq_id_list(getTargetIdList(seq_id_list));
+			
+			TranslationResultVO vo = new TranslationResultVO();
+			vo.setSeq_id_list(seq_id_list);
 			vo.setDelivery_company(delivery_company);
 			
-			ArrayList<AmazonVO> list = mapper.getAmazonInfo(vo);
+			ArrayList<AmazonVO> list = mapper.getTransResult(vo);
 			ArrayList<ArakuVO> yList = new ArrayList<>();
 			
 			for (AmazonVO tmp : list) {
@@ -493,15 +494,16 @@ public class AmazonDAO {
 			
 			// 사가와 포맷으로 바꾸기 전 치환된 결과와 함께 아마존 정보 얻기
 			log.debug("seq_id_list : " + id_lst.toString());
-			AmazonVO vo = new AmazonVO();
 			ArrayList<String> seq_id_list = new ArrayList<>();
 			for (String seq_id : id_lst) {
 				seq_id_list.add(seq_id);
 			}
-			vo.setSeq_id_list(getTargetIdList(seq_id_list));
+			
+			TranslationResultVO vo = new TranslationResultVO();
+			vo.setSeq_id_list(seq_id_list);
 			vo.setDelivery_company(delivery_company);
 			
-			ArrayList<AmazonVO> list = mapper.getAmazonInfo(vo);
+			ArrayList<AmazonVO> list = mapper.getTransResult(vo);
 			ArrayList<ArakuVO> sList = new ArrayList<>();
 			
 			for (AmazonVO tmp : list) {
@@ -543,19 +545,5 @@ public class AmazonDAO {
 				writer.close();
 			}
 		}
-	}
-	
-	public ArrayList<String> getTargetIdList(ArrayList<String> seq_id_list) {
-		IAmazonMapper mapper = sqlSession.getMapper(IAmazonMapper.class);
-		ArrayList<String> ret = new ArrayList<>();
-		
-		TranslationResultVO vo = new TranslationResultVO();
-		vo.setSeq_id_list(seq_id_list);
-		ArrayList<AmazonVO> list = mapper.getTransResult(vo);
-		for (AmazonVO v : list) {
-			ret.add(v.getTrans_target_id());
-		}
-		
-		return ret;
 	}
 }
