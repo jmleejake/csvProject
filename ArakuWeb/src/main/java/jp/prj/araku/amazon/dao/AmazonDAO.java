@@ -21,8 +21,6 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 import jp.prj.araku.amazon.mapper.IAmazonMapper;
 import jp.prj.araku.amazon.vo.AmazonVO;
-import jp.prj.araku.file.mapper.IFileMapper;
-import jp.prj.araku.file.vo.RakutenVO;
 import jp.prj.araku.file.vo.SagawaVO;
 import jp.prj.araku.file.vo.YamatoVO;
 import jp.prj.araku.list.mapper.IListMapper;
@@ -358,7 +356,7 @@ public class AmazonDAO {
 			for (String seq_id : id_lst) {
 				seq_id_list.add(seq_id);
 			}
-			vo.setSeq_id_list(seq_id_list);
+			vo.setSeq_id_list(getTargetIdList(seq_id_list));
 			vo.setDelivery_company(delivery_company);
 			
 			ArrayList<AmazonVO> list = mapper.getAmazonInfo(vo);
@@ -500,7 +498,7 @@ public class AmazonDAO {
 			for (String seq_id : id_lst) {
 				seq_id_list.add(seq_id);
 			}
-			vo.setSeq_id_list(seq_id_list);
+			vo.setSeq_id_list(getTargetIdList(seq_id_list));
 			vo.setDelivery_company(delivery_company);
 			
 			ArrayList<AmazonVO> list = mapper.getAmazonInfo(vo);
@@ -545,5 +543,19 @@ public class AmazonDAO {
 				writer.close();
 			}
 		}
+	}
+	
+	public ArrayList<String> getTargetIdList(ArrayList<String> seq_id_list) {
+		IAmazonMapper mapper = sqlSession.getMapper(IAmazonMapper.class);
+		ArrayList<String> ret = new ArrayList<>();
+		
+		TranslationResultVO vo = new TranslationResultVO();
+		vo.setSeq_id_list(seq_id_list);
+		ArrayList<AmazonVO> list = mapper.getTransResult(vo);
+		for (AmazonVO v : list) {
+			ret.add(v.getTrans_target_id());
+		}
+		
+		return ret;
 	}
 }

@@ -13,6 +13,8 @@ public class AmazonVO {
 	private String update_date;
 	/**配送会社*/
 	private String delivery_company;
+	/**楽天・アマゾン区分ID*/
+	private String trans_target_id;
 	@CsvBindByPosition(position=0)
 	private String order_id;
 	@CsvBindByPosition(position=1)
@@ -301,6 +303,12 @@ public class AmazonVO {
 	}
 	public void setSeq_id_list(ArrayList<String> seq_id_list) {
 		this.seq_id_list = seq_id_list;
+	}
+	public String getTrans_target_id() {
+		return trans_target_id;
+	}
+	public void setTrans_target_id(String trans_target_id) {
+		this.trans_target_id = trans_target_id;
 	}
 	
 	@Override

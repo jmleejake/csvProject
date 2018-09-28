@@ -134,6 +134,7 @@ from
 <select id="getTransResult" resultType="Amazon" parameterType="TransResult">
 select 
 	tr.seq_id
+	, tr.trans_target_id
 	, date_format(ai.register_date, '%Y/%m/%d') register_date
 	, date_format(ai.update_date, '%Y/%m/%d') update_date
 	, order_id

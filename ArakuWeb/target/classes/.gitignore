@@ -1,3 +1,4 @@
+/init_db.sql
 /log4j.xml
 /mybatis-config.xml
-/init_db.sql
+/.gitignore
