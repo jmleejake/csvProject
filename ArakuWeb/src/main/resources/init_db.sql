@@ -368,6 +368,18 @@ insert into region_master (p_id, region_name, region_name_en, delivery_company) 
 
 
 
+/*置換する時、エラー発生の場合*/
+drop table translation_err;
+
+create table translation_err (
+	seq_id bigint unsigned primary key  auto_increment /*区分ID*/
+	, register_date datetime default now() /*データ登録日*/
+	, trans_target_id bigint /*楽天・アマゾン区分ID*/
+	, trans_target_type varchar(1) /*R:楽天・A:アマゾン*/
+	, err_text varchar(3) /*エラーテキスト*/
+) default charset = utf8;
+
+
 
 /*YAMATO情報*/
 drop table yamato_info;
@@ -910,5 +922,73 @@ select tr.seq_id , date_format(tr.register_date, '%Y/%m/%d') register_date
 from translation_result tr 
 inner join rakuten_info ri on ri.seq_id = tr.trans_target_id 
 WHERE tr.seq_id in ( 1,2,3,4,5 ) 
+
+
+
+
+select 
+	ai.seq_id
+	, date_format(ai.register_date, '%Y/%m/%d') register_date
+	, date_format(ai.update_date, '%Y/%m/%d') update_date
+	, order_id
+	, order_item_id
+	, purchase_date
+	, payments_date
+	, reporting_date
+	, promise_date
+	, days_past_promise
+	, buyer_email
+	, buyer_name
+	, buyer_phone_number
+	, sku
+	, product_name
+	, quantity_purchased
+	, quantity_shipped
+	, quantity_to_ship
+	, ship_service_level
+	, recipient_name
+	, ship_address1
+	, ship_address2
+	, ship_address3
+	, ship_city
+	, ship_state
+	, ship_postal_code
+	, ship_country
+	, payment_method
+	, cod_collectible_amount
+	, already_paid
+	, payment_method_fee
+	, scheduled_delivery_start_date
+	, scheduled_delivery_end_date
+	, points_granted
+	, is_prime
+	, err_text
+from
+	amazon_info ai
+left outer join translation_err terr on terr.trans_target_id = ai.seq_id and trans_target_type = 'A'
+order by ai.seq_id asc
+
+
+select ri.seq_id , err_text , order_no 
+, order_status , delivery_date_sel , total_amt , baggage_claim_no 
+, delivery_surname , delivery_name , delivery_surname_kana 
+, delivery_name_kana , delivery_tel1 , delivery_tel2 , delivery_tel3 
+, delivery_address1 , product_id , product_name , product_option , unit_no 
+, tomorrow_hope , date_format(ri.register_date, '%Y/%m/%d') register_date 
+, date_format(ri.update_date, '%Y/%m/%d') update_date 
+from rakuten_info ri 
+left outer join translation_err terr on terr.trans_target_id = ri.seq_id and terr.trans_target_type = 'R' 
+WHERE ri.register_date between str_to_date('2018/09/28 00:00:00', '%Y/%m/%d %H:%i:%s') and now() 
+order by ri.seq_id asc
+
+
+
+select tr.seq_id , date_format(tr.register_date, '%Y/%m/%d') register_date , err_text 
+, result_text , order_no , product_name , product_option , unit_no 
+, delivery_surname , delivery_name , delivery_company 
+from translation_result tr 
+inner join rakuten_info ri on ri.seq_id = tr.trans_target_id and tr.trans_target_type = 'R' 
+left outer join translation_err terr on terr.trans_target_id = ri.seq_id and terr.trans_target_type = 'R' 
+WHERE tr.seq_id in ( 1 , 2 , 9 , 10 ) 
 
 

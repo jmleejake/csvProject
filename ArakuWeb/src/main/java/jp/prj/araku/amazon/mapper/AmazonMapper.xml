@@ -76,9 +76,10 @@ values(
 
 <select id="getAmazonInfo" parameterType="Amazon" resultType="Amazon">
 select 
-	seq_id
-	, date_format(register_date, '%Y/%m/%d') register_date
-	, date_format(update_date, '%Y/%m/%d') update_date
+	ai.seq_id
+	, date_format(ai.register_date, '%Y/%m/%d') register_date
+	, date_format(ai.update_date, '%Y/%m/%d') update_date
+	, err_text
 	, order_id
 	, order_item_id
 	, purchase_date
@@ -112,23 +113,46 @@ select
 	, points_granted
 	, is_prime
 from
-	amazon_info
+	amazon_info ai
+left outer join translation_err terr on terr.trans_target_id = ai.seq_id and terr.trans_target_type = 'A'
 <where>
+	<choose>
+	<when test="search_type =='srch'">
+	<trim prefixOverrides="AND |OR ">
+	<if test="register_date != null and register_date != ''">
+	ai.register_date between str_to_date(concat(#{register_date},' ','00:00:00'), '%Y/%m/%d %H:%i:%S')  
+	and str_to_date(concat(#{register_date},' ','23:59:59'), '%Y/%m/%d %H:%i:%S')
+	</if>
+	<if test="recipient_name != null and recipient_name != ''">
+	and recipient_name like '%${recipient_name}%'
+	</if>
+	<if test="order_id != null and order_id != ''">
+	and order_id like '%${order_id}%'
+	</if>
+	</trim>
+	</when>
+	<otherwise>
 	<if test="order_id != null and order_id != '' and order_item_id != null and order_item_id != ''">
 	order_id = #{order_id}
 	and order_item_id = #{order_item_id}
 	</if>
 	<if test="seq_id_list != null">
-		seq_id in
+		ai.seq_id in
 		<foreach item="item" index="index" collection="seq_id_list"
 			open="(" separator="," close=")">
 			#{item}
 		</foreach>
 	</if>
-	<if test="delivery_company != null">
+	<if test="delivery_company != null and delivery_company != ''">
 	and delivery_company = #{delivery_company}
 	</if>
+	<if test="start_date != null and start_date != ''">
+	ai.register_date between str_to_date(#{start_date}, '%Y/%m/%d %H:%i:%s') and now()
+	</if>
+	</otherwise>
+	</choose>
 </where>
+order by ai.seq_id asc
 </select>
 
 <select id="getTransResult" resultType="Amazon" parameterType="TransResult">
@@ -136,6 +160,7 @@ select
 	tr.seq_id
 	, date_format(ai.register_date, '%Y/%m/%d') register_date
 	, date_format(ai.update_date, '%Y/%m/%d') update_date
+	, err_text
 	, order_id
 	, order_item_id
 	, purchase_date
@@ -147,7 +172,8 @@ select
 	, buyer_name
 	, buyer_phone_number
 	, sku
-	, tr.result_text product_name
+	, result_text 
+	, product_name
 	, quantity_purchased
 	, quantity_shipped
 	, quantity_to_ship
@@ -172,9 +198,10 @@ select
 from
 	translation_result tr 
 inner join amazon_info ai on ai.seq_id = tr.trans_target_id and tr.trans_target_type = 'A'
+left outer join translation_err terr on terr.trans_target_id = ai.seq_id and terr.trans_target_type = 'A'
 <where>
 	<if test="trans_target_id != null">
-		trans_target_id = #{trans_target_id}
+		tr.trans_target_id = #{trans_target_id}
 	</if>
 	<if test="seq_id_list != null">
 		tr.seq_id in
@@ -183,7 +210,7 @@ inner join amazon_info ai on ai.seq_id = tr.trans_target_id and tr.trans_target_
 			#{item}
 		</foreach>
 	</if>
-	<if test="delivery_company != null">
+	<if test="delivery_company != null and delivery_company != ''">
 	and delivery_company = #{delivery_company}
 	</if>
 </where>

@@ -62,6 +62,10 @@ var orderGridOptions = {
     	'trans-modified': function(params) {
     		var target = params.data.update_date;
     		return target === getDate(0);
+    	},
+    	'trans-error' : function(params) {
+    		var target = params.data.err_text;
+    		return target === 'ERR';
     	}
     }
 };
@@ -98,6 +102,7 @@ function setRowData(result) {
 				, ship_postal_code:result[i].ship_postal_code
 				, payment_method:result[i].payment_method
 				, cod_collectible_amount:cod_amt != '' ? '¥' + cod_amt : ''
+				, err_text:result[i].err_text
 				, register_date:result[i].register_date
 				, update_date:result[i].update_date
 		}

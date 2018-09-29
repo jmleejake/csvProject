@@ -28,3 +28,7 @@
 .ag-theme-balham .trans-modified {
 	background-color: #99ccff; !important;
 }
+
+.ag-theme-balham .trans-error {
+	background-color: #ff6666; !important;
+}

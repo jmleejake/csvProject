@@ -19,6 +19,13 @@ var columnDefs = [
 		}
 	}
 	, {headerName: "商品名", field: "product_name", width: 400
+		, editable: true
+    	, cellEditor: 'agLargeTextCellEditor'
+    	, cellEditorParams: {
+            maxLength: '500',
+            cols: '50',
+            rows: '6'
+        }
 		// 길이가 긴 항목에 대해서 툴팁 추가.  
 		, tooltip: function(params) {
 			return params.value;
@@ -47,6 +54,12 @@ var gridOptions = {
 	rowSelection: 'multiple',
 	columnDefs: columnDefs,
 	rowData: rowData,
+	rowClassRules: {
+    	'trans-error' : function(params) {
+    		var target = params.data.err_text;
+    		return target === 'ERR';
+    	}
+    },
 	onCellEditingStarted: function(event) {
 		var start = event.node.data;
 		startResultTxt = start.result_text;
@@ -103,6 +116,7 @@ function setRowData(result) {
 				, unit_no:result[i].unit_no
 				, register_date:result[i].register_date
 				, result_text:result[i].result_text
+				, err_text:result[i].err_text
 				, delivery_company:result[i].delivery_company
 		}
 		rowData.push(row);

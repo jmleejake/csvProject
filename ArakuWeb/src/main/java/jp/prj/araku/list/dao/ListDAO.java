@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import jp.prj.araku.list.mapper.IListMapper;
 import jp.prj.araku.list.vo.RakutenSearchVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
+import jp.prj.araku.list.vo.TranslationErrorVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
 import jp.prj.araku.util.CommonUtil;
@@ -118,6 +119,15 @@ public class ListDAO {
 //		int productSetNo, unitNo;
 		int unitNo;
 		for (RakutenSearchVO vo : targetList) {
+			// 이전에 에러처리 된 데이터가 있을경우 제거
+			TranslationErrorVO errVO = new TranslationErrorVO();
+			errVO.setTrans_target_id(vo.getSeq_id());
+			errVO.setTrans_target_type(CommonUtil.TRANS_TARGET_R);
+			String err_seq_id = mapper.getTranslationErr(errVO);
+			if (err_seq_id != null && err_seq_id != "") {
+				errVO.setSeq_id(err_seq_id);
+				mapper.deleteTranslationErr(errVO);
+			}
 			
 			transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
 			transVO.setKeyword(vo.getProduct_name());
@@ -125,6 +135,12 @@ public class ListDAO {
 			
 			// 치환후 상품명
 			transedName = searchRet.get(0).getAfter_trans();
+			// 치환한 결과가 없을 경우 에러처리
+			if (transedName == null) {
+				errVO.setErr_text(CommonUtil.TRANS_ERR);
+				mapper.insertTranslationErr(errVO);
+				transedName = "";
+			}
 			// 상품세트수
 			// [MOD-0819]
 //			String[] arr = transedName.split(CommonUtil.SPLIT_BY_STAR);
@@ -142,6 +158,13 @@ public class ListDAO {
 				String[] strArr = vo.getProduct_option().split(CommonUtil.SPLIT_BY_NPER);
 				ArrayList<String> list = new ArrayList<>();
 				for (int i=0; i<strArr.length; i++) {
+					// 이전에 에러처리 된 데이터가 있을경우 제거 (옵션이 여러개인 경우 중복제거)
+					err_seq_id = mapper.getTranslationErr(errVO);
+					if (err_seq_id != null && err_seq_id != "") {
+						errVO.setSeq_id(err_seq_id);
+						mapper.deleteTranslationErr(errVO);
+					}
+					
 					log.debug(String.format("%d :: %s", i, strArr[i]));
 					String[] data = strArr[i].split(CommonUtil.SPLIT_BY_COLON);
 					String value = null;
@@ -154,7 +177,13 @@ public class ListDAO {
 						transVO.setKeyword(value);
 						searchRet = mapper.getTransInfo(transVO);
 						
-						list.add(searchRet.get(0).getAfter_trans().trim());
+						try {
+							list.add(searchRet.get(0).getAfter_trans().trim());
+						} catch (NullPointerException e) {
+							errVO.setErr_text(CommonUtil.TRANS_ERR);
+							mapper.insertTranslationErr(errVO);
+							continue;
+						}
 					} 
 					/*
 					// [MOD-0826]

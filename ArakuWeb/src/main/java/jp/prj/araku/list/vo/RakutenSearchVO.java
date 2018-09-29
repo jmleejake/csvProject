@@ -53,6 +53,8 @@ public class RakutenSearchVO {
 	private String start_date;
 	/**検索用*/
 	private String search_type;
+	/**エラーテキスト*/
+	private String err_text;
 	
 	public String getSeq_id() {
 		return seq_id;
@@ -199,6 +201,12 @@ public class RakutenSearchVO {
 	}
 	public void setProduct_id(String product_id) {
 		this.product_id = product_id;
+	}
+	public String getErr_text() {
+		return err_text;
+	}
+	public void setErr_text(String err_text) {
+		this.err_text = err_text;
 	}
 	
 	@Override

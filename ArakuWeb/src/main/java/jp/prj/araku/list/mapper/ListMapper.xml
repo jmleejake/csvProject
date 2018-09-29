@@ -7,7 +7,8 @@
 
 <select id="getRList" resultType="RakutenSearch">
 select 
-	seq_id
+	ri.seq_id
+	, err_text
 	, order_no
 	, order_status
 	, delivery_date_sel
@@ -26,19 +27,20 @@ select
 	, product_option
 	, unit_no
 	, tomorrow_hope
-	, date_format(register_date, '%Y/%m/%d') register_date
-	, date_format(update_date, '%Y/%m/%d') update_date
+	, date_format(ri.register_date, '%Y/%m/%d') register_date
+	, date_format(ri.update_date, '%Y/%m/%d') update_date
 from
-	rakuten_info
+	rakuten_info ri
+left outer join translation_err terr on terr.trans_target_id = ri.seq_id and terr.trans_target_type = 'R'
 <where>
 	<if test="seq_id != null and seq_id != ''">
-	seq_id = #{seq_id}
+	ri.seq_id = #{seq_id}
 	</if>
 	<choose>
 		<when test="search_type =='srch'">
 		<trim prefixOverrides="AND |OR ">
 		<if test="register_date != null and register_date != ''">
-		register_date between str_to_date(concat(#{register_date},' ','00:00:00'), '%Y/%m/%d %H:%i:%S')  
+		ri.register_date between str_to_date(concat(#{register_date},' ','00:00:00'), '%Y/%m/%d %H:%i:%S')  
 		and str_to_date(concat(#{register_date},' ','23:59:59'), '%Y/%m/%d %H:%i:%S')
 		</if>
 		<if test="delivery_surname != null and delivery_surname != ''">
@@ -71,11 +73,12 @@ from
 		</when>
 		<otherwise>
 		<if test="start_date != null and start_date != ''">
-		register_date between str_to_date(#{start_date}, '%Y/%m/%d %H:%i:%s') and now()
+		ri.register_date between str_to_date(#{start_date}, '%Y/%m/%d %H:%i:%s') and now()
 		</if>
 		</otherwise>
 	</choose>
 </where>
+order by ri.seq_id asc
 </select>
 
 <select id="getTransInfo" resultType="Trans" parameterType="Trans">
@@ -164,6 +167,7 @@ values (#{trans_target_id}, #{trans_target_type}, #{result_text})
 select
 	tr.seq_id
 	, date_format(tr.register_date, '%Y/%m/%d') register_date
+	, err_text
 	, result_text
 	, order_no
 	, product_name
@@ -175,9 +179,10 @@ select
 from
 	translation_result tr
 inner join rakuten_info ri on ri.seq_id = tr.trans_target_id and tr.trans_target_type = 'R'
+left outer join translation_err terr on terr.trans_target_id = ri.seq_id and terr.trans_target_type = 'R'
 <where>
 	<if test="trans_target_id != null">
-		trans_target_id = #{trans_target_id}
+		tr.trans_target_id = #{trans_target_id}
 	</if>
 	<if test="seq_id_list != null">
 		tr.seq_id in
@@ -238,5 +243,28 @@ set
 where
 	seq_id = #{seq_id}
 </update>
+
+<insert id="insertTranslationErr" parameterType="TransErr">
+insert into translation_err (trans_target_id, trans_target_type, err_text)
+values (#{trans_target_id}, #{trans_target_type}, #{err_text})
+</insert>
+
+<select id="getTranslationErr" resultType="String" parameterType="TransErr">
+select
+	seq_id
+from
+	translation_err
+where
+	trans_target_id = #{trans_target_id}
+	and trans_target_type = #{trans_target_type}
+</select>
+
+<delete id="deleteTranslationErr" parameterType="TransErr">
+delete from
+	translation_err
+where
+	seq_id = #{seq_id}
+	and trans_target_type = #{trans_target_type}
+</delete>
 
 </mapper>

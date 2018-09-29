@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -852,11 +853,11 @@ public class FileDAO {
 				sVO.setDelivery_add3(tmp.getDelivery_address3().replace("\"", ""));
 				sVO.setDelivery_post_no(tmp.getDelivery_post_no1().replace("\"", "") + "-" +  tmp.getDelivery_post_no2().replace("\"", ""));
 				sVO.setDelivery_tel(tmp.getDelivery_tel1().replace("\"", "") + "-" + tmp.getDelivery_tel2().replace("\"", "") + "-" + tmp.getDelivery_tel3().replace("\"", ""));
-				sVO.setDelivery_name1(tmp.getDelivery_surname().replace("\"", ""));
-				sVO.setDelivery_name2(tmp.getDelivery_name().replace("\"", "") + " " + CommonUtil.TITLE_SAMA);
+				sVO.setDelivery_name1(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
+//				sVO.setDelivery_name2(tmp.getDelivery_name().replace("\"", "") + " " + CommonUtil.TITLE_SAMA); //様는 제거하고 두개로 나누지 않고 1에만 이름을 세팅
 				
 				sVO.setClient_add1("埼玉県川口市");
-				sVO.setClient_add2("上青木西１丁目19-39");
+				sVO.setClient_add2("上青木西１丁目19-39エレガンス滝澤ビル1F");
 				sVO.setClient_name1("有限会社");
 				sVO.setClient_name2("ItempiaJapan");
 				sVO.setClient_tel("048-242-3801");
@@ -867,7 +868,21 @@ public class FileDAO {
         			sVO.setDelivery_date(tmp.getDelivery_date_sel());
         		}
 				
-        		sVO.setProduct_name1(tmp.getProduct_name().replace("\"", ""));
+        		String product_name = tmp.getProduct_name().replace("\"", "");
+        		// 반각문자를 전각문자로 치환 (https://kurochan-note.hatenablog.jp/entry/2014/02/04/213737)
+        		product_name = Normalizer.normalize(product_name, Normalizer.Form.NFKC);
+        		// 사가와 정책에 따라 品名1~5 각각 32바이트가 넘어가면 다음으로 세팅하는 방식으로 수정
+        		if (product_name.length() > 30) {
+        			sVO.setProduct_name1(product_name.substring(0, 30));
+        			sVO.setProduct_name2(product_name.substring(30, product_name.length()));
+        			if (sVO.getProduct_name2().length() > 30) {
+        				String product_name2 = sVO.getProduct_name2();
+        				sVO.setProduct_name2(product_name2.substring(0, 30));
+        				sVO.setProduct_name3(product_name2.substring(30, product_name2.length()));
+        			}
+        		} else {
+        			sVO.setProduct_name1(product_name);
+        		}
 				
 				// csv작성을 위한 리스트작성
 				sList.add(sVO);

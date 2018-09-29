@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import jp.prj.araku.list.vo.RakutenSearchVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
+import jp.prj.araku.list.vo.TranslationErrorVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
 
@@ -20,4 +21,7 @@ public interface IListMapper {
 	public int modTransResult(TranslationResultVO vo);
 	public ArrayList<RegionMasterVO> getRegionMaster(RegionMasterVO vo);
 	public int modRegionMaster(RegionMasterVO vo);
+	public int insertTranslationErr(TranslationErrorVO vo);
+	public String getTranslationErr(TranslationErrorVO vo);
+	public int deleteTranslationErr(TranslationErrorVO vo);
 }

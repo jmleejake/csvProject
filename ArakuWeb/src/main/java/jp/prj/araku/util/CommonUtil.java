@@ -23,6 +23,7 @@ public class CommonUtil {
 	
 	public static final String TRANS_TARGET_R = "R"; /*R:楽天*/
 	public static final String TRANS_TARGET_A = "A"; /*A:アマゾン*/
+	public static final String TRANS_ERR = "ERR"; /*エラーテキスト*/
 	
 	public static final String ORDER_STATUS_COMPLETE = "出荷準備済";
 	public static final String TOMORROW_MORNING = "午前中";

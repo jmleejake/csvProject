@@ -64,6 +64,10 @@ var orderGridOptions = {
     	'trans-modified': function(params) {
     		var target = params.data.update_date;
     		return target === getDate(0);
+    	},
+    	'trans-error' : function(params) {
+    		var target = params.data.err_text;
+    		return target === 'ERR';
     	}
     }
 };
@@ -99,6 +103,7 @@ function setRowData(result) {
 				, product_option:result[i].product_option
 				, unit_no:result[i].unit_no
 				, tomorrow_hope:result[i].tomorrow_hope
+				, err_text:result[i].err_text
 				, register_date:result[i].register_date
 				, update_date:result[i].update_date
 		}

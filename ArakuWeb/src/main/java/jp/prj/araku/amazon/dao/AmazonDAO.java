@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.Normalizer;
 import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletResponse;
@@ -25,6 +26,7 @@ import jp.prj.araku.file.vo.SagawaVO;
 import jp.prj.araku.file.vo.YamatoVO;
 import jp.prj.araku.list.mapper.IListMapper;
 import jp.prj.araku.list.vo.RegionMasterVO;
+import jp.prj.araku.list.vo.TranslationErrorVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
 import jp.prj.araku.util.ArakuVO;
@@ -125,6 +127,10 @@ public class AmazonDAO {
 	
 	public ArrayList<AmazonVO> getAmazonInfo(AmazonVO vo) {
 		log.info("getAmazonInfo");
+		// 초기상태일때 2틀간의 데이터를 얻을수있게 처리 (*srch는 검색할때 넘기는 값)
+		if (!CommonUtil.SEARCH_TYPE_SRCH.equals(vo.getSearch_type())) {
+			vo.setStart_date(CommonUtil.getStartDate());
+		}
 		log.debug(vo);
 		IAmazonMapper mapper = sqlSession.getMapper(IAmazonMapper.class);
 		return mapper.getAmazonInfo(vo);
@@ -144,6 +150,15 @@ public class AmazonDAO {
 		String transedName;
 		
 		for (AmazonVO vo : targetList) {
+			// 이전에 에러처리 된 데이터가 있을경우 제거
+			TranslationErrorVO errVO = new TranslationErrorVO();
+			errVO.setTrans_target_id(vo.getSeq_id());
+			errVO.setTrans_target_type(CommonUtil.TRANS_TARGET_A);
+			String err_seq_id = listMapper.getTranslationErr(errVO);
+			if (err_seq_id != null && err_seq_id != "") {
+				errVO.setSeq_id(err_seq_id);
+				listMapper.deleteTranslationErr(errVO);
+			}
 			
 			transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
 			transVO.setKeyword(vo.getProduct_name());
@@ -151,6 +166,11 @@ public class AmazonDAO {
 			
 			// 치환후 상품명
 			transedName = searchRet.get(0).getAfter_trans();
+			// 치환한 결과가 없을 경우 에러처리
+			if (transedName == null) {
+				errVO.setErr_text(CommonUtil.TRANS_ERR);
+				listMapper.insertTranslationErr(errVO);
+			}
 			
 			// 지역별 배송코드 세팅 (csv다운로드 기능)
 			RegionMasterVO rmVO = new RegionMasterVO();
@@ -384,6 +404,16 @@ public class AmazonDAO {
 				yVO.setDelivery_add(tmp.getShip_state().replace("\"", "") + "" + tmp.getShip_address1().replace("\"", "") + "" + tmp.getShip_address2().replace("\"", "") + "" + tmp.getShip_address3().replace("\"", ""));
 				yVO.setDelivery_name(tmp.getRecipient_name().replace("\"", ""));
 				yVO.setDelivery_name_title(CommonUtil.TITLE_SAMA);
+				String phone_no = tmp.getBuyer_phone_number();
+				if (phone_no.contains("-")) {
+					yVO.setDelivery_tel(phone_no);
+				} else {
+					if (phone_no.length() == 10) {
+						yVO.setDelivery_tel(phone_no.substring(0, 2) + "-" + phone_no.subSequence(2, 6) + "-" + phone_no.subSequence(6, 10));
+					} else if (phone_no.length() == 11) {
+						yVO.setDelivery_tel(phone_no.substring(0, 3) + "-" + phone_no.subSequence(3, 7) + "-" + phone_no.subSequence(7, 11));
+					}
+				}
 //				yVO.setDelivery_tel(tmp.getDelivery_tel1().replace("\"", "") + "-" + tmp.getDelivery_tel2().replace("\"", "") + "-" + tmp.getDelivery_tel3().replace("\"", ""));
 				
 				// 配送サービスレベル가 NextDay인 경우
@@ -391,7 +421,7 @@ public class AmazonDAO {
         			yVO.setDelivery_time(CommonUtil.YA_TOMORROW_MORNING_CODE);
         		}
 				
-				yVO.setProduct_name1(tmp.getProduct_name().replace("\"", ""));
+				yVO.setProduct_name1(tmp.getResult_text().replace("\"", ""));
 				
 				// csv작성을 위한 리스트작성
 				yList.add(yVO);
@@ -512,12 +542,21 @@ public class AmazonDAO {
 				sVO.setDelivery_add2(tmp.getShip_address1().replace("\"", ""));
 				sVO.setDelivery_add3(tmp.getShip_address2().replace("\"", "") + "" + tmp.getShip_address3().replace("\"", ""));
 				sVO.setDelivery_post_no(tmp.getShip_postal_code().replace("\"", ""));
+				String phone_no = tmp.getBuyer_phone_number();
+				if (phone_no.contains("-")) {
+					sVO.setDelivery_tel(phone_no);
+				} else {
+					if (phone_no.length() == 10) {
+						sVO.setDelivery_tel(phone_no.substring(0, 2) + "-" + phone_no.subSequence(2, 6) + "-" + phone_no.subSequence(6, 10));
+					} else if (phone_no.length() == 11) {
+						sVO.setDelivery_tel(phone_no.substring(0, 3) + "-" + phone_no.subSequence(3, 7) + "-" + phone_no.subSequence(7, 11));
+					}
+				}
 //				sVO.setDelivery_tel(tmp.getDelivery_tel1().replace("\"", "") + "-" + tmp.getDelivery_tel2().replace("\"", "") + "-" + tmp.getDelivery_tel3().replace("\"", ""));
-				sVO.setDelivery_name1(tmp.getRecipient_name().replace("\"", "") + " " + CommonUtil.TITLE_SAMA);
-//				sVO.setDelivery_name2(tmp.getDelivery_name().replace("\"", "") + " " + CommonUtil.TITLE_SAMA);
+				sVO.setDelivery_name1(tmp.getRecipient_name().replace("\"", ""));
 				
 				sVO.setClient_add1("埼玉県川口市");
-				sVO.setClient_add2("上青木西１丁目19-39");
+				sVO.setClient_add2("上青木西１丁目19-39エレガンス滝澤ビル1F");
 				sVO.setClient_name1("有限会社");
 				sVO.setClient_name2("ItempiaJapan");
 				sVO.setClient_tel("048-242-3801");
@@ -528,7 +567,21 @@ public class AmazonDAO {
         			sVO.setDelivery_date(CommonUtil.getDate("YYYY/MM/dd", 1));
         		}
 				
-        		sVO.setProduct_name1(tmp.getProduct_name().replace("\"", ""));
+        		String product_name = tmp.getResult_text().replace("\"", "");
+        		// 반각문자를 전각문자로 치환 (https://kurochan-note.hatenablog.jp/entry/2014/02/04/213737)
+        		product_name = Normalizer.normalize(product_name, Normalizer.Form.NFKC);
+        		// 사가와 정책에 따라 品名1~5 각각 32바이트가 넘어가면 다음으로 세팅하는 방식으로 수정
+        		if (product_name.length() > 30) {
+        			sVO.setProduct_name1(product_name.substring(0, 30));
+        			sVO.setProduct_name2(product_name.substring(30, product_name.length()));
+        			if (sVO.getProduct_name2().length() > 30) {
+        				String product_name2 = sVO.getProduct_name2();
+        				sVO.setProduct_name2(product_name2.substring(0, 30));
+        				sVO.setProduct_name3(product_name2.substring(30, product_name2.length()));
+        			}
+        		} else {
+        			sVO.setProduct_name1(product_name);
+        		}
 				
 				// csv작성을 위한 리스트작성
 				sList.add(sVO);

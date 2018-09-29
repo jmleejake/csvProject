@@ -24,6 +24,7 @@ import jp.prj.araku.amazon.dao.AmazonDAO;
 import jp.prj.araku.amazon.vo.AmazonVO;
 import jp.prj.araku.list.dao.ListDAO;
 import jp.prj.araku.list.vo.RegionMasterVO;
+import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
 
 @RequestMapping(value="amazon")
@@ -194,5 +195,11 @@ public class AmazonController {
 		} catch (CsvRequiredFieldEmptyException e) {
 			log.error(e.toString());
 		}
+	}
+	
+	@RequestMapping(value="/modTransResult")
+	public void modTransResult(TranslationResultVO vo) {
+		log.info("modTransResult");
+		listDao.modTransResult(vo);
 	}
 }

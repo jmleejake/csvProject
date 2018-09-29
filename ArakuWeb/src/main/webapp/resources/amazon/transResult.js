@@ -5,7 +5,27 @@
 var columnDefs = [
 	{headerName: "注文ID", field: "order_id", width: 200}
 	, {headerName: "出荷予定日", field: "promise_date", width: 130}
-	, {headerName: "商品名", field: "product_name", width: 300
+	, {headerName: "置換結果", field: "result_text", width: 300
+		, editable: true
+    	, cellEditor: 'agLargeTextCellEditor'
+    	, cellEditorParams: {
+            maxLength: '500',
+            cols: '50',
+            rows: '6'
+        }
+		// 길이가 긴 항목에 대해서 툴팁 추가.  
+		, tooltip: function(params) {
+			return params.value;
+		}
+	}
+	, {headerName: "商品名", field: "product_name", width: 400
+		, editable: true
+    	, cellEditor: 'agLargeTextCellEditor'
+    	, cellEditorParams: {
+            maxLength: '500',
+            cols: '50',
+            rows: '6'
+        }
 		// 길이가 긴 항목에 대해서 툴팁 추가.  
 		, tooltip: function(params) {
 			return params.value;
@@ -45,6 +65,12 @@ var gridOptions = {
 	rowSelection: 'multiple',
 	columnDefs: columnDefs,
 	rowData: rowData,
+	rowClassRules: {
+    	'trans-error' : function(params) {
+    		var target = params.data.err_text;
+    		return target === 'ERR';
+    	}
+    },
 	onCellEditingStarted: function(event) {
 		var start = event.node.data;
 		startResultTxt = start.result_text;
@@ -107,6 +133,8 @@ function setRowData(result) {
 				, payment_method:result[i].payment_method
 				, cod_collectible_amount:cod_amt != '' ? '¥' + cod_amt : ''
 				, delivery_company:result[i].delivery_company
+				, result_text:result[i].result_text
+				, err_text:result[i].err_text
 				, register_date:result[i].register_date
 				, update_date:result[i].update_date
 		}

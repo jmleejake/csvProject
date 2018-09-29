@@ -15,6 +15,16 @@ public class AmazonVO {
 	private String delivery_company;
 	/**楽天・アマゾン区分ID*/
 	private String trans_target_id;
+	/**置換結果テキスト*/
+	private String result_text;
+	/**エラーテキスト*/
+	private String err_text;
+	
+	/**検索用*/
+	private String start_date;
+	/**検索用*/
+	private String search_type;
+	
 	@CsvBindByPosition(position=0)
 	private String order_id;
 	@CsvBindByPosition(position=1)
@@ -309,6 +319,30 @@ public class AmazonVO {
 	}
 	public void setTrans_target_id(String trans_target_id) {
 		this.trans_target_id = trans_target_id;
+	}
+	public String getResult_text() {
+		return result_text;
+	}
+	public void setResult_text(String result_text) {
+		this.result_text = result_text;
+	}
+	public String getStart_date() {
+		return start_date;
+	}
+	public void setStart_date(String start_date) {
+		this.start_date = start_date;
+	}
+	public String getSearch_type() {
+		return search_type;
+	}
+	public void setSearch_type(String search_type) {
+		this.search_type = search_type;
+	}
+	public String getErr_text() {
+		return err_text;
+	}
+	public void setErr_text(String err_text) {
+		this.err_text = err_text;
 	}
 	
 	@Override

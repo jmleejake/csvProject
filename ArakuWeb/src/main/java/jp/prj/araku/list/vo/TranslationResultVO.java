@@ -13,6 +13,8 @@ public class TranslationResultVO {
 	private String trans_target_type;
 	/**置換結果テキスト*/
 	private String result_text;
+	/**エラーテキスト*/
+	private String err_text;
 	
 	/**受注番号*/
 	private String order_no;
@@ -110,6 +112,12 @@ public class TranslationResultVO {
 	}
 	public void setDelivery_company(String delivery_company) {
 		this.delivery_company = delivery_company;
+	}
+	public String getErr_text() {
+		return err_text;
+	}
+	public void setErr_text(String err_text) {
+		this.err_text = err_text;
 	}
 	
 	@Override
