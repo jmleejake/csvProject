@@ -103,6 +103,7 @@ function setRowData(result) {
 				, payment_method:result[i].payment_method
 				, cod_collectible_amount:cod_amt != '' ? '¥' + cod_amt : ''
 				, err_text:result[i].err_text
+				, quantity_to_ship:result[i].quantity_to_ship
 				, register_date:result[i].register_date
 				, update_date:result[i].update_date
 		}

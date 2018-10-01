@@ -53,6 +53,7 @@ public class AmazonVO {
 	private String quantity_purchased;
 	@CsvBindByPosition(position=13)
 	private String quantity_shipped;
+	/**出荷数*/
 	@CsvBindByPosition(position=14)
 	private String quantity_to_ship;
 	@CsvBindByPosition(position=15)

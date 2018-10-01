@@ -135,6 +135,7 @@ function setRowData(result) {
 				, delivery_company:result[i].delivery_company
 				, result_text:result[i].result_text
 				, err_text:result[i].err_text
+				, quantity_to_ship:result[i].quantity_to_ship
 				, register_date:result[i].register_date
 				, update_date:result[i].update_date
 		}

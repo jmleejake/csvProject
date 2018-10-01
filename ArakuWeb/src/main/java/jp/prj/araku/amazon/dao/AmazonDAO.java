@@ -188,7 +188,7 @@ public class AmazonDAO {
 			TranslationResultVO resultVO = new TranslationResultVO();
 			resultVO.setTrans_target_id(vo.getSeq_id());
 			resultVO.setTrans_target_type(CommonUtil.TRANS_TARGET_A);
-			resultVO.setResult_text(transedName);
+			resultVO.setResult_text(transedName + "*" + vo.getQuantity_to_ship());
 			
 			// 이미 치환된 결과가 있는 trans_target_id이면 update, 아니면 insert
 			ArrayList<AmazonVO> transResult = amazonMapper.getTransResult(resultVO);
