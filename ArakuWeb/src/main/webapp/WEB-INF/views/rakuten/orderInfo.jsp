@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="./resources/jquery/jquery.min.js"></script>
+<script src="./../resources/jquery/jquery.min.js"></script>
 <script>
 $(document).ready(function() {
 	$("#order").addClass("active");
@@ -69,7 +69,7 @@ $(document).ready(function() {
 <div id="orderGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
 </div>
 </div>
-<script src="./resources/menu/orderInfo.js"></script>
+<script src="./../resources/rakuten/orderInfo.js"></script>
 <form action="resultView" id="order_frm" method="post">
 <input type="hidden" id="hid_data" name="list" >
 </form>

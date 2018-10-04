@@ -27,18 +27,6 @@ public class HomeController {
 		return "arakuMain";
 	}
 	
-	@RequestMapping(value = "/fileView")
-	public String fileView() {
-		log.info("Welcome to file upload view");
-		return "menu/fileView";
-	}
-	
-	@RequestMapping(value = "/orderView")
-	public String orderView() {
-		log.info("Welcome to orderView");
-		return "menu/orderInfo";
-	}
-	
 	@RequestMapping(value = "/translationView")
 	public String translationView() {
 		log.info("Welcome to translationView");

@@ -8,7 +8,7 @@ var columnDefs = [
 	, {headerName: "受注ステータス", field: "order_status", width: 130}
 	, {headerName: "お届け日指定", field: "delivery_date_sel", width: 130}
 	, {headerName: "合計金額", field: "total_amt", width: 100}
-	, {headerName: "お荷物伝票番号", field: "baggage_claim_no", width: 170}
+//	, {headerName: "お荷物伝票番号", field: "baggage_claim_no", width: 170}
 	, {headerName: "名前", field: "delivery_name", width: 120}
 	, {headerName: "電話番号", field: "delivery_tel", width: 120}
 	, {headerName: "商品名", field: "product_name", width: 400
@@ -29,7 +29,7 @@ var columnDefs = [
 		, cellRenderer: function(params) {
 			if (params.value == 1) {
 				console.log("true in");
-				return '<img src="./resources/img/fastDelivery.png" alt="logo" style="width:40px; margin-left:10px;">';
+				return '<img src="./../resources/img/fastDelivery.png" alt="logo" style="width:40px; margin-left:10px;">';
 			}
 		}
 	}
@@ -104,6 +104,7 @@ function setRowData(result) {
 				, unit_no:result[i].unit_no
 				, tomorrow_hope:result[i].tomorrow_hope
 				, err_text:result[i].err_text
+				, delivery_add1:result[i].delivery_add1
 				, register_date:result[i].register_date
 				, update_date:result[i].update_date
 		}

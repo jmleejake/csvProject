@@ -126,10 +126,13 @@ function setRowData(result) {
 
 // 유프리아루 CSV파일 다운로드
 $("#btn_yu_down").on("click", function() {
+	/*
 	console.log("yupuri download button clicked");
 	$("#yu_code").val("1003");
 	console.log("code : " + $("#yu_code").val());
 	$("#frm_down3").submit();
+	*/
+	pleaseSelectNotify('구현예정');
 });
 
 //야마토 CSV파일 다운로드

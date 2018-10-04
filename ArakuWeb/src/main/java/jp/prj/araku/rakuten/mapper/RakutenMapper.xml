@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.prj.araku.rakuten.mapper.IRakutenMapper">
+
+<insert id="insertRakutenInfo" parameterType="Rakuten" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
+insert into rakuten_info (
+order_no
+, order_status
+, sub_status_id
+, sub_status
+, order_datetime
+, order_date
+, order_time
+, cancel_due_date
+, order_check_datetime
+, order_confirm_datetime
+, delivery_eta_datetime
+, delivery_ata_datetime
+, pay_method_name
+, creadit_pay_method
+, credit_pay_times
+, delivery_method
+, delivery_type
+, order_type
+, multi_destination_flag
+, destination_match_flag
+, island_flag
+, rverify_flag
+, warning_type
+, rmember_flag
+, purchase_hist_mod_flag
+, total_goods_amt
+, total_consume_tax
+, total_shipping
+, gross_deduction
+, invoice_amt
+, total_amt
+, point_usage
+, total_coupon_usage
+, store_coupon_usage
+, rakuten_coupon_usage
+, order_post_no1
+, order_post_no2
+, order_add1
+, order_add2
+, order_add3
+, order_surname
+, order_name
+, order_surname_kana
+, order_name_kana
+, order_tel1
+, order_tel2
+, order_tel3
+, order_email
+, order_sex
+, request_no
+, request_received_no
+, ship_id
+, ship_charge
+, ship_substitute_fee
+, ship_total_consume_tax
+, ship_total_goods_amt
+, ship_total_amt
+, indicates
+, delivery_post_no1
+, delivery_post_no2
+, delivery_add1
+, delivery_add2
+, delivery_add3
+, delivery_surname
+, delivery_name
+, delivery_surname_kana
+, delivery_name_kana
+, delivery_tel1
+, delivery_tel2
+, delivery_tel3
+, product_detail_id
+, product_id
+, product_name
+, product_no
+, product_manage_no
+, unit_price
+, unit_no
+, delivery_cost_include
+, tax_exclude
+, substitute_fee_include
+, product_option
+, point_multiple
+, delivery_info
+, inventory_type
+, wrap_title1
+, wrap_name1
+, wrap_amt1
+, wrap_tax_include1
+, wrap_type1
+, wrap_title2
+, wrap_name2
+, wrap_amt2
+, wrap_tax_include2
+, wrap_type2
+, delivery_time
+, delivery_date_sel
+, manager
+, quick_note
+, msg_to_customer
+, gift_request
+, comment
+, util_terminal
+, mail_carrier_code
+, tomorrow_hope
+, drug_order_flag
+, rakuten_super_deal
+, membership_program
+)
+values(
+#{order_no}
+, #{order_status}
+, #{sub_status_id}
+, #{sub_status}
+, #{order_datetime}
+, #{order_date}
+, #{order_time}
+, #{cancel_due_date}
+, #{order_check_datetime}
+, #{order_confirm_datetime}
+, #{delivery_eta_datetime}
+, #{delivery_ata_datetime}
+, #{pay_method_name}
+, #{creadit_pay_method}
+, #{credit_pay_times}
+, #{delivery_method}
+, #{delivery_type}
+, #{order_type}
+, #{multi_destination_flag}
+, #{destination_match_flag}
+, #{island_flag}
+, #{rverify_flag}
+, #{warning_type}
+, #{rmember_flag}
+, #{purchase_hist_mod_flag}
+, #{total_goods_amt}
+, #{total_consume_tax}
+, #{total_shipping}
+, #{gross_deduction}
+, #{invoice_amt}
+, #{total_amt}
+, #{point_usage}
+, #{total_coupon_usage}
+, #{store_coupon_usage}
+, #{rakuten_coupon_usage}
+, #{order_post_no1}
+, #{order_post_no2}
+, #{order_add1}
+, #{order_add2}
+, #{order_add3}
+, #{order_surname}
+, #{order_name}
+, #{order_surname_kana}
+, #{order_name_kana}
+, #{order_tel1}
+, #{order_tel2}
+, #{order_tel3}
+, #{order_email}
+, #{order_sex}
+, #{request_no}
+, #{request_received_no}
+, #{ship_id}
+, #{ship_charge}
+, #{ship_substitute_fee}
+, #{ship_total_consume_tax}
+, #{ship_total_goods_amt}
+, #{ship_total_amt}
+, #{indicates}
+, #{delivery_post_no1}
+, #{delivery_post_no2}
+, #{delivery_add1}
+, #{delivery_add2}
+, #{delivery_add3}
+, #{delivery_surname}
+, #{delivery_name}
+, #{delivery_surname_kana}
+, #{delivery_name_kana}
+, #{delivery_tel1}
+, #{delivery_tel2}
+, #{delivery_tel3}
+, #{product_detail_id}
+, #{product_id}
+, #{product_name}
+, #{product_no}
+, #{product_manage_no}
+, #{unit_price}
+, #{unit_no}
+, #{delivery_cost_include}
+, #{tax_exclude}
+, #{substitute_fee_include}
+, #{product_option}
+, #{point_multiple}
+, #{delivery_info}
+, #{inventory_type}
+, #{wrap_title1}
+, #{wrap_name1}
+, #{wrap_amt1}
+, #{wrap_tax_include1}
+, #{wrap_type1}
+, #{wrap_title2}
+, #{wrap_name2}
+, #{wrap_amt2}
+, #{wrap_tax_include2}
+, #{wrap_type2}
+, #{delivery_time}
+, #{delivery_date_sel}
+, #{manager}
+, #{quick_note}
+, #{msg_to_customer}
+, #{gift_request}
+, #{comment}
+, #{util_terminal}
+, #{mail_carrier_code}
+, #{tomorrow_hope}
+, #{drug_order_flag}
+, #{rakuten_super_deal}
+, #{membership_program}
+)
+</insert>
+
+<select id="getRakutenInfo" parameterType="Rakuten" resultType="Rakuten">
+select
+	ri.seq_id
+	, err_text
+	, date_format(ri.register_date, '%Y/%m/%d') register_date
+	, date_format(ri.update_date, '%Y/%m/%d') update_date
+	, order_no
+	, order_status
+	, sub_status_id
+	, sub_status
+	, order_datetime
+	, order_date
+	, order_time
+	, cancel_due_date
+	, order_check_datetime
+	, order_confirm_datetime
+	, delivery_eta_datetime
+	, delivery_ata_datetime
+	, pay_method_name
+	, creadit_pay_method
+	, credit_pay_times
+	, delivery_method
+	, delivery_type
+	, order_type
+	, multi_destination_flag
+	, destination_match_flag
+	, island_flag
+	, rverify_flag
+	, warning_type
+	, rmember_flag
+	, purchase_hist_mod_flag
+	, total_goods_amt
+	, total_consume_tax
+	, total_shipping
+	, gross_deduction
+	, invoice_amt
+	, total_amt
+	, point_usage
+	, total_coupon_usage
+	, store_coupon_usage
+	, rakuten_coupon_usage
+	, order_post_no1
+	, order_post_no2
+	, order_add1
+	, order_add2
+	, order_add3
+	, order_surname
+	, order_name
+	, order_surname_kana
+	, order_name_kana
+	, order_tel1
+	, order_tel2
+	, order_tel3
+	, order_email
+	, order_sex
+	, request_no
+	, request_received_no
+	, ship_id
+	, ship_charge
+	, ship_substitute_fee
+	, ship_total_consume_tax
+	, ship_total_goods_amt
+	, ship_total_amt
+	, indicates
+	, delivery_post_no1
+	, delivery_post_no2
+	, delivery_add1
+	, delivery_add2
+	, delivery_add3
+	, delivery_surname
+	, delivery_name
+	, delivery_surname_kana
+	, delivery_name_kana
+	, delivery_tel1
+	, delivery_tel2
+	, delivery_tel3
+	, product_detail_id
+	, product_id
+	, product_name
+	, product_no
+	, product_manage_no
+	, unit_price
+	, unit_no
+	, delivery_cost_include
+	, tax_exclude
+	, substitute_fee_include
+	, product_option
+	, point_multiple
+	, delivery_info
+	, inventory_type
+	, wrap_title1
+	, wrap_name1
+	, wrap_amt1
+	, wrap_tax_include1
+	, wrap_type1
+	, wrap_title2
+	, wrap_name2
+	, wrap_amt2
+	, wrap_tax_include2
+	, wrap_type2
+	, delivery_time
+	, delivery_date_sel
+	, manager
+	, quick_note
+	, msg_to_customer
+	, gift_request
+	, comment
+	, util_terminal
+	, mail_carrier_code
+	, tomorrow_hope
+	, drug_order_flag
+	, rakuten_super_deal
+	, membership_program
+from
+	rakuten_info ri
+left outer join translation_err terr on terr.trans_target_id = ri.seq_id and terr.trans_target_type = 'R'
+<where>
+	<if test="seq_id != null and seq_id != ''">
+	ri.seq_id = #{seq_id}
+	</if>
+	<choose>
+		<when test="search_type =='srch'">
+		<trim prefixOverrides="AND |OR ">
+		<if test="register_date != null and register_date != ''">
+		ri.register_date between str_to_date(concat(#{register_date},' ','00:00:00'), '%Y/%m/%d %H:%i:%S')  
+		and str_to_date(concat(#{register_date},' ','23:59:59'), '%Y/%m/%d %H:%i:%S')
+		</if>
+		<if test="delivery_surname != null and delivery_surname != ''">
+		and (delivery_surname like '%${delivery_surname}%' 
+		or delivery_surname_kana like '%${delivery_surname}%')
+		</if>
+		<if test="delivery_name != null and delivery_name != ''">
+		and (delivery_name like '%${delivery_name}%' 
+		or delivery_name_kana like '%${delivery_name}%')
+		</if>
+		<if test="delivery_tel1 != null and delivery_tel1 != ''">
+		and delivery_tel1 like '%${delivery_tel1}%'
+		</if>
+		<if test="delivery_tel2 != null and delivery_tel2 != ''">
+		and delivery_tel2 like '%${delivery_tel2}%'
+		</if>
+		<if test="delivery_tel3 != null and delivery_tel3 != ''">
+		and delivery_tel3 like '%${delivery_tel3}%'
+		</if>
+		<if test="order_no != null and order_no != ''">
+		and order_no like '%${order_no}%'
+		</if>
+		<if test="product_name != null and product_name != ''">
+		and product_name like '%${product_name}%'
+		</if>
+		</trim>
+		</when>
+		<otherwise>
+		<if test="start_date != null and start_date != ''">
+		ri.register_date between str_to_date(#{start_date}, '%Y/%m/%d %H:%i:%s') and now()
+		</if>
+		</otherwise>
+	</choose>
+</where>
+order by ri.seq_id asc
+</select>
+
+<delete id="deleteRakutenInfo" parameterType="String">
+delete from
+	rakuten_info
+where
+	seq_id = #{seq_id}
+</delete>
+
+<select id="getTransResult" resultType="Rakuten" parameterType="TransResult">
+select
+	tr.seq_id
+	, err_text
+	, date_format(ri.register_date, '%Y/%m/%d') register_date
+	, date_format(ri.update_date, '%Y/%m/%d') update_date
+	, result_text
+	, delivery_company
+	, order_no
+	, order_status
+	, sub_status_id
+	, sub_status
+	, order_datetime
+	, order_date
+	, order_time
+	, cancel_due_date
+	, order_check_datetime
+	, order_confirm_datetime
+	, delivery_eta_datetime
+	, delivery_ata_datetime
+	, pay_method_name
+	, creadit_pay_method
+	, credit_pay_times
+	, delivery_method
+	, delivery_type
+	, order_type
+	, multi_destination_flag
+	, destination_match_flag
+	, island_flag
+	, rverify_flag
+	, warning_type
+	, rmember_flag
+	, purchase_hist_mod_flag
+	, total_goods_amt
+	, total_consume_tax
+	, total_shipping
+	, gross_deduction
+	, invoice_amt
+	, total_amt
+	, point_usage
+	, total_coupon_usage
+	, store_coupon_usage
+	, rakuten_coupon_usage
+	, order_post_no1
+	, order_post_no2
+	, order_add1
+	, order_add2
+	, order_add3
+	, order_surname
+	, order_name
+	, order_surname_kana
+	, order_name_kana
+	, order_tel1
+	, order_tel2
+	, order_tel3
+	, order_email
+	, order_sex
+	, request_no
+	, request_received_no
+	, ship_id
+	, ship_charge
+	, ship_substitute_fee
+	, ship_total_consume_tax
+	, ship_total_goods_amt
+	, ship_total_amt
+	, indicates
+	, delivery_post_no1
+	, delivery_post_no2
+	, delivery_add1
+	, delivery_add2
+	, delivery_add3
+	, delivery_surname
+	, delivery_name
+	, delivery_surname_kana
+	, delivery_name_kana
+	, delivery_tel1
+	, delivery_tel2
+	, delivery_tel3
+	, product_detail_id
+	, product_id
+	, product_name
+	, product_no
+	, product_manage_no
+	, unit_price
+	, unit_no
+	, delivery_cost_include
+	, tax_exclude
+	, substitute_fee_include
+	, product_option
+	, point_multiple
+	, delivery_info
+	, inventory_type
+	, wrap_title1
+	, wrap_name1
+	, wrap_amt1
+	, wrap_tax_include1
+	, wrap_type1
+	, wrap_title2
+	, wrap_name2
+	, wrap_amt2
+	, wrap_tax_include2
+	, wrap_type2
+	, delivery_time
+	, delivery_date_sel
+	, manager
+	, quick_note
+	, msg_to_customer
+	, gift_request
+	, comment
+	, util_terminal
+	, mail_carrier_code
+	, tomorrow_hope
+	, drug_order_flag
+	, rakuten_super_deal
+	, membership_program
+from
+	translation_result tr
+inner join rakuten_info ri on ri.seq_id = tr.trans_target_id and tr.trans_target_type = 'R'
+left outer join translation_err terr on terr.trans_target_id = ri.seq_id and terr.trans_target_type = 'R'
+<where>
+	<if test="trans_target_id != null">
+		tr.trans_target_id = #{trans_target_id}
+	</if>
+	<if test="seq_id_list != null">
+		tr.seq_id in
+		<foreach item="item" index="index" collection="seq_id_list"
+			open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+</where>
+</select>
+
+<update id="updateRakutenInfo" parameterType="Rakuten">
+update
+	rakuten_info
+set
+	<if test="baggage_claim_no != null and baggage_claim_no !=''">
+	baggage_claim_no = #{baggage_claim_no}
+	</if>
+	<if test="delivery_company != null and delivery_company !=''">
+	delivery_company = #{delivery_company}
+	</if>
+	, update_date = now()
+where
+	seq_id = #{seq_id}
+</update>
+
+</mapper>

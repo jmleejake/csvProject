@@ -45,23 +45,23 @@
 <div class="tab-content">
 <!-- 情報取り込み -->
 <div id="home" class="tab-pane active">
-<jsp:include page="menu/fileView.jsp" />
+<%-- <jsp:include page="menu/fileView.jsp" /> --%>
 </div>
 <!-- 商品名置換 -->
 <div id="menu1" class="tab-pane">
-<jsp:include page="menu/translation.jsp" />
+<%-- <jsp:include page="menu/translation.jsp" /> --%>
 </div>
 <!-- 注文情報 -->
 <div id="menu2" class="tab-pane">
-<jsp:include page="menu/orderInfo.jsp" />
+<%-- <jsp:include page="menu/orderInfo.jsp" /> --%>
 </div>
 <!-- 荷物伝票番号更新 -->
 <div id="menu3" class="tab-pane">
-<jsp:include page="menu/claimNoUpdate.jsp" />
+<%-- <jsp:include page="menu/claimNoUpdate.jsp" /> --%>
 </div>
 <!-- 楽天更新ファイル -->
 <div id="menu4" class="tab-pane">
-<jsp:include page="menu/rakutenFileDown.jsp" />
+<%-- <jsp:include page="menu/rakutenFileDown.jsp" /> --%>
 </div>
 <!-- ゆプリある -->
 </div>

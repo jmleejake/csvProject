@@ -24,13 +24,6 @@ public class ListController {
 	ListDAO dao;
 	
 	@ResponseBody
-	@RequestMapping(value="/showRList")
-	public ArrayList<RakutenSearchVO> getRakutenList(RakutenSearchVO searchVO) {
-		log.info("getRakutenList");
-		return dao.getRList(searchVO);
-	}
-	
-	@ResponseBody
 	@RequestMapping(value="/getTrans")
 	public ArrayList<TranslationVO> getTransInfo(TranslationVO transVO) {
 		log.info("getTransInfo");
@@ -58,33 +51,6 @@ public class ListController {
 		log.info("modRakutenInfo");
 		dao.modRakutenInfo(vo);
 		return "redirect:showRList";
-	}
-	
-	@RequestMapping(value="/delRakuten")
-	public String delRakutenInfo(@RequestBody ArrayList<RakutenSearchVO> vo) {
-		log.info("delRakutenInfo");
-		dao.delRakutenInfo(vo);
-		return "redirect:showRList";
-	}
-	
-	@ResponseBody
-	@RequestMapping(value="/executeTrans")
-	public ArrayList<String> executeTranslate(@RequestBody ArrayList<RakutenSearchVO> targetList) {
-		log.info("executeTranslate");
-		return dao.executeTranslate(targetList);
-	}
-	
-	@ResponseBody
-	@RequestMapping(value="/getTransResult")
-	public ArrayList<TranslationResultVO> getTransResult(@RequestParam(value="id_lst") String id_lst) {
-		log.info("getTransResult");
-		return dao.getTransResult(id_lst);
-	}
-	
-	@RequestMapping(value="/modTransResult")
-	public void modTransResult(TranslationResultVO vo) {
-		log.info("modTransResult");
-		dao.modTransResult(vo);
 	}
 	
 	@ResponseBody

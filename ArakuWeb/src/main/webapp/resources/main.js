@@ -4,7 +4,7 @@
 
 $("#btn_rakuten").on("click", function() {
 	console.log("rak");
-	location.href="fileView";
+	location.href="rakuten/fileView";
 });
 
 $("#btn_amazon").on("click", function() {

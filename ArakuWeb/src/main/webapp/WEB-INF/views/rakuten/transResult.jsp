@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="./resources/jquery/jquery.min.js"></script>
+<script src="./../resources/jquery/jquery.min.js"></script>
 <script>
 $(document).ready(function() {
 	$("#order").addClass("active");
@@ -22,7 +22,7 @@ $(document).ready(function() {
 <div id="resultGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
 </div>
 </div>
-<script src="./resources/menu/transResult.js"></script>
+<script src="./../resources/rakuten/transResult.js"></script>
 <form id="frm_down3" action="yuDown" method="post">
 <input type="hidden" id="id_lst" name="id_lst" value="${idList }">
 <input type="hidden" id="yu_code" name="company">

@@ -5,82 +5,6 @@
 
 <mapper namespace="jp.prj.araku.list.mapper.IListMapper">
 
-<select id="getRList" resultType="RakutenSearch">
-select 
-	ri.seq_id
-	, err_text
-	, order_no
-	, order_status
-	, delivery_date_sel
-	, total_amt
-	, baggage_claim_no
-	, delivery_surname
-	, delivery_name
-	, delivery_surname_kana
-	, delivery_name_kana
-	, delivery_tel1
-	, delivery_tel2
-	, delivery_tel3
-	, delivery_address1
-	, product_id
-	, product_name
-	, product_option
-	, unit_no
-	, tomorrow_hope
-	, date_format(ri.register_date, '%Y/%m/%d') register_date
-	, date_format(ri.update_date, '%Y/%m/%d') update_date
-from
-	rakuten_info ri
-left outer join translation_err terr on terr.trans_target_id = ri.seq_id and terr.trans_target_type = 'R'
-<where>
-	<if test="seq_id != null and seq_id != ''">
-	ri.seq_id = #{seq_id}
-	</if>
-	<choose>
-		<when test="search_type =='srch'">
-		<trim prefixOverrides="AND |OR ">
-		<if test="register_date != null and register_date != ''">
-		ri.register_date between str_to_date(concat(#{register_date},' ','00:00:00'), '%Y/%m/%d %H:%i:%S')  
-		and str_to_date(concat(#{register_date},' ','23:59:59'), '%Y/%m/%d %H:%i:%S')
-		</if>
-		<if test="delivery_surname != null and delivery_surname != ''">
-		and (delivery_surname like '%${delivery_surname}%' 
-		or delivery_surname_kana like '%${delivery_surname}%')
-		</if>
-		<if test="delivery_name != null and delivery_name != ''">
-		and (delivery_name like '%${delivery_name}%' 
-		or delivery_name_kana like '%${delivery_name}%')
-		</if>
-		<if test="delivery_tel1 != null and delivery_tel1 != ''">
-		and delivery_tel1 like '%${delivery_tel1}%'
-		</if>
-		<if test="delivery_tel2 != null and delivery_tel2 != ''">
-		and delivery_tel2 like '%${delivery_tel2}%'
-		</if>
-		<if test="delivery_tel3 != null and delivery_tel3 != ''">
-		and delivery_tel3 like '%${delivery_tel3}%'
-		</if>
-		<if test="order_no != null and order_no != ''">
-		and order_no like '%${order_no}%'
-		</if>
-		<if test="baggage_claim_no != null and baggage_claim_no != ''">
-		and baggage_claim_no like '%${baggage_claim_no}%'
-		</if>
-		<if test="product_name != null and product_name != ''">
-		and product_name like '%${product_name}%'
-		</if>
-		</trim>
-		</when>
-		<otherwise>
-		<if test="start_date != null and start_date != ''">
-		ri.register_date between str_to_date(#{start_date}, '%Y/%m/%d %H:%i:%s') and now()
-		</if>
-		</otherwise>
-	</choose>
-</where>
-order by ri.seq_id asc
-</select>
-
 <select id="getTransInfo" resultType="Trans" parameterType="Trans">
 select 
 	seq_id
@@ -136,63 +60,10 @@ where
 	seq_id = #{seq_id}
 </delete>
 
-<update id="modRakutenInfo" parameterType="RakutenSearch">
-update
-	rakuten_info
-set
-	<if test="baggage_claim_no != null and baggage_claim_no !=''">
-	baggage_claim_no = #{baggage_claim_no}
-	</if>
-	<if test="delivery_company != null and delivery_company !=''">
-	delivery_company = #{delivery_company}
-	</if>
-	, update_date = now()
-where
-	seq_id = #{seq_id}
-</update>
-
-<delete id="delRakutenInfo" parameterType="String">
-delete from
-	rakuten_info
-where
-	seq_id = #{seq_id}
-</delete>
-
 <insert id="addTransResult" parameterType="TransResult" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
 insert into translation_result (trans_target_id, trans_target_type, result_text)
 values (#{trans_target_id}, #{trans_target_type}, #{result_text})
 </insert>
-
-<select id="getTransResult" resultType="TransResult" parameterType="TransResult">
-select
-	tr.seq_id
-	, date_format(tr.register_date, '%Y/%m/%d') register_date
-	, err_text
-	, result_text
-	, order_no
-	, product_name
-	, product_option
-	, unit_no
-	, delivery_surname
-	, delivery_name
-	, delivery_company
-from
-	translation_result tr
-inner join rakuten_info ri on ri.seq_id = tr.trans_target_id and tr.trans_target_type = 'R'
-left outer join translation_err terr on terr.trans_target_id = ri.seq_id and terr.trans_target_type = 'R'
-<where>
-	<if test="trans_target_id != null">
-		tr.trans_target_id = #{trans_target_id}
-	</if>
-	<if test="seq_id_list != null">
-		tr.seq_id in
-		<foreach item="item" index="index" collection="seq_id_list"
-			open="(" separator="," close=")">
-			#{item}
-		</foreach>
-	</if>
-</where>
-</select>
 
 <update id="modTransResult" parameterType="TransResult">
 update 
@@ -206,6 +77,9 @@ set
 	</if>
 	<if test="trans_target_id != null">
 		trans_target_id = #{trans_target_id}
+	</if>
+	<if test="trans_target_id != null">
+		and trans_target_type = #{trans_target_type}
 	</if>
 </where>	
 </update>

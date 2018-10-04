@@ -9,13 +9,11 @@ import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
 
 public interface IListMapper {
-	public ArrayList<RakutenSearchVO> getRList(RakutenSearchVO vo);
 	public ArrayList<TranslationVO> getTransInfo(TranslationVO vo);
 	public int addTransInfo(TranslationVO vo);
 	public int modTransInfo(TranslationVO vo);
 	public int delTransInfo(String seq_id);
 	public int modRakutenInfo(RakutenSearchVO vo);
-	public int delRakutenInfo(String seq_id);
 	public int addTransResult(TranslationResultVO vo);
 	public ArrayList<TranslationResultVO> getTransResult(TranslationResultVO vo);
 	public int modTransResult(TranslationResultVO vo);

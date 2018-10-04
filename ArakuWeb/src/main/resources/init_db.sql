@@ -83,6 +83,7 @@ from
 */
 
 /*楽天CSVファイル*/
+/*
 drop table rakuten_info;
 
 create table rakuten_info (
@@ -216,13 +217,130 @@ create table rakuten_info (
 	, rakuten_super_deal varchar(1) /*楽天スーパーDEAL*/
 	, membership_program varchar(1) /*メンバーシッププログラム*/
 ) default charset = utf8;
+*/
 
+/*NEW 楽天CSVファイル*/
+
+drop table rakuten_info;
+create table rakuten_info (
+	seq_id bigint unsigned primary key  auto_increment /*区分ID*/
+	, register_date datetime default now() /*データ登録日*/
+	, update_date datetime /*データ修正日*/
+	, delivery_company varchar(4) /*配送会社*/
+	, baggage_claim_no varchar(12) /*お荷物伝票番号*/
+	, order_no varchar(25) /*注文番号*/
+	, order_status varchar(10) /*ステータス*/
+	, sub_status_id varchar(10) /*サブステータスID*/
+	, sub_status varchar(10) /*サブステータス*/
+	, order_datetime varchar(20) /*注文日時*/
+	, order_date varchar(10) /*注文日*/
+	, order_time varchar(20) /*注文時間*/
+	, cancel_due_date varchar(10) /*キャンセル期限日*/
+	, order_check_datetime varchar(20) /*注文確認日時*/
+	, order_confirm_datetime varchar(20) /*注文確定日時*/
+	, delivery_eta_datetime varchar(20) /*発送指示日時*/
+	, delivery_ata_datetime varchar(20) /*発送完了報告日時*/
+	, pay_method_name varchar(50) /*支払方法名*/
+	, creadit_pay_method varchar(50) /*クレジットカード支払い方法*/
+	, credit_pay_times varchar(2) /*クレジットカード支払い回数*/
+	, delivery_method varchar(10) /*配送方法*/
+	, delivery_type varchar(10) /*配送区分*/
+	, order_type varchar(20) /*注文種別*/
+	, multi_destination_flag varchar(1) /*複数送付先フラグ*/
+	, destination_match_flag varchar(1) /*送付先一致フラグ*/
+	, island_flag varchar(1) /*離島フラグ*/
+	, rverify_flag varchar(1) /*楽天確認中フラグ*/
+	, warning_type varchar(10) /*警告表示タイプ*/
+	, rmember_flag varchar(1) /*楽天会員フラグ*/
+	, purchase_hist_mod_flag varchar(1) /*購入履歴修正有無フラグ*/
+	, total_goods_amt varchar(10) /*商品合計金額*/
+	, total_consume_tax varchar(10) /*消費税合計*/
+	, total_shipping varchar(10) /*送料合計*/
+	, gross_deduction varchar(10) /*代引料合計*/
+	, invoice_amt varchar(10) /*請求金額*/
+	, total_amt varchar(10) /*合計金額*/
+	, point_usage varchar(10) /*ポイント利用額*/
+	, total_coupon_usage varchar(1) /*クーポン利用総額*/
+	, store_coupon_usage varchar(1) /*店舗発行クーポン利用額*/
+	, rakuten_coupon_usage varchar(1) /*楽天発行クーポン利用額*/
+	, order_post_no1 varchar(4) /*注文者郵便番号1*/
+	, order_post_no2 varchar(4) /*注文者郵便番号2*/
+	, order_add1 varchar(20) /*注文者住所都道府県*/
+	, order_add2 varchar(20) /*注文者住所郡市区*/
+	, order_add3 varchar(50) /*注文者住所それ以降の住所*/
+	, order_surname varchar(10) /*注文者姓*/
+	, order_name varchar(10) /*注文者名*/
+	, order_surname_kana varchar(10) /*注文者姓カナ*/
+	, order_name_kana varchar(10) /*注文者名カナ*/
+	, order_tel1 varchar(4) /*注文者電話番号1*/
+	, order_tel2 varchar(4) /*注文者電話番号2*/
+	, order_tel3 varchar(4) /*注文者電話番号3*/
+	, order_email varchar(60) /*注文者メールアドレス*/
+	, order_sex varchar(3) /*注文者性別*/
+	, request_no varchar(10) /*申込番号*/
+	, request_received_no varchar(10) /*申込お届け回数*/
+	, ship_id varchar(10) /*送付先ID*/
+	, ship_charge varchar(10) /*送付先送料*/
+	, ship_substitute_fee varchar(10) /*送付先代引料*/
+	, ship_total_consume_tax varchar(10) /*送付先消費税合計*/
+	, ship_total_goods_amt varchar(10) /*送付先商品合計金額*/
+	, ship_total_amt varchar(10) /*送付先合計金額*/
+	, indicates varchar(10) /*のし*/
+	, delivery_post_no1 varchar(4) /*送付先郵便番号1*/
+	, delivery_post_no2 varchar(4) /*送付先郵便番号2*/
+	, delivery_add1 varchar(20) /*送付先住所都道府県*/
+	, delivery_add2 varchar(20) /*送付先住所郡市区*/
+	, delivery_add3 varchar(50) /*送付先住所それ以降の住所*/
+	, delivery_surname varchar(10) /*送付先姓*/
+	, delivery_name varchar(10) /*送付先名*/
+	, delivery_surname_kana varchar(10) /*送付先姓カナ*/
+	, delivery_name_kana varchar(10) /*送付先名カナ*/
+	, delivery_tel1 varchar(4) /*送付先電話番号1*/
+	, delivery_tel2 varchar(4) /*送付先電話番号2*/
+	, delivery_tel3 varchar(4) /*送付先電話番号3*/
+	, product_detail_id varchar(8) /*商品明細ID*/
+	, product_id varchar(8) /*商品ID*/
+	, product_name varchar(1500) /*商品名*/
+	, product_no varchar(30) /*商品番号*/
+	, product_manage_no varchar(100) /*商品管理番号*/
+	, unit_price varchar(10) /*単価*/
+	, unit_no varchar(10) /*個数*/
+	, delivery_cost_include varchar(10) /*送料込別*/
+	, tax_exclude varchar(10) /*税込別*/
+	, substitute_fee_include varchar(10) /*代引手数料込別*/
+	, product_option varchar(1500) /*項目・選択肢*/
+	, point_multiple varchar(10) /*ポイント倍率*/
+	, delivery_info varchar(200) /*納期情報*/
+	, inventory_type varchar(10) /*在庫タイプ*/
+	, wrap_title1 varchar(10) /*ラッピングタイトル1*/
+	, wrap_name1 varchar(10) /*ラッピング名1*/
+	, wrap_amt1 varchar(10) /*ラッピング料金1*/
+	, wrap_tax_include1 varchar(10) /*ラッピング税込別1*/
+	, wrap_type1 varchar(10) /*ラッピング種類1*/
+	, wrap_title2 varchar(10) /*ラッピングタイトル2*/
+	, wrap_name2 varchar(10) /*ラッピング名2*/
+	, wrap_amt2 varchar(10) /*ラッピング料金2*/
+	, wrap_tax_include2 varchar(10) /*ラッピング税込別2*/
+	, wrap_type2 varchar(10) /*ラッピング種類2*/
+	, delivery_time varchar(10) /*お届け時間帯*/
+	, delivery_date_sel varchar(10) /*お届け日指定*/
+	, manager varchar(10) /*担当者*/
+	, quick_note varchar(100) /*ひとことメモ*/
+	, msg_to_customer varchar(200) /*メール差込文 (お客様へのメッセージ)*/
+	, gift_request varchar(10) /*ギフト配送希望*/
+	, comment varchar(300) /*コメント*/
+	, util_terminal varchar(10) /*利用端末*/
+	, mail_carrier_code varchar(10) /*メールキャリアコード*/
+	, tomorrow_hope varchar(1) /*あす楽希望フラグ*/
+	, drug_order_flag varchar(1) /*医薬品受注フラグ*/
+	, rakuten_super_deal varchar(1) /*楽天スーパーDEAL商品受注フラグ*/
+	, membership_program varchar(1) /*メンバーシッププログラム受注タイプ*/
+) default charset = utf8;
 
 
 
 /*置換情報*/
 drop table translation_info;
-
 create table translation_info (
 	seq_id bigint unsigned primary key  auto_increment /*区分ID*/
 	, register_date datetime default now() /*データ登録日*/
@@ -236,7 +354,6 @@ create table translation_info (
 
 /*置換結果*/
 drop table translation_result;
-
 create table translation_result (
 	seq_id bigint unsigned primary key  auto_increment /*区分ID*/
 	, register_date datetime default now() /*データ登録日*/
@@ -250,7 +367,6 @@ create table translation_result (
 
 /*AMAZON 情報*/
 drop table amazon_info;
-
 create table amazon_info (
 	seq_id bigint unsigned primary key  auto_increment /*区分ID*/
 	, register_date datetime default now() /*データ登録日*/
@@ -370,7 +486,6 @@ insert into region_master (p_id, region_name, region_name_en, delivery_company) 
 
 /*置換する時、エラー発生の場合*/
 drop table translation_err;
-
 create table translation_err (
 	seq_id bigint unsigned primary key  auto_increment /*区分ID*/
 	, register_date datetime default now() /*データ登録日*/
@@ -839,6 +954,8 @@ seq_id bigint unsigned primary key  auto_increment /*区分ID*/
 
 
 
+
+
 update rakuten_info
 /*
 set register_date = adddate(now(), -3)
@@ -903,12 +1020,18 @@ from
 	translation_result tr
 inner join rakuten_info ri on ri.seq_id = tr.trans_target_id
 
+
+
+/*라쿠텐 데이터 등록일 최신화*/
 update rakuten_info
 set register_date = now()
 
 
-select * from rakuten_info
-where tomorrow_hope = 1
+
+
+/*아마존 데이터 등록일 최신화*/
+update amazon_info
+set register_date = now()
 
 
 
