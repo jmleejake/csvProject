@@ -260,9 +260,9 @@ create table rakuten_info (
 	, invoice_amt varchar(10) /*請求金額*/
 	, total_amt varchar(10) /*合計金額*/
 	, point_usage varchar(10) /*ポイント利用額*/
-	, total_coupon_usage varchar(1) /*クーポン利用総額*/
-	, store_coupon_usage varchar(1) /*店舗発行クーポン利用額*/
-	, rakuten_coupon_usage varchar(1) /*楽天発行クーポン利用額*/
+	, total_coupon_usage varchar(10) /*クーポン利用総額*/
+	, store_coupon_usage varchar(10) /*店舗発行クーポン利用額*/
+	, rakuten_coupon_usage varchar(10) /*楽天発行クーポン利用額*/
 	, order_post_no1 varchar(4) /*注文者郵便番号1*/
 	, order_post_no2 varchar(4) /*注文者郵便番号2*/
 	, order_add1 varchar(20) /*注文者住所都道府県*/
@@ -298,7 +298,7 @@ create table rakuten_info (
 	, delivery_tel1 varchar(4) /*送付先電話番号1*/
 	, delivery_tel2 varchar(4) /*送付先電話番号2*/
 	, delivery_tel3 varchar(4) /*送付先電話番号3*/
-	, product_detail_id varchar(8) /*商品明細ID*/
+	, product_detail_id varchar(10) /*商品明細ID*/
 	, product_id varchar(8) /*商品ID*/
 	, product_name varchar(1500) /*商品名*/
 	, product_no varchar(30) /*商品番号*/
@@ -1118,12 +1118,12 @@ WHERE tr.seq_id in ( 1 , 2 , 9 , 10 )
  * 새로운 라쿠텐 테이블을 생성하였으므로
  * 기존 데이터를 삭제하는 쿼리를 작성
  * */
-select *
-/*delete*/
+/*select * */
+delete
 from translation_result
 where trans_target_type = 'R'
 
-select *
-/*delete*/
+/*select * */
+delete
 from translation_err
 where trans_target_type = 'R'

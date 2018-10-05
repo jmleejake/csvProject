@@ -542,15 +542,16 @@ public class RakutenDAO {
 			
 			// 야마토 포맷으로 바꾸기 전 치환된 결과와 함께 라쿠텐정보 얻기
 			log.debug("seq_id_list : " + id_lst.toString());
-			RakutenVO vo = new RakutenVO();
 			ArrayList<String> seq_id_list = new ArrayList<>();
 			for (String seq_id : id_lst) {
 				seq_id_list.add(seq_id);
 			}
+			
+			TranslationResultVO vo = new TranslationResultVO();
 			vo.setSeq_id_list(seq_id_list);
 			vo.setDelivery_company(delivery_company);
 			
-			ArrayList<RakutenVO> list = mapper.getRakutenInfo(vo);
+			ArrayList<RakutenVO> list = mapper.getTransResult(vo);
 			ArrayList<ArakuVO> yList = new ArrayList<>();
 			
 			for (RakutenVO tmp : list) {
@@ -685,15 +686,16 @@ public class RakutenDAO {
 			
 			// 사가와 포맷으로 바꾸기 전 치환된 결과와 함께 라쿠텐정보 얻기
 			log.debug("seq_id_list : " + id_lst.toString());
-			RakutenVO vo = new RakutenVO();
 			ArrayList<String> seq_id_list = new ArrayList<>();
 			for (String seq_id : id_lst) {
 				seq_id_list.add(seq_id);
 			}
+			
+			TranslationResultVO vo = new TranslationResultVO();
 			vo.setSeq_id_list(seq_id_list);
 			vo.setDelivery_company(delivery_company);
 			
-			ArrayList<RakutenVO> list = mapper.getRakutenInfo(vo);
+			ArrayList<RakutenVO> list = mapper.getTransResult(vo);
 			ArrayList<ArakuVO> sList = new ArrayList<>();
 			
 			for (RakutenVO tmp : list) {
