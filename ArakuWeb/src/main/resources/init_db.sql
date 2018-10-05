@@ -1114,4 +1114,16 @@ inner join rakuten_info ri on ri.seq_id = tr.trans_target_id and tr.trans_target
 left outer join translation_err terr on terr.trans_target_id = ri.seq_id and terr.trans_target_type = 'R' 
 WHERE tr.seq_id in ( 1 , 2 , 9 , 10 ) 
 
+/*
+ * 새로운 라쿠텐 테이블을 생성하였으므로
+ * 기존 데이터를 삭제하는 쿼리를 작성
+ * */
+select *
+/*delete*/
+from translation_result
+where trans_target_type = 'R'
 
+select *
+/*delete*/
+from translation_err
+where trans_target_type = 'R'
