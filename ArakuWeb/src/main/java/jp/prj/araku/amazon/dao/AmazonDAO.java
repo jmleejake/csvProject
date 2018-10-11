@@ -397,7 +397,7 @@ public class AmazonDAO {
 				yVO.setClient_post_no("3330845");
 				yVO.setClient_add("埼玉県川口市上青木西１丁目19-39");
 				yVO.setClient_building("エレガンス滝澤ビル1F");
-				yVO.setClient_name("有限会社ItempiaJapan");
+				yVO.setClient_name("有限会社ItempiaJapan A");
 				yVO.setClient_tel("048-242-3801");
 				
 				yVO.setDelivery_post_no(tmp.getShip_postal_code().replace("\"", "").replace("-", ""));
@@ -558,7 +558,7 @@ public class AmazonDAO {
 				sVO.setClient_add1("埼玉県川口市");
 				sVO.setClient_add2("上青木西１丁目19-39エレガンス滝澤ビル1F");
 				sVO.setClient_name1("有限会社");
-				sVO.setClient_name2("ItempiaJapan");
+				sVO.setClient_name2("ItempiaJapan A");
 				sVO.setClient_tel("048-242-3801");
 				
 				// 配送サービスレベル가 NextDay인 경우

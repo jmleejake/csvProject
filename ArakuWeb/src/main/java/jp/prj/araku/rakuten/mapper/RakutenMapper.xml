@@ -525,7 +525,11 @@ left outer join translation_err terr on terr.trans_target_id = ri.seq_id and ter
 			#{item}
 		</foreach>
 	</if>
+	<if test="delivery_company != null and delivery_company != ''">
+	and delivery_company = #{delivery_company}
+	</if>
 </where>
+order by order_no desc
 </select>
 
 <update id="updateRakutenInfo" parameterType="Rakuten">

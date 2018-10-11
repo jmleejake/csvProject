@@ -567,7 +567,7 @@ public class RakutenDAO {
 				yVO.setClient_post_no("3330845");
 				yVO.setClient_add("埼玉県川口市上青木西１丁目19-39");
 				yVO.setClient_building("エレガンス滝澤ビル1F");
-				yVO.setClient_name("有限会社ItempiaJapan");
+				yVO.setClient_name("有限会社ItempiaJapan R");
 //				yVO.setClient_name_kana(tmp.getOrder_surname_kana().replace("\"", "") + " " + tmp.getOrder_name_kana().replace("\"", ""));
 				yVO.setClient_tel("048-242-3801");
 				
@@ -711,7 +711,7 @@ public class RakutenDAO {
 				sVO.setClient_add1("埼玉県川口市");
 				sVO.setClient_add2("上青木西１丁目19-39エレガンス滝澤ビル1F");
 				sVO.setClient_name1("有限会社");
-				sVO.setClient_name2("ItempiaJapan");
+				sVO.setClient_name2("ItempiaJapan R");
 				sVO.setClient_tel("048-242-3801");
 				
 				// あす楽希望이 1인 경우
