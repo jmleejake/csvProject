@@ -30,11 +30,9 @@ import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
-import jp.prj.araku.file.mapper.IFileMapper;
 import jp.prj.araku.file.vo.SagawaVO;
 import jp.prj.araku.file.vo.YamatoVO;
 import jp.prj.araku.list.mapper.IListMapper;
-import jp.prj.araku.list.vo.RakutenSearchVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.TranslationErrorVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
@@ -44,6 +42,9 @@ import jp.prj.araku.rakuten.vo.RakutenVO;
 import jp.prj.araku.util.ArakuVO;
 import jp.prj.araku.util.CommonUtil;
 
+/**
+ * [MOD-1011] 半角→全角へ変換する。　　kim
+ * */
 @Repository
 public class RakutenDAO {
 	@Autowired
@@ -258,6 +259,11 @@ public class RakutenDAO {
 			// 상품개수
 			unitNo = Integer.parseInt(vo.getUnit_no());
 			
+			// [MOD-1011] 
+			Integer intsu = new Integer (unitNo); 
+			String sintsu = intsu.toString(); 
+			String su = CommonUtil.hankakuNumToZenkaku(sintsu); 
+			
 			StringBuffer buf = null;
 			String optionContent = vo.getProduct_option();
 			if(optionContent != null && optionContent.length() > 1) {
@@ -335,16 +341,24 @@ public class RakutenDAO {
 				buf.append(" ");
 				for (String optionName : optionNames) {
 					// 옵션개수, 상품개수를 곱하여 치환결과에 반영
-//					buf.append(optionName + "*" + (map.get(optionName)*productSetNo*unitNo));[MOD-0819]
-					buf.append(optionName + "*" + (map.get(optionName)*unitNo));
+//					buf.append(optionName + "*" + (map.get(optionName)*productSetNo*unitNo)); // [MOD-0819]
+//					buf.append(optionName + "*" + (map.get(optionName)*unitNo)); // [MOD-1011] 
+					
+					Integer unitsu = map.get(optionName)*unitNo; 
+					// [MOD-1011] 
+					String unitsu1 = unitsu.toString(); 
+					String su1 = CommonUtil.hankakuNumToZenkaku(unitsu1); 
+					buf.append(optionName + "×" +su1); 
+
 					if (optionNames.size() > 1) {
 						buf.append(";");
 					}
 				}
 			} else {
 				// 옵션이 없는 경우, 상품세트수와 상품개수를 곱하여 치환결과에 반영
-//				buf = new StringBuffer(arr[0] + "*" + (productSetNo*unitNo));[MOD-0819]
-				buf = new StringBuffer(transedName + "*" + unitNo);
+//				buf = new StringBuffer(arr[0] + "*" + (productSetNo*unitNo)); // [MOD-0819]
+//				buf = new StringBuffer(transedName + "*" + unitNo); // [MOD-1011] 
+				buf = new StringBuffer(transedName + "×" + su);
 			}
 			
 			String last = buf.toString();
@@ -567,7 +581,7 @@ public class RakutenDAO {
 				yVO.setClient_post_no("3330845");
 				yVO.setClient_add("埼玉県川口市上青木西１丁目19-39");
 				yVO.setClient_building("エレガンス滝澤ビル1F");
-				yVO.setClient_name("有限会社ItempiaJapan R");
+				yVO.setClient_name("有限会社ItempiaJapan (R)");
 //				yVO.setClient_name_kana(tmp.getOrder_surname_kana().replace("\"", "") + " " + tmp.getOrder_name_kana().replace("\"", ""));
 				yVO.setClient_tel("048-242-3801");
 				
@@ -711,7 +725,7 @@ public class RakutenDAO {
 				sVO.setClient_add1("埼玉県川口市");
 				sVO.setClient_add2("上青木西１丁目19-39エレガンス滝澤ビル1F");
 				sVO.setClient_name1("有限会社");
-				sVO.setClient_name2("ItempiaJapan R");
+				sVO.setClient_name2("ItempiaJapan (R)");
 				sVO.setClient_tel("048-242-3801");
 				
 				// あす楽希望이 1인 경우

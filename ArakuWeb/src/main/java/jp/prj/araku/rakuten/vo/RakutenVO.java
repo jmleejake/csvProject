@@ -1613,6 +1613,12 @@ public class RakutenVO {
 		if (membership_program != null) {
 			builder.append("membership_program=");
 			builder.append(membership_program);
+			builder.append(", ");
+		}
+		if (delivery_company != null) {
+			builder.append("delivery_company=");
+			builder.append(delivery_company);
+			builder.append(", ");
 		}
 		builder.append("]");
 		return builder.toString();

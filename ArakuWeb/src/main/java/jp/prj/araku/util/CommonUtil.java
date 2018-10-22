@@ -64,4 +64,18 @@ public class CommonUtil {
 		
 		beanToCSV.write(list);
 	}
+	
+	public static String hankakuNumToZenkaku(String s) {
+		StringBuffer sb = new StringBuffer(s);
+		for (int i=0; i < s.length(); i++) {
+			char c = s.charAt(i);
+			
+			if (c >= '0' && c <= '9') {
+				sb.setCharAt(i, (char) (c - '0' + '０'));
+			}
+		}
+		
+		return sb.toString();
+	}
+	
 }

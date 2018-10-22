@@ -32,6 +32,9 @@ import jp.prj.araku.list.vo.TranslationVO;
 import jp.prj.araku.util.ArakuVO;
 import jp.prj.araku.util.CommonUtil;
 
+/**
+ * [MOD-1011] 半角→全角へ変換する。　　kim
+ * */
 @Repository
 public class AmazonDAO {
 	@Autowired
@@ -188,7 +191,13 @@ public class AmazonDAO {
 			TranslationResultVO resultVO = new TranslationResultVO();
 			resultVO.setTrans_target_id(vo.getSeq_id());
 			resultVO.setTrans_target_type(CommonUtil.TRANS_TARGET_A);
-			resultVO.setResult_text(transedName + "*" + vo.getQuantity_to_ship());
+//			resultVO.setResult_text(transedName + "*" + vo.getQuantity_to_ship()); // [MOD-1011] 
+			
+			// [MOD-1011] 
+			Integer intsu = new Integer (vo.getQuantity_to_ship()); 
+			String sintsu = intsu.toString(); 
+			String su = CommonUtil.hankakuNumToZenkaku(sintsu); 
+			resultVO.setResult_text(transedName + "×" + su); 
 			
 			// 이미 치환된 결과가 있는 trans_target_id이면 update, 아니면 insert
 			ArrayList<AmazonVO> transResult = amazonMapper.getTransResult(resultVO);
@@ -397,7 +406,7 @@ public class AmazonDAO {
 				yVO.setClient_post_no("3330845");
 				yVO.setClient_add("埼玉県川口市上青木西１丁目19-39");
 				yVO.setClient_building("エレガンス滝澤ビル1F");
-				yVO.setClient_name("有限会社ItempiaJapan A");
+				yVO.setClient_name("有限会社ItempiaJapan (A)");
 				yVO.setClient_tel("048-242-3801");
 				
 				yVO.setDelivery_post_no(tmp.getShip_postal_code().replace("\"", "").replace("-", ""));
@@ -558,7 +567,7 @@ public class AmazonDAO {
 				sVO.setClient_add1("埼玉県川口市");
 				sVO.setClient_add2("上青木西１丁目19-39エレガンス滝澤ビル1F");
 				sVO.setClient_name1("有限会社");
-				sVO.setClient_name2("ItempiaJapan A");
+				sVO.setClient_name2("ItempiaJapan (A)");
 				sVO.setClient_tel("048-242-3801");
 				
 				// 配送サービスレベル가 NextDay인 경우
