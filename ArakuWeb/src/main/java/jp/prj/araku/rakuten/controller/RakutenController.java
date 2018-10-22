@@ -216,4 +216,11 @@ public class RakutenController {
 		
 		return "redirect:orderView";
 	}
+	
+	@RequestMapping(value="/delFileUpload", method=RequestMethod.POST)
+	public String processErrFileUpload(MultipartFile delUpload, HttpServletRequest req) throws IOException {
+		log.info("processCsvUpload");
+		dao.checkRakutenInfo(delUpload, fileEncoding, req);
+		return "redirect:orderView";
+	}
 }

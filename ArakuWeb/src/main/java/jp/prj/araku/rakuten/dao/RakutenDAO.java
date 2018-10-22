@@ -111,14 +111,14 @@ public class RakutenDAO {
         			vo.setDelivery_time(CommonUtil.TOMORROW_MORNING);
         		}
         		
-//        		try {
+        		try {
         			mapper.insertRakutenInfo(vo);
-//        		} catch (Exception e) {
+        		} catch (Exception e) {
         			// 에러 발생시 에러리스트에 넣은후 다음 레코드로 진행
-//        			log.debug("[ERR]: " + vo.getOrder_no());
-//        			errList.add(vo);
-//        			continue;
-//				}
+        			log.debug("[ERR]: " + vo.getOrder_no());
+        			errList.add(vo);
+        			continue;
+				}
                 log.debug("inserted rakuten seq_id :: " + vo.getSeq_id());
                 log.debug("==========================");
                 
@@ -993,5 +993,62 @@ public class RakutenDAO {
 		csvWriter.writeNext(header);
 		
 		beanToCSV.write(list);
+	}
+	
+	@Transactional
+	public void checkRakutenInfo(MultipartFile file, String fileEncoding, HttpServletRequest req) throws IOException {
+		log.info("checkRakutenInfo");
+		
+		/**
+		 * 한사람이 中腹受注番号로 여러 주문을 했을때 에러파일로 처리한 부분의 受注番号를 데이터상에서 삭제처리
+		 * */
+		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
+		
+		log.debug("encoding : " + fileEncoding);
+		log.debug("contentType: " + file.getContentType());
+		log.debug("name: " + file.getName());
+		log.debug("original name: " + file.getOriginalFilename());
+		log.debug("size: " + file.getSize());
+		
+		BufferedReader reader = null;
+		ArrayList<RakutenVO> errList = new ArrayList<>();
+		try  {
+			reader = new BufferedReader(
+					new InputStreamReader(file.getInputStream(), fileEncoding));
+			
+			CsvToBean<RakutenVO> csvToBean = new CsvToBeanBuilder<RakutenVO>(reader)
+                    .withType(RakutenVO.class)
+                    .withSkipLines(1)
+                    .withIgnoreLeadingWhiteSpace(true)
+                    .build();
+
+            Iterator<RakutenVO> iterator = csvToBean.iterator();
+
+            while (iterator.hasNext()) {
+            	RakutenVO vo = iterator.next();
+            	
+            	// 데이터 중복체크
+            	RakutenVO searchVO = new RakutenVO();
+            	searchVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+            	searchVO.setOrder_no(vo.getOrder_no());
+            	
+            	ArrayList<RakutenVO> dupCheckList = mapper.getRakutenInfo(searchVO);
+        		
+        		// 이미 존재하는 受注番号가 있으면
+        		if (dupCheckList.size() == 1) {
+    				// seq_id로 데이터 삭제 
+    				mapper.deleteRakutenInfo(dupCheckList.get(0).getSeq_id());
+        		}
+            }
+            
+		} finally {
+			if (reader != null) {
+				reader.close();
+			}
+			
+			HttpSession session = req.getSession();
+			session.setAttribute("errSize", errList.size());
+			session.setAttribute("errList", errList);
+		}
 	}
 }
