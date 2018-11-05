@@ -44,15 +44,11 @@ var gridOption = {
 		onCellEditingStarted: function(event) {
 	    	var start = event.node.data;
 	    	startData = start.delivery_company;
-	    	console.log("start?");
-	    	console.log(startData);
 	    },
 	    onCellEditingStopped: function(event) {
 	    	var stop = event.node.data;
 	    	stopData = stop.delivery_company;
 	    	id = stop.seq_id;
-	    	console.log("stop?");
-	    	console.log(stopData);
 	    	if (!(startData == stopData)) {
 	    		console.log("modified!");
 	    		modifiedData.push({
@@ -73,13 +69,15 @@ function isHeaderRow(params) {
 	return params.data.section === 'region-title';
 }
 
-$.ajax({
-    url: "showRegionMaster"
-    , dataType: "json"  
-    , contentType : "application/json"
-    , data:{}
-    , success: setRowData
-});
+function showRegionMaster() {
+	$.ajax({
+	    url: "showRegionMaster"
+	    , dataType: "json"  
+	    , contentType : "application/json"
+	    , data:{}
+	    , success: setRowData
+	});
+}
 
 function setRowData(result) {
 	rowData = [];

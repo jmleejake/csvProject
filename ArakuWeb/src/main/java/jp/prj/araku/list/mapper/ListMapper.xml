@@ -141,4 +141,40 @@ where
 	and trans_target_type = #{trans_target_type}
 </delete>
 
+<select id="getExceptionMaster" parameterType="ExceptionMaster" resultType="ExceptionMaster">
+select
+	seq_id
+	, exception_data
+from
+	exception_master
+<where>
+	<if test="keyword != null">
+		exception_data like '%${keyword}%'
+	</if>
+	<if test="seq_id_list != null">
+		seq_id in
+		<foreach item="item" index="index" collection="seq_id_list"
+			open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+</where>
+</select>
+
+<insert id="insertExceptionMaster" parameterType="ExceptionMaster" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
+insert into exception_master (exception_data) 
+values (#{exception_data})
+</insert>
+
+<update id="updateExceptionMaster" parameterType="ExceptionMaster">
+update exception_master
+set exception_data = #{exception_data}
+where seq_id = #{seq_id}
+</update>
+
+<delete id="deleteExceptionMaster" parameterType="String">
+delete from exception_master
+where seq_id = #{seq_id}
+</delete>
+
 </mapper>

@@ -91,7 +91,7 @@ $(document).ready(function() {
 <form id="del-frm" action="delFileUpload" method="post" enctype="multipart/form-data" onsubmit="return preCheck('del');" >
 <div id="del-csv" class="file-up col-sm-8">
 <input type="file" id="del-upload" name="delUpload" multiple="multiple" style="display:none">
-<button class="original_btn" style="width: 150px;">中腹受注番号削除</button>
+<button class="original_btn" style="width: 150px;">重複受注番号削除</button>
 <span class="icon">未選択</span>
 </div>
 <div class="col-sm-4">

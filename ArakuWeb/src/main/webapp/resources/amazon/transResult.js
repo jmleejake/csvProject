@@ -170,3 +170,11 @@ $("#btn_sa_down").on("click", function() {
 	console.log("code : " + $("#sa_code").val());
 	 $("#frm_down2").submit();
 });
+
+//あす楽例外 체크박스 클릭시 서버로 보낼 값 세팅
+$("#tomoEx").on("click", function() {
+	$("#chk_ex").val("");
+	if ($("input:checked").length > 0) {
+		$("#chk_ex").val("1");
+	}
+});

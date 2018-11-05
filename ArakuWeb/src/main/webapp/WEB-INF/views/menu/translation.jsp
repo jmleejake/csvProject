@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,7 +12,12 @@ $(document).ready(function() {
 </script>
 </head>
 <body>
+<c:if test="${'R' == type }">
 <jsp:include page="../top.jsp"></jsp:include>
+</c:if>
+<c:if test="${'A' == type }">
+<jsp:include page="../amazonTop.jsp"></jsp:include>
+</c:if>
 <div class="container-fluid">
 <div class="well container-fluid">
 	<form action="getTrans" id="transForm">

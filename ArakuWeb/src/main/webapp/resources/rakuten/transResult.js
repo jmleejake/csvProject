@@ -40,6 +40,14 @@ var columnDefs = [
 	, {headerName: "個数", field: "unit_no", width: 100}
 	, {headerName: "配送会社", field: "delivery_company", width: 80}
 	, {headerName: "登録日付", field: "register_date", width: 100}
+	, {headerName: "あす楽希望", field: "tomorrow_hope", width: 100
+		, cellRenderer: function(params) {
+			if (params.value == 1) {
+				console.log("true in");
+				return '<img src="./../resources/img/fastDelivery.png" alt="logo" style="width:40px; margin-left:10px;">';
+			}
+		}
+	}
 ];
 
 // specify the data
@@ -118,6 +126,7 @@ function setRowData(result) {
 				, result_text:result[i].result_text
 				, err_text:result[i].err_text
 				, delivery_company:result[i].delivery_company
+				, tomorrow_hope:result[i].tomorrow_hope
 		}
 		rowData.push(row);
 	}
@@ -149,4 +158,12 @@ $("#btn_sa_down").on("click", function() {
 	 $("#sa_code").val("1002");
 	console.log("code : " + $("#sa_code").val());
 	 $("#frm_down2").submit();
+});
+
+// あす楽例外 체크박스 클릭시 서버로 보낼 값 세팅
+$("#tomoEx").on("click", function() {
+	$("#chk_ex").val("");
+	if ($("input:checked").length > 0) {
+		$("#chk_ex").val("1");
+	}
 });

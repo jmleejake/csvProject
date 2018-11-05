@@ -2,6 +2,7 @@ package jp.prj.araku.list.mapper;
 
 import java.util.ArrayList;
 
+import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.RakutenSearchVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.TranslationErrorVO;
@@ -22,4 +23,8 @@ public interface IListMapper {
 	public int insertTranslationErr(TranslationErrorVO vo);
 	public String getTranslationErr(TranslationErrorVO vo);
 	public int deleteTranslationErr(TranslationErrorVO vo);
+	public ArrayList<ExceptionMasterVO> getExceptionMaster(ExceptionMasterVO vo);
+	public int insertExceptionMaster(ExceptionMasterVO vo);
+	public int updateExceptionMaster(ExceptionMasterVO vo);
+	public int deleteExceptionMaster(String seq_id);
 }

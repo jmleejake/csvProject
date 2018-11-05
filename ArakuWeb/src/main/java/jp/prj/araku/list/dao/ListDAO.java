@@ -1,9 +1,6 @@
 package jp.prj.araku.list.dao;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
@@ -12,9 +9,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import jp.prj.araku.list.mapper.IListMapper;
+import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.RakutenSearchVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
-import jp.prj.araku.list.vo.TranslationErrorVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
 import jp.prj.araku.util.CommonUtil;
@@ -115,5 +112,47 @@ public class ListDAO {
 		vo.setSeq_id_list(idList);
 		
 		return mapper.getRegionMaster(vo);
+	}
+	
+	public ArrayList<ExceptionMasterVO> getExceptionMaster(ExceptionMasterVO vo) {
+		log.info("getExceptionMaster");
+		log.debug(vo);
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		return mapper.getExceptionMaster(vo);
+	}
+	
+	public ArrayList<ExceptionMasterVO> registerExceptionMaster(ArrayList<ExceptionMasterVO> list) {
+		log.info("registerExceptionMaster");
+		log.debug(list);
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		
+		ArrayList<String> seq_id_list = new ArrayList<>();
+		for (ExceptionMasterVO vo : list) {
+			if (vo.getSeq_id() != null) {
+				mapper.updateExceptionMaster(vo);
+				seq_id_list.add(vo.getSeq_id());
+				log.debug(String.format("updated seq_id: %s", vo.getSeq_id()));
+			} else {
+				mapper.insertExceptionMaster(vo);
+				seq_id_list.add(vo.getSeq_id());
+				log.debug(String.format("inserted seq_id: %s", vo.getSeq_id()));
+			}
+		}
+		ExceptionMasterVO exVO = new  ExceptionMasterVO();
+		exVO.setSeq_id_list(seq_id_list);
+		
+		return mapper.getExceptionMaster(exVO);
+	}
+	
+	public ArrayList<ExceptionMasterVO> deleteExceptionMaster(ArrayList<ExceptionMasterVO> list) {
+		log.info("deleteExceptionMaster");
+		log.debug(list);
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		
+		for (ExceptionMasterVO vo : list) {
+			mapper.deleteExceptionMaster(vo.getSeq_id());
+		}
+		
+		return mapper.getExceptionMaster(null);
 	}
 }

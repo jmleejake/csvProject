@@ -33,6 +33,7 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import jp.prj.araku.file.vo.SagawaVO;
 import jp.prj.araku.file.vo.YamatoVO;
 import jp.prj.araku.list.mapper.IListMapper;
+import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.TranslationErrorVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
@@ -424,7 +425,8 @@ public class RakutenDAO {
 			HttpServletResponse response
 			, String[] id_lst
 			, String fileEncoding
-			, String delivery_company) 
+			, String delivery_company
+			, String isChecked) 
 			throws IOException
 			, CsvDataTypeMismatchException
 			, CsvRequiredFieldEmptyException {
@@ -433,6 +435,7 @@ public class RakutenDAO {
 		log.debug("encoding : " + fileEncoding);
 		
 		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
+		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
 		BufferedWriter writer = null;
 		CSVWriter csvWriter = null;
 		
@@ -569,6 +572,26 @@ public class RakutenDAO {
 			ArrayList<ArakuVO> yList = new ArrayList<>();
 			
 			for (RakutenVO tmp : list) {
+				// 빠른배송을 옵션으로 둔 항목에 대하여 체크가 되어있으면 제외
+				if ("1".equals(isChecked)) {
+					if ("1".equals(tmp.getTomorrow_hope())) {
+						log.debug("tomorrow hope checked and excepted!");
+						continue;
+					}
+				}
+				
+				// 예외테이블에 추가한 목록에 대하여 야마토에서 제외
+				ArrayList<ExceptionMasterVO> exList = listMapper.getExceptionMaster(null);
+				boolean chkRet = false;
+				for (ExceptionMasterVO exVO : exList) {
+					if (tmp.getResult_text().contains(exVO.getException_data())) {
+						log.debug(String.format("exception_data: %s - result_txt: %s", exVO.getException_data(), tmp.getResult_text()));
+						chkRet = true;
+					}
+				}
+				if (chkRet) {
+					continue;
+				}
 				YamatoVO yVO = new YamatoVO();
 				yVO.setCustomer_no(tmp.getOrder_no().replace("\"", ""));
 				yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_0);
@@ -629,6 +652,7 @@ public class RakutenDAO {
 		log.debug("encoding : " + fileEncoding);
 		
 		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
+		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
 		BufferedWriter writer = null;
 		CSVWriter csvWriter = null;
 		
@@ -710,6 +734,30 @@ public class RakutenDAO {
 			vo.setDelivery_company(delivery_company);
 			
 			ArrayList<RakutenVO> list = mapper.getTransResult(vo);
+			
+			// 예외테이블에 있는 목록은 사가와로
+			vo = new TranslationResultVO();
+			vo.setSeq_id_list(seq_id_list);
+			ArrayList<RakutenVO> list2 = mapper.getTransResult(vo);
+			ArrayList<ExceptionMasterVO> exList = listMapper.getExceptionMaster(null);
+			boolean chkRet = false;
+			
+			for (RakutenVO tmp : list2) {
+				chkRet = false;
+				for (ExceptionMasterVO exVO : exList) {
+					if (tmp.getResult_text().contains(exVO.getException_data())) {
+						chkRet = true;
+						// 예외테이블에 있는 목록중 배송코드가 같지 않은것만 리스트에 추가
+						if (!tmp.getDelivery_company().equals(delivery_company)) {
+							list.add(tmp);
+						}
+					}
+					if (chkRet) {
+						break;
+					}
+				}
+			}
+			
 			ArrayList<ArakuVO> sList = new ArrayList<>();
 			
 			for (RakutenVO tmp : list) {
@@ -1000,7 +1048,7 @@ public class RakutenDAO {
 		log.info("checkRakutenInfo");
 		
 		/**
-		 * 한사람이 中腹受注番号로 여러 주문을 했을때 에러파일로 처리한 부분의 受注番号를 데이터상에서 삭제처리
+		 * 한사람이 重複受注番号로 여러 주문을 했을때 에러파일로 처리한 부분의 受注番号를 데이터상에서 삭제처리
 		 * */
 		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
 		

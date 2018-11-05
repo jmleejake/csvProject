@@ -23,9 +23,11 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import jp.prj.araku.amazon.dao.AmazonDAO;
 import jp.prj.araku.amazon.vo.AmazonVO;
 import jp.prj.araku.list.dao.ListDAO;
+import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
+import jp.prj.araku.util.CommonUtil;
 
 @RequestMapping(value="amazon")
 @Controller
@@ -54,15 +56,17 @@ public class AmazonController {
 	}
 	
 	@RequestMapping(value="/translationView")
-	public String translationView() {
+	public String translationView(Model model) {
 		log.info("Welcome to amazon translation view");
-		return "amazon/translation";
+		model.addAttribute("type", CommonUtil.TRANS_TARGET_A);
+		return "menu/translation";
 	}
 	
 	@RequestMapping(value = "/regionView")
-	public String regionView() {
+	public String regionView(Model model) {
 		log.info("Welcome to amazon region master view");
-		return "amazon/regionMaster";
+		model.addAttribute("type", CommonUtil.TRANS_TARGET_A);
+		return "menu/regionMaster";
 	}
 	
 	@RequestMapping(value = "/resultView", method=RequestMethod.POST)
@@ -153,17 +157,19 @@ public class AmazonController {
 	public void processYamatoDownload(
 			HttpServletResponse response
 			, @RequestParam(value="id_lst") String id_lst
-			, @RequestParam(value="company") String delivery_company) {
+			, @RequestParam(value="company") String delivery_company
+			, @RequestParam(value="isChecked") String chk_ex) {
 		log.info("processYamatoDownload");
 		
 		log.debug("id list : " + id_lst);
 		log.debug("delivery company : " + delivery_company);
+		log.debug("isChecked : " + chk_ex);
 		
 		id_lst = id_lst.replace("[", "");
 		id_lst = id_lst.replace("]", "");
 		String[] seq_id_list = id_lst.split(",");
 		try {
-				dao.yamatoFormatDownload(response, seq_id_list, fileEncoding, delivery_company);
+				dao.yamatoFormatDownload(response, seq_id_list, fileEncoding, delivery_company, chk_ex);
 		} catch (IOException e) {
 			log.error(e.toString());
 		} catch (CsvDataTypeMismatchException e) {
@@ -201,5 +207,26 @@ public class AmazonController {
 	public void modTransResult(TranslationResultVO vo) {
 		log.info("modTransResult");
 		listDao.modTransResult(vo);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/showExceptionMaster")
+	public ArrayList<ExceptionMasterVO> showExceptionMaster(ExceptionMasterVO vo) {
+		log.info("showExceptionMaster");
+		return listDao.getExceptionMaster(vo);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/modExceptionMaster")
+	public ArrayList<ExceptionMasterVO> processExceptionMaster(@RequestBody ArrayList<ExceptionMasterVO> list) {
+		log.info("processExceptionMaster");
+		return listDao.registerExceptionMaster(list);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/delExceptionMaster")
+	public ArrayList<ExceptionMasterVO> deleteExceptionMaster(@RequestBody ArrayList<ExceptionMasterVO> list) {
+		log.info("deleteExceptionMaster");
+		return listDao.deleteExceptionMaster(list);
 	}
 }

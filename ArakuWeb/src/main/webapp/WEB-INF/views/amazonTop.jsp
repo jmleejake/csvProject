@@ -62,7 +62,7 @@ $(document).ready(function() {
 				<a class="nav-link" href="translationView">商品名置換</a>
 				</li>
 				<li id="region" class="nav-item">
-				<a class="nav-link" href="regionView">地域区分マスタ</a>
+				<a class="nav-link" href="regionView">マスタ管理</a>
 				</li>
 			</ul>
 		</div>

@@ -298,7 +298,7 @@ create table rakuten_info (
 	, delivery_tel1 varchar(4) /*送付先電話番号1*/
 	, delivery_tel2 varchar(4) /*送付先電話番号2*/
 	, delivery_tel3 varchar(4) /*送付先電話番号3*/
-	, product_detail_id varchar(10) /*商品明細ID*/
+	, product_detail_id varchar(20) /*商品明細ID*/
 	, product_id varchar(8) /*商品ID*/
 	, product_name varchar(1500) /*商品名*/
 	, product_no varchar(30) /*商品番号*/
@@ -495,451 +495,18 @@ create table translation_err (
 ) default charset = utf8;
 
 
-
-/*YAMATO情報*/
-drop table yamato_info;
-create table yamato_info (
-seq_id bigint unsigned primary key  auto_increment /*区分ID*/
-, register_date datetime default now() /*データ登録日*/
-, customer_no varchar(50) /*お客様管理番号
-半角英数字50文字*/
-, invoice_type varchar(1) /*送り状種類
-半角数字1文字
- 0 : 発払い
- 2 : コレクト
- 3 : ＤＭ便
- 4 : タイム ※新規追加
- 5 : 着払い ※新規追加
- 7 : ネコポス
- 8 : 宅急便コンパクト
- 9 : 宅急便コンパクトコレクト
-
-(※宅急便_必須項目)
-(※ＤＭ便_必須項目)
-(※ネコポス_必須項目)
-*/
-, cool_type varchar(1) /*クール区分
-半角数字1文字
-0または空白 : 通常
- 1 : クール冷凍
- 2 : クール冷蔵*/
-, slip_no varchar(12) /*伝票番号
-半角数字12文字
-
-※B2クラウドにて付与*/
-, estimate_ship_date varchar(10) /*出荷予定日
-半角10文字
-｢YYYY/MM/DD｣で入力してください。
-
-(※宅急便_必須項目)
-(※ＤＭ便_必須項目)
-(※ネコポス_必須項目)
-
-
-出荷予定日は本日～30日後までの範囲で指定して下さい。*/
-, estimate_delivery_date varchar(10) /*お届け予定日
-半角10文字
-｢YYYY/MM/DD｣で入力してください。
-
-※入力なしの場合、印字されません。
-※「最短日」と入力可*/
-, delivery_time varchar(4) /*配達時間帯
-半角4文字
-タイム、ＤＭ便以外
- 空白 : 指定なし
- 0812 : 午前中
- 1416 : 14～16時
- 1618 : 16～18時
- 1820 : 18～20時
- 1921 : 19～21時
-
-タイム
- 0010 : 午前10時まで
- 0017 : 午後5時まで*/
-, delivery_code varchar(20) /*お届け先コード
-半角英数字20文字*/
-, delivery_tel varchar(15) /*お届け先電話番号
-半角数字15文字ハイフン含む
-
-(※宅急便_必須項目)
-(※ＤＭ便_必須項目)
-(※ネコポス_必須項目)*/
-, delivery_tel_branch varchar(2) /*お届け先電話番号枝番
-半角数字2文字*/
-, delivery_post_no varchar(8) /*お届け先郵便番号
-半角数字8文字
-ハイフンなし7文字も可
-
-(※宅急便_必須項目)
-(※ＤＭ便_必須項目)
-(※ネコポス_必須項目)*/
-, delivery_add varchar(64) /*お届け先住所
-全角/半角
-都道府県（４文字）
-市区郡町村（１２文字）
-町・番地（１６文字）
-
-(※宅急便_必須項目)
-(※ＤＭ便_必須項目)
-(※ネコポス_必須項目)*/
-, delivery_building varchar(32) /*お届け先アパートマンション名
-全角/半角 
-16文字/32文字 */
-, delivery_company1 varchar(50) /*お届け先会社・部門１
-全角/半角
-25文字/50文字 */
-, delivery_company2 varchar(50) /*お届け先会社・部門２
-全角/半角 
-25文字/50文字 */
-, delivery_name varchar(32) /*お届け先名
-全角/半角
-16文字/32文字 
-
-(※宅急便_必須項目)
-(※ＤＭ便_必須項目)
-(※ネコポス_必須項目)*/
-, delivery_name_kana varchar(50) /*お届け先名(ｶﾅ)
-半角カタカナ 50文字 */
-, delivery_name_title varchar(4) /*敬称
-全角/半角 2文字/4文字
-ＤＭ便の場合に指定可能
-【入力例】
-様・御中・殿・行・係・宛・先生・なし*/
-, client_code varchar(20) /*ご依頼主コード
-半角英数字 20文字 */
-, client_tel varchar(15) /*ご依頼主電話番号
-半角数字15文字ハイフン含む
-
-(※宅急便_必須項目)
-(※ネコポス_必須項目)*/
-, client_tel_branch varchar(2) /*ご依頼主電話番号枝番
-半角数字 2文字 */
-, client_post_no varchar(8) /*ご依頼主郵便番号
-半角数字8文字
-ハイフンなし半角7文字も可 
-
-(※宅急便_必須項目)
-(※ネコポス_必須項目)*/
-, client_add varchar(64) /*ご依頼主住所
-全角/半角32文字/64文字
-都道府県（４文字）
-市区郡町村（１２文字）
-町・番地（１６文字）
-
-(※宅急便_必須項目)
-(※ネコポス_必須項目)*/
-, client_building varchar(32) /*ご依頼主アパートマンション
-全角/半角 16文字/32文字 */
-, client_name varchar(32) /*ご依頼主名
-全角/半角 16文字/32文字 
-
-(※宅急便_必須項目)
-(※ネコポス_必須項目)*/
-, client_name_kana varchar(50) /*ご依頼主名(ｶﾅ)
-半角カタカナ 50文字*/
-, product_code1 varchar(30) /*品名コード１
-半角英数字 30文字 */
-, product_name1 varchar(50) /*品名１
-全角/半角 25文字/50文字 
-
-(※宅急便_必須項目)
-(※ネコポス_必須項目)*/
-, product_code2 varchar(30) /*品名コード２
-半角英数字 30文字*/
-, product_name2 varchar(50) /*品名２
-全角/半角 25文字/50文字 */
-, product_handle1 varchar(20) /*荷扱い１
-全角/半角 10文字/20文字 
-
-
-
-精密機器
-ワレ物注意
-下積厳禁
-天地無用
-ナマモノ*/
-, product_handle2 varchar(20) /*荷扱い２
-全角/半角 10文字/20文字 
-
-
-
-精密機器
-ワレ物注意
-下積厳禁
-天地無用
-ナマモノ*/
-, comment varchar(44) /*記事
-全角/半角 22文字/44文字 */
-, collect_cash varchar(7) /*ｺﾚｸﾄ代金引換額（税込)
-半角数字 7文字
-
-※コレクトの場合は必須
-300,000円以下　1円以上
-※但し、宅急便コンパクトコレクトの場合は
-30,000円以下　　1円以上*/
-, interval_consume_tax varchar(7) /*内消費税額等
-半角数字 7文字
-
-※コレクトの場合は必須 
-※コレクト代金引換額（税込)以下*/
-, stop_and_leave varchar(1) /*止置き
-半角数字 1文字
-0 : 利用しない
-1 : 利用する */
-, office_code varchar(6) /*営業所コード
-半角数字 6文字
-
-※止置きを利用する場合は必須 */
-, issued_no varchar(2) /*発行枚数
-半角数字 2文字
-
-※発払いのみ指定可能*/
-, show_no_flag varchar(1) /*個数口表示フラグ
-半角数字 1文字
-1 : 印字する
-2 : 印字しない 
-3 : 枠と口数を印字する
-
-※宅急便コンパクト、宅急便コンパクトコレクトは対象外*/
-, bill_customer_code varchar(12) /*請求先顧客コード
-半角数字12文字
-
-(※宅急便_必須項目)
-(※ネコポス_必須項目)*/
-, bill_class_code varchar(3) /*請求先分類コード
-空白または半角数字3文字
-*/
-, fare_manage_no varchar(2) /*運賃管理番号
-半角数字2文字
-
-(※宅急便_必須項目)
-(※ネコポス_必須項目)*/
-, kuroneko_collect_register varchar(1) /*クロネコwebコレクトデータ登録
-半角数字 1文字
-0 : 無し
-1 : 有り */
-, kuroneko_collect_member_no varchar(9) /*クロネコwebコレクト加盟店番号
-半角英数字 9文字 
-
-※クロネコwebコレクトデータ有りの場合は必須 */
-, kuroneko_collect_apply_no1 varchar(23) /*クロネコwebコレクト申込受付番号１
-半角英数字 23文字
-
-※クロネコwebコレクトデータ有りの場合は必須 */
-, kuroneko_collect_apply_no2 varchar(23) /*クロネコwebコレクト申込受付番号２
-半角英数字 23文字*/
-, kuroneko_collect_apply_no3 varchar(23) /*クロネコwebコレクト申込受付番号３
-半角英数字 23文字*/
-, email_status_usage varchar(1) /*お届け予定ｅメール利用区分
-半角数字 1文字
-0 : 利用しない
-1 : 利用する */
-, email_status_add varchar(60) /*お届け予定ｅメールe-mailアドレス
-半角英数字＆記号 60文字
-
-※お届け予定eメールを利用する場合は必須 */
-, input_type varchar(1) /*入力機種
-半角数字 1文字
-1 : ＰＣ
-2 : 携帯電話
-
-※お届け予定eメールを利用する場合は必須*/
-, email_status_msg varchar(74) /*お届け予定ｅメールメッセージ
-全角 74文字
-
-
-※お届け予定eメールを利用する場合は必須*/
-, email_complete_usage varchar(1) /*お届け完了ｅメール利用区分
-半角数字 1文字
-0 : 利用しない
-1 : 利用する */
-, email_complete_add varchar(60) /*お届け完了ｅメールe-mailアドレス
-半角英数字 60文字
-
-※お届け完了eメールを利用する場合は必須 */
-, email_complete_msg varchar(159) /*お届け完了ｅメールメッセージ
-全角 159文字 
-
-※お届け完了eメールを利用する場合は必須 */
-, kuroneko_substitute_usage varchar(1) /*クロネコ収納代行利用区分
-半角数字１文字*/
-, reserved_cal1 varchar(1) /*予備
-半角数字１文字*/
-, substitute_amount varchar(7) /*収納代行請求金額(税込)
-半角数字７文字*/
-, substitute_tax varchar(7) /*収納代行内消費税額等
-半角数字７文字*/
-, substitute_bill_post_no varchar(8) /*収納代行請求先郵便番号
-半角数字＆ハイフン8文字*/
-, substitute_bill_add varchar(64) /*収納代行請求先住所
-全角/半角　32文字/64文字
-都道府県（４文字）
-市区郡町村（１２文字）
-町・番地（１６文字）*/
-, substitute_bill_building varchar(32) /*収納代行請求先住所（アパートマンション名）
-全角/半角　16文字/32文字*/
-, substitute_bill_company1 varchar(50) /*収納代行請求先会社・部門名１
-全角/半角　25文字/50文字*/
-, substitute_bill_company2 varchar(50) /*収納代行請求先会社・部門名２
-全角/半角　25文字/50文字*/
-, substitute_bill_name varchar(32) /*収納代行請求先名(漢字)
-全角/半角　16文字/32文字*/
-, substitute_bill_name_kana varchar(50) /*収納代行請求先名(カナ)
-半角カタカナ50文字*/
-, substitute_contact_name varchar(32) /*収納代行問合せ先名(漢字)
-全角/半角　16文字/32文字*/
-, substitute_contact_post_no varchar(8) /*収納代行問合せ先郵便番号
-半角数字＆ハイフン8文字*/
-, substitute_contact_add varchar(64) /*収納代行問合せ先住所
-全角/半角　32文字/64文字
-都道府県（４文字）
-市区郡町村（１２文字）
-町・番地（１６文字）*/
-, substitute_contact_building varchar(32) /*収納代行問合せ先住所（アパートマンション名）
-全角/半角　16文字/32文字*/
-, substitute_contact_tel varchar(15) /*収納代行問合せ先電話番号
-半角数字＆ハイフン15文字*/
-, substitute_manage_no varchar(20) /*収納代行管理番号
-半角英数字20文字*/
-, substitute_product_name varchar(50) /*収納代行品名
-全角/半角　25文字/50文字*/
-, substitute_note varchar(28) /*収納代行備考
-全角/半角　14文字/28文字*/
-, multiple_key varchar(20) /*複数口くくりキー
-半角英数字20文字
-
-※「出荷予定個数」が2以上で「個数口枠の印字」で 「3 : 枠と口数を印字する」を選択し、且つ「複数口くくりキー」が空白の場合は、送り状発行時に「B2」という文言を自動補完する。
-
-出荷予定個数:1*/
-, search_key_title1 varchar(20) /*検索キータイトル1
-全角/半角 
-10文字/20文字 */
-, search_key1 varchar(20) /*検索キー1
-半角英数字
-20文字*/
-, search_key_title2 varchar(20) /*検索キータイトル2
-全角/半角 
-10文字/20文字 */
-, search_key2 varchar(20) /*検索キー2
-半角英数字
-20文字*/
-, search_key_title3 varchar(20) /*検索キータイトル3
-全角/半角 
-10文字/20文字 */
-, search_key3 varchar(20) /*検索キー3
-半角英数字
-20文字*/
-, search_key_title4 varchar(20) /*検索キータイトル4
-全角/半角 
-10文字/20文字 */
-, search_key4 varchar(20) /*検索キー4
-半角英数字
-20文字*/
-, search_key_title5 varchar(20) /*検索キータイトル5
-
-※入力時は不要。出力時に自動反映。
-※「ユーザーID」という文言を送り状発行時に固定で自動補完する。*/
-, search_key5 varchar(20) /*検索キー5
-
-※入力時は不要。出力時に自動反映。
-※送り状発行時のユーザーIDを固定で自動補完する。*/
-, reserved_cal2 varchar(50) /*予備*/
-, reserved_cal3 varchar(50) /*予備*/
-, posting_status_mail_usage varchar(1) /*投函予定メール利用区分
-半角数字
-1文字
-0 : 利用しない
-1 : 利用する PC宛て
-2 : 利用する モバイル宛て*/
-, posting_status_mail_add varchar(60) /*投函予定メールe-mailアドレス
-半角英数字＆記号
-60文字*/
-, posting_status_mail_msg varchar(148) /*投函予定メールメッセージ
-全角/半角
-74文字/148文字
-
-※半角カタカナ及び半角スペースは使えません。*/
-, posting_delivery_complete_mail_usage varchar(1) /*投函完了メール（お届け先宛）利用区分
-半角数字
-1文字
-0 : 利用しない
-1 : 利用する PC宛て
-2 : 利用する モバイル宛て*/
-, posting_delivery_complete_mail_add varchar(60) /*投函完了メール（お届け先宛）e-mailアドレス
-半角英数字＆記号
-60文字*/
-, posting_delivery_complete_mail_msg varchar(318) /*投函完了メール（お届け先宛）メールメッセージ
-全角/半角
-159文字/318文字
-
-※半角カタカナ及び半角スペースは使えません。*/
-, posting_client_complete_mail_usage varchar(1) /*投函完了メール（ご依頼主宛）利用区分
-半角数字
-1文字
-0 : 利用しない
-1 : 利用する PC宛て
-2 : 利用する モバイル宛て*/
-, posting_client_complete_mail_add varchar(60) /*投函完了メール（ご依頼主宛）e-mailアドレス
-半角英数字＆記号
-60文字*/
-, posting_client_complete_mail_msg varchar(318) /*投函完了メール（ご依頼主宛）メールメッセージ
-全角/半角
-159文字/318文字
-
-※半角カタカナ及び半角スペースは使えません。*/
+/*例外データマスタ*/
+drop table exception_master;
+create table exception_master (
+	seq_id bigint unsigned primary key  auto_increment /*区分ID*/
+	, register_date datetime default now() /*データ登録日*/
+	, exception_data varchar(20) /*例外データ*/
 ) default charset = utf8;
 
-
-
-
-/*SAGAWA情報*/
-drop table sagawa_info;
-create table sagawa_info (
-seq_id bigint unsigned primary key  auto_increment /*区分ID*/
-, register_date datetime default now() /*データ登録日*/
-, add_book_code varchar(12) /*住所録コード*/
-, delivery_tel varchar(14) /*お届け先電話番号*/
-, delivery_post_no varchar(8) /*お届け先郵便番号*/
-, delivery_add1 varchar(16) /*お届け先住所１（必須）*/
-, delivery_add2 varchar(16) /*お届け先住所２*/
-, delivery_add3 varchar(16) /*お届け先住所３*/
-, delivery_name1 varchar(16) /*お届け先名称１（必須）*/
-, delivery_name2 varchar(16) /*お届け先名称２*/
-, client_manage_no varchar(16) /*お客様管理ナンバー*/
-, client_code varchar(12) /*お客様コード*/
-, transport_dept_charge varchar(16) /*部署・担当者*/
-, transport_tel varchar(14) /*荷送人電話番号*/
-, client_tel varchar(14) /*ご依頼主電話番号*/
-, client_post_no varchar(8) /*ご依頼主郵便番号*/
-, client_add1 varchar(16) /*ご依頼主住所１*/
-, client_add2 varchar(16) /*ご依頼主住所２*/
-, client_name1 varchar(16) /*ご依頼主名称１*/
-, client_name2 varchar(16) /*ご依頼主名称２*/
-, transport_code varchar(3) /*荷姿コード*/
-, product_name1 varchar(32) /*品名１*/
-, product_name2 varchar(32) /*品名２*/
-, product_name3 varchar(32) /*品名３*/
-, product_name4 varchar(32) /*品名４*/
-, product_name5 varchar(32) /*品名５*/
-, delivery_cnt varchar(3) /*出荷個数*/
-, speed_type varchar(3) /*便種（スピードで選択）*/
-, product_type varchar(3) /*便種（商品）*/
-, delivery_date varchar(8) /*配達日*/
-, delivery_time varchar(2) /*配達指定時間帯*/
-, delivery_time_detail varchar(4) /*配達指定時間（時分）*/
-, total_amt varchar(7) /*代引金額*/
-, consume_tax varchar(6) /*消費税*/
-, payment_method varchar(1) /*決済種別*/
-, insurance_amt varchar(8) /*保険金額*/
-, insurance_status varchar(1) /*保険金額印字*/
-, select_seal1 varchar(3) /*指定シール①*/
-, select_seal2 varchar(3) /*指定シール②*/
-, select_seal3 varchar(3) /*指定シール③*/
-, store_stop varchar(1) /*営業店止め*/
-, src_type varchar(1) /*ＳＲＣ区分*/
-, store_code varchar(4) /*営業店コード*/
-, origin_type varchar(1) /*元着区分*/
-) default charset = utf8;
+insert into exception_master (exception_data)
+values 
+('aaa')
+, ('bbb');
 
 
 
@@ -956,14 +523,6 @@ seq_id bigint unsigned primary key  auto_increment /*区分ID*/
 
 
 
-update rakuten_info
-/*
-set register_date = adddate(now(), -3)
-*/
-set register_date = now()
-
-update translation_info
-set register_date = now()
 
 
 select after_trans
@@ -983,28 +542,20 @@ from
 
 
 select 
-	seq_id
-	, order_no
-	, order_status
-	, delivery_date_sel
-	, total_amt
-	, baggage_claim_no
-	, delivery_surname
-	, delivery_name
-	, delivery_surname_kana
-	, delivery_name_kana
-	, delivery_tel1
-	, delivery_tel2
-	, delivery_tel3
+	seq_id, order_no, order_status, delivery_date_sel
+	, total_amt, baggage_claim_no, delivery_surname, delivery_name
+	, delivery_surname_kana, delivery_name_kana
+	, delivery_tel1, delivery_tel2, delivery_tel3
 	, product_name
 	, product_option
 	, unit_no
 	, tomorrow_hope
 	, date_format(register_date, '%Y/%m/%d') register_date
+	, delivery_add1
 from
 	rakuten_info
 where
-	register_date between str_to_date('2018/08/09 00:00:00', '%Y/%m/%d %H:%i:%s') and now()
+	register_date between str_to_date('2018/10/11 00:00:00', '%Y/%m/%d %H:%i:%s') and now()
 	
 	
 select
@@ -1024,14 +575,18 @@ inner join rakuten_info ri on ri.seq_id = tr.trans_target_id
 
 /*라쿠텐 데이터 등록일 최신화*/
 update rakuten_info
-set register_date = now()
+set register_date = now();
 
+
+/*치환테이블 등록일 최신화*/
+update translation_info
+set register_date = now();
 
 
 
 /*아마존 데이터 등록일 최신화*/
 update amazon_info
-set register_date = now()
+set register_date = now();
 
 
 
@@ -1106,13 +661,13 @@ order by ri.seq_id asc
 
 
 
-select tr.seq_id , date_format(tr.register_date, '%Y/%m/%d') register_date , err_text 
+select tr.seq_id , delivery_company, date_format(tr.register_date, '%Y/%m/%d') register_date , err_text 
 , result_text , order_no , product_name , product_option , unit_no 
-, delivery_surname , delivery_name , delivery_company 
+, delivery_surname , delivery_name 
 from translation_result tr 
 inner join rakuten_info ri on ri.seq_id = tr.trans_target_id and tr.trans_target_type = 'R' 
 left outer join translation_err terr on terr.trans_target_id = ri.seq_id and terr.trans_target_type = 'R' 
-WHERE tr.seq_id in ( 1 , 2 , 9 , 10 ) 
+WHERE tr.seq_id in (1,2,3,4,5,6,7) 
 
 /*
  * 새로운 라쿠텐 테이블을 생성하였으므로
@@ -1127,3 +682,21 @@ where trans_target_type = 'R'
 delete
 from translation_err
 where trans_target_type = 'R'
+
+/*
+ * 181103 
+ * 예외데이터등록 마스터
+ * */
+select * from exception_master
+
+/*
+ * 181105
+ * 예외데이터 테스트용 데이터
+ * */
+update rakuten_info
+set delivery_add1 = '石川県'
+where seq_id in (5,2,7,4);
+
+update rakuten_info
+set delivery_add1 = '東京都'
+where seq_id in (6,1,3);
