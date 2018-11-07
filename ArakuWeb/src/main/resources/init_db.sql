@@ -572,26 +572,6 @@ from
 inner join rakuten_info ri on ri.seq_id = tr.trans_target_id
 
 
-
-/*라쿠텐 데이터 등록일 최신화*/
-update rakuten_info
-set register_date = now();
-
-
-/*치환테이블 등록일 최신화*/
-update translation_info
-set register_date = now();
-
-
-
-/*아마존 데이터 등록일 최신화*/
-update amazon_info
-set register_date = now();
-
-
-
-
-
 select tr.seq_id , date_format(tr.register_date, '%Y/%m/%d') register_date 
 , result_text , order_no , product_name , product_option 
 , unit_no , delivery_surname , delivery_name , delivery_company 
@@ -683,11 +663,26 @@ delete
 from translation_err
 where trans_target_type = 'R'
 
+
+/*라쿠텐 데이터 등록일 최신화*/
+update rakuten_info
+set register_date = now();
+
+/*치환테이블 등록일 최신화*/
+update translation_info
+set register_date = now();
+
+/*아마존 데이터 등록일 최신화*/
+update amazon_info
+set register_date = now();
+
+
 /*
  * 181103 
  * 예외데이터등록 마스터
  * */
 select * from exception_master
+
 
 /*
  * 181105

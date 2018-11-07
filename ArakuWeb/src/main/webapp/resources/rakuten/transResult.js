@@ -162,8 +162,10 @@ $("#btn_sa_down").on("click", function() {
 
 // あす楽例外 체크박스 클릭시 서버로 보낼 값 세팅
 $("#tomoEx").on("click", function() {
-	$("#chk_ex").val("");
+	$("#sa_chk").val("");
+	$("#ya_chk").val("");
 	if ($("input:checked").length > 0) {
-		$("#chk_ex").val("1");
+		$("#sa_chk").val("1");
+		$("#ya_chk").val("1");
 	}
 });

@@ -8,7 +8,8 @@
 $(document).ready(function() {
 	$("#order").addClass("active");
 	
-	$("#chk_ex").val("");
+	$("#sa_chk").val("");
+	$("#ya_chk").val("");
 	getData();
 });
 </script>
@@ -41,11 +42,12 @@ $(document).ready(function() {
 <form id="frm_down2" action="saDown" method="post">
 <input type="hidden" id="id_lst" name="id_lst" value="${idList }">
 <input type="hidden" id="sa_code" name="company">
+<input type="hidden" id="sa_chk" name="isChecked">
 </form>
 <form id="frm_down1" action="yaDown" method="post">
 <input type="hidden" id="id_lst" name="id_lst" value="${idList }">
 <input type="hidden" id="ya_code" name="company">
-<input type="hidden" id="chk_ex" name="isChecked">
+<input type="hidden" id="ya_chk" name="isChecked">
 </form>
 </body>
 </html>

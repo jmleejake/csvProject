@@ -643,7 +643,8 @@ public class RakutenDAO {
 			HttpServletResponse response
 			, String[] id_lst
 			, String fileEncoding
-			, String delivery_company) 
+			, String delivery_company
+			, String isChecked) 
 			throws IOException
 			, CsvDataTypeMismatchException
 			, CsvRequiredFieldEmptyException {
@@ -752,6 +753,18 @@ public class RakutenDAO {
 							list.add(tmp);
 						}
 					}
+					
+					if ("1".equals(isChecked)) {
+						if ("1".equals(tmp.getTomorrow_hope())) {
+							chkRet = true;
+							// 예외테이블에 있는 목록에 없고, 배송코드가 같지 않은 빠른배송 목록을 리스트에 추가
+							if ((!tmp.getResult_text().contains(exVO.getException_data()))
+									&& (!tmp.getDelivery_company().equals(delivery_company))) {
+								list.add(tmp);
+							}
+						}
+					}
+					
 					if (chkRet) {
 						break;
 					}
