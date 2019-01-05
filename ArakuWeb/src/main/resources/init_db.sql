@@ -408,6 +408,31 @@ create table amazon_info (
 
 
 
+select days_past_promise, 
+quantity_purchased,
+quantity_shipped,
+quantity_to_ship,
+scheduled_delivery_start_date
+from amazon_info
+where days_past_promise = 0
+
+/* alter varchar(2) columns to varchar(10) */
+alter table amazon_info
+CHANGE COLUMN days_past_promise days_past_promise varchar(10);
+
+alter table amazon_info
+CHANGE COLUMN quantity_purchased quantity_purchased varchar(10);
+
+alter table amazon_info
+CHANGE COLUMN quantity_shipped quantity_shipped varchar(10);
+
+alter table amazon_info
+CHANGE COLUMN quantity_to_ship quantity_to_ship varchar(10);
+
+alter table amazon_info
+CHANGE COLUMN scheduled_delivery_start_date scheduled_delivery_start_date varchar(10);
+
+
 /*地域区分コードマスタ*/
 drop table region_master;
 create table region_master (

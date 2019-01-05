@@ -152,7 +152,7 @@ left outer join translation_err terr on terr.trans_target_id = ai.seq_id and ter
 	</otherwise>
 	</choose>
 </where>
-order by ai.seq_id asc
+order by ai.purchase_date asc
 </select>
 
 <select id="getTransResult" resultType="Amazon" parameterType="TransResult">
@@ -214,7 +214,7 @@ left outer join translation_err terr on terr.trans_target_id = ai.seq_id and ter
 	and delivery_company = #{delivery_company}
 	</if>
 </where>
-order by order_id desc
+order by purchase_date asc
 </select>
 
 <delete id="deleteAmazonInfo" parameterType="String">
