@@ -15,6 +15,7 @@
 $(document).ready(function() {
 	$("#home").addClass("active");
 	
+	// 楽天CSV
 	$('#rak-csv').on('click', 'button', function () {
         $('#rak-upload').click();
         return false;
@@ -32,6 +33,25 @@ $(document).ready(function() {
 	    //ファイル名を表示
 	    $('.rak-filename').html('ファイル名：' + file.name);
 	});
+	
+	// CSV一括編集
+	$('#items-csv').on('click', 'button', function () {
+        $('#items-upload').click();
+        return false;
+    });
+	
+	$('#items-upload').on('change', function() {
+	    //選択したファイル情報を取得し変数に格納
+	    var file = $(this).prop('files')[0];
+	    //アイコンを選択中に変更
+	    $('#items-csv').find('.icon').addClass('select').html('選択中');
+	    //未選択→選択の場合（.filenameが存在しない場合）はファイル名表示用の<div>タグを追加
+	    if(!($('.items-filename').length)){
+	        $('#items-csv').append('<div class="items-filename"></div>');
+	    };
+	    //ファイル名を表示
+	    $('.items-filename').html('ファイル名：' + file.name);
+	});
     
 });
 </script>
@@ -46,6 +66,19 @@ $(document).ready(function() {
 <div id="rak-csv" class="file-up col-sm-8">
 <input type="file" id="rak-upload" name="rakUpload" multiple="multiple" style="display:none">
 <button class="original_btn">楽天CSV</button>
+<span class="icon">未選択</span>
+</div>
+<div class="col-sm-4">
+<input type="submit" class="original_btn" value="アップロード">
+</div>
+</form>
+</div>
+
+<div class="well container-fluid">
+<form id="items-frm" action="itemsUpload" method="post" enctype="multipart/form-data" onsubmit="return preCheck('items');" >
+<div id="items-csv" class="file-up col-sm-8">
+<input type="file" id="items-upload" name="itemsUpload" multiple="multiple" style="display:none">
+<button class="original_btn">CSV一括編集</button>
 <span class="icon">未選択</span>
 </div>
 <div class="col-sm-4">

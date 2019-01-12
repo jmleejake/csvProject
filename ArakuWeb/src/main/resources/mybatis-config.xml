@@ -14,11 +14,13 @@
 		<typeAlias type="jp.prj.araku.list.vo.TranslationErrorVO" alias="TransErr"/>
 		<typeAlias type="jp.prj.araku.rakuten.vo.RakutenVO" alias="Rakuten"/>
 		<typeAlias type="jp.prj.araku.list.vo.ExceptionMasterVO" alias="ExceptionMaster" />
+		<typeAlias type="jp.prj.araku.batch.vo.ItemOutputVO" alias="ItemOut" />
 	</typeAliases>
 	<mappers>
 		<mapper resource="jp/prj/araku/file/mapper/FileMapper.xml" />
 		<mapper resource="jp/prj/araku/list/mapper/ListMapper.xml" />
 		<mapper resource="jp/prj/araku/amazon/mapper/AmazonMapper.xml" />
 		<mapper resource="jp/prj/araku/rakuten/mapper/RakutenMapper.xml" />
+		<mapper resource="jp/prj/araku/batch/mapper/BatchItemsMapper.xml" />
 	</mappers>
 </configuration>

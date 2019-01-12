@@ -58,6 +58,9 @@ $(document).ready(function() {
 				<li id="order" class="nav-item">
 				<a class="nav-link" href="orderView">注文情報</a>
 				</li>
+				<li id="items" class="nav-item">
+				<a class="nav-link" href="itemsView">一括編集情報</a>
+				</li>
 				<li id="trans" class="nav-item">
 				<a class="nav-link" href="translationView">商品名置換</a>
 				</li>

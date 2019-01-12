@@ -29,14 +29,18 @@
 /* ファイル名 */
 .rak-filename {
     display: inline-block;
-    font-size: 12px;
+    font-size: 14px;
 }
 .ama-filename {
     display: inline-block;
-    font-size: 12px;
+    font-size: 14px;
 }
 .yu-filename {
     display: inline-block;
-    font-size: 12px;
+    font-size: 14px;
+}
+.items-filename {
+    display: inline-block;
+    font-size: 14px;
 }
 

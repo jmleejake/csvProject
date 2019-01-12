@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.prj.araku.batch.mapper.IBatchItemsMapper">
+
+<insert id="insertItemsInfo" parameterType="ItemOut" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
+insert into items_info (
+ctrl_col
+, item_url
+, item_num
+, directory_id
+, tag_id
+, pc_catch_cp
+, mobile_catch_cp
+, item_name
+, sell_price
+, display_price
+, consume_tax
+, shipping_cost
+, individual_shipping_cost
+, shipping_category1
+, shipping_category2
+, commission_fee
+, select_warehouse
+, item_info_layout
+, order_btn
+, material_req_btn
+, item_inquiry_btn
+, notice_btn
+, nosi_resp
+, desc_pc_item
+, desc_phone_item
+, desc_pc_sales
+, item_image_url
+, item_image_name
+, video_name
+, select_sales_period
+, order_num
+, inven_type
+, inven_num
+, inven_num_view
+, item_horizon_name
+, item_vertical_name
+, item_inven_view
+, search_type
+, pw_black_market
+, catalog_id
+, back_stock_flag
+, out_stock_order
+, in_stock_delivery_num
+, out_stock_delivery_num
+, reserved_item_date
+, percent_point_var
+, period_point_apply
+, header_footer_leftnavi
+, order_display_item
+, desc_common_small
+, item_eye_catch
+, desc_common_big
+, display_review
+, manage_num_tomorrow_delivery
+, manage_num_oversea_delivery
+, link_size_tbl
+, manage_num_dbl_price
+, reason_no_catalog_id
+, manage_num_shipping_method
+, white_bg_image_url
+, display_maker_info )
+values (
+#{ctrl_col}
+, #{item_url}
+, #{item_num}
+, #{directory_id}
+, #{tag_id}
+, #{pc_catch_cp}
+, #{mobile_catch_cp}
+, #{item_name}
+, #{sell_price}
+, #{display_price}
+, #{consume_tax}
+, #{shipping_cost}
+, #{individual_shipping_cost}
+, #{shipping_category1}
+, #{shipping_category2}
+, #{commission_fee}
+, #{select_warehouse}
+, #{item_info_layout}
+, #{order_btn}
+, #{material_req_btn}
+, #{item_inquiry_btn}
+, #{notice_btn}
+, #{nosi_resp}
+, #{desc_pc_item}
+, #{desc_phone_item}
+, #{desc_pc_sales}
+, #{item_image_url}
+, #{item_image_name}
+, #{video_name}
+, #{select_sales_period}
+, #{order_num}
+, #{inven_type}
+, #{inven_num}
+, #{inven_num_view}
+, #{item_horizon_name}
+, #{item_vertical_name}
+, #{item_inven_view}
+, #{search_type}
+, #{pw_black_market}
+, #{catalog_id}
+, #{back_stock_flag}
+, #{out_stock_order}
+, #{in_stock_delivery_num}
+, #{out_stock_delivery_num}
+, #{reserved_item_date}
+, #{percent_point_var}
+, #{period_point_apply}
+, #{header_footer_leftnavi}
+, #{order_display_item}
+, #{desc_common_small}
+, #{item_eye_catch}
+, #{desc_common_big}
+, #{display_review}
+, #{manage_num_tomorrow_delivery}
+, #{manage_num_oversea_delivery}
+, #{link_size_tbl}
+, #{manage_num_dbl_price}
+, #{reason_no_catalog_id}
+, #{manage_num_shipping_method}
+, #{white_bg_image_url}
+, #{display_maker_info} )
+</insert>
+
+<select id="getItemsInfo" parameterType="ItemOut" resultType="ItemOut">
+select
+	seq_id
+	, ctrl_col
+	, item_url
+	, item_num
+	, directory_id
+	, tag_id
+	, pc_catch_cp
+	, mobile_catch_cp
+	, item_name
+	, sell_price
+	, display_price
+	, consume_tax
+	, shipping_cost
+	, individual_shipping_cost
+	, shipping_category1
+	, shipping_category2
+	, commission_fee
+	, select_warehouse
+	, item_info_layout
+	, order_btn
+	, material_req_btn
+	, item_inquiry_btn
+	, notice_btn
+	, nosi_resp
+	, desc_pc_item
+	, desc_phone_item
+	, desc_pc_sales
+	, item_image_url
+	, item_image_name
+	, video_name
+	, select_sales_period
+	, order_num
+	, inven_type
+	, inven_num
+	, inven_num_view
+	, item_horizon_name
+	, item_vertical_name
+	, item_inven_view
+	, search_type
+	, pw_black_market
+	, catalog_id
+	, back_stock_flag
+	, out_stock_order
+	, in_stock_delivery_num
+	, out_stock_delivery_num
+	, reserved_item_date
+	, percent_point_var
+	, period_point_apply
+	, header_footer_leftnavi
+	, order_display_item
+	, desc_common_small
+	, item_eye_catch
+	, desc_common_big
+	, display_review
+	, manage_num_tomorrow_delivery
+	, manage_num_oversea_delivery
+	, link_size_tbl
+	, manage_num_dbl_price
+	, reason_no_catalog_id
+	, manage_num_shipping_method
+	, white_bg_image_url
+	, display_maker_info
+from
+	items_info
+<where>
+	<choose>
+		<when test="end_date != null and end_date != ''">
+		register_date between str_to_date(concat(#{start_date},' ','00:00:00'), '%Y/%m/%d %H:%i:%S')  
+		and str_to_date(concat(#{end_date},' ','23:59:59'), '%Y/%m/%d %H:%i:%S')
+		</when>
+		<otherwise>
+		register_date between str_to_date(concat(#{start_date},' ','00:00:00'), '%Y/%m/%d %H:%i:%S')  
+		and str_to_date(concat(#{start_date},' ','23:59:59'), '%Y/%m/%d %H:%i:%S')
+		</otherwise>
+	</choose>
+</where>
+</select>
+
+
+<delete id="deleteItemsInfo" parameterType="String">
+
+</delete>
+
+<update id="updateItemsInfo" parameterType="ItemOut">
+update items_info
+<trim prefix="set" suffixOverrides=",">
+	<if test="ctrl_col != null and ctrl_col != ''">
+	ctrl_col = #{ctrl_col},
+	</if>
+	<if test="directory_id != null and directory_id != ''">
+	directory_id = #{directory_id},
+	</if>
+	<if test="item_name != null and item_name != ''">
+	item_name = #{item_name},
+	</if>
+	<if test="sell_price != null and sell_price != ''">
+	sell_price = #{sell_price},
+	</if>
+</trim>
+where
+	seq_id = #{seq_id}
+</update>
+
+</mapper>

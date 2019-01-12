@@ -18,6 +18,9 @@ function preCheck(type) {
 	if ("del" == type) {
 		hasFile = $("#del-upload")[0].files.length;
 	}
+	if ("items" == type) {
+		hasFile = $("#items-upload")[0].files.length;
+	}
 	
 	if (hasFile <= 0) {
 		$.notify({

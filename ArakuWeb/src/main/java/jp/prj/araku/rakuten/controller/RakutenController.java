@@ -21,6 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
+import jp.prj.araku.batch.dao.BatchDAO;
+import jp.prj.araku.batch.vo.ItemOutputVO;
 import jp.prj.araku.list.dao.ListDAO;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
@@ -43,6 +45,9 @@ public class RakutenController {
 	
 	@Autowired
 	ListDAO listDao;
+	
+	@Autowired
+	BatchDAO batchDao;
 	
 	@RequestMapping(value = "/fileView")
 	public String fileView() {
@@ -80,6 +85,12 @@ public class RakutenController {
 		}
 		model.addAttribute("idList", idList);
 		return "rakuten/transResult";
+	}
+	
+	@RequestMapping(value = "/itemsView")
+	public String itemsView() {
+		log.info("Welcome to rakuten items view");
+		return "rakuten/itemsInfo";
 	}
 	
 	@ResponseBody
@@ -250,5 +261,77 @@ public class RakutenController {
 	public ArrayList<ExceptionMasterVO> deleteExceptionMaster(@RequestBody ArrayList<ExceptionMasterVO> list) {
 		log.info("deleteExceptionMaster");
 		return listDao.deleteExceptionMaster(list);
+	}
+	
+	@RequestMapping(value="/itemsUpload", method=RequestMethod.POST)
+	public String processItemsUpload(MultipartFile itemsUpload, HttpServletRequest req) throws IOException {
+		log.info("processItemsUpload");
+		batchDao.insertItemsInfo(itemsUpload, fileEncoding, req);
+		return "redirect:itemsView";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/getItems")
+	public ArrayList<ItemOutputVO> getItemsInfo(ItemOutputVO vo) {
+		log.info("getItemsInfo");
+		return batchDao.getItemsInfo(vo);
+	}
+	
+	@RequestMapping(value="/itemDown")
+	public void processItemDownload(
+			HttpServletResponse resp
+			, ItemOutputVO vo) {
+		log.info("processItemDownload");
+		
+		try {
+			batchDao.itemsCsvDownload(resp, fileEncoding, "item", vo);
+		} catch (IOException e) {
+			log.error(e.toString());
+		} catch (CsvDataTypeMismatchException e) {
+			log.error(e.toString());
+		} catch (CsvRequiredFieldEmptyException e) {
+			log.error(e.toString());
+		}
+	}
+	
+	@RequestMapping(value="/catDown")
+	public void processItemCatDownload(
+			HttpServletResponse resp
+			, ItemOutputVO vo) {
+		log.info("processItemCatDownload");
+		
+		try {
+			batchDao.itemsCsvDownload(resp, fileEncoding, "itemCat", vo);
+		} catch (IOException e) {
+			log.error(e.toString());
+		} catch (CsvDataTypeMismatchException e) {
+			log.error(e.toString());
+		} catch (CsvRequiredFieldEmptyException e) {
+			log.error(e.toString());
+		}
+	}
+	
+	@RequestMapping(value="/selDown")
+	public void processSelectDownload(
+			HttpServletResponse resp
+			, ItemOutputVO vo) {
+		log.info("processSelectDownload");
+		
+		try {
+			batchDao.itemsCsvDownload(resp, fileEncoding, "selectOut", vo);
+		} catch (IOException e) {
+			log.error(e.toString());
+		} catch (CsvDataTypeMismatchException e) {
+			log.error(e.toString());
+		} catch (CsvRequiredFieldEmptyException e) {
+			log.error(e.toString());
+		}
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/updateItem")
+	public ArrayList<ItemOutputVO> updateItemsInfo(@RequestBody ArrayList<ItemOutputVO> vo) {
+		log.info("updateItemsInfo");
+		return batchDao.updateItems(vo);
 	}
 }

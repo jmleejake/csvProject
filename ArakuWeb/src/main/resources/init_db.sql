@@ -536,6 +536,77 @@ values
 
 
 
+/*CSV一括編集ツール*/
+create table items_info (
+seq_id bigint unsigned primary key auto_increment /*区分ID*/
+, register_date datetime default now() /*データ登録日*/
+, ctrl_col varchar(10) /*コントロールカラム*/
+, item_url varchar(30) /*商品管理番号（商品URL）*/
+, item_num varchar(30) /*商品番号*/
+, directory_id varchar(20) /*全商品ディレクトリID*/
+, tag_id varchar(10) /*タグID*/
+, pc_catch_cp varchar(200) /*PC用キャッチコピー*/
+, mobile_catch_cp varchar(200) /*モバイル用キャッチコピー*/
+, item_name varchar(1500) /*商品名*/
+, sell_price varchar(10) /*販売価格*/
+, display_price varchar(10) /*表示価格*/
+, consume_tax varchar(10) /*消費税*/
+, shipping_cost varchar(10) /*送料*/
+, individual_shipping_cost varchar(10) /*個別送料*/
+, shipping_category1 varchar(10) /*送料区分1*/
+, shipping_category2 varchar(10) /*送料区分2*/
+, commission_fee varchar(10) /*代引料*/
+, select_warehouse varchar(10) /*倉庫指定*/
+, item_info_layout varchar(10) /*商品情報レイアウト*/
+, order_btn varchar(10) /*注文ボタン*/
+, material_req_btn varchar(10) /*資料請求ボタン*/
+, item_inquiry_btn varchar(10) /*商品問い合わせボタン*/
+, notice_btn varchar(10) /*再入荷お知らせボタン*/
+, nosi_resp varchar(10) /*のし対応*/
+, desc_pc_item MEDIUMTEXT /*PC用商品説明文*/
+, desc_phone_item MEDIUMTEXT /*スマートフォン用商品説明文*/
+, desc_pc_sales MEDIUMTEXT /*PC用販売説明文*/
+, item_image_url varchar(200) /*商品画像URL*/
+, item_image_name varchar(10) /*商品画像名（ALT）*/
+, video_name varchar(10) /*動画*/
+, select_sales_period varchar(10) /*販売期間指定*/
+, order_num varchar(10) /*注文受付数*/
+, inven_type varchar(10) /*在庫タイプ*/
+, inven_num varchar(10) /*在庫数*/
+, inven_num_view varchar(10) /*在庫数表示*/
+, item_horizon_name varchar(10) /*項目選択肢別在庫用横軸項目名*/
+, item_vertical_name varchar(10) /*項目選択肢別在庫用縦軸項目名*/
+, item_inven_view varchar(10) /*項目選択肢別在庫用残り表示閾値*/
+, search_type varchar(10) /*サーチ非表示*/
+, pw_black_market varchar(10) /*闇市パスワード*/
+, catalog_id varchar(200) /*カタログID*/
+, back_stock_flag varchar(10) /*在庫戻しフラグ*/
+, out_stock_order varchar(10) /*在庫切れ時の注文受付*/
+, in_stock_delivery_num varchar(10) /*在庫あり時納期管理番号*/
+, out_stock_delivery_num varchar(10) /*在庫切れ時納期管理番号*/
+, reserved_item_date varchar(10) /*予約商品発売日*/
+, percent_point_var varchar(10) /*ポイント変倍率*/
+, period_point_apply varchar(10) /*ポイント変倍率適用期間*/
+, header_footer_leftnavi varchar(10) /*ヘッダー・フッター・レフトナビ*/
+, order_display_item varchar(10) /*表示項目の並び順*/
+, desc_common_small varchar(10) /*共通説明文（小）*/
+, item_eye_catch varchar(10) /*目玉商品*/
+, desc_common_big varchar(10) /*共通説明文（大）*/
+, display_review varchar(10) /*レビュー本文表示*/
+, manage_num_tomorrow_delivery varchar(10) /*あす楽配送管理番号*/
+, manage_num_oversea_delivery varchar(10) /*海外配送管理番号*/
+, link_size_tbl varchar(10) /*サイズ表リンク*/
+, manage_num_dbl_price varchar(10) /*二重価格文言管理番号*/
+, reason_no_catalog_id varchar(10) /*カタログIDなしの理由*/
+, manage_num_shipping_method varchar(10) /*配送方法セット管理番号*/
+, white_bg_image_url varchar(200) /*白背景画像URL*/
+, display_maker_info varchar(10) /*メーカー提供情報表示*/
+) default charset = utf8;
+
+
+
+
+
 
 
 
@@ -720,3 +791,13 @@ where seq_id in (5,2,7,4);
 update rakuten_info
 set delivery_add1 = '東京都'
 where seq_id in (6,1,3);
+
+/*
+ * 190107
+ * items 일괄정보데이터 테이블
+ * */
+select * from items_info
+
+update items_info
+set ctrl_col = '8n'
+where seq_id in (4,5,6)
