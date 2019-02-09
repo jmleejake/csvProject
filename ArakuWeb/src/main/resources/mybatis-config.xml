@@ -17,7 +17,6 @@
 		<typeAlias type="jp.prj.araku.batch.vo.ItemOutputVO" alias="ItemOut" />
 	</typeAliases>
 	<mappers>
-		<mapper resource="jp/prj/araku/file/mapper/FileMapper.xml" />
 		<mapper resource="jp/prj/araku/list/mapper/ListMapper.xml" />
 		<mapper resource="jp/prj/araku/amazon/mapper/AmazonMapper.xml" />
 		<mapper resource="jp/prj/araku/rakuten/mapper/RakutenMapper.xml" />

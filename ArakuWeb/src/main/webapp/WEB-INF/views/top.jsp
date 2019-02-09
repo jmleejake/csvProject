@@ -67,10 +67,10 @@ $(document).ready(function() {
 				<li id="region" class="nav-item">
 				<a class="nav-link" href="regionView">マスタ管理</a>
 				</li>
-				<!-- 
 				<li id="rFile" class="nav-item">
 				<a class="nav-link" href="rFileDownView">楽天更新ファイル</a>
 				</li>
+				<!--
 				<li id="yuUp" class="nav-item">
 				<a class="nav-link" href="yuView">ゆプリある</a>
 				</li>

@@ -30,6 +30,9 @@ import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
+import jp.prj.araku.file.vo.NewSagawaVO;
+import jp.prj.araku.file.vo.NewYamatoVO;
+import jp.prj.araku.file.vo.RCSVDownVO;
 import jp.prj.araku.file.vo.SagawaVO;
 import jp.prj.araku.file.vo.YamatoVO;
 import jp.prj.araku.list.mapper.IListMapper;
@@ -1110,6 +1113,177 @@ public class RakutenDAO {
 			HttpSession session = req.getSession();
 			session.setAttribute("errSize", errList.size());
 			session.setAttribute("errList", errList);
+		}
+	}
+	
+	public void rakutenSagawaUpdate(MultipartFile sagaUpload, String fileEncoding) throws IOException {
+		log.info("rakutenSagawaUpdate");
+		
+		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
+		
+		log.debug("encoding : " + fileEncoding);
+		log.debug("contentType: " + sagaUpload.getContentType());
+		log.debug("name: " + sagaUpload.getName());
+		log.debug("original name: " + sagaUpload.getOriginalFilename());
+		log.debug("size: " + sagaUpload.getSize());
+		
+		BufferedReader reader = null;
+		try  {
+			reader = new BufferedReader(
+					new InputStreamReader(sagaUpload.getInputStream(), fileEncoding));
+			
+			CsvToBean<NewSagawaVO> csvToBean = new CsvToBeanBuilder<NewSagawaVO>(reader)
+                    .withType(NewSagawaVO.class)
+                    .withSkipLines(1)
+                    .withIgnoreLeadingWhiteSpace(true)
+                    .build();
+
+            Iterator<NewSagawaVO> iterator = csvToBean.iterator();
+
+            while (iterator.hasNext()) {
+            	NewSagawaVO vo = iterator.next();
+            	
+            	// 데이터가 있는지 체크
+            	RakutenVO searchVO = new RakutenVO();
+            	searchVO.setSearch_type(CommonUtil.SEARCH_TYPE_SAGAWA);
+            	searchVO.setDelivery_name(vo.getDelivery_name2());
+            	
+            	/*
+            	 * お届け先名称２ (delivery_name2)을 키로 해서 
+            	 * お問合せ送り状No(contact_no) 값을 갱신
+            	 * */
+            	ArrayList<RakutenVO> searchRetList = mapper.getRakutenInfo(searchVO);
+            	
+            	RakutenVO searchRet = new RakutenVO();
+            	if (searchRetList.size() > 0) {
+            		searchRet = searchRetList.get(0);
+            	} else {
+            		searchVO.setDelivery_name(vo.getDelivery_name1());
+            		searchRetList = mapper.getRakutenInfo(searchVO);
+            		searchRet = searchRetList.get(0);
+            	}
+            	
+            	searchVO.setSeq_id(searchRet.getSeq_id());
+            	searchVO.setBaggage_claim_no(vo.getContact_no());
+            	
+            	// お荷物伝票番号값 update
+            	mapper.updateRakutenInfo(searchVO);
+            }
+            
+		} finally {
+			if (reader != null) {
+				reader.close();
+			}
+		}
+	}
+	
+	public void rakutenYamatoUpdate(MultipartFile yamaUpload, String fileEncoding) throws IOException {
+		log.info("rakutenYamatoUpdate");
+		
+		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
+		
+		log.debug("encoding : " + fileEncoding);
+		log.debug("contentType: " + yamaUpload.getContentType());
+		log.debug("name: " + yamaUpload.getName());
+		log.debug("original name: " + yamaUpload.getOriginalFilename());
+		log.debug("size: " + yamaUpload.getSize());
+		
+		BufferedReader reader = null;
+		try  {
+			reader = new BufferedReader(
+					new InputStreamReader(yamaUpload.getInputStream(), fileEncoding));
+			
+			CsvToBean<NewYamatoVO> csvToBean = new CsvToBeanBuilder<NewYamatoVO>(reader)
+                    .withType(NewYamatoVO.class)
+                    .withSkipLines(1)
+                    .withIgnoreLeadingWhiteSpace(true)
+                    .build();
+
+            Iterator<NewYamatoVO> iterator = csvToBean.iterator();
+
+            while (iterator.hasNext()) {
+            	NewYamatoVO vo = iterator.next();
+            	
+            	// 데이터가 있는지 체크
+            	RakutenVO searchVO = new RakutenVO();
+            	searchVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+            	searchVO.setOrder_no(vo.getCustomer_no());
+            	
+            	/*
+            	 * お客様管理番号(customer_no) 값을 키로 해서
+            	 * 伝票番号(slip_no) 값을 갱신
+            	 * */
+            	ArrayList<RakutenVO> searchRetList = mapper.getRakutenInfo(searchVO);
+            	
+            	if (searchRetList.size() > 0) {
+            		RakutenVO searchRet = searchRetList.get(0);
+            		
+            		searchVO.setSeq_id(searchRet.getSeq_id());
+                	searchVO.setBaggage_claim_no(vo.getSlip_no());
+                	
+                	// お荷物伝票番号값 update
+                	mapper.updateRakutenInfo(searchVO);
+            	}
+            }
+            
+		} finally {
+			if (reader != null) {
+				reader.close();
+			}
+		}
+	}
+	
+	public void rCSVDownload(HttpServletResponse response, String[] id_lst, String fileEncoding) 
+			throws IOException
+			, CsvDataTypeMismatchException
+			, CsvRequiredFieldEmptyException {
+		log.info("rCSVDownload");
+		log.debug("seq_id_list : " + id_lst.toString());
+		log.debug("encoding : " + fileEncoding);
+		
+		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
+		BufferedWriter writer = null;
+		CSVWriter csvWriter = null;
+		
+		try {
+			String csvFileName = "R" + CommonUtil.getDate("YYYY-MM-dd HH:mm:ss", 0) + ".csv";
+
+			response.setContentType("text/csv");
+
+			// creates mock data
+			String headerKey = "Content-Disposition";
+			String headerValue = String.format("attachment; filename=\"%s\"",
+					csvFileName);
+			response.setHeader(headerKey, headerValue);
+			response.setCharacterEncoding(fileEncoding);
+			
+			writer = new BufferedWriter(response.getWriter());
+			
+			csvWriter = new CSVWriter(writer
+					, CSVWriter.DEFAULT_SEPARATOR
+					, CSVWriter.NO_QUOTE_CHARACTER
+					, CSVWriter.DEFAULT_ESCAPE_CHARACTER
+					, CSVWriter.DEFAULT_LINE_END);
+			
+			String[] header = {"受注番号", "受注ステータス", "処理番号", "お荷物伝票番号", "配送会社", "フリー項目01"};
+			
+			RCSVDownVO vo = new RCSVDownVO();
+			ArrayList<String> seq_id_list = new ArrayList<>();
+			for (String seq_id : id_lst) {
+				seq_id_list.add(seq_id);
+			}
+			vo.setSeq_id_list(seq_id_list);
+			ArrayList<ArakuVO> list = mapper.getRCSVDownList(vo);
+			
+			CommonUtil.executeCSVDownload(csvWriter, writer, header, list);
+		} finally {
+			if (csvWriter != null) {
+				csvWriter.close();
+			}
+			
+			if (writer != null) {
+				writer.close();
+			}
 		}
 	}
 }

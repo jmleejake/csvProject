@@ -339,6 +339,8 @@ select
 	, drug_order_flag
 	, rakuten_super_deal
 	, membership_program
+	, baggage_claim_no
+	, delivery_company
 from
 	rakuten_info ri
 left outer join translation_err terr on terr.trans_target_id = ri.seq_id and terr.trans_target_type = 'R'
@@ -375,6 +377,19 @@ left outer join translation_err terr on terr.trans_target_id = ri.seq_id and ter
 		</if>
 		<if test="product_name != null and product_name != ''">
 		and product_name like '%${product_name}%'
+		</if>
+		<if test="baggage_claim_no != null and baggage_claim_no !=''">
+		and baggage_claim_no like '%${baggage_claim_no}%'
+		</if>
+		</trim>
+		</when>
+		<when test="search_type =='saga'">
+		<trim prefixOverrides="AND |OR ">
+		<if test="delivery_name != null and delivery_name != ''">
+		delivery_surname like '%${delivery_name}%' 
+		or delivery_surname_kana like '%${delivery_name}%'
+		or delivery_name like '%${delivery_name}%' 
+		or delivery_name_kana like '%${delivery_name}%'
 		</if>
 		</trim>
 		</when>
@@ -546,5 +561,34 @@ set
 where
 	seq_id = #{seq_id}
 </update>
+
+<select id="getRCSVDownList" resultType="RCSVDown">
+select 
+	seq_id
+	, order_no
+	, order_status
+	, seq_id process_no
+	, baggage_claim_no
+	, delivery_surname
+	, delivery_name
+	, delivery_surname_kana
+	, delivery_name_kana
+	, delivery_tel1
+	, delivery_tel2
+	, delivery_tel3
+	, delivery_company
+	, '' free_space
+from
+	rakuten_info
+<where>
+	<if test="seq_id_list != null">
+		seq_id in
+		<foreach item="item" index="index" collection="seq_id_list"
+			open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+</where>
+</select>
 
 </mapper>

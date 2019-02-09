@@ -93,6 +93,12 @@ public class RakutenController {
 		return "rakuten/itemsInfo";
 	}
 	
+	@RequestMapping(value = "/rFileDownView")
+	public String rFileDownView() {
+		log.info("Welcome to rakuten file down view");
+		return "rakuten/rakutenFileDown";
+	}
+	
 	@ResponseBody
 	@RequestMapping(value="/getTrans")
 	public ArrayList<TranslationVO> getTransInfo(TranslationVO transVO) {
@@ -333,5 +339,41 @@ public class RakutenController {
 	public ArrayList<ItemOutputVO> updateItemsInfo(@RequestBody ArrayList<ItemOutputVO> vo) {
 		log.info("updateItemsInfo");
 		return batchDao.updateItems(vo);
+	}
+	
+	@RequestMapping(value="/sagaUpload", method=RequestMethod.POST)
+	public String processSagawaUpload(MultipartFile sagaUpload) throws IOException {
+		log.info("processSagawaUpload");
+		dao.rakutenSagawaUpdate(sagaUpload, fileEncoding);
+		return "redirect:rFileDownView";
+	}
+	
+	@RequestMapping(value="/yamaUpload", method=RequestMethod.POST)
+	public String processYamatoUpload(MultipartFile yamaUpload) throws IOException {
+		log.info("processYamatoUpload");
+		dao.rakutenYamatoUpdate(yamaUpload, fileEncoding);
+		return "redirect:rFileDownView";
+	}
+	
+	@RequestMapping(value="/rFileDown", method=RequestMethod.POST)
+	public void processRakutenFileDownload(
+			HttpServletResponse response
+			, @RequestParam(value="id_lst") String id_lst) {
+		log.info("processRakutenFileDownload");
+		
+		log.debug("id list : " + id_lst);
+		
+		id_lst = id_lst.replace("[", "");
+		id_lst = id_lst.replace("]", "");
+		String[] seq_id_list = id_lst.split(",");
+		try {
+				dao.rCSVDownload(response, seq_id_list, fileEncoding);
+		} catch (IOException e) {
+			log.error(e.toString());
+		} catch (CsvDataTypeMismatchException e) {
+			log.error(e.toString());
+		} catch (CsvRequiredFieldEmptyException e) {
+			log.error(e.toString());
+		}
 	}
 }

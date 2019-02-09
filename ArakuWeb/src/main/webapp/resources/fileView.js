@@ -21,6 +21,12 @@ function preCheck(type) {
 	if ("items" == type) {
 		hasFile = $("#items-upload")[0].files.length;
 	}
+	if ("yama" == type) {
+		hasFile = $("#yama-upload")[0].files.length;
+	}
+	if ("saga" == type) {
+		hasFile = $("#saga-upload")[0].files.length;
+	}
 	
 	if (hasFile <= 0) {
 		$.notify({

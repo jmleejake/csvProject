@@ -3,14 +3,16 @@
  */
 // specify the columns
 var columnDefs = [
-	{headerName: "受注番号", field: "order_no", width: 230}
-	, {headerName: "受注ステータス", field: "order_status", width: 130}
-	, {headerName: "お届け日指定", field: "delivery_date_sel", width: 130}
-	, {headerName: "合計金額", field: "total_amt", width: 100}
-	, {headerName: "お荷物伝票番号", field: "baggage_claim_no", width: 170
+	{headerName: "受注番号", field: "order_no", width: 300}
+	, {headerName: "受注ステータス", field: "order_status", width: 200}
+	, {headerName: "お荷物伝票番号", field: "baggage_claim_no", width: 300
 		, editable: true
     	, cellEditor: 'agPopupTextCellEditor'
 	}
+	, {headerName: "配送会社", field: "delivery_company", width: 130}
+	/*
+	, {headerName: "お届け日指定", field: "delivery_date_sel", width: 130}
+	, {headerName: "合計金額", field: "total_amt", width: 100}
 	, {headerName: "名前", field: "delivery_name", width: 120}
 	, {headerName: "電話番号", field: "delivery_tel", width: 120}
 	, {headerName: "商品名", field: "product_name", width: 400
@@ -30,11 +32,11 @@ var columnDefs = [
 	, {headerName: "あす楽希望", field: "tomorrow_hope", width: 100
 		, cellRenderer: function(params) {
 			if (params.value == 1) {
-				console.log("true in");
-				return '<img src="./resources/img/fastDelivery.png" alt="logo" style="width:40px; margin-left:10px;">';
+				return '<img src="./../resources/img/fastDelivery.png" alt="logo" style="width:40px; margin-left:10px;">';
 			}
 		}
 	}
+	*/
 ];
 
 // rowData 초기화
@@ -73,15 +75,11 @@ var rFileDownGridOptions = {
     onCellEditingStarted: function(event) {
     	var start = event.node.data;
     	startData = start.baggage_claim_no;
-    	console.log("start?");
-    	console.log(startData);
     },
     onCellEditingStopped: function(event) {
     	var stop = event.node.data;
     	stopData = stop.baggage_claim_no;
     	id = stop.seq_id;
-    	console.log("stop?");
-    	console.log(stopData);
     	if (!(startData == stopData)) {
     		console.log("modified!");
     		modifiedData.push({
@@ -89,18 +87,6 @@ var rFileDownGridOptions = {
     			, baggage_claim_no: stopData
     		});
     	}
-    	/*
-        $.ajax({
-            url: "modRakuten"
-            , dataType: "json"  
-            , contentType : "application/json"
-            , data:{
-            	seq_id:afterData.seq_id
-            	, baggage_claim_no:afterData.baggage_claim_no
-            }
-            , success: setRowData
-        });
-        */
     }
 };
 
@@ -123,6 +109,8 @@ $.ajax({
 
 function setRowData(result) {
 	rowData = [];
+	// 수정데이터 초기화
+	modifiedData = [];
 	
 	for (var i=0; i<result.length; i++) {
 		var row = {
@@ -140,6 +128,7 @@ function setRowData(result) {
 				, tomorrow_hope:result[i].tomorrow_hope
 				, register_date:result[i].register_date
 				, update_date:result[i].update_date
+				, delivery_company:result[i].delivery_company
 		}
 		rowData.push(row);
 	}
@@ -155,15 +144,6 @@ function isFirstColumn(params) {
 function onRowSelected(event) {
 	console.log("row selected");
 	console.log(event.node.data);
-}
-
-function getInfo(data) {
-        console.log("getInfo");
-        console.log(data);
-        $('form').attr('action', "getInfo");
-        $('form').attr('method', "post");
-        $("#car_id").val(data);
-        $("form").submit();
 }
 
 $("#btn_srch").on("click", function() {
@@ -209,31 +189,6 @@ $("#btn_commit").on("click", function() {
 		, dataType: "json"
 		, contentType: 'application/json'
 		, data:JSON.stringify(modifiedData)
-		, success: function(result){
-			var rowData = [];
-			for (var i=0; i<result.length; i++) {
-				rowData.push({
-					seq_id: result[i].seq_id
-					, order_no: result[i].order_no
-					, order_status:result[i].order_status
-					, delivery_date_sel:result[i].delivery_date_sel
-					, total_amt:'¥' + result[i].total_amt
-					, baggage_claim_no:result[i].baggage_claim_no
-					, delivery_name:result[i].delivery_surname + ' ' + result[i].delivery_name
-					, delivery_tel:result[i].delivery_tel1 + '-' +  result[i].delivery_tel2 + '-' +  result[i].delivery_tel3
-					, product_name:result[i].product_name
-					, product_option:result[i].product_option
-					, unit_no:result[i].unit_no
-					, tomorrow_hope:result[i].tomorrow_hope
-					, register_date:result[i].register_date
-					, update_date:result[i].update_date
-				});
-			}
-			
-			rFileDownGridOptions.api.setRowData(rowData);
-				
-			// 수정데이터 초기화
-			modifiedData = [];
-    	}
+		, success: setRowData
 	});
 });
