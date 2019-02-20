@@ -604,9 +604,46 @@ seq_id bigint unsigned primary key auto_increment /*区分ID*/
 ) default charset = utf8;
 
 
+/*
+ * 190220 데이터 증가에 따른 쿼리 속도 개선을 위해 
+ * rakuten_info, amazon_info 테이블에
+ * index생성
+ * */
+create index idx_raku_reg_date
+on rakuten_info (register_date);
+
+create index idx_raku_upd_date
+on rakuten_info (update_date);
+
+create index idx_raku_order_no
+on rakuten_info (order_no);
+
+create index idx_raku_company_no
+on rakuten_info (delivery_company);
+
+create index idx_raku_baggage_no
+on rakuten_info (baggage_claim_no);
+
+create index idx_raku_name
+on rakuten_info (delivery_name, delivery_name_kana);
+
+create index idx_raku_surname
+on rakuten_info (delivery_surname, delivery_surname_kana);
 
 
 
+
+create index idx_amazon_reg_date
+on amazon_info (register_date);
+
+create index idx_amazon_upd_date
+on amazon_info (update_date);
+
+create index idx_amazon_order_id
+on amazon_info (order_id);
+
+create index idx_amazon_company_no
+on amazon_info (delivery_company);
 
 
 

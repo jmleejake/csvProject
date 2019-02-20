@@ -3,7 +3,7 @@
  */
 // specify the columns
 var columnDefs2 = [
-	{headerName: "例外データ", field: "exception_data", width: 130
+	{headerName: "例外データ", field: "exception_data", width: 500
 		, editable: true
     	, cellEditor: 'agPopupTextCellEditor'	
 	}
