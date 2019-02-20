@@ -1265,7 +1265,7 @@ public class RakutenDAO {
 					, CSVWriter.DEFAULT_ESCAPE_CHARACTER
 					, CSVWriter.DEFAULT_LINE_END);
 			
-			String[] header = {"受注番号", "受注ステータス", "処理番号", "お荷物伝票番号", "配送会社", "フリー項目01"};
+			String[] header = {"受注番号", "送付先ID", "発送明細ID", "お荷物伝票番号", "配送会社", "発送日"};
 			
 			RCSVDownVO vo = new RCSVDownVO();
 			ArrayList<String> seq_id_list = new ArrayList<>();

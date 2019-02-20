@@ -567,8 +567,7 @@ select
 	seq_id
 	, order_no
 	, order_status
-	, seq_id process_no
-	, baggage_claim_no
+	, baggage_claim_no 
 	, delivery_surname
 	, delivery_name
 	, delivery_surname_kana
@@ -578,6 +577,9 @@ select
 	, delivery_tel3
 	, delivery_company
 	, '' free_space
+	, ship_id
+	, '' ship_detail_id
+	, date_format(register_date, '%Y%m%d') ship_date
 from
 	rakuten_info
 <where>

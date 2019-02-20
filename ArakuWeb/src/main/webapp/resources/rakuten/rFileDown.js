@@ -4,12 +4,14 @@
 // specify the columns
 var columnDefs = [
 	{headerName: "受注番号", field: "order_no", width: 300}
-	, {headerName: "受注ステータス", field: "order_status", width: 200}
+//	, {headerName: "受注ステータス", field: "order_status", width: 200}
+	, {headerName: "送付先ID", field: "ship_id", width: 200}
 	, {headerName: "お荷物伝票番号", field: "baggage_claim_no", width: 300
 		, editable: true
     	, cellEditor: 'agPopupTextCellEditor'
 	}
 	, {headerName: "配送会社", field: "delivery_company", width: 130}
+	, {headerName: "発送日", field: "register_date", width: 200}
 	/*
 	, {headerName: "お届け日指定", field: "delivery_date_sel", width: 130}
 	, {headerName: "合計金額", field: "total_amt", width: 100}
@@ -116,19 +118,10 @@ function setRowData(result) {
 		var row = {
 				seq_id: result[i].seq_id
 				, order_no: result[i].order_no
-				, order_status:result[i].order_status
-				, delivery_date_sel:result[i].delivery_date_sel
-				, total_amt:'¥' + result[i].total_amt
 				, baggage_claim_no:result[i].baggage_claim_no
-				, delivery_name:result[i].delivery_surname + ' ' + result[i].delivery_name
-				, delivery_tel:result[i].delivery_tel1 + '-' +  result[i].delivery_tel2 + '-' +  result[i].delivery_tel3
-				, product_name:result[i].product_name
-				, product_option:result[i].product_option
-				, unit_no:result[i].unit_no
-				, tomorrow_hope:result[i].tomorrow_hope
 				, register_date:result[i].register_date
-				, update_date:result[i].update_date
 				, delivery_company:result[i].delivery_company
+				, ship_id:result[i].ship_id
 		}
 		rowData.push(row);
 	}
