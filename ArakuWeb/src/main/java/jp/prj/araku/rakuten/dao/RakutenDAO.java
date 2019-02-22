@@ -1246,7 +1246,7 @@ public class RakutenDAO {
 		CSVWriter csvWriter = null;
 		
 		try {
-			String csvFileName = "R" + CommonUtil.getDate("YYYY-MM-dd HH:mm:ss", 0) + ".csv";
+			String csvFileName = "R" + CommonUtil.getDate("YYYYMMdd", 0) + ".csv";
 
 			response.setContentType("text/csv");
 
@@ -1265,7 +1265,7 @@ public class RakutenDAO {
 					, CSVWriter.DEFAULT_ESCAPE_CHARACTER
 					, CSVWriter.DEFAULT_LINE_END);
 			
-			String[] header = {"受注番号", "送付先ID", "発送明細ID", "お荷物伝票番号", "配送会社", "発送日"};
+			String[] header = {"注文番号", "送付先ID", "発送明細ID", "お荷物伝票番号", "配送会社", "発送日"};
 			
 			RCSVDownVO vo = new RCSVDownVO();
 			ArrayList<String> seq_id_list = new ArrayList<>();
