@@ -737,7 +737,8 @@ public class AmazonDAO {
 			ArrayList<ArakuVO> cList = new ArrayList<>();
 			
 			for (AmazonVO tmp : list) {
-				if(tmp.getProduct_name().indexOf("[全国送料無料]") != -1) {
+				if(tmp.getProduct_name().contains("全国送料無料")) {
+				/*if(tmp.getProduct_name().indexOf("[全国送料無料]") != -1) {*/
 					ClickPostVO cVO = new ClickPostVO();
 					cVO.setPost_no(tmp.getShip_postal_code().replace("\"", ""));
 					cVO.setDelivery_name(tmp.getRecipient_name().replace("\"", ""));

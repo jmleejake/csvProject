@@ -1356,7 +1356,8 @@ public class RakutenDAO {
 			ArrayList<ArakuVO> cList = new ArrayList<>();
 			
 			for (RakutenVO tmp : list) {
-				if(tmp.getProduct_name().indexOf("[全国送料無料]") != -1) {
+				if(tmp.getProduct_name().contains("全国送料無料")) {
+				/*if(tmp.getProduct_name().indexOf("[全国送料無料]") != -1) {*/
 					ClickPostVO cVO = new ClickPostVO();
 					cVO.setPost_no(tmp.getDelivery_post_no1().replace("\"", "") + "-" +  tmp.getDelivery_post_no2().replace("\"", ""));
 					cVO.setDelivery_name(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
