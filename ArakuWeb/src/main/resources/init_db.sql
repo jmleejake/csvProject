@@ -810,20 +810,8 @@ where trans_target_type = 'R'
 select * from rakuten_info
 where seq_id in (1,4,25,30,31,32,79)
 
-
 select * from amazon_info
-where order_id like '250%'
-
-
-select product_name from amazon_info
 where seq_id in (4,9,10)
-
-
-update amazon_info
-set product_name = concat(product_name, '[全国送料無料]')
-/**/
-where seq_id = 10
-
 
 
 /*라쿠텐 데이터 등록일 최신화*/
