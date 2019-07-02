@@ -22,6 +22,7 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 import jp.prj.araku.amazon.mapper.IAmazonMapper;
 import jp.prj.araku.amazon.vo.AmazonVO;
+import jp.prj.araku.file.vo.ClickPostVO;
 import jp.prj.araku.file.vo.SagawaVO;
 import jp.prj.araku.file.vo.YamatoVO;
 import jp.prj.araku.list.mapper.IListMapper;
@@ -168,12 +169,18 @@ public class AmazonDAO {
 			transVO.setKeyword(vo.getProduct_name());
 			ArrayList<TranslationVO> searchRet = listMapper.getTransInfo(transVO);
 			
-			// 치환후 상품명
-			transedName = searchRet.get(0).getAfter_trans();
-			// 치환한 결과가 없을 경우 에러처리
-			if (transedName == null) {
+			if(searchRet.size() > 0) {
+				// 치환후 상품명
+				transedName = searchRet.get(0).getAfter_trans();
+				// 치환한 결과가 없을 경우 에러처리
+				if (transedName == null) {
+					errVO.setErr_text(CommonUtil.TRANS_ERR);
+					listMapper.insertTranslationErr(errVO);
+				}
+			} else {
 				errVO.setErr_text(CommonUtil.TRANS_ERR);
 				listMapper.insertTranslationErr(errVO);
+				transedName = "";
 			}
 			
 			// 지역별 배송코드 세팅 (csv다운로드 기능)
@@ -657,6 +664,102 @@ public class AmazonDAO {
 			}
 			
 			CommonUtil.executeCSVDownload(csvWriter, writer, header, sList);
+			
+		} finally {
+			if (csvWriter != null) {
+				csvWriter.close();
+			}
+			
+			if (writer != null) {
+				writer.close();
+			}
+		}
+	}
+	
+	public void clickPostFormatDownload(
+			HttpServletResponse response
+			, String[] id_lst
+			, String fileEncoding) 
+			throws IOException
+			, CsvDataTypeMismatchException
+			, CsvRequiredFieldEmptyException {
+		log.info("clickPostFormatDownload");
+		
+		log.debug("encoding : " + fileEncoding);
+		
+		IAmazonMapper mapper = sqlSession.getMapper(IAmazonMapper.class);
+		BufferedWriter writer = null;
+		CSVWriter csvWriter = null;
+		
+		try {
+			String csvFileName = "CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0) + ".csv";
+
+			response.setContentType("text/csv");
+
+			// creates mock data
+			String headerKey = "Content-Disposition";
+			String headerValue = String.format("attachment; filename=\"%s\"",
+					csvFileName);
+			response.setHeader(headerKey, headerValue);
+			response.setCharacterEncoding(fileEncoding);
+			
+			writer = new BufferedWriter(response.getWriter());
+			
+			csvWriter = new CSVWriter(writer
+					, CSVWriter.DEFAULT_SEPARATOR
+					, CSVWriter.NO_QUOTE_CHARACTER
+					, CSVWriter.DEFAULT_ESCAPE_CHARACTER
+					, CSVWriter.DEFAULT_LINE_END);
+			
+			String[] header = 
+				{
+					"お届け先郵便番号"
+					,"お届け先氏名"
+					,"お届け先敬称"
+					,"お届け先住所1行目"
+					,"お届け先住所2行目"
+					,"お届け先住所3行目"
+					,"お届け先住所4行目"
+					,"内容品"
+				};
+			
+			// 사가와 포맷으로 바꾸기 전 치환된 결과와 함께 아마존 정보 얻기
+			log.debug("seq_id_list : " + id_lst.toString());
+			ArrayList<String> seq_id_list = new ArrayList<>();
+			for (String seq_id : id_lst) {
+				seq_id_list.add(seq_id);
+			}
+			
+			TranslationResultVO vo = new TranslationResultVO();
+			vo.setSeq_id_list(seq_id_list);
+			
+			ArrayList<AmazonVO> list = mapper.getTransResult(vo);
+			ArrayList<ArakuVO> cList = new ArrayList<>();
+			
+			for (AmazonVO tmp : list) {
+				if(tmp.getProduct_name().indexOf("[全国送料無料]") != -1) {
+					ClickPostVO cVO = new ClickPostVO();
+					cVO.setPost_no(tmp.getShip_postal_code().replace("\"", ""));
+					cVO.setDelivery_name(tmp.getRecipient_name().replace("\"", ""));
+					cVO.setDelivery_add1(tmp.getShip_state().replace("\"", ""));
+					cVO.setDelivery_add2(tmp.getShip_address1().replace("\"", ""));
+					cVO.setDelivery_add3(tmp.getShip_address2().replace("\"", ""));
+					cVO.setDelivery_add4(tmp.getShip_address3().replace("\"", ""));
+					String product_name = tmp.getResult_text().replace("\"", "");
+	        		// 반각문자를 전각문자로 치환 (https://kurochan-note.hatenablog.jp/entry/2014/02/04/213737)
+	        		product_name = Normalizer.normalize(product_name, Normalizer.Form.NFKC);
+	        		// clickpost 정책에 따라  内容品의 문자가 전각15바이트가 넘어가면 잘라내고 집어 넣을수있게 처리
+	        		if (product_name.length() > 13) {
+	        			product_name = product_name.substring(0, 13);
+	        		}
+					cVO.setDelivery_contents(product_name);
+					
+					// csv작성을 위한 리스트작성
+	        		cList.add(cVO);
+				}
+			}
+			
+			CommonUtil.executeCSVDownload(csvWriter, writer, header, cList);
 			
 		} finally {
 			if (csvWriter != null) {

@@ -228,10 +228,10 @@ where
 update
 	amazon_info
 set
+	update_date = now()
 	<if test="delivery_company != null and delivery_company !=''">
-	delivery_company = #{delivery_company}
+	, delivery_company = #{delivery_company}
 	</if>
-	, update_date = now()
 where
 	seq_id = #{seq_id}
 </update>

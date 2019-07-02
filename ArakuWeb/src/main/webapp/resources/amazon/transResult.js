@@ -171,6 +171,12 @@ $("#btn_sa_down").on("click", function() {
 	 $("#frm_down2").submit();
 });
 
+//クリックポスト CSV파일 다운로드
+$("#btn_cp_down").on("click", function() {
+	console.log("clickpost download button clicked");
+	 $("#frm_down4").submit();
+});
+
 //あす楽例外 체크박스 클릭시 서버로 보낼 값 세팅
 $("#tomoEx").on("click", function() {
 	$("#sa_chk").val("");

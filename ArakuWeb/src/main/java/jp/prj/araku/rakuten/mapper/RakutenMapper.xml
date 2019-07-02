@@ -400,7 +400,7 @@ left outer join translation_err terr on terr.trans_target_id = ri.seq_id and ter
 		</otherwise>
 	</choose>
 </where>
-order by ri.seq_id asc
+order by ri.seq_id desc
 </select>
 
 <delete id="deleteRakutenInfo" parameterType="String">
@@ -544,20 +544,20 @@ left outer join translation_err terr on terr.trans_target_id = ri.seq_id and ter
 	and delivery_company = #{delivery_company}
 	</if>
 </where>
-order by order_no desc
+order by tr.seq_id desc
 </select>
 
 <update id="updateRakutenInfo" parameterType="Rakuten">
 update
 	rakuten_info
 set
+	update_date = now()
 	<if test="baggage_claim_no != null and baggage_claim_no !=''">
-	baggage_claim_no = #{baggage_claim_no}
+	, baggage_claim_no = #{baggage_claim_no}
 	</if>
 	<if test="delivery_company != null and delivery_company !=''">
-	delivery_company = #{delivery_company}
+	, delivery_company = #{delivery_company}
 	</if>
-	, update_date = now()
 where
 	seq_id = #{seq_id}
 </update>

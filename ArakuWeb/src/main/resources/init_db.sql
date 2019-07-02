@@ -603,6 +603,15 @@ seq_id bigint unsigned primary key auto_increment /*区分ID*/
 , display_maker_info varchar(10) /*メーカー提供情報表示*/
 ) default charset = utf8;
 
+/*190630 청구서 작업을 편하게 하기위한 테이블*/
+create table tb_time (
+seq_id bigint unsigned primary key auto_increment /*区分ID*/
+, start_date datetime /*일 시작시간*/
+, end_date datetime /*일 종료시간*/
+, work_time varchar(10) /*워킹아워*/
+, dbsts varchar(1) default 'S' /*status: 작업시작(S) 작업종료(E)*/
+) default charset = utf8;
+
 
 /*
  * 190220 데이터 증가에 따른 쿼리 속도 개선을 위해 
@@ -797,6 +806,26 @@ from translation_err
 where trans_target_type = 'R'
 
 
+/*clickpost용 테스트데이터 [全国送料無料]태그 추가*/
+select * from rakuten_info
+where seq_id in (1,4,25,30,31,32,79)
+
+
+select * from amazon_info
+where order_id like '250%'
+
+
+select product_name from amazon_info
+where seq_id in (4,9,10)
+
+
+update amazon_info
+set product_name = concat(product_name, '[全国送料無料]')
+/**/
+where seq_id = 10
+
+
+
 /*라쿠텐 데이터 등록일 최신화*/
 update rakuten_info
 set register_date = now();
@@ -838,3 +867,22 @@ select * from items_info
 update items_info
 set ctrl_col = '8n'
 where seq_id in (4,5,6)
+
+
+
+
+/*190630 청구서작업을 위한 테이블 테스트*/
+insert into tb_time (start_date)
+values (now());
+
+select * from tb_time;
+
+update tb_time
+set end_date = now()
+, work_time = timediff(end_date, start_date)
+, dbsts = 'E'
+where seq_id = 2;
+/*//190630 청구서작업을 위한 테이블 테스트*/
+
+
+

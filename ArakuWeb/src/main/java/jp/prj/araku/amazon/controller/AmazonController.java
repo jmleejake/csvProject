@@ -231,4 +231,26 @@ public class AmazonController {
 		log.info("deleteExceptionMaster");
 		return listDao.deleteExceptionMaster(list);
 	}
+	
+	@RequestMapping(value="/cpDown", method=RequestMethod.POST)
+	public void processClickPostDownload(
+			HttpServletResponse response
+			, @RequestParam(value="id_lst") String id_lst) {
+		log.info("processClickPostDownload");
+		
+		log.debug("id list : " + id_lst);
+		
+		id_lst = id_lst.replace("[", "");
+		id_lst = id_lst.replace("]", "");
+		String[] seq_id_list = id_lst.split(",");
+		try {
+				dao.clickPostFormatDownload(response, seq_id_list, fileEncoding);
+		} catch (IOException e) {
+			log.error(e.toString());
+		} catch (CsvDataTypeMismatchException e) {
+			log.error(e.toString());
+		} catch (CsvRequiredFieldEmptyException e) {
+			log.error(e.toString());
+		}
+	}
 }
