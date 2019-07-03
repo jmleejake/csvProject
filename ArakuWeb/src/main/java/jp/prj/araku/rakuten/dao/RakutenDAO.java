@@ -758,45 +758,20 @@ public class RakutenDAO {
 			vo.setDelivery_company(delivery_company);
 			
 			ArrayList<RakutenVO> list = mapper.getTransResult(vo);
-			
-			// 예외테이블에 있는 목록은 사가와로
-			vo = new TranslationResultVO();
-			vo.setSeq_id_list(seq_id_list);
-			ArrayList<RakutenVO> list2 = mapper.getTransResult(vo);
 			ArrayList<ExceptionMasterVO> exList = listMapper.getExceptionMaster(null);
 			boolean chkRet = false;
-			
-			for (RakutenVO tmp : list2) {
-				chkRet = false;
-				for (ExceptionMasterVO exVO : exList) {
-					if (tmp.getResult_text().contains(exVO.getException_data())) {
-						chkRet = true;
-						// 예외테이블에 있는 목록중 배송코드가 같지 않은것만 리스트에 추가
-						if (!tmp.getDelivery_company().equals(delivery_company)) {
-							list.add(tmp);
-						}
-					}
-					
-					if ("1".equals(isChecked)) {
-						if ("1".equals(tmp.getTomorrow_hope())) {
-							chkRet = true;
-							// 예외테이블에 있는 목록에 없고, 배송코드가 같지 않은 빠른배송 목록을 리스트에 추가
-							if ((!tmp.getResult_text().contains(exVO.getException_data()))
-									&& (!tmp.getDelivery_company().equals(delivery_company))) {
-								list.add(tmp);
-							}
-						}
-					}
-					
-					if (chkRet) {
-						break;
-					}
-				}
-			}
-			
 			ArrayList<ArakuVO> sList = new ArrayList<>();
 			
 			for (RakutenVO tmp : list) {
+				for (ExceptionMasterVO exVO : exList) {
+					chkRet = false;
+					if (tmp.getResult_text().contains(exVO.getException_data())) {
+						chkRet = true;
+					}
+				}
+				if (chkRet) {
+					continue;
+				}
 				SagawaVO sVO = new SagawaVO();
 				sVO.setDelivery_add1(tmp.getDelivery_add1().replace("\"", ""));
 				sVO.setDelivery_add2(tmp.getDelivery_add2().replace("\"", ""));
@@ -1356,7 +1331,7 @@ public class RakutenDAO {
 			ArrayList<ArakuVO> cList = new ArrayList<>();
 			
 			for (RakutenVO tmp : list) {
-				if(tmp.getProduct_name().contains("全国送料無料")) {
+				if(tmp.getProduct_name().contains("【全国送料無料】")) {
 				/*if(tmp.getProduct_name().indexOf("[全国送料無料]") != -1) {*/
 					ClickPostVO cVO = new ClickPostVO();
 					cVO.setPost_no(tmp.getDelivery_post_no1().replace("\"", "") + "-" +  tmp.getDelivery_post_no2().replace("\"", ""));

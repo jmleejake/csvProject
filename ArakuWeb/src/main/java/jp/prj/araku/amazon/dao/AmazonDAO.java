@@ -575,44 +575,20 @@ public class AmazonDAO {
 			vo.setDelivery_company(delivery_company);
 			
 			ArrayList<AmazonVO> list = mapper.getTransResult(vo);
-			
-			// 예외테이블에 있는 목록은 사가와로
-			vo = new TranslationResultVO();
-			vo.setSeq_id_list(seq_id_list);
-			ArrayList<AmazonVO> list2 = mapper.getTransResult(vo);
 			ArrayList<ExceptionMasterVO> exList = listMapper.getExceptionMaster(null);
 			boolean chkRet = false;
-			
-			for (AmazonVO tmp : list2) {
-				chkRet = false;
-				for (ExceptionMasterVO exVO : exList) {
-					if (tmp.getResult_text().contains(exVO.getException_data())) {
-						chkRet = true;
-						// 예외테이블에 있는 목록중 배송코드가 같지 않은것만 리스트에 추가
-						if (!tmp.getDelivery_company().equals(delivery_company)) {
-							list.add(tmp);
-						}
-					}
-					
-					if ("1".equals(isChecked)) {
-						if ("NextDay".equals(tmp.getShip_service_level())) {
-							chkRet = true;
-							// 예외테이블에 있는 목록에 없고, 배송코드가 같지 않은 빠른배송 목록을 리스트에 추가
-							if ((!tmp.getResult_text().contains(exVO.getException_data()))
-									&& (!tmp.getDelivery_company().equals(delivery_company))) {
-								list.add(tmp);
-							}
-						}
-					}
-					if (chkRet) {
-						break;
-					}
-				}
-			}
-			
 			ArrayList<ArakuVO> sList = new ArrayList<>();
 			
 			for (AmazonVO tmp : list) {
+				for (ExceptionMasterVO exVO : exList) {
+					chkRet = false;
+					if (tmp.getResult_text().contains(exVO.getException_data())) {
+						chkRet = true;
+					}
+				}
+				if (chkRet) {
+					continue;
+				}
 				SagawaVO sVO = new SagawaVO();
 				sVO.setDelivery_add1(tmp.getShip_state().replace("\"", ""));
 				sVO.setDelivery_add2(tmp.getShip_address1().replace("\"", ""));
@@ -737,7 +713,7 @@ public class AmazonDAO {
 			ArrayList<ArakuVO> cList = new ArrayList<>();
 			
 			for (AmazonVO tmp : list) {
-				if(tmp.getProduct_name().contains("全国送料無料")) {
+				if(tmp.getResult_text().contains("全無")) {
 				/*if(tmp.getProduct_name().indexOf("[全国送料無料]") != -1) {*/
 					ClickPostVO cVO = new ClickPostVO();
 					cVO.setPost_no(tmp.getShip_postal_code().replace("\"", ""));
