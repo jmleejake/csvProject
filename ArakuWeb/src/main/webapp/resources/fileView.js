@@ -27,6 +27,9 @@ function preCheck(type) {
 	if ("saga" == type) {
 		hasFile = $("#saga-upload")[0].files.length;
 	}
+	if ("q10" == type) {
+		hasFile = $("#q-upload")[0].files.length;
+	}
 	
 	if (hasFile <= 0) {
 		$.notify({

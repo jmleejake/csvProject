@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.prj.araku.q10.mapper.IQ10Mapper">
+
+<insert id="insertQ10Info" parameterType="Q10" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
+insert into q10_info (
+delivery_sts
+, order_no
+, cart_no
+, delivery_company_q10
+, invoice_no
+, ship_date
+, order_date
+, pay_date
+, delivery_date
+, ship_eta
+, delivery_atd
+, ship_method
+, item_no
+, product_name
+, qty
+, option_info
+, option_cd
+, bonus
+, recpt_name
+, recpt_name_kana
+, recpt_phone_no
+, recpt_mobile_no
+, address
+, post_no
+, country_name
+, ship_pay
+, pay_site
+, currency_type
+, pay_amt
+, sel_price
+, disc_price
+, total_price
+, total_supply
+, pay_name
+, pay_name_kana
+, delivery_item
+, pay_phone_no
+, pay_mobile_no
+, product_cd
+, jan_cd
+, std_no
+, presenter
+, ads_no_site
+, material_type
+) 
+values (
+#{delivery_sts}
+, #{order_no}
+, #{cart_no}
+, #{delivery_company_q10}
+, #{invoice_no}
+, #{ship_date}
+, #{order_date}
+, #{pay_date}
+, #{delivery_date}
+, #{ship_eta}
+, #{delivery_atd}
+, #{ship_method}
+, #{item_no}
+, #{product_name}
+, #{qty}
+, #{option_info}
+, #{option_cd}
+, #{bonus}
+, #{recpt_name}
+, #{recpt_name_kana}
+, #{recpt_phone_no}
+, #{recpt_mobile_no}
+, #{address}
+, #{post_no}
+, #{country_name}
+, #{ship_pay}
+, #{pay_site}
+, #{currency_type}
+, #{pay_amt}
+, #{sel_price}
+, #{disc_price}
+, #{total_price}
+, #{total_supply}
+, #{pay_name}
+, #{pay_name_kana}
+, #{delivery_item}
+, #{pay_phone_no}
+, #{pay_mobile_no}
+, #{product_cd}
+, #{jan_cd}
+, #{std_no}
+, #{presenter}
+, #{ads_no_site}
+, #{material_type}
+)
+</insert>
+
+<select id="getQ10Info" parameterType="Q10" resultType="Q10">
+select
+	qi.seq_id
+	, date_format(qi.register_date, '%Y/%m/%d') register_date
+	, date_format(qi.update_date, '%Y/%m/%d') update_date
+	, err_text
+	, delivery_sts
+	, order_no
+	, cart_no
+	, delivery_company_q10
+	, invoice_no
+	, ship_date
+	, order_date
+	, pay_date
+	, delivery_date
+	, ship_eta
+	, delivery_atd
+	, ship_method
+	, item_no
+	, product_name
+	, qty
+	, option_info
+	, option_cd
+	, bonus
+	, recpt_name
+	, recpt_name_kana
+	, recpt_phone_no
+	, recpt_mobile_no
+	, address
+	, post_no
+	, country_name
+	, ship_pay
+	, pay_site
+	, currency_type
+	, pay_amt
+	, sel_price
+	, disc_price
+	, total_price
+	, total_supply
+	, pay_name
+	, pay_name_kana
+	, delivery_item
+	, pay_phone_no
+	, pay_mobile_no
+	, product_cd
+	, jan_cd
+	, std_no
+	, presenter
+	, ads_no_site
+	, material_type
+from
+	q10_info qi
+left outer join translation_err terr on terr.trans_target_id = qi.seq_id and terr.trans_target_type = 'Q'
+<where>
+	<choose>
+	<when test="search_type =='srch'">
+	<trim prefixOverrides="AND |OR ">
+	<if test="register_date != null and register_date != ''">
+	qi.register_date between str_to_date(concat(#{register_date},' ','00:00:00'), '%Y/%m/%d %H:%i:%S')  
+	and str_to_date(concat(#{register_date},' ','23:59:59'), '%Y/%m/%d %H:%i:%S')
+	</if>
+	<if test="recpt_name != null and recpt_name != ''">
+	and recpt_name like '%${recpt_name}%'
+	</if>
+	<if test="order_no != null and order_no != ''">
+	and order_no like '%${order_no}%'
+	</if>
+	</trim>
+	</when>
+	<otherwise>
+	<if test="seq_id_list != null">
+		qi.seq_id in
+		<foreach item="item" index="index" collection="seq_id_list"
+			open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="delivery_company != null and delivery_company != ''">
+	and delivery_company = #{delivery_company}
+	</if>
+	<if test="start_date != null and start_date != ''">
+	qi.register_date between str_to_date(#{start_date}, '%Y/%m/%d %H:%i:%s') and now()
+	</if>
+	</otherwise>
+	</choose>
+</where>
+order by qi.pay_date desc
+</select>
+
+<select id="getTransResult" resultType="Q10" parameterType="TransResult">
+select 
+	tr.seq_id
+	, date_format(qi.register_date, '%Y/%m/%d') register_date
+	, date_format(qi.update_date, '%Y/%m/%d') update_date
+	, err_text
+	, result_text
+	, delivery_sts
+	, order_no
+	, cart_no
+	, delivery_company_q10
+	, invoice_no
+	, ship_date
+	, order_date
+	, pay_date
+	, delivery_date
+	, ship_eta
+	, delivery_atd
+	, ship_method
+	, item_no
+	, product_name
+	, qty
+	, option_info
+	, option_cd
+	, bonus
+	, recpt_name
+	, recpt_name_kana
+	, recpt_phone_no
+	, recpt_mobile_no
+	, address
+	, post_no
+	, country_name
+	, ship_pay
+	, pay_site
+	, currency_type
+	, pay_amt
+	, sel_price
+	, disc_price
+	, total_price
+	, total_supply
+	, pay_name
+	, pay_name_kana
+	, delivery_item
+	, pay_phone_no
+	, pay_mobile_no
+	, product_cd
+	, jan_cd
+	, std_no
+	, presenter
+	, ads_no_site
+	, material_type
+	, delivery_company
+from
+	translation_result tr 
+inner join q10_info qi on qi.seq_id = tr.trans_target_id and tr.trans_target_type = 'Q'
+left outer join translation_err terr on terr.trans_target_id = qi.seq_id and terr.trans_target_type = 'Q'
+<where>
+	<if test="trans_target_id != null">
+		tr.trans_target_id = #{trans_target_id}
+	</if>
+	<if test="seq_id_list != null">
+		tr.seq_id in
+		<foreach item="item" index="index" collection="seq_id_list"
+			open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="delivery_company != null and delivery_company != ''">
+	and delivery_company = #{delivery_company}
+	</if>
+</where>
+order by pay_date desc
+</select>
+
+<update id="updateQ10Info" parameterType="Q10">
+update
+	q10_info
+set
+	update_date = now()
+	<if test="delivery_company != null and delivery_company !=''">
+	, delivery_company = #{delivery_company}
+	</if>
+where
+	seq_id = #{seq_id}
+</update>
+
+<delete id="deleteQ10Info" parameterType="String">
+delete from
+	q10_info
+where
+	seq_id = #{seq_id}
+</delete>
+</mapper>

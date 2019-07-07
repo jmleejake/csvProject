@@ -528,13 +528,6 @@ create table exception_master (
 	, exception_data varchar(20) /*例外データ*/
 ) default charset = utf8;
 
-insert into exception_master (exception_data)
-values 
-('aaa')
-, ('bbb');
-
-
-
 
 /*CSV一括編集ツール*/
 create table items_info (
@@ -603,13 +596,58 @@ seq_id bigint unsigned primary key auto_increment /*区分ID*/
 , display_maker_info varchar(10) /*メーカー提供情報表示*/
 ) default charset = utf8;
 
-/*190630 청구서 작업을 편하게 하기위한 테이블*/
-create table tb_time (
+
+/*190703 큐텐화면 대응을 위한 테이블 생성*/
+drop table q10_info;
+create table q10_info (
 seq_id bigint unsigned primary key auto_increment /*区分ID*/
-, start_date datetime /*일 시작시간*/
-, end_date datetime /*일 종료시간*/
-, work_time varchar(10) /*워킹아워*/
-, dbsts varchar(1) default 'S' /*status: 작업시작(S) 작업종료(E)*/
+, register_date datetime default now() /*データ登録日*/
+, update_date datetime /*データ修正日*/
+, delivery_sts varchar(10) /*配送状態*/
+, order_no varchar(15) /*注文番号*/
+, cart_no varchar(15) /*カート番号*/
+, delivery_company_q10 varchar(50) /*配送会社*/
+, invoice_no varchar(15) /*送り状番号*/
+, ship_date varchar(10) /*発送日*/
+, order_date varchar(20) /*注文日*/
+, pay_date varchar(20) /*入金日*/
+, delivery_date varchar(20) /*お届け希望日*/
+, ship_eta varchar(20) /*発送予定日*/
+, delivery_atd varchar(20) /*配送完了日*/
+, ship_method varchar(50) /*配送方法*/
+, item_no varchar(15) /*商品番号*/
+, product_name varchar(1500) /*商品名*/
+, qty varchar(5) /*数量*/
+, option_info varchar(1500) /*オプション情報*/
+, option_cd varchar(15) /*オプションコード*/
+, bonus varchar(15) /*おまけ*/
+, recpt_name varchar(30) /*受取人名*/
+, recpt_name_kana varchar(30) /*受取人名(フリガナ)*/
+, recpt_phone_no varchar(15) /*受取人電話番号*/
+, recpt_mobile_no varchar(15) /*受取人携帯電話番号*/
+, address varchar(150) /*住所*/
+, post_no varchar(10) /*郵便番号*/
+, country_name varchar(30) /*国家*/
+, ship_pay varchar(4) /*送料の決済*/
+, pay_site varchar(4) /*決済サイト*/
+, currency_type varchar(4) /*通貨*/
+, pay_amt varchar(10) /*購入者決済金額*/
+, sel_price varchar(10) /*販売価格*/
+, disc_price varchar(10) /*割引額*/
+, total_price varchar(10) /*注文金額の合計*/
+, total_supply varchar(10) /*供給原価の合計*/
+, pay_name varchar(30) /*購入者名*/
+, pay_name_kana varchar(30) /*購入者名(フリガナ)*/
+, delivery_item varchar(500) /*配送要請事項*/
+, pay_phone_no varchar(15) /*購入者電話番号*/
+, pay_mobile_no varchar(15) /*購入者携帯電話番号*/
+, product_cd varchar(15) /*販売者商品コード*/
+, jan_cd varchar(15) /*JANコード*/
+, std_no varchar(15) /*規格番号*/
+, presenter varchar(30) /*プレゼント贈り主*/
+, ads_no_site varchar(30) /*外部広告*/
+, material_type varchar(50) /*素材*/
+, delivery_company varchar(4) /*配送会社(code)*/
 ) default charset = utf8;
 
 
@@ -659,161 +697,6 @@ on amazon_info (delivery_company);
 
 
 
-
-
-
-
-
-
-
-
-select after_trans
-/*
- ミチョ　
- パイン
- カラ
- マス
-select 
-	seq_id
-	, before_trans
-	, after_trans
-	, date_format(register_date, '%Y/%m/%d') register_date
-*/
-from
-	translation_info
-
-
-select 
-	seq_id, order_no, order_status, delivery_date_sel
-	, total_amt, baggage_claim_no, delivery_surname, delivery_name
-	, delivery_surname_kana, delivery_name_kana
-	, delivery_tel1, delivery_tel2, delivery_tel3
-	, product_name
-	, product_option
-	, unit_no
-	, tomorrow_hope
-	, date_format(register_date, '%Y/%m/%d') register_date
-	, delivery_add1
-from
-	rakuten_info
-where
-	register_date between str_to_date('2018/10/11 00:00:00', '%Y/%m/%d %H:%i:%s') and now()
-	
-	
-select
-	tr.seq_id
-	, date_format(tr.register_date, '%Y/%m/%d') register_date
-	, result_text
-	, product_name
-	, product_option
-	, delivery_surname
-	, delivery_name
-	, unit_no
-from
-	translation_result tr
-inner join rakuten_info ri on ri.seq_id = tr.trans_target_id
-
-
-select tr.seq_id , date_format(tr.register_date, '%Y/%m/%d') register_date 
-, result_text , order_no , product_name , product_option 
-, unit_no , delivery_surname , delivery_name , delivery_company 
-, ri.delivery_address1, ri.delivery_address2, ri.delivery_address3
-
-from translation_result tr 
-inner join rakuten_info ri on ri.seq_id = tr.trans_target_id 
-WHERE tr.seq_id in ( 1,2,3,4,5 ) 
-
-
-
-
-select 
-	ai.seq_id
-	, date_format(ai.register_date, '%Y/%m/%d') register_date
-	, date_format(ai.update_date, '%Y/%m/%d') update_date
-	, order_id
-	, order_item_id
-	, purchase_date
-	, payments_date
-	, reporting_date
-	, promise_date
-	, days_past_promise
-	, buyer_email
-	, buyer_name
-	, buyer_phone_number
-	, sku
-	, product_name
-	, quantity_purchased
-	, quantity_shipped
-	, quantity_to_ship
-	, ship_service_level
-	, recipient_name
-	, ship_address1
-	, ship_address2
-	, ship_address3
-	, ship_city
-	, ship_state
-	, ship_postal_code
-	, ship_country
-	, payment_method
-	, cod_collectible_amount
-	, already_paid
-	, payment_method_fee
-	, scheduled_delivery_start_date
-	, scheduled_delivery_end_date
-	, points_granted
-	, is_prime
-	, err_text
-from
-	amazon_info ai
-left outer join translation_err terr on terr.trans_target_id = ai.seq_id and trans_target_type = 'A'
-order by ai.seq_id asc
-
-
-select ri.seq_id , err_text , order_no 
-, order_status , delivery_date_sel , total_amt , baggage_claim_no 
-, delivery_surname , delivery_name , delivery_surname_kana 
-, delivery_name_kana , delivery_tel1 , delivery_tel2 , delivery_tel3 
-, delivery_address1 , product_id , product_name , product_option , unit_no 
-, tomorrow_hope , date_format(ri.register_date, '%Y/%m/%d') register_date 
-, date_format(ri.update_date, '%Y/%m/%d') update_date 
-from rakuten_info ri 
-left outer join translation_err terr on terr.trans_target_id = ri.seq_id and terr.trans_target_type = 'R' 
-WHERE ri.register_date between str_to_date('2018/09/28 00:00:00', '%Y/%m/%d %H:%i:%s') and now() 
-order by ri.seq_id asc
-
-
-
-select tr.seq_id , delivery_company, date_format(tr.register_date, '%Y/%m/%d') register_date , err_text 
-, result_text , order_no , product_name , product_option , unit_no 
-, delivery_surname , delivery_name 
-from translation_result tr 
-inner join rakuten_info ri on ri.seq_id = tr.trans_target_id and tr.trans_target_type = 'R' 
-left outer join translation_err terr on terr.trans_target_id = ri.seq_id and terr.trans_target_type = 'R' 
-WHERE tr.seq_id in (1,2,3,4,5,6,7) 
-
-/*
- * 새로운 라쿠텐 테이블을 생성하였으므로
- * 기존 데이터를 삭제하는 쿼리를 작성
- * */
-/*select * */
-delete
-from translation_result
-where trans_target_type = 'R'
-
-/*select * */
-delete
-from translation_err
-where trans_target_type = 'R'
-
-
-/*clickpost용 테스트데이터 [全国送料無料]태그 추가*/
-select * from rakuten_info
-where seq_id in (1,4,25,30,31,32,79)
-
-select * from amazon_info
-where seq_id in (4,9,10)
-
-
 /*라쿠텐 데이터 등록일 최신화*/
 update rakuten_info
 set register_date = now();
@@ -856,21 +739,13 @@ update items_info
 set ctrl_col = '8n'
 where seq_id in (4,5,6)
 
+select * from q10_info
+where seq_id in (92,93)
 
 
 
-/*190630 청구서작업을 위한 테이블 테스트*/
-insert into tb_time (start_date)
-values (now());
-
-select * from tb_time;
-
-update tb_time
-set end_date = now()
-, work_time = timediff(end_date, start_date)
-, dbsts = 'E'
-where seq_id = 2;
-/*//190630 청구서작업을 위한 테이블 테스트*/
-
+select * from rakuten_info /*comment*/
+select * from amazon_info
+select * from q10_info
 
 

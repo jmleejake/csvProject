@@ -11,3 +11,8 @@ $("#btn_amazon").on("click", function() {
 	console.log("ama");
 	location.href="amazon/fileView";
 });
+
+$("#btn_q10").on("click", function() {
+	console.log("q10");
+	location.href="q10/fileView";
+});

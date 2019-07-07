@@ -20,6 +20,7 @@
 </div>
 <button id="btn_rakuten" class="btn btn-lg" style="width: 150px;">RAKUTEN</button>
 <button id="btn_amazon" class="btn btn-lg" style="width: 150px;">AMAZON</button>
+<button id="btn_q10" class="btn btn-lg" style="width: 150px;">QOO10</button>
 </div>
 </div>
 <script src="./resources/main.js"></script>

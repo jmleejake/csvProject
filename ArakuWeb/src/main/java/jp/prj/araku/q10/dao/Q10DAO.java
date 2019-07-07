@@ -1,4 +1,4 @@
-package jp.prj.araku.amazon.dao;
+package jp.prj.araku.q10.dao;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -6,6 +6,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -17,11 +21,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.opencsv.CSVWriter;
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
-import jp.prj.araku.amazon.mapper.IAmazonMapper;
-import jp.prj.araku.amazon.vo.AmazonVO;
 import jp.prj.araku.file.vo.ClickPostVO;
 import jp.prj.araku.file.vo.SagawaVO;
 import jp.prj.araku.file.vo.YamatoVO;
@@ -31,134 +35,144 @@ import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.TranslationErrorVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
+import jp.prj.araku.q10.mapper.IQ10Mapper;
+import jp.prj.araku.q10.vo.Q10VO;
 import jp.prj.araku.util.ArakuVO;
 import jp.prj.araku.util.CommonUtil;
 
-/**
- * [MOD-1011] 半角→全角へ変換する。　　kim
- * */
 @Repository
-public class AmazonDAO {
+public class Q10DAO {
 	@Autowired
 	SqlSession sqlSession;
 	
-	private static final Logger log = Logger.getLogger("jp.prj.araku.amazon");
+	private static final Logger log = Logger.getLogger("jp.prj.araku.q10");
 	
-	public void insertAmazonInfo(MultipartFile amaUpload, String fileEncoding) throws IOException {
-		log.info("insertAmazonInfo");
+	@Transactional
+	public void insertQ10Info(MultipartFile qUpload, String fileEncoding) throws IOException {
+		log.info("insertQ10Info");
 		
-		IAmazonMapper mapper = sqlSession.getMapper(IAmazonMapper.class);
+		IQ10Mapper mapper =sqlSession.getMapper(IQ10Mapper.class);
 		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
 		
+		log.debug("encoding : " + fileEncoding);
+		log.debug("contentType: " + qUpload.getContentType());
+		log.debug("name: " + qUpload.getName());
+		log.debug("original name: " + qUpload.getOriginalFilename());
+		log.debug("size: " + qUpload.getSize());
+		
 		BufferedReader reader = null;
-        try {
+		try  {
 			reader = new BufferedReader(
-			                new InputStreamReader(amaUpload.getInputStream(), fileEncoding));
-			String line = "";
-			String splitBy = "	";
-			int cnt = 0;
+					new InputStreamReader(qUpload.getInputStream(), fileEncoding));
 			
-			while ((line = reader.readLine()) != null) {
-		        String[] arr = line.split(splitBy);
-		        log.debug(arr[0]);
-		        if(cnt == 0) {
-		        	cnt++;
-		        	// 컬럼 헤더명이 나올 경우 다음 레코드로 진행
-		        	continue;
-		        } else {
-		        	// 헤더 이후의 데이터 처리
-		        	AmazonVO vo = new AmazonVO();
-		        	vo.setOrder_id(arr[0]);
-		        	vo.setOrder_item_id(arr[1]);
-		        	vo.setPurchase_date(arr[2]);
-		        	vo.setPayments_date(arr[3]);
-		        	vo.setReporting_date(arr[4]);
-		        	vo.setPromise_date(arr[5]);
-		        	vo.setDays_past_promise(arr[6]);
-		        	vo.setBuyer_email(arr[7]);
-		        	vo.setBuyer_name(arr[8]);
-		        	vo.setBuyer_phone_number(arr[9]);
-		        	vo.setSku(arr[10]);
-		        	vo.setProduct_name(arr[11]);
-		        	vo.setQuantity_purchased(arr[12]);
-		        	vo.setQuantity_shipped(arr[13]);
-		        	vo.setQuantity_to_ship(arr[14]);
-		        	vo.setShip_service_level(arr[15]);
-		        	vo.setRecipient_name(arr[16]);
-		        	vo.setShip_address1(arr[17]);
-		        	vo.setShip_address2(arr[18]);
-		        	vo.setShip_address3(arr[19]);
-		        	vo.setShip_city(arr[20]);
-		        	vo.setShip_state(arr[21]);
-		        	vo.setShip_postal_code(arr[22]);
-		        	vo.setShip_country(arr[23]);
-		        	vo.setPayment_method(arr[24]);
-		        	vo.setCod_collectible_amount(arr[25]);
-		        	vo.setAlready_paid(arr[26]);
-		        	vo.setPayment_method_fee(arr[27]);
-		        	vo.setScheduled_delivery_start_date(arr[28]);
-		        	vo.setScheduled_delivery_end_date(arr[29]);
-		        	vo.setPoints_granted(arr[30]);
-		        	vo.setIs_prime(arr[31]);
-		        	
-		        	ArrayList<AmazonVO> dupCheck = mapper.getAmazonInfo(vo);
-		        	if (dupCheck.size() > 0) {
-		        		log.debug("already have data");
-		        	} else {
-		        		int result = mapper.insertAmazonInfo(vo);
-			        	log.debug(String.format("inserted amazon info seq_id : [%d]", result));
-		        	}
-		        	
-		        	// 項目・選択肢 (상품옵션) 처리
-	                TranslationVO transVO = new TranslationVO();
-	                transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
-	                transVO.setKeyword(vo.getProduct_name());
-	                transVO.setBefore_trans(vo.getProduct_name());
-	                
-	                ArrayList<TranslationVO> transList = listMapper.getTransInfo(transVO);
-	                if (transList.size() == 0) {
-	                	listMapper.addTransInfo(transVO);
-	                }
-		        	
-		        	cnt++;
-		        }
-			}
-        } finally {
-            if (reader != null) {
-                reader.close();
+			CsvToBean<Q10VO> csvToBean = new CsvToBeanBuilder<Q10VO>(reader)
+                    .withType(Q10VO.class)
+                    .withSkipLines(1)
+                    .withIgnoreLeadingWhiteSpace(true)
+                    .build();
+
+            Iterator<Q10VO> iterator = csvToBean.iterator();
+
+            while (iterator.hasNext()) {
+            	Q10VO vo = iterator.next();
+            	
+            	if(vo.getOrder_no() != null) {
+            		
+            		Q10VO srch = new Q10VO();
+            		srch.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+            		srch.setOrder_no(vo.getOrder_no());
+            		if(mapper.getQ10Info(srch).size() > 0) {
+            			continue;
+            		}
+            		try {
+            			mapper.insertQ10Info(vo);
+            		} catch (Exception e) {
+            			log.error(e.getMessage());
+            			continue;
+    				}
+                    log.debug("inserted qoo10 seq_id :: " + vo.getSeq_id());
+                    log.debug("==========================");
+                    
+                    // 項目・選択肢 (상품옵션) 처리
+                    TranslationVO transVO = new TranslationVO();
+                    transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+                    transVO.setKeyword(vo.getProduct_name());
+                    transVO.setBefore_trans(vo.getProduct_name());
+                    
+                    ArrayList<TranslationVO> transList = listMapper.getTransInfo(transVO);
+                    if (transList.size() == 0) {
+                    	listMapper.addTransInfo(transVO);
+                    }
+                    
+                    String optionContent = vo.getOption_info();
+                    if(optionContent != null && optionContent.length() > 1) {
+    					String[] arr = optionContent.split(CommonUtil.SPLIT_BY_SLASH);
+    					HashSet<String> set = new HashSet<>();
+    					for (int i=0; i<arr.length; i++) {
+    						log.debug(String.format("[%d] :: %s", i, arr[i]));
+    						String[] dataArr = arr[i].split(CommonUtil.SPLIT_BY_COLON);
+    						String data = null;
+    						if (dataArr.length > 1) {
+    							// 예외적인 경우로 콜론 바로 뒤에 데이터가 있는것이 아니라 콜론 두개 뒤에 있는 경우가 있어 스플릿 결과의 맨 마지막 값을 가져올 수 있도록 처리
+    							data = dataArr[dataArr.length-1];
+    							log.debug(String.format("option value1 :: %s", data));
+    							set.add(data.trim());
+    						} 
+    					}
+    					
+    					log.debug("final option set : " + set);
+    					
+    					for (String value : set) {
+    						transVO.setKeyword(value);
+    						transVO.setBefore_trans(value);
+    						
+    						transList = listMapper.getTransInfo(transVO);
+    						if (transList.size() == 0) {
+    								listMapper.addTransInfo(transVO);
+    					    }
+    					}
+    					log.debug("==========================");
+                    }
+            	}
             }
-        }
+            
+		} finally {
+			if (reader != null) {
+				reader.close();
+			}
+		}
 	}
 	
-	public ArrayList<AmazonVO> getAmazonInfo(AmazonVO vo) {
-		log.info("getAmazonInfo");
+	public ArrayList<Q10VO> getQ10Info(Q10VO vo) {
+		log.info("getQ10Info");
 		// 초기상태일때 2틀간의 데이터를 얻을수있게 처리 (*srch는 검색할때 넘기는 값)
 		if (!CommonUtil.SEARCH_TYPE_SRCH.equals(vo.getSearch_type())) {
 			vo.setStart_date(CommonUtil.getStartDate());
 		}
 		log.debug(vo);
-		IAmazonMapper mapper = sqlSession.getMapper(IAmazonMapper.class);
-		return mapper.getAmazonInfo(vo);
+		IQ10Mapper mapper = sqlSession.getMapper(IQ10Mapper.class);
+		return mapper.getQ10Info(vo);
 	}
 	
 	@Transactional
-	public ArrayList<String> executeTranslate(ArrayList<AmazonVO> targetList) {
+	public ArrayList<String> executeTranslate(ArrayList<Q10VO> targetList) {
 		log.info("executeTranslate");
 		log.debug(targetList);
 		
 		ArrayList<String> ret = new ArrayList<>();
 		
 		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
-		IAmazonMapper amazonMapper = sqlSession.getMapper(IAmazonMapper.class);
+		IQ10Mapper mapper = sqlSession.getMapper(IQ10Mapper.class);
 		
 		TranslationVO transVO = new TranslationVO();
-		String transedName;
+		String transedName = "";
 		
-		for (AmazonVO vo : targetList) {
+		int unitNo = 0;
+		for (Q10VO vo : targetList) {
 			// 이전에 에러처리 된 데이터가 있을경우 제거
 			TranslationErrorVO errVO = new TranslationErrorVO();
 			errVO.setTrans_target_id(vo.getSeq_id());
-			errVO.setTrans_target_type(CommonUtil.TRANS_TARGET_A);
+			errVO.setTrans_target_type(CommonUtil.TRANS_TARGET_Q);
 			String err_seq_id = listMapper.getTranslationErr(errVO);
 			if (err_seq_id != null && err_seq_id != "") {
 				errVO.setSeq_id(err_seq_id);
@@ -185,30 +199,120 @@ public class AmazonDAO {
 			
 			// 지역별 배송코드 세팅 (csv다운로드 기능)
 			RegionMasterVO rmVO = new RegionMasterVO();
-			String state = vo.getShip_state();
-			if (state.contains("-")) {
-				state = state.split("-")[0];
+			// 県 府 都 道
+			String state = vo.getAddress();
+			if(state.indexOf("県") > -1) {
+				state = state.substring(0, state.indexOf("県")+1);
+			} else if(state.indexOf("都") > -1) {
+				state = state.substring(0, state.indexOf("都")+1);
+			} else if(state.indexOf("府") > -1) {
+				state = state.substring(0, state.indexOf("府")+1);
+			} else if(state.indexOf("道") > -1) {
+				state = state.substring(0, state.indexOf("道")+1);
 			}
+			
 			rmVO.setKeyword(state);
 			ArrayList<RegionMasterVO> regionM = listMapper.getRegionMaster(rmVO);
 			
 			vo.setDelivery_company(regionM.get(0).getDelivery_company());
-			log.debug("Update Amazon info : " + vo);
-			amazonMapper.updateAmazonInfo(vo);
+			log.debug("Update Q10 info : " + vo);
+			mapper.updateQ10Info(vo);
+			
+			unitNo = Integer.parseInt(vo.getQty());
+			Integer intsu = new Integer (unitNo); 
+			String sintsu = intsu.toString(); 
+			String su = CommonUtil.hankakuNumToZenkaku(sintsu);
+			
+			StringBuffer buf = null;
+			String optionContent = vo.getOption_info();
+			if(optionContent != null && optionContent.length() > 1) {
+				// 옵션에 대한 처리
+				HashSet<String> cntCheck = new HashSet<>();
+				HashMap<String, Integer> map = new HashMap<>();
+				
+				String[] strArr = vo.getOption_info().split(CommonUtil.SPLIT_BY_SLASH);
+				ArrayList<String> list = new ArrayList<>();
+				for (int i=0; i<strArr.length; i++) {
+					// 이전에 에러처리 된 데이터가 있을경우 제거 (옵션이 여러개인 경우 중복제거)
+					err_seq_id = listMapper.getTranslationErr(errVO);
+					if (err_seq_id != null && err_seq_id != "") {
+						errVO.setSeq_id(err_seq_id);
+						listMapper.deleteTranslationErr(errVO);
+					}
+					
+					log.debug(String.format("%d :: %s", i, strArr[i]));
+					String[] data = strArr[i].split(CommonUtil.SPLIT_BY_COLON);
+					String value = null;
+					if (data.length > 1) {
+						// 예외적인 경우로 콜론 바로 뒤에 데이터가 있는것이 아니라 콜론 두개 뒤에 있는 경우가 있어 스플릿 결과의 맨 마지막 값을 가져올 수 있도록 처리
+						value = data[data.length-1];
+						log.debug(String.format("option value1 :: %s", value));
+						
+						transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+						transVO.setKeyword(value.trim());
+						searchRet = listMapper.getTransInfo(transVO);
+						
+						try {
+							list.add(searchRet.get(0).getAfter_trans().trim());
+						} catch (NullPointerException e) {
+							errVO.setErr_text(CommonUtil.TRANS_ERR);
+							listMapper.insertTranslationErr(errVO);
+							continue;
+						} catch (IndexOutOfBoundsException e) {
+							errVO.setErr_text(CommonUtil.TRANS_ERR);
+							listMapper.insertTranslationErr(errVO);
+							continue;
+						}
+					} 
+				}
+				log.debug("option list : " + list);
+				
+				for (String str : list) {
+					String trimmed = str.trim();
+					if (cntCheck.add(trimmed)) {
+						map.put(trimmed, 1);
+					} else {
+						// 이미 존재하는 옵션명의 경우 +1후 map에 저장
+						int recnt = map.get(trimmed);
+						map.put(trimmed, recnt+1);
+					}
+				}
+				log.debug("option map : " + map);
+				
+				Set<String> optionNames = map.keySet();
+				buf = new StringBuffer(transedName);
+				buf.append(" ");
+				for (String optionName : optionNames) {
+					Integer unitsu = map.get(optionName)*unitNo; 
+					// [MOD-1011] 
+					String unitsu1 = unitsu.toString(); 
+					String su1 = CommonUtil.hankakuNumToZenkaku(unitsu1); 
+					buf.append(optionName + "×" +su1); 
+
+					if (optionNames.size() > 1) {
+						buf.append(";");
+					}
+				}
+			} else {
+				buf = new StringBuffer(transedName + "×" + su);
+			}
+			
+			String last = buf.toString();
+			String finalStr = null;
+			try {
+				finalStr = last.substring(0, last.lastIndexOf(";"));
+			} catch (StringIndexOutOfBoundsException e) {
+				finalStr = last;
+			}
+			log.debug("final String : " + finalStr);
 			
 			TranslationResultVO resultVO = new TranslationResultVO();
 			resultVO.setTrans_target_id(vo.getSeq_id());
-			resultVO.setTrans_target_type(CommonUtil.TRANS_TARGET_A);
-//			resultVO.setResult_text(transedName + "*" + vo.getQuantity_to_ship()); // [MOD-1011] 
-			
-			// [MOD-1011] 
-			Integer intsu = new Integer (vo.getQuantity_to_ship()); 
-			String sintsu = intsu.toString(); 
-			String su = CommonUtil.hankakuNumToZenkaku(sintsu); 
-			resultVO.setResult_text(transedName + "×" + su); 
+			resultVO.setTrans_target_type(CommonUtil.TRANS_TARGET_Q);
+			resultVO.setResult_text(finalStr);
 			
 			// 이미 치환된 결과가 있는 trans_target_id이면 update, 아니면 insert
-			ArrayList<AmazonVO> transResult = amazonMapper.getTransResult(resultVO);
+			ArrayList<Q10VO> transResult = mapper.getTransResult(resultVO);
 			if (transResult.size() > 0) {
 				listMapper.modTransResult(resultVO);
 				
@@ -225,7 +329,7 @@ public class AmazonDAO {
 		return ret;
 	}
 	
-	public ArrayList<AmazonVO> getTransResult(String id_lst) {
+	public ArrayList<Q10VO> getTransResult(String id_lst) {
 		log.info("getTransResult");
 		id_lst = id_lst.replace("[", "");
 		id_lst = id_lst.replace("]", "");
@@ -236,19 +340,19 @@ public class AmazonDAO {
 		}
 		log.debug("query id list : " + list);
 		
-		IAmazonMapper mapper = sqlSession.getMapper(IAmazonMapper.class);
+		IQ10Mapper mapper = sqlSession.getMapper(IQ10Mapper.class);
 		TranslationResultVO vo = new TranslationResultVO();
 		vo.setSeq_id_list(list);
 		return mapper.getTransResult(vo);
 	}
 	
-	public void deleteAmazonInfo(ArrayList<AmazonVO> list) {
-		log.info("deleteAmazonInfo");
+	public void deleteQ10Info(ArrayList<Q10VO> list) {
+		log.info("deleteQ10Info");
 		log.debug(list);
 		
-		IAmazonMapper mapper = sqlSession.getMapper(IAmazonMapper.class);
-		for (AmazonVO vo : list) {
-			mapper.deleteAmazonInfo(vo.getSeq_id());
+		IQ10Mapper mapper = sqlSession.getMapper(IQ10Mapper.class);
+		for(Q10VO vo : list) {
+			mapper.deleteQ10Info(vo.getSeq_id());
 		}
 	}
 	
@@ -256,8 +360,7 @@ public class AmazonDAO {
 			HttpServletResponse response
 			, String[] id_lst
 			, String fileEncoding
-			, String delivery_company
-			, String isChecked) 
+			, String delivery_company) 
 			throws IOException
 			, CsvDataTypeMismatchException
 			, CsvRequiredFieldEmptyException {
@@ -265,7 +368,7 @@ public class AmazonDAO {
 		
 		log.debug("encoding : " + fileEncoding);
 		
-		IAmazonMapper mapper = sqlSession.getMapper(IAmazonMapper.class);
+		IQ10Mapper mapper = sqlSession.getMapper(IQ10Mapper.class);
 		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
 		BufferedWriter writer = null;
 		CSVWriter csvWriter = null;
@@ -303,17 +406,10 @@ public class AmazonDAO {
 			vo.setSeq_id_list(seq_id_list);
 			vo.setDelivery_company(delivery_company);
 			
-			ArrayList<AmazonVO> list = mapper.getTransResult(vo);
+			ArrayList<Q10VO> list = mapper.getTransResult(vo);
 			ArrayList<ArakuVO> yList = new ArrayList<>();
 			
-			for (AmazonVO tmp : list) {
-				// 빠른배송을 옵션으로 둔 항목에 대하여 체크가 되어있으면 제외
-				if ("1".equals(isChecked)) {
-					if ("NextDay".equals(tmp.getShip_service_level())) {
-						log.debug("tomorrow hope checked and excepted!");
-						continue;
-					}
-				}
+			for (Q10VO tmp : list) {
 				
 				// 예외테이블에 추가한 목록에 대하여 야마토에서 제외
 				ArrayList<ExceptionMasterVO> exList = listMapper.getExceptionMaster(null);
@@ -328,11 +424,9 @@ public class AmazonDAO {
 					continue;
 				}
 				YamatoVO yVO = new YamatoVO();
-				yVO.setCustomer_no(tmp.getOrder_id().replace("\"", ""));
+				yVO.setCustomer_no(tmp.getOrder_no().replace("\"", ""));
 				yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_0);
-				if ("COD".equals(tmp.getPayment_method())) {
-					yVO.setCollect_cash(tmp.getCod_collectible_amount().replace("\"", ""));
-				}
+				yVO.setCollect_cash(tmp.getTotal_price().replace("\"", ""));
 				yVO.setEstimate_ship_date(CommonUtil.getDate("YYYY/MM/dd", 0));
 				yVO.setBill_customer_code("048299821004-311");
 				yVO.setMultiple_key("1");
@@ -340,30 +434,18 @@ public class AmazonDAO {
 				yVO.setClient_post_no("3330845");
 				yVO.setClient_add("埼玉県川口市上青木西１丁目19-39");
 				yVO.setClient_building("エレガンス滝澤ビル1F");
-				yVO.setClient_name("有限会社ItempiaJapan (A)");
+				yVO.setClient_name("有限会社ItempiaJapan (Q)");
 				yVO.setClient_tel("048-242-3801");
 				
-				yVO.setDelivery_post_no(tmp.getShip_postal_code().replace("\"", "").replace("-", ""));
-				yVO.setDelivery_add(tmp.getShip_state().replace("\"", "") + "" + tmp.getShip_address1().replace("\"", "") + "" + tmp.getShip_address2().replace("\"", "") + "" + tmp.getShip_address3().replace("\"", ""));
-				yVO.setDelivery_name(tmp.getRecipient_name().replace("\"", ""));
+				yVO.setDelivery_post_no(tmp.getPost_no().replace("\"", "").replace("-", ""));
+				yVO.setDelivery_add(tmp.getAddress().replace("\"", ""));
+				yVO.setDelivery_name(tmp.getRecpt_name().replace("\"", ""));
 				yVO.setDelivery_name_title(CommonUtil.TITLE_SAMA);
-				String phone_no = tmp.getBuyer_phone_number();
-				if (phone_no.contains("-")) {
-					yVO.setDelivery_tel(phone_no);
-				} else {
-					if (phone_no.length() == 10) {
-						yVO.setDelivery_tel(phone_no.substring(0, 2) + "-" + phone_no.subSequence(2, 6) + "-" + phone_no.subSequence(6, 10));
-					} else if (phone_no.length() == 11) {
-						yVO.setDelivery_tel(phone_no.substring(0, 3) + "-" + phone_no.subSequence(3, 7) + "-" + phone_no.subSequence(7, 11));
-					}
+				String phone_no = tmp.getRecpt_mobile_no();
+				if("-".equals(phone_no)) {
+					phone_no = tmp.getRecpt_phone_no();
 				}
-//				yVO.setDelivery_tel(tmp.getDelivery_tel1().replace("\"", "") + "-" + tmp.getDelivery_tel2().replace("\"", "") + "-" + tmp.getDelivery_tel3().replace("\"", ""));
-				
-				// 配送サービスレベル가 NextDay인 경우
-        		if ("NextDay".equals(tmp.getShip_service_level())) {
-        			yVO.setDelivery_time(CommonUtil.YA_TOMORROW_MORNING_CODE);
-        		}
-				
+				yVO.setDelivery_tel(phone_no);
 				yVO.setProduct_name1(tmp.getResult_text().replace("\"", ""));
 				
 				// csv작성을 위한 리스트작성
@@ -387,8 +469,7 @@ public class AmazonDAO {
 			HttpServletResponse response
 			, String[] id_lst
 			, String fileEncoding
-			, String delivery_company
-			, String isChecked) 
+			, String delivery_company) 
 			throws IOException
 			, CsvDataTypeMismatchException
 			, CsvRequiredFieldEmptyException {
@@ -396,7 +477,7 @@ public class AmazonDAO {
 		
 		log.debug("encoding : " + fileEncoding);
 		
-		IAmazonMapper mapper = sqlSession.getMapper(IAmazonMapper.class);
+		IQ10Mapper mapper = sqlSession.getMapper(IQ10Mapper.class);
 		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
 		BufferedWriter writer = null;
 		CSVWriter csvWriter = null;
@@ -434,12 +515,12 @@ public class AmazonDAO {
 			vo.setSeq_id_list(seq_id_list);
 			vo.setDelivery_company(delivery_company);
 			
-			ArrayList<AmazonVO> list = mapper.getTransResult(vo);
+			ArrayList<Q10VO> list = mapper.getTransResult(vo);
 			ArrayList<ExceptionMasterVO> exList = listMapper.getExceptionMaster(null);
 			boolean chkRet = false;
 			ArrayList<ArakuVO> sList = new ArrayList<>();
 			
-			for (AmazonVO tmp : list) {
+			for (Q10VO tmp : list) {
 				for (ExceptionMasterVO exVO : exList) {
 					chkRet = false;
 					if (tmp.getResult_text().contains(exVO.getException_data())) {
@@ -450,34 +531,51 @@ public class AmazonDAO {
 					continue;
 				}
 				SagawaVO sVO = new SagawaVO();
-				sVO.setDelivery_add1(tmp.getShip_state().replace("\"", ""));
-				sVO.setDelivery_add2(tmp.getShip_address1().replace("\"", ""));
-				sVO.setDelivery_add3(tmp.getShip_address2().replace("\"", "") + "" + tmp.getShip_address3().replace("\"", ""));
-				sVO.setDelivery_post_no(tmp.getShip_postal_code().replace("\"", ""));
-				String phone_no = tmp.getBuyer_phone_number();
-				if (phone_no.contains("-")) {
-					sVO.setDelivery_tel(phone_no);
-				} else {
-					if (phone_no.length() == 10) {
-						sVO.setDelivery_tel(phone_no.substring(0, 2) + "-" + phone_no.subSequence(2, 6) + "-" + phone_no.subSequence(6, 10));
-					} else if (phone_no.length() == 11) {
-						sVO.setDelivery_tel(phone_no.substring(0, 3) + "-" + phone_no.subSequence(3, 7) + "-" + phone_no.subSequence(7, 11));
-					}
+				
+				// 県 府 都 道
+				String add = tmp.getAddress();
+				String tmpStr = "";
+				String state = "";
+				if(add.indexOf("県") > -1) {
+					state = add.substring(0, add.indexOf("県")+1);
+					tmpStr = add.substring(add.indexOf("県")+1, add.length());
+				} else if(add.indexOf("都") > -1) {
+					state = add.substring(0, add.indexOf("都")+1);
+					tmpStr = add.substring(add.indexOf("都")+1, add.length());
+				} else if(add.indexOf("府") > -1) {
+					state = add.substring(0, add.indexOf("府")+1);
+					tmpStr = add.substring(add.indexOf("府")+1, add.length());
+				} else if(add.indexOf("道") > -1) {
+					state = add.substring(0, add.indexOf("道")+1);
+					tmpStr = add.substring(add.indexOf("道")+1, add.length());
 				}
-//				sVO.setDelivery_tel(tmp.getDelivery_tel1().replace("\"", "") + "-" + tmp.getDelivery_tel2().replace("\"", "") + "-" + tmp.getDelivery_tel3().replace("\"", ""));
-				sVO.setDelivery_name1(tmp.getRecipient_name().replace("\"", ""));
+				
+				// 市 区
+				String city = "";
+				if(tmpStr.indexOf("市") > -1) {
+					city = tmpStr.substring(0, tmpStr.indexOf("市")+1);
+					tmpStr = tmpStr.substring(tmpStr.indexOf("市")+1, tmpStr.length());
+				} else if(tmpStr.indexOf("区") > -1) {
+					city = tmpStr.substring(0, tmpStr.indexOf("区")+1);
+					tmpStr = tmpStr.substring(tmpStr.indexOf("区")+1, tmpStr.length());
+				}
+				
+				sVO.setDelivery_add1(state.replace("\"", ""));
+				sVO.setDelivery_add2(city.replace("\"", ""));
+				sVO.setDelivery_add3(tmpStr.replace("\"", ""));
+				sVO.setDelivery_post_no(tmp.getPost_no().replace("\"", ""));
+				String phone_no = tmp.getRecpt_mobile_no();
+				if("-".equals(phone_no)) {
+					phone_no = tmp.getRecpt_phone_no();
+				}
+				sVO.setDelivery_tel(phone_no);
+				sVO.setDelivery_name1(tmp.getRecpt_name().replace("\"", ""));
 				
 				sVO.setClient_add1("埼玉県川口市");
 				sVO.setClient_add2("上青木西１丁目19-39エレガンス滝澤ビル1F");
 				sVO.setClient_name1("有限会社");
-				sVO.setClient_name2("ItempiaJapan (A)");
+				sVO.setClient_name2("ItempiaJapan (Q)");
 				sVO.setClient_tel("048-242-3801");
-				
-				// 配送サービスレベル가 NextDay인 경우
-        		if ("NextDay".equals(tmp.getShip_service_level())) {
-        			sVO.setDelivery_time(CommonUtil.SA_TOMORROW_MORNING_CODE);
-        			sVO.setDelivery_date(CommonUtil.getDate("YYYY/MM/dd", 1));
-        		}
 				
         		String product_name = tmp.getResult_text().replace("\"", "");
         		// 반각문자를 전각문자로 치환 (https://kurochan-note.hatenablog.jp/entry/2014/02/04/213737)
@@ -523,7 +621,7 @@ public class AmazonDAO {
 		
 		log.debug("encoding : " + fileEncoding);
 		
-		IAmazonMapper mapper = sqlSession.getMapper(IAmazonMapper.class);
+		IQ10Mapper mapper = sqlSession.getMapper(IQ10Mapper.class);
 		BufferedWriter writer = null;
 		CSVWriter csvWriter = null;
 		
@@ -559,19 +657,46 @@ public class AmazonDAO {
 			TranslationResultVO vo = new TranslationResultVO();
 			vo.setSeq_id_list(seq_id_list);
 			
-			ArrayList<AmazonVO> list = mapper.getTransResult(vo);
+			ArrayList<Q10VO> list = mapper.getTransResult(vo);
 			ArrayList<ArakuVO> cList = new ArrayList<>();
 			
-			for (AmazonVO tmp : list) {
+			for (Q10VO tmp : list) {
 				if(tmp.getResult_text().contains("全無")) {
 				/*if(tmp.getProduct_name().indexOf("[全国送料無料]") != -1) {*/
 					ClickPostVO cVO = new ClickPostVO();
-					cVO.setPost_no(tmp.getShip_postal_code().replace("\"", ""));
-					cVO.setDelivery_name(tmp.getRecipient_name().replace("\"", ""));
-					cVO.setDelivery_add1(tmp.getShip_state().replace("\"", ""));
-					cVO.setDelivery_add2(tmp.getShip_address1().replace("\"", ""));
-					cVO.setDelivery_add3(tmp.getShip_address2().replace("\"", ""));
-					cVO.setDelivery_add4(tmp.getShip_address3().replace("\"", ""));
+					cVO.setPost_no(tmp.getPost_no().replace("\"", ""));
+					cVO.setDelivery_name(tmp.getRecpt_name().replace("\"", ""));
+					
+					// 県 府 都 道
+					String add = tmp.getAddress();
+					String tmpStr = "";
+					String state = "";
+					if(add.indexOf("県") > -1) {
+						state = add.substring(0, add.indexOf("県")+1);
+						tmpStr = add.substring(add.indexOf("県")+1, add.length());
+					} else if(add.indexOf("都") > -1) {
+						state = add.substring(0, add.indexOf("都")+1);
+						tmpStr = add.substring(add.indexOf("都")+1, add.length());
+					} else if(add.indexOf("府") > -1) {
+						state = add.substring(0, add.indexOf("府")+1);
+						tmpStr = add.substring(add.indexOf("府")+1, add.length());
+					} else if(add.indexOf("道") > -1) {
+						state = add.substring(0, add.indexOf("道")+1);
+						tmpStr = add.substring(add.indexOf("道")+1, add.length());
+					}
+					
+					// 市 区
+					String city = "";
+					if(tmpStr.indexOf("市") > -1) {
+						city = tmpStr.substring(0, tmpStr.indexOf("市")+1);
+						tmpStr = tmpStr.substring(tmpStr.indexOf("市")+1, tmpStr.length());
+					} else if(tmpStr.indexOf("区") > -1) {
+						city = tmpStr.substring(0, tmpStr.indexOf("区")+1);
+						tmpStr = tmpStr.substring(tmpStr.indexOf("区")+1, tmpStr.length());
+					}
+					cVO.setDelivery_add1(state.replace("\"", ""));
+					cVO.setDelivery_add2(city.replace("\"", ""));
+					cVO.setDelivery_add3(tmpStr.replace("\"", ""));
 					String product_name = tmp.getResult_text().replace("\"", "");
 	        		// 반각문자를 전각문자로 치환 (https://kurochan-note.hatenablog.jp/entry/2014/02/04/213737)
 	        		product_name = Normalizer.normalize(product_name, Normalizer.Form.NFKC);
