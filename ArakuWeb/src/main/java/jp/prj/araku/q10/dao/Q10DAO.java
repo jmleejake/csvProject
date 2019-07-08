@@ -437,7 +437,7 @@ public class Q10DAO {
 				yVO.setClient_name("有限会社ItempiaJapan (Q)");
 				yVO.setClient_tel("048-242-3801");
 				
-				yVO.setDelivery_post_no(tmp.getPost_no().replace("\"", "").replace("-", ""));
+				yVO.setDelivery_post_no(tmp.getPost_no().replace("\"", "").replace("-", "").replace("'", ""));
 				yVO.setDelivery_add(tmp.getAddress().replace("\"", ""));
 				yVO.setDelivery_name(tmp.getRecpt_name().replace("\"", ""));
 				yVO.setDelivery_name_title(CommonUtil.TITLE_SAMA);
@@ -563,7 +563,7 @@ public class Q10DAO {
 				sVO.setDelivery_add1(state.replace("\"", ""));
 				sVO.setDelivery_add2(city.replace("\"", ""));
 				sVO.setDelivery_add3(tmpStr.replace("\"", ""));
-				sVO.setDelivery_post_no(tmp.getPost_no().replace("\"", ""));
+				sVO.setDelivery_post_no(tmp.getPost_no().replace("\"", "").replace("'", ""));
 				String phone_no = tmp.getRecpt_mobile_no();
 				if("-".equals(phone_no)) {
 					phone_no = tmp.getRecpt_phone_no();
@@ -664,7 +664,7 @@ public class Q10DAO {
 				if(tmp.getResult_text().contains("全無")) {
 				/*if(tmp.getProduct_name().indexOf("[全国送料無料]") != -1) {*/
 					ClickPostVO cVO = new ClickPostVO();
-					cVO.setPost_no(tmp.getPost_no().replace("\"", ""));
+					cVO.setPost_no(tmp.getPost_no().replace("\"", "").replace("'", ""));
 					cVO.setDelivery_name(tmp.getRecpt_name().replace("\"", ""));
 					
 					// 県 府 都 道

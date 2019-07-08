@@ -34,8 +34,11 @@ import jp.prj.araku.util.CommonUtil;
 public class Q10Controller {
 	private static final Logger log = Logger.getLogger("jp.prj.araku.q10");
 	
+	@Value("${Q10_FILE_ENCODING}")
+	private String upFileEncoding;
+	
 	@Value("${FILE_ENCODING}")
-	private String fileEncoding;
+	private String downFileEncoding;
 	
 	@Autowired
 	Q10DAO dao;
@@ -77,6 +80,15 @@ public class Q10Controller {
 		return listDao.registerTransInfo(transVO);
 	}
 	
+	@RequestMapping(value="/delTrans")
+	public String delTransInfo(@RequestBody ArrayList<TranslationVO> transVO) {
+		log.info("delTransInfo");
+		for (TranslationVO vo : transVO) {
+			listDao.delTransInfo(vo.getSeq_id());
+		}
+		return "redirect:getTrans";
+	}
+	
 	@ResponseBody
 	@RequestMapping(value="/showRegionMaster")
 	public ArrayList<RegionMasterVO> showRegionMaster(RegionMasterVO vo) {
@@ -115,7 +127,7 @@ public class Q10Controller {
 	@RequestMapping(value="/qUpload", method=RequestMethod.POST)
 	public String processCsvUpload(MultipartFile upload) throws IOException {
 		log.info("processCsvUpload");
-		dao.insertQ10Info(upload, fileEncoding);
+		dao.insertQ10Info(upload, upFileEncoding);
 		return "redirect:orderView";
 	}
 	
@@ -185,7 +197,7 @@ public class Q10Controller {
 		id_lst = id_lst.replace("]", "");
 		String[] seq_id_list = id_lst.split(",");
 		try {
-				dao.yamatoFormatDownload(response, seq_id_list, fileEncoding, delivery_company);
+				dao.yamatoFormatDownload(response, seq_id_list, downFileEncoding, delivery_company);
 		} catch (IOException e) {
 			log.error(e.toString());
 		} catch (CsvDataTypeMismatchException e) {
@@ -209,7 +221,7 @@ public class Q10Controller {
 		id_lst = id_lst.replace("]", "");
 		String[] seq_id_list = id_lst.split(",");
 		try {
-				dao.sagawaFormatDownload(response, seq_id_list, fileEncoding, delivery_company);
+				dao.sagawaFormatDownload(response, seq_id_list, downFileEncoding, delivery_company);
 		} catch (IOException e) {
 			log.error(e.toString());
 		} catch (CsvDataTypeMismatchException e) {
@@ -231,7 +243,7 @@ public class Q10Controller {
 		id_lst = id_lst.replace("]", "");
 		String[] seq_id_list = id_lst.split(",");
 		try {
-				dao.clickPostFormatDownload(response, seq_id_list, fileEncoding);
+				dao.clickPostFormatDownload(response, seq_id_list, downFileEncoding);
 		} catch (IOException e) {
 			log.error(e.toString());
 		} catch (CsvDataTypeMismatchException e) {
