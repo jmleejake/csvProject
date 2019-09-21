@@ -22,6 +22,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ibm.icu.text.Transliterator;
 import com.opencsv.CSVWriter;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
@@ -649,22 +650,41 @@ public class RakutenDAO {
 				// あす楽希望이 1인 경우
         		if (tmp.getTomorrow_hope().equals("1")) {
         			sVO.setDelivery_time(CommonUtil.SA_TOMORROW_MORNING_CODE);
-        			sVO.setDelivery_date(tmp.getDelivery_date_sel());
         		}
+        		
+        		// 2019-09-21: 배송일 컬럼에 대하여 YYYYMMDD의 형태로 처리
+        		sVO.setDelivery_date(tmp.getDelivery_date_sel().replaceAll("/", "").replaceAll("-", ""));
 				
         		String product_name = tmp.getResult_text().replace("\"", "");
-        		// 반각문자를 전각문자로 치환 (https://kurochan-note.hatenablog.jp/entry/2014/02/04/213737)
-        		product_name = Normalizer.normalize(product_name, Normalizer.Form.NFKC);
-        		// 사가와 정책에 따라 品名1~5 각각 32바이트가 넘어가면 다음으로 세팅하는 방식으로 수정
-        		if (product_name.length() > 30) {
-        			sVO.setProduct_name1(product_name.substring(0, 30));
-        			sVO.setProduct_name2(product_name.substring(30, product_name.length()));
-        			if (sVO.getProduct_name2().length() > 30) {
-        				String product_name2 = sVO.getProduct_name2();
-        				sVO.setProduct_name2(product_name2.substring(0, 30));
-        				sVO.setProduct_name3(product_name2.substring(30, product_name2.length()));
-        			}
-        		} else {
+        		// 2019-09-21: 전각처리 / 전각처리된 상품명1-5에 대하여 각 14자리가 들어갈수있게 처리 
+        		Transliterator transliterator = Transliterator.getInstance("Halfwidth-Fullwidth");
+        		product_name = transliterator.transliterate(product_name);
+        		if(product_name.length() > 14) {
+        			sVO.setProduct_name1(product_name.substring(0,14));
+        			sVO.setProduct_name2(product_name.substring(14,product_name.length()));
+        			
+        			if(sVO.getProduct_name2().length() > 14) {
+        				String str1 = sVO.getProduct_name2();
+            			sVO.setProduct_name2(str1.substring(0,14));
+            			sVO.setProduct_name3(str1.substring(14,str1.length()));
+            			
+            			if(sVO.getProduct_name3().length() > 14) {
+            				String str2 = sVO.getProduct_name3();
+            				sVO.setProduct_name3(str2.substring(0,14));
+            				sVO.setProduct_name4(str2.substring(14,str2.length()));
+            				
+            				if(sVO.getProduct_name4().length() > 14) {
+            					String str3 = sVO.getProduct_name4();
+            					sVO.setProduct_name4(str3.substring(0,14));
+            					sVO.setProduct_name5(str3.substring(14,str3.length()));
+            					
+            					if(sVO.getProduct_name5().length() > 14) {
+            						sVO.setProduct_name5(sVO.getProduct_name5().substring(0,14));
+            					}
+            				}
+            			}
+            		}
+        		}else {
         			sVO.setProduct_name1(product_name);
         		}
 				
