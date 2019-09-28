@@ -653,8 +653,10 @@ public class RakutenDAO {
         		}
         		
         		// 2019-09-21: 배송일 컬럼에 대하여 YYYYMMDD의 형태로 처리
-        		sVO.setDelivery_date(tmp.getDelivery_date_sel().replaceAll("/", "").replaceAll("-", ""));
-				
+        		if  (tmp.getDelivery_date_sel() != null) {
+        			sVO.setDelivery_date(tmp.getDelivery_date_sel().replaceAll("/", "").replaceAll("-", ""));
+        		}
+        		
         		String product_name = tmp.getResult_text().replace("\"", "");
         		// 2019-09-21: 전각처리 / 전각처리된 상품명1-5에 대하여 각 14자리가 들어갈수있게 처리 
         		Transliterator transliterator = Transliterator.getInstance("Halfwidth-Fullwidth");
