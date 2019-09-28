@@ -589,14 +589,22 @@ public class AmazonDAO {
 					cVO.setDelivery_name(tmp.getRecipient_name().replace("\"", ""));
 					cVO.setDelivery_add1(tmp.getShip_state().replace("\"", ""));
 					cVO.setDelivery_add2(tmp.getShip_address1().replace("\"", ""));
-					cVO.setDelivery_add3(tmp.getShip_address2().replace("\"", ""));
-					cVO.setDelivery_add4(tmp.getShip_address3().replace("\"", ""));
+					// 2019-09-28 크리쿠포스트 주소 컬럼에 대하여 전각 20자 이상이면 안되는 사항이 있어 수정.
+					String addStr = tmp.getShip_address2().replace("\"", "");
+					if(addStr.length() > 20) {
+						cVO.setDelivery_add3(addStr.substring(0, 20));
+						cVO.setDelivery_add4(addStr.substring(20, addStr.length())+" "+tmp.getShip_address3().replace("\"", ""));
+					}else {
+						cVO.setDelivery_add3(tmp.getShip_address2().replace("\"", ""));
+						cVO.setDelivery_add4(tmp.getShip_address3().replace("\"", ""));
+					}
+					
 					String product_name = tmp.getResult_text().replace("\"", "");
 	        		// 반각문자를 전각문자로 치환 (https://kurochan-note.hatenablog.jp/entry/2014/02/04/213737)
 	        		product_name = Normalizer.normalize(product_name, Normalizer.Form.NFKC);
 	        		// clickpost 정책에 따라  内容品의 문자가 전각15바이트가 넘어가면 잘라내고 집어 넣을수있게 처리
-	        		if (product_name.length() > 13) {
-	        			product_name = product_name.substring(0, 13);
+	        		if (product_name.length() > 15) {
+	        			product_name = product_name.substring(0, 15);
 	        		}
 					cVO.setDelivery_contents(product_name);
 					
