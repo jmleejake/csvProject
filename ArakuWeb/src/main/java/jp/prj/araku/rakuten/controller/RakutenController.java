@@ -136,7 +136,8 @@ public class RakutenController {
 	@RequestMapping(value="/csvUpload", method=RequestMethod.POST)
 	public String processCsvUpload(MultipartFile rakUpload, HttpServletRequest req) throws IOException {
 		log.info("processCsvUpload");
-		return dao.insertRakutenInfo(rakUpload, fileEncoding, req, duplDownPath);
+		dao.insertRakutenInfo(rakUpload, fileEncoding, req, duplDownPath);
+		return "redirect:orderView";
 	}
 	
 	@ResponseBody
@@ -396,7 +397,7 @@ public class RakutenController {
 		try {
 			// dao.clickPostFormatDownload(response, seq_id_list, fileEncoding);
 			// 2019-10-03: 크리쿠포스트 csv다운로드시 목록에 40개 제한이 있어 잘라서 다운로드처리
-			ret = dao.createClickpostCsvFile(cpDownPath, seq_id_list);
+			ret = dao.createClickpostCsvFile(fileEncoding, cpDownPath, seq_id_list);
 		} catch (IOException e) {
 			log.error(e.toString());
 		} catch (CsvDataTypeMismatchException e) {

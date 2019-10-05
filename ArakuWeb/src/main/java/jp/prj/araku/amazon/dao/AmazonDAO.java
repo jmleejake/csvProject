@@ -2,8 +2,10 @@ package jp.prj.araku.amazon.dao;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -632,7 +634,7 @@ public class AmazonDAO {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public String createClickpostCsvFile(String cpDownPath, String[] id_lst) 
+	public String createClickpostCsvFile(String fileEncoding, String cpDownPath, String[] id_lst) 
 			throws IOException
 			, CsvDataTypeMismatchException
 			, CsvRequiredFieldEmptyException {
@@ -709,8 +711,9 @@ public class AmazonDAO {
 			for(int i1=0; i1<subList.size(); i1++) {
 				try
 				(
-					Writer writer = Files.newBufferedWriter(Paths.get(cpDownPath+"CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0) +"-"+i1+".csv"));
-					CSVWriter	csvWriter = new CSVWriter(writer
+						FileOutputStream fos = new FileOutputStream(cpDownPath+"CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0) +"-"+i1+".csv");
+						Writer writer = new OutputStreamWriter(fos, fileEncoding);
+						CSVWriter	csvWriter = new CSVWriter(writer
 							, CSVWriter.DEFAULT_SEPARATOR
 							, CSVWriter.NO_QUOTE_CHARACTER
 							, CSVWriter.DEFAULT_ESCAPE_CHARACTER
@@ -729,8 +732,8 @@ public class AmazonDAO {
 		}else {
 			try
 			(
-				Writer writer = Files.newBufferedWriter(Paths.get(cpDownPath+"CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0) + ".csv"));
-					
+				FileOutputStream fos = new FileOutputStream(cpDownPath+"CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0) +".csv");
+				Writer writer = new OutputStreamWriter(fos, fileEncoding);
 				CSVWriter	csvWriter = new CSVWriter(writer
 						, CSVWriter.DEFAULT_SEPARATOR
 						, CSVWriter.NO_QUOTE_CHARACTER

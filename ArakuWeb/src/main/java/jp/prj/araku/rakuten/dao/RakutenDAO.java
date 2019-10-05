@@ -2,8 +2,10 @@ package jp.prj.araku.rakuten.dao;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -93,6 +95,11 @@ public class RakutenDAO {
             while (iterator.hasNext()) {
             	RakutenVO vo = iterator.next();
             	
+            	// 2019-10-05: 注1】이라는 항목에 대해서 빈 값으로 처리후 insert처리
+            	if(null != vo.getProduct_option() && "注1".contains(vo.getProduct_option())) {
+            		vo.setProduct_option("");
+            	}
+            	
             	// 데이터 중복체크
             	RakutenVO searchVO = new RakutenVO();
             	searchVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
@@ -102,7 +109,7 @@ public class RakutenDAO {
             	// 2019-10-05: 別紙처리
             	HashSet<String> exceptionList = new HashSet<>();
         		
-        		// 이미 존재하는 受注番号가 있으면
+            	// 이미 존재하는 受注番号가 있으면
         		if (dupCheckList.size() == 1) {
         			// 商品ID가 같으면
         			if (vo.getProduct_id().equals(dupCheckList.get(0).getProduct_id())) {
@@ -114,10 +121,12 @@ public class RakutenDAO {
         				if(exceptionList.add(vo.getOrder_no().trim())) {
         					RakutenVO forException = new RakutenVO();
         					forException.setSeq_id(dupCheckList.get(0).getSeq_id());
-        					forException.setProduct_name("[別紙"+(exceptionList.size()+1)+"] "+dupCheckList.get(0).getProduct_name());
-        					mapper.updateRakutenInfo(searchVO);
+        					forException.setProduct_name("[別紙"+(exceptionList.size())+"] "+dupCheckList.get(0).getProduct_name());
+        					mapper.updateRakutenInfo(forException);
+        					dupCheckList.get(0).setProduct_name("[別紙"+(exceptionList.size())+"] "+dupCheckList.get(0).getProduct_name());
+        					errList.add(dupCheckList.get(0));
         				}
-        				vo.setProduct_name("[別紙"+(exceptionList.size()+1)+"] "+vo.getProduct_name());
+        				vo.setProduct_name("[別紙"+(exceptionList.size())+"] "+vo.getProduct_name());
         				errList.add(vo);
             			continue;
         			}
@@ -213,10 +222,14 @@ public class RakutenDAO {
 //			session.setAttribute("errSize", errList.size());
 //			session.setAttribute("errList", errList);
 			if(errList.size() > 0) {
+				for(RakutenVO rvo : errList) {
+					rvo.setProduct_option(rvo.getProduct_option().replaceAll("\n", ""));
+					rvo.setComment(rvo.getComment().replaceAll("\n", ""));
+				}
 				try
 				(
-					Writer writer = Files.newBufferedWriter(Paths.get(duplDownPath+"[ERR] "+CommonUtil.getDate("YYYY-MM-dd HH:mm:ss", 0) + ".csv"));
-						
+					FileOutputStream fos = new FileOutputStream(duplDownPath+"[DUPL] "+CommonUtil.getDate("YYYYMMdd", 0) + ".csv");
+					Writer writer = new OutputStreamWriter(fos, fileEncoding);
 					CSVWriter	csvWriter = new CSVWriter(writer
 							, CSVWriter.DEFAULT_SEPARATOR
 							, CSVWriter.NO_QUOTE_CHARACTER
@@ -228,7 +241,7 @@ public class RakutenDAO {
 		                    .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
 		                    .build();
 					
-					csvWriter.writeNext(CommonUtil.deliveryCompanyHeader("CLICK"));
+					csvWriter.writeNext(CommonUtil.rakutenHeader());
 
 		            try {
 						beanToCsv.write(errList);
@@ -238,9 +251,7 @@ public class RakutenDAO {
 				}
 			}
 			
-			ret = "アップロードを完了しました。<br>"
-			+(errList.size() > 0?"中腹のファイルはこちです。<br>"+duplDownPath+"[ERR] "+CommonUtil.getDate("YYYY-MM-dd HH:mm:ss", 0) + ".csv":"")
-			+"<br><a href='/rakuten/orderview'>注文情報</a>";
+			ret = "アップロードを完了しました。";
 		}
 		return ret;
 	}
@@ -346,7 +357,7 @@ public class RakutenDAO {
 						log.debug(String.format("option value1 :: %s", value));
 						
 						transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
-						transVO.setKeyword(value);
+						transVO.setKeyword(value.trim());
 						searchRet = listMapper.getTransInfo(transVO);
 						
 						try {
@@ -1180,7 +1191,7 @@ public class RakutenDAO {
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public String createClickpostCsvFile(String cpDownPath, String[] id_lst) 
+	public String createClickpostCsvFile(String fileEncoding, String cpDownPath, String[] id_lst) 
 			throws IOException
 			, CsvDataTypeMismatchException
 			, CsvRequiredFieldEmptyException {
@@ -1256,8 +1267,9 @@ public class RakutenDAO {
 			for(int i1=0; i1<subList.size(); i1++) {
 				try
 				(
-					Writer writer = Files.newBufferedWriter(Paths.get(cpDownPath+"CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0) +"-"+i1+".csv"));
-					CSVWriter	csvWriter = new CSVWriter(writer
+						FileOutputStream fos = new FileOutputStream(cpDownPath+"CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0) +"-"+i1+".csv");
+						Writer writer = new OutputStreamWriter(fos, fileEncoding);
+						CSVWriter	csvWriter = new CSVWriter(writer
 							, CSVWriter.DEFAULT_SEPARATOR
 							, CSVWriter.NO_QUOTE_CHARACTER
 							, CSVWriter.DEFAULT_ESCAPE_CHARACTER
@@ -1276,8 +1288,8 @@ public class RakutenDAO {
 		}else {
 			try
 			(
-				Writer writer = Files.newBufferedWriter(Paths.get(cpDownPath+"CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0) + ".csv"));
-					
+				FileOutputStream fos = new FileOutputStream(cpDownPath+"CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0) +".csv");
+				Writer writer = new OutputStreamWriter(fos, fileEncoding);
 				CSVWriter	csvWriter = new CSVWriter(writer
 						, CSVWriter.DEFAULT_SEPARATOR
 						, CSVWriter.NO_QUOTE_CHARACTER

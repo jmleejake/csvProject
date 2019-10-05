@@ -2,8 +2,10 @@ package jp.prj.araku.q10.dao;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -46,7 +48,6 @@ import jp.prj.araku.q10.mapper.IQ10Mapper;
 import jp.prj.araku.q10.vo.Q10VO;
 import jp.prj.araku.util.ArakuVO;
 import jp.prj.araku.util.CommonUtil;
-import jp.prj.araku.util.MyUser;
 
 @Repository
 public class Q10DAO {
@@ -756,7 +757,7 @@ public class Q10DAO {
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public String createClickpostCsvFile(String cpDownPath, String[] id_lst) 
+	public String createClickpostCsvFile(String fileEncoding, String cpDownPath, String[] id_lst) 
 			throws IOException
 			, CsvDataTypeMismatchException
 			, CsvRequiredFieldEmptyException {
@@ -860,7 +861,8 @@ public class Q10DAO {
 			for(int i1=0; i1<subList.size(); i1++) {
 				try
 				(
-					Writer writer = Files.newBufferedWriter(Paths.get(cpDownPath+"CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0) +"-"+i1+".csv"));
+					FileOutputStream fos = new FileOutputStream(cpDownPath+"CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0) +"-"+i1+".csv");
+					Writer writer = new OutputStreamWriter(fos, fileEncoding);
 					CSVWriter	csvWriter = new CSVWriter(writer
 							, CSVWriter.DEFAULT_SEPARATOR
 							, CSVWriter.NO_QUOTE_CHARACTER
@@ -880,8 +882,8 @@ public class Q10DAO {
 		}else {
 			try
 			(
-				Writer writer = Files.newBufferedWriter(Paths.get(cpDownPath+"CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0) + ".csv"));
-					
+				FileOutputStream fos = new FileOutputStream(cpDownPath+"CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0) +".csv");
+				Writer writer = new OutputStreamWriter(fos, fileEncoding);
 				CSVWriter	csvWriter = new CSVWriter(writer
 						, CSVWriter.DEFAULT_SEPARATOR
 						, CSVWriter.NO_QUOTE_CHARACTER

@@ -251,7 +251,7 @@ public class Q10Controller {
 		try {
 			// dao.clickPostFormatDownload(response, seq_id_list, fileEncoding);
 			// 2019-10-03: 크리쿠포스트 csv다운로드시 목록에 40개 제한이 있어 잘라서 다운로드처리
-			ret = dao.createClickpostCsvFile(cpDownPath,seq_id_list);
+			ret = dao.createClickpostCsvFile(downFileEncoding, cpDownPath,seq_id_list);
 		} catch (IOException e) {
 			log.error(e.toString());
 		} catch (CsvDataTypeMismatchException e) {

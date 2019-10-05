@@ -19,7 +19,7 @@ from
 		<when test="search_type =='srch'">
 		<trim prefixOverrides="AND |OR ">
 		<if test="keyword != null and keyword != ''"> 
-		and (before_trans like '%${keyword}%' or after_trans like '%${keyword}%')
+		and (before_trans like '${keyword}%' or after_trans like '${keyword}%')
 		</if>
 		<if test="seq_id_list != null">
 			and seq_id in
