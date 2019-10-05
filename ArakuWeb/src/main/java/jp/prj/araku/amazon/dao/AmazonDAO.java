@@ -4,8 +4,12 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,6 +22,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ibm.icu.text.Transliterator;
 import com.opencsv.CSVWriter;
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
@@ -568,7 +574,6 @@ public class AmazonDAO {
 			
 			String[] header = CommonUtil.deliveryCompanyHeader("CLICK");
 			
-			// 사가와 포맷으로 바꾸기 전 치환된 결과와 함께 아마존 정보 얻기
 			log.debug("seq_id_list : " + id_lst.toString());
 			ArrayList<String> seq_id_list = new ArrayList<>();
 			for (String seq_id : id_lst) {
@@ -624,5 +629,125 @@ public class AmazonDAO {
 				writer.close();
 			}
 		}
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public String createClickpostCsvFile(String cpDownPath, String[] id_lst) 
+			throws IOException
+			, CsvDataTypeMismatchException
+			, CsvRequiredFieldEmptyException {
+		String ret = "ダウンロードを失敗しました。";
+		IAmazonMapper mapper = sqlSession.getMapper(IAmazonMapper.class);
+		
+		ArrayList<String> seq_id_list = new ArrayList<>();
+		for (String seq_id : id_lst) {
+			seq_id_list.add(seq_id);
+		}
+		
+		TranslationResultVO vo = new TranslationResultVO();
+		vo.setSeq_id_list(seq_id_list);
+		
+		ArrayList<AmazonVO> list = mapper.getTransResult(vo);
+		ArrayList<ArakuVO> cList = new ArrayList<>();
+		
+		for (AmazonVO tmp : list) {
+			if(tmp.getResult_text().contains("全無")) {
+			/*if(tmp.getProduct_name().indexOf("[全国送料無料]") != -1) {*/
+				ClickPostVO cVO = new ClickPostVO();
+				cVO.setPost_no(tmp.getShip_postal_code().replace("\"", ""));
+				cVO.setDelivery_name(tmp.getRecipient_name().replace("\"", ""));
+				cVO.setDelivery_add1(tmp.getShip_state().replace("\"", ""));
+				cVO.setDelivery_add2(tmp.getShip_address1().replace("\"", ""));
+				// 2019-09-28 크리쿠포스트 주소 컬럼에 대하여 전각 20자 이상이면 안되는 사항이 있어 수정.
+				String addStr = tmp.getShip_address2().replace("\"", "");
+				if(addStr.length() > 20) {
+					cVO.setDelivery_add3(addStr.substring(0, 20));
+					cVO.setDelivery_add4(addStr.substring(20, addStr.length())+" "+tmp.getShip_address3().replace("\"", ""));
+				}else {
+					cVO.setDelivery_add3(tmp.getShip_address2().replace("\"", ""));
+					cVO.setDelivery_add4(tmp.getShip_address3().replace("\"", ""));
+				}
+				
+				String product_name = tmp.getResult_text().replace("\"", "");
+        		// 반각문자를 전각문자로 치환 (https://kurochan-note.hatenablog.jp/entry/2014/02/04/213737)
+        		product_name = Normalizer.normalize(product_name, Normalizer.Form.NFKC);
+        		// clickpost 정책에 따라  内容品의 문자가 전각15바이트가 넘어가면 잘라내고 집어 넣을수있게 처리
+        		if (product_name.length() > 15) {
+        			product_name = product_name.substring(0, 15);
+        		}
+				cVO.setDelivery_contents(product_name);
+				
+				// csv작성을 위한 리스트작성
+        		cList.add(cVO);
+			}
+		}
+		
+		if(cList.size() > 40) {
+			int i = cList.size()/40;
+			int[] arr = new int[i+1];
+			
+			List<List<ArakuVO>> subList = new ArrayList<>();
+			
+			for(int j=0; j<arr.length; j++) {
+				arr[j] = (j+1)*40;
+			}
+			
+			for(int k=0; k<arr.length; k++) {
+				if(k==0) {
+					subList.add(cList.subList(0, arr[k]));
+					continue;
+				}
+				
+				if(arr[k] > cList.size()) {
+					subList.add(cList.subList(k*arr[k-1], cList.size()));
+				}else {
+					subList.add(cList.subList(k*arr[k-1], arr[k]));
+				}
+			}
+			
+			ArrayList<String> fileList = new ArrayList<>();
+			for(int i1=0; i1<subList.size(); i1++) {
+				try
+				(
+					Writer writer = Files.newBufferedWriter(Paths.get(cpDownPath+"CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0) +"-"+i1+".csv"));
+					CSVWriter	csvWriter = new CSVWriter(writer
+							, CSVWriter.DEFAULT_SEPARATOR
+							, CSVWriter.NO_QUOTE_CHARACTER
+							, CSVWriter.DEFAULT_ESCAPE_CHARACTER
+							, CSVWriter.DEFAULT_LINE_END);
+				) 
+				{
+					StatefulBeanToCsv<ArakuVO> beanToCsv = new StatefulBeanToCsvBuilder(writer)
+		                    .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
+		                    .build();
+					csvWriter.writeNext(CommonUtil.deliveryCompanyHeader("CLICK"));
+		            beanToCsv.write(subList.get(i1));
+		            fileList.add(cpDownPath+"CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0) +"-"+i1+".csv");
+				}
+			}
+			ret = "ダウンロードを完了しました。<br>ファイルはこちです。<br>"+fileList;
+		}else {
+			try
+			(
+				Writer writer = Files.newBufferedWriter(Paths.get(cpDownPath+"CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0) + ".csv"));
+					
+				CSVWriter	csvWriter = new CSVWriter(writer
+						, CSVWriter.DEFAULT_SEPARATOR
+						, CSVWriter.NO_QUOTE_CHARACTER
+						, CSVWriter.DEFAULT_ESCAPE_CHARACTER
+						, CSVWriter.DEFAULT_LINE_END);
+			) 
+			{
+				StatefulBeanToCsv<ArakuVO> beanToCsv = new StatefulBeanToCsvBuilder(writer)
+	                    .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
+	                    .build();
+				
+				csvWriter.writeNext(CommonUtil.deliveryCompanyHeader("CLICK"));
+
+	            beanToCsv.write(cList);
+			}
+			ret = "ダウンロードを完了しました。<br>ファイルはこちです。<br>"+cpDownPath+"CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0) + ".csv";
+		}
+		return ret;
 	}
 }

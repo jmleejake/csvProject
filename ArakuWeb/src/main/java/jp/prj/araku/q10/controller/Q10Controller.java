@@ -40,6 +40,9 @@ public class Q10Controller {
 	@Value("${FILE_ENCODING}")
 	private String downFileEncoding;
 	
+	@Value("${CLICKPOST_DOWN_PATH}")
+	private String cpDownPath;
+	
 	@Autowired
 	Q10DAO dao;
 	
@@ -232,18 +235,23 @@ public class Q10Controller {
 	}
 		
 	@RequestMapping(value="/cpDown", method=RequestMethod.POST)
-	public void processClickPostDownload(
-			HttpServletResponse response
-			, @RequestParam(value="id_lst") String id_lst) {
+	@ResponseBody
+	public String processClickPostDownload(
+			@RequestParam(value="id_lst") String id_lst) {
 		log.info("processClickPostDownload");
 		
 		log.debug("id list : " + id_lst);
 		
+		String ret = "";
+		
 		id_lst = id_lst.replace("[", "");
 		id_lst = id_lst.replace("]", "");
 		String[] seq_id_list = id_lst.split(",");
+		
 		try {
-				dao.clickPostFormatDownload(response, seq_id_list, downFileEncoding);
+			// dao.clickPostFormatDownload(response, seq_id_list, fileEncoding);
+			// 2019-10-03: 크리쿠포스트 csv다운로드시 목록에 40개 제한이 있어 잘라서 다운로드처리
+			ret = dao.createClickpostCsvFile(cpDownPath,seq_id_list);
 		} catch (IOException e) {
 			log.error(e.toString());
 		} catch (CsvDataTypeMismatchException e) {
@@ -251,5 +259,6 @@ public class Q10Controller {
 		} catch (CsvRequiredFieldEmptyException e) {
 			log.error(e.toString());
 		}
+		return ret;
 	}
 }

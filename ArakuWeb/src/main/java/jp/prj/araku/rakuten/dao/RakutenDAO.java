@@ -4,11 +4,15 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -58,10 +62,11 @@ public class RakutenDAO {
 	
 	private static final Logger log = Logger.getLogger("jp.prj.araku.rakuten");
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Transactional
-	public void insertRakutenInfo(MultipartFile rakUpload, String fileEncoding, HttpServletRequest req) throws IOException {
+	public String insertRakutenInfo(MultipartFile rakUpload, String fileEncoding, HttpServletRequest req, String duplDownPath) throws IOException {
 		log.info("insertRakutenInfo");
-		
+		String ret = "アップロードを失敗しました。";
 		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
 		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
 		
@@ -94,6 +99,8 @@ public class RakutenDAO {
             	searchVO.setOrder_no(vo.getOrder_no());
             	
             	ArrayList<RakutenVO> dupCheckList = mapper.getRakutenInfo(searchVO);
+            	// 2019-10-05: 別紙처리
+            	HashSet<String> exceptionList = new HashSet<>();
         		
         		// 이미 존재하는 受注番号가 있으면
         		if (dupCheckList.size() == 1) {
@@ -104,6 +111,13 @@ public class RakutenDAO {
         			} else {
         				// 商品ID가 다르면 한사람이 여러 상품을 주문한 것으로 간주, 에러리스트에 넣은후 다음 레코드로 진행
         				log.debug("[ERR]: " + vo.getOrder_no());
+        				if(exceptionList.add(vo.getOrder_no().trim())) {
+        					RakutenVO forException = new RakutenVO();
+        					forException.setSeq_id(dupCheckList.get(0).getSeq_id());
+        					forException.setProduct_name("[別紙"+(exceptionList.size()+1)+"] "+dupCheckList.get(0).getProduct_name());
+        					mapper.updateRakutenInfo(searchVO);
+        				}
+        				vo.setProduct_name("[別紙"+(exceptionList.size()+1)+"] "+vo.getProduct_name());
         				errList.add(vo);
             			continue;
         			}
@@ -194,11 +208,41 @@ public class RakutenDAO {
 			if (reader != null) {
 				reader.close();
 			}
+			// 2019-10-03: 세션에 에러리스트 및 개수 노출기능 제거
+//			HttpSession session = req.getSession();
+//			session.setAttribute("errSize", errList.size());
+//			session.setAttribute("errList", errList);
+			if(errList.size() > 0) {
+				try
+				(
+					Writer writer = Files.newBufferedWriter(Paths.get(duplDownPath+"[ERR] "+CommonUtil.getDate("YYYY-MM-dd HH:mm:ss", 0) + ".csv"));
+						
+					CSVWriter	csvWriter = new CSVWriter(writer
+							, CSVWriter.DEFAULT_SEPARATOR
+							, CSVWriter.NO_QUOTE_CHARACTER
+							, CSVWriter.DEFAULT_ESCAPE_CHARACTER
+							, CSVWriter.DEFAULT_LINE_END);
+				) 
+				{
+					StatefulBeanToCsv<RakutenVO> beanToCsv = new StatefulBeanToCsvBuilder(writer)
+		                    .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
+		                    .build();
+					
+					csvWriter.writeNext(CommonUtil.deliveryCompanyHeader("CLICK"));
+
+		            try {
+						beanToCsv.write(errList);
+					} catch (CsvDataTypeMismatchException | CsvRequiredFieldEmptyException e) {
+						e.printStackTrace();
+					}
+				}
+			}
 			
-			HttpSession session = req.getSession();
-			session.setAttribute("errSize", errList.size());
-			session.setAttribute("errList", errList);
+			ret = "アップロードを完了しました。<br>"
+			+(errList.size() > 0?"中腹のファイルはこちです。<br>"+duplDownPath+"[ERR] "+CommonUtil.getDate("YYYY-MM-dd HH:mm:ss", 0) + ".csv":"")
+			+"<br><a href='/rakuten/orderview'>注文情報</a>";
 		}
+		return ret;
 	}
 	
 	public ArrayList<RakutenVO> getRakutenInfo(RakutenVO vo) {
@@ -747,117 +791,7 @@ public class RakutenDAO {
 					, CSVWriter.DEFAULT_ESCAPE_CHARACTER
 					, CSVWriter.DEFAULT_LINE_END);
 			
-			String[] header = 
-			{
-				"注文番号"
-				, "ステータス"
-				, "サブステータスID"
-				, "サブステータス"
-				, "注文日時"
-				, "注文日"
-				, "注文時間"
-				, "キャンセル期限日"
-				, "注文確認日時"
-				, "注文確定日時"
-				, "発送指示日時"
-				, "発送完了報告日時"
-				, "支払方法名"
-				, "クレジットカード支払い方法"
-				, "クレジットカード支払い回数"
-				, "配送方法"
-				, "配送区分"
-				, "注文種別"
-				, "複数送付先フラグ"
-				, "送付先一致フラグ"
-				, "離島フラグ"
-				, "楽天確認中フラグ"
-				, "警告表示タイプ"
-				, "楽天会員フラグ"
-				, "購入履歴修正有無フラグ"
-				, "商品合計金額"
-				, "消費税合計"
-				, "送料合計"
-				, "代引料合計"
-				, "請求金額"
-				, "合計金額"
-				, "ポイント利用額"
-				, "クーポン利用総額"
-				, "店舗発行クーポン利用額"
-				, "楽天発行クーポン利用額"
-				, "注文者郵便番号1"
-				, "注文者郵便番号2"
-				, "注文者住所都道府県"
-				, "注文者住所郡市区"
-				, "注文者住所それ以降の住所"
-				, "注文者姓"
-				, "注文者名"
-				, "注文者姓カナ"
-				, "注文者名カナ"
-				, "注文者電話番号1"
-				, "注文者電話番号2"
-				, "注文者電話番号3"
-				, "注文者メールアドレス"
-				, "注文者性別"
-				, "申込番号"
-				, "申込お届け回数"
-				, "送付先ID"
-				, "送付先送料"
-				, "送付先代引料"
-				, "送付先消費税合計"
-				, "送付先商品合計金額"
-				, "送付先合計金額"
-				, "のし"
-				, "送付先郵便番号1"
-				, "送付先郵便番号2"
-				, "送付先住所都道府県"
-				, "送付先住所郡市区"
-				, "送付先住所それ以降の住所"
-				, "送付先姓"
-				, "送付先名"
-				, "送付先姓カナ"
-				, "送付先名カナ"
-				, "送付先電話番号1"
-				, "送付先電話番号2"
-				, "送付先電話番号3"
-				, "商品明細ID"
-				, "商品ID"
-				, "商品名"
-				, "商品番号"
-				, "商品管理番号"
-				, "単価"
-				, "個数"
-				, "送料込別"
-				, "税込別"
-				, "代引手数料込別"
-				, "項目・選択肢"
-				, "ポイント倍率"
-				, "納期情報"
-				, "在庫タイプ"
-				, "ラッピングタイトル1"
-				, "ラッピング名1"
-				, "ラッピング料金1"
-				, "ラッピング税込別1"
-				, "ラッピング種類1"
-				, "ラッピングタイトル2"
-				, "ラッピング名2"
-				, "ラッピング料金2"
-				, "ラッピング税込別2"
-				, "ラッピング種類2"
-				, "お届け時間帯"
-				, "お届け日指定"
-				, "担当者"
-				, "ひとことメモ"
-				, "メール差込文 (お客様へのメッセージ)"
-				, "ギフト配送希望"
-				, "コメント"
-				, "利用端末"
-				, "メールキャリアコード"
-				, "あす楽希望フラグ"
-				, "医薬品受注フラグ"
-				, "楽天スーパーDEAL商品受注フラグ"
-				, "メンバーシッププログラム受注タイプ"
-			};
-			
+			String[] header = CommonUtil.rakutenHeader();
 			ArrayList<RakutenVO> list = null;
 			if ("YU".equals(type)) {
 				log.debug("seq_id_list : " + id_lst.toString());
@@ -1188,7 +1122,6 @@ public class RakutenDAO {
 			
 			String[] header = CommonUtil.deliveryCompanyHeader("CLICK");
 			
-			// 사가와 포맷으로 바꾸기 전 치환된 결과와 함께 라쿠텐정보 얻기
 			log.debug("seq_id_list : " + id_lst.toString());
 			ArrayList<String> seq_id_list = new ArrayList<>();
 			for (String seq_id : id_lst) {
@@ -1244,5 +1177,125 @@ public class RakutenDAO {
 				writer.close();
 			}
 		}
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public String createClickpostCsvFile(String cpDownPath, String[] id_lst) 
+			throws IOException
+			, CsvDataTypeMismatchException
+			, CsvRequiredFieldEmptyException {
+		String ret = "ダウンロードを失敗しました。";
+		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
+		
+		ArrayList<String> seq_id_list = new ArrayList<>();
+		for (String seq_id : id_lst) {
+			seq_id_list.add(seq_id);
+		}
+		
+		TranslationResultVO vo = new TranslationResultVO();
+		vo.setSeq_id_list(seq_id_list);
+		
+		ArrayList<RakutenVO> list = mapper.getTransResult(vo);
+		ArrayList<ArakuVO> cList = new ArrayList<>();
+		
+		for (RakutenVO tmp : list) {
+			if(tmp.getProduct_name().contains("【全国送料無料】")) {
+			/*if(tmp.getProduct_name().indexOf("[全国送料無料]") != -1) {*/
+				ClickPostVO cVO = new ClickPostVO();
+				cVO.setPost_no(tmp.getDelivery_post_no1().replace("\"", "") + "-" +  tmp.getDelivery_post_no2().replace("\"", ""));
+				cVO.setDelivery_name(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
+				cVO.setDelivery_add1(tmp.getDelivery_add1().replace("\"", ""));
+				cVO.setDelivery_add2(tmp.getDelivery_add2().replace("\"", ""));
+				// 2019-09-28 크리쿠포스트 주소 컬럼에 대하여 전각 20자 이상이면 안되는 사항이 있어 수정.
+				String addStr = tmp.getDelivery_add3().replace("\"", "");
+				if(addStr.length() > 20) {
+					cVO.setDelivery_add3(addStr.substring(0, 20));
+					cVO.setDelivery_add4(addStr.substring(20, addStr.length()));
+				}else {
+					cVO.setDelivery_add3(tmp.getDelivery_add3().replace("\"", ""));
+				}
+				
+				String product_name = tmp.getResult_text().replace("\"", "");
+        		// 반각문자를 전각문자로 치환 (https://kurochan-note.hatenablog.jp/entry/2014/02/04/213737)
+        		product_name = Normalizer.normalize(product_name, Normalizer.Form.NFKC);
+        		// clickpost 정책에 따라  内容品의 문자가 전각15바이트가 넘어가면 잘라내고 집어 넣을수있게 처리
+        		if (product_name.length() > 15) {
+        			product_name = product_name.substring(0, 15);
+        		}
+				cVO.setDelivery_contents(product_name);
+				
+				// csv작성을 위한 리스트작성
+        		cList.add(cVO);
+			}
+		}
+		
+		if(cList.size() > 40) {
+			int i = cList.size()/40;
+			int[] arr = new int[i+1];
+			
+			List<List<ArakuVO>> subList = new ArrayList<>();
+			
+			for(int j=0; j<arr.length; j++) {
+				arr[j] = (j+1)*40;
+			}
+			
+			for(int k=0; k<arr.length; k++) {
+				if(k==0) {
+					subList.add(cList.subList(0, arr[k]));
+					continue;
+				}
+				
+				if(arr[k] > cList.size()) {
+					subList.add(cList.subList(k*arr[k-1], cList.size()));
+				}else {
+					subList.add(cList.subList(k*arr[k-1], arr[k]));
+				}
+			}
+			
+			ArrayList<String> fileList = new ArrayList<>();
+			for(int i1=0; i1<subList.size(); i1++) {
+				try
+				(
+					Writer writer = Files.newBufferedWriter(Paths.get(cpDownPath+"CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0) +"-"+i1+".csv"));
+					CSVWriter	csvWriter = new CSVWriter(writer
+							, CSVWriter.DEFAULT_SEPARATOR
+							, CSVWriter.NO_QUOTE_CHARACTER
+							, CSVWriter.DEFAULT_ESCAPE_CHARACTER
+							, CSVWriter.DEFAULT_LINE_END);
+				) 
+				{
+					StatefulBeanToCsv<ArakuVO> beanToCsv = new StatefulBeanToCsvBuilder(writer)
+		                    .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
+		                    .build();
+					csvWriter.writeNext(CommonUtil.deliveryCompanyHeader("CLICK"));
+		            beanToCsv.write(subList.get(i1));
+		            fileList.add(cpDownPath+"CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0) +"-"+i1+".csv");
+				}
+			}
+			ret = "ダウンロードを完了しました。<br>ファイルはこちです。<br>"+fileList;
+		}else {
+			try
+			(
+				Writer writer = Files.newBufferedWriter(Paths.get(cpDownPath+"CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0) + ".csv"));
+					
+				CSVWriter	csvWriter = new CSVWriter(writer
+						, CSVWriter.DEFAULT_SEPARATOR
+						, CSVWriter.NO_QUOTE_CHARACTER
+						, CSVWriter.DEFAULT_ESCAPE_CHARACTER
+						, CSVWriter.DEFAULT_LINE_END);
+			) 
+			{
+				StatefulBeanToCsv<ArakuVO> beanToCsv = new StatefulBeanToCsvBuilder(writer)
+	                    .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
+	                    .build();
+				
+				csvWriter.writeNext(CommonUtil.deliveryCompanyHeader("CLICK"));
+
+	            beanToCsv.write(cList);
+			}
+			ret = "ダウンロードを完了しました。<br>ファイルはこちです。<br>"+cpDownPath+"CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0) + ".csv";
+		}
+		
+		return ret;
 	}
 }
