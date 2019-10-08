@@ -14,4 +14,5 @@ public interface IRakutenMapper {
 	public int updateRakutenInfo(RakutenVO vo);
 	public ArrayList<RakutenVO> getTransResult(TranslationResultVO vo);
 	public ArrayList<ArakuVO> getRCSVDownList(RCSVDownVO vo);
+	public int updateRakutenRegistDate(String seq_id);
 }

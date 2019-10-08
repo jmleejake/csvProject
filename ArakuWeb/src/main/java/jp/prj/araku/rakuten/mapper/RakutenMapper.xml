@@ -593,4 +593,13 @@ from
 </where>
 </select>
 
+<update id="updateRakutenRegistDate" parameterType="String">
+	update 
+		rakuten_info
+	set 
+		register_date = now()
+	where 
+		seq_id = #{seq_id}
+</update>
+
 </mapper>

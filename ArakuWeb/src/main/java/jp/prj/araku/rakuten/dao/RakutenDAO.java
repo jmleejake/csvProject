@@ -7,10 +7,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.text.Normalizer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -100,6 +101,19 @@ public class RakutenDAO {
             		vo.setProduct_option("");
             	}
             	
+            	// 2019-10-08: 배송지정일이 일주일 내에 있는 데이터에 대해서만 insert
+            	if(null != vo.getDelivery_date_sel()) {
+            		Calendar c = Calendar.getInstance();
+            		c.add(Calendar.DAY_OF_MONTH, 7);
+            		Date d = c.getTime();
+            		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            		long today = Long.parseLong(sdf.format(d));
+            		long selectedDate = Long.parseLong(vo.getDelivery_date_sel().replaceAll("/", "").replaceAll("-", ""));
+            		if(selectedDate >= today) {
+            			continue;
+            		}
+            	}
+            	
             	// 데이터 중복체크
             	RakutenVO searchVO = new RakutenVO();
             	searchVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
@@ -111,6 +125,8 @@ public class RakutenDAO {
         		
             	// 이미 존재하는 受注番号가 있으면
         		if (dupCheckList.size() == 1) {
+        			// 2019-10-08: 업로드시 존재하는 주문번호가 있다면 등록일을 현재일로 갱신
+        			mapper.updateRakutenRegistDate(dupCheckList.get(0).getSeq_id());
         			// 商品ID가 같으면
         			if (vo.getProduct_id().equals(dupCheckList.get(0).getProduct_id())) {
         				// 다음 레코드로 진행
@@ -223,8 +239,15 @@ public class RakutenDAO {
 //			session.setAttribute("errList", errList);
 			if(errList.size() > 0) {
 				for(RakutenVO rvo : errList) {
-					rvo.setProduct_option(rvo.getProduct_option().replaceAll("\n", ""));
-					rvo.setComment(rvo.getComment().replaceAll("\n", ""));
+					// 2019-10-08: 다건주문자에 대하여 파일다운로드시 널체크추가
+					if(null != rvo.getProduct_option()) {
+						rvo.setProduct_option(rvo.getProduct_option().replaceAll("\n", ""));
+					}
+					
+					if(null != rvo.getComment()) {
+						rvo.setComment(rvo.getComment().replaceAll("\n", ""));
+					}
+					
 				}
 				try
 				(

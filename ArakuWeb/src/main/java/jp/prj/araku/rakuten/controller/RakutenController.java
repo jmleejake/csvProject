@@ -43,7 +43,7 @@ public class RakutenController {
 	@Value("${CLICKPOST_DOWN_PATH}")
 	private String cpDownPath;
 	
-	@Value("${DUPLICATE_DONW_PATH}")
+	@Value("${DUPLICATE_DOWN_PATH}")
 	private String duplDownPath;
 	
 	@Autowired
