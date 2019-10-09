@@ -51,6 +51,7 @@ import jp.prj.araku.list.vo.TranslationErrorVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
 import jp.prj.araku.rakuten.mapper.IRakutenMapper;
+import jp.prj.araku.rakuten.vo.RakutenDeleteVO;
 import jp.prj.araku.rakuten.vo.RakutenVO;
 import jp.prj.araku.util.ArakuVO;
 import jp.prj.araku.util.CommonUtil;
@@ -895,9 +896,6 @@ public class RakutenDAO {
 	public void checkRakutenInfo(MultipartFile file, String fileEncoding, HttpServletRequest req) throws IOException {
 		log.info("checkRakutenInfo");
 		
-		/**
-		 * 한사람이 重複受注番号로 여러 주문을 했을때 에러파일로 처리한 부분의 受注番号를 데이터상에서 삭제처리
-		 * */
 		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
 		
 		log.debug("encoding : " + fileEncoding);
@@ -907,44 +905,42 @@ public class RakutenDAO {
 		log.debug("size: " + file.getSize());
 		
 		BufferedReader reader = null;
-		ArrayList<RakutenVO> errList = new ArrayList<>();
 		try  {
 			reader = new BufferedReader(
 					new InputStreamReader(file.getInputStream(), fileEncoding));
 			
-			CsvToBean<RakutenVO> csvToBean = new CsvToBeanBuilder<RakutenVO>(reader)
-                    .withType(RakutenVO.class)
+			// 2019-10-09: 발송처리된 목록을 업로드했을때 니모쯔칸리방고가 존재하는 데이터에 대해 해당 주문번호의 데이터를 DB상에서 삭제처리 진행
+			CsvToBean<RakutenDeleteVO> csvToBean = new CsvToBeanBuilder<RakutenDeleteVO>(reader)
+                    .withType(RakutenDeleteVO.class)
                     .withSkipLines(1)
                     .withIgnoreLeadingWhiteSpace(true)
                     .build();
 
-            Iterator<RakutenVO> iterator = csvToBean.iterator();
+            Iterator<RakutenDeleteVO> iterator = csvToBean.iterator();
 
             while (iterator.hasNext()) {
-            	RakutenVO vo = iterator.next();
+            	RakutenDeleteVO vo = iterator.next();
             	
-            	// 데이터 중복체크
-            	RakutenVO searchVO = new RakutenVO();
-            	searchVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
-            	searchVO.setOrder_no(vo.getOrder_no());
-            	
-            	ArrayList<RakutenVO> dupCheckList = mapper.getRakutenInfo(searchVO);
-        		
-        		// 이미 존재하는 受注番号가 있으면
-        		if (dupCheckList.size() == 1) {
-    				// seq_id로 데이터 삭제 
-    				mapper.deleteRakutenInfo(dupCheckList.get(0).getSeq_id());
-        		}
+            	// 니모쯔칸리방고가 있는 데이터의 경우 주문번호로 데이터를 찾아 삭제처리
+            	if(null != vo.getBaggage_claim_no()) {
+            		RakutenVO searchVO = new RakutenVO();
+                	searchVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+                	searchVO.setOrder_no(vo.getOrder_no());
+                	
+                	ArrayList<RakutenVO> dupCheckList = mapper.getRakutenInfo(searchVO);
+            		
+            		// 이미 존재하는 受注番号가 있으면
+            		if (dupCheckList.size() == 1) {
+        				// seq_id로 데이터 삭제 
+        				mapper.deleteRakutenInfo(dupCheckList.get(0).getSeq_id());
+            		}
+            	}
             }
             
 		} finally {
 			if (reader != null) {
 				reader.close();
 			}
-			
-			HttpSession session = req.getSession();
-			session.setAttribute("errSize", errList.size());
-			session.setAttribute("errList", errList);
 		}
 	}
 	
