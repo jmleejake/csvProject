@@ -38,6 +38,7 @@ import jp.prj.araku.file.vo.SagawaVO;
 import jp.prj.araku.file.vo.YamatoVO;
 import jp.prj.araku.list.mapper.IListMapper;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
+import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.TranslationErrorVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
@@ -370,15 +371,12 @@ public class YahooDAO {
 			log.debug("final String : " + finalStr);
 			
 			// 지역별 배송코드 세팅 (csv다운로드 기능)
-			/*
 			RegionMasterVO rmVO = new RegionMasterVO();
 			rmVO.setKeyword(vo.getShip_pre());
 			ArrayList<RegionMasterVO> regionM = listMapper.getRegionMaster(rmVO);
 			
-			vo.setDelivery_company(regionM.get(0).getDelivery_company());
-			log.debug("Update Rakuten info : " + vo);
-			rMapper.updateRakutenInfo(vo);
-			*/
+			vo.setShip_company_cd(regionM.get(0).getDelivery_company());
+			mapper.updateYahooInfo(vo);
 			
 			TranslationResultVO resultVO = new TranslationResultVO();
 			resultVO.setTrans_target_id(vo.getSeq_id());
