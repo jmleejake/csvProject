@@ -65,6 +65,15 @@
 	    </layout>
 	</appender>
 	
+	<appender name="yahoo" class="org.apache.log4j.DailyRollingFileAppender">
+	    <param name="datePattern" value="'.'yyyy-MM-dd" />
+	    <param name="file" value="${catalina.home}/araku/yahoo.log" />
+	    <param name="append" value="true" />
+	    <layout class="org.apache.log4j.PatternLayout">
+	        <param name="ConversionPattern" value="[%-5p] %d{yyyy/MMM/dd HH:mm:ss.SSS} %l - %m%n"/>
+	    </layout>
+	</appender>
+	
 	<logger name="jp.prj.araku.file">
 		<level value="debug" />
 	</logger>
@@ -86,6 +95,10 @@
 	</logger>
 	
 	<logger name="jp.prj.araku.q10">
+		<level value="debug" />
+	</logger>
+	
+	<logger name="jp.prj.araku.yahoo">
 		<level value="debug" />
 	</logger>
 	
@@ -148,6 +161,12 @@
 	<category name="jp.prj.araku.q10" additivity="false">
 		<priority value="debug" /><!-- 요놈의 레벨이 바뀌면 파일에 쓰이는 레벨이 바뀐다 -->
 		<appender-ref ref="q10"/>
+		<appender-ref ref="console" />
+	</category>
+	
+	<category name="jp.prj.araku.yahoo" additivity="false">
+		<priority value="debug" /><!-- 요놈의 레벨이 바뀌면 파일에 쓰이는 레벨이 바뀐다 -->
+		<appender-ref ref="yahoo"/>
 		<appender-ref ref="console" />
 	</category>
 	

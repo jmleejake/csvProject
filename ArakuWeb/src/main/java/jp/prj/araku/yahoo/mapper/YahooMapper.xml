@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.prj.araku.yahoo.mapper.IYahooMapper">
+
+<insert id="insertYahooInfo" parameterType="Yahoo" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
+insert into yahoo_info (
+	order_id
+	, line_id
+	, title
+	, qty
+	, id
+	, item_id
+	, item_option_val
+	, lead_time_txt
+	, item_tax_ratio
+	, order_time
+	, order_status
+	, ship_nm
+	, ship_fst_nm
+	, ship_last_nm
+	, ship_add1
+	, ship_add2
+	, ship_city
+	, ship_pre
+	, ship_post_no
+	, ship_nm_kana
+	, ship_fst_nm_kana
+	, ship_last_nm_kana
+	, ship_phone_no
+	, ship_req_dt
+	, ship_req_time
+	, ship_company_cd
+	, ship_ivc_no1
+	, ship_ivc_no2
+)
+values(
+	#{order_id}
+	, #{line_id}
+	, #{title}
+	, #{qty}
+	, #{id}
+	, #{item_id}
+	, #{item_option_val}
+	, #{lead_time_txt}
+	, #{item_tax_ratio}
+	, #{order_time}
+	, #{order_status}
+	, #{ship_nm}
+	, #{ship_fst_nm}
+	, #{ship_last_nm}
+	, #{ship_add1}
+	, #{ship_add2}
+	, #{ship_city}
+	, #{ship_pre}
+	, #{ship_post_no}
+	, #{ship_nm_kana}
+	, #{ship_fst_nm_kana}
+	, #{ship_last_nm_kana}
+	, #{ship_phone_no}
+	, #{ship_req_dt}
+	, #{ship_req_time}
+	, #{ship_company_cd}
+	, #{ship_ivc_no1}
+	, #{ship_ivc_no2}
+)
+</insert>
+
+<update id="updateYahooInfo" parameterType="Yahoo">
+update 
+	yahoo_info
+set
+	update_date = now()
+	<if test="line_id != null and line_id !=''">
+	, line_id = #{line_id}
+	</if>
+	<if test="title != null and title !=''">
+	, title = #{title}
+	</if>
+	<if test="qty != null and qty !=''">
+	, qty = #{qty}
+	</if>
+	<if test="id != null and id !=''">
+	, id = #{id}
+	</if>
+	<if test="item_id != null and item_id !=''">
+	, item_id = #{item_id}
+	</if>
+	<if test="item_option_val != null and item_option_val !=''">
+	, item_option_val = #{item_option_val}
+	</if>
+	<if test="lead_time_txt != null and lead_time_txt !=''">
+	, lead_time_txt = #{lead_time_txt}
+	</if>
+	<if test="item_tax_ratio != null and item_tax_ratio !=''">
+	, item_tax_ratio = #{item_tax_ratio}
+	</if>
+	<if test="order_time != null and order_time !=''">
+	, order_time = #{order_time}
+	</if>
+	<if test="order_status != null and order_status !=''">
+	, order_status = #{order_status}
+	</if>
+	<if test="ship_nm != null and ship_nm !=''">
+	, ship_nm = #{ship_nm}
+	</if>
+	<if test="ship_fst_nm != null and ship_fst_nm !=''">
+	, ship_fst_nm = #{ship_fst_nm}
+	</if>
+	<if test="ship_last_nm != null and ship_last_nm !=''">
+	, ship_last_nm = #{ship_last_nm}
+	</if>
+	<if test="ship_add1 != null and ship_add1 !=''">
+	, ship_add1 = #{ship_add1}
+	</if>
+	<if test="ship_add2 != null and ship_add2 !=''">
+	, ship_add2 = #{ship_add2}
+	</if>
+	<if test="ship_city != null and ship_city !=''">
+	, ship_city = #{ship_city}
+	</if>
+	<if test="ship_pre != null and ship_pre !=''">
+	, ship_pre = #{ship_pre}
+	</if>
+	<if test="ship_post_no != null and ship_post_no !=''">
+	, ship_post_no = #{ship_post_no}
+	</if>
+	<if test="ship_nm_kana != null and ship_nm_kana !=''">
+	, ship_nm_kana = #{ship_nm_kana}
+	</if>
+	<if test="ship_fst_nm_kana != null and ship_fst_nm_kana !=''">
+	, ship_fst_nm_kana = #{ship_fst_nm_kana}
+	</if>
+	<if test="ship_last_nm_kana != null and ship_last_nm_kana !=''">
+	, ship_last_nm_kana = #{ship_last_nm_kana}
+	</if>
+	<if test="ship_phone_no != null and ship_phone_no !=''">
+	, ship_phone_no = #{ship_phone_no}
+	</if>
+	<if test="ship_req_dt != null and ship_req_dt !=''">
+	, ship_req_dt = #{ship_req_dt}
+	</if>
+	<if test="ship_req_time != null and ship_req_time !=''">
+	, ship_req_time = #{ship_req_time}
+	</if>
+	<if test="ship_company_cd != null and ship_company_cd !=''">
+	, ship_company_cd = #{ship_company_cd}
+	</if>
+	<if test="ship_ivc_no1 != null and ship_ivc_no1 !=''">
+	, ship_ivc_no1 = #{ship_ivc_no1}
+	</if>
+	<if test="ship_ivc_no2 != null and ship_ivc_no2 !=''">
+	, ship_ivc_no2 = #{ship_ivc_no2}
+	</if>
+where 
+	<if test="update_type == null">
+	seq_id = #{seq_id}
+	</if>
+	<if test="update_type != null and update_type =='twomore'">
+	order_id = #{order_id}
+	</if>
+	
+</update>
+
+<select id="getYahooInfo" parameterType="Yahoo" resultType="Yahoo">
+select
+	yi.seq_id
+	, err_text
+	, date_format(yi.register_date, '%Y/%m/%d') register_date
+	, date_format(yi.update_date, '%Y/%m/%d') update_date
+	, order_id
+	, line_id
+	, title
+	, qty
+	, id
+	, item_id
+	, item_option_val
+	, lead_time_txt
+	, item_tax_ratio
+	, order_time
+	, order_status
+	, ship_nm
+	, ship_fst_nm
+	, ship_last_nm
+	, ship_add1
+	, ship_add2
+	, ship_city
+	, ship_pre
+	, ship_post_no
+	, ship_nm_kana
+	, ship_fst_nm_kana
+	, ship_last_nm_kana
+	, ship_phone_no
+	, ship_req_dt
+	, ship_req_time
+	, ship_company_cd
+	, ship_ivc_no1
+	, ship_ivc_no2
+from
+	yahoo_info yi
+left outer join translation_err terr on terr.trans_target_id = yi.seq_id and terr.trans_target_type = 'Y'
+<where>
+	<if test="seq_id != null and seq_id != ''">
+	yi.seq_id = #{seq_id}
+	</if>
+	<choose>
+		<when test="search_type =='srch'">
+		<trim prefixOverrides="AND |OR ">
+		<if test="register_date != null and register_date != ''">
+		yi.register_date between str_to_date(concat(#{register_date},' ','00:00:00'), '%Y/%m/%d %H:%i:%S')  
+		and str_to_date(concat(#{register_date},' ','23:59:59'), '%Y/%m/%d %H:%i:%S')
+		</if>
+		<if test="order_id != null and order_id != ''">
+		and order_id like '%${order_id}%'
+		</if>
+		<if test="line_id != null and line_id != ''">
+		and line_id like '%${line_id}%'
+		</if>
+		<if test="item_id != null and item_id != ''">
+		and item_id like '%${item_id}%'
+		</if>
+		</trim>
+		</when>
+		<otherwise>
+		<if test="start_date != null and start_date != ''">
+		yi.register_date between str_to_date(#{start_date}, '%Y/%m/%d %H:%i:%s') and now()
+		</if>
+		</otherwise>
+	</choose>
+</where>
+order by yi.seq_id desc
+</select>
+
+<select id="getTransResult" resultType="Yahoo" parameterType="TransResult">
+select
+	tr.seq_id
+	, err_text
+	, date_format(yi.register_date, '%Y/%m/%d') register_date
+	, date_format(yi.update_date, '%Y/%m/%d') update_date
+	, result_text
+	, ship_company_cd
+	, order_id
+	, line_id
+	, title
+	, qty
+	, id
+	, item_id
+	, item_option_val
+	, lead_time_txt
+	, item_tax_ratio
+	, order_time
+	, order_status
+	, ship_nm
+	, ship_fst_nm
+	, ship_last_nm
+	, ship_add1
+	, ship_add2
+	, ship_city
+	, ship_pre
+	, ship_post_no
+	, ship_nm_kana
+	, ship_fst_nm_kana
+	, ship_last_nm_kana
+	, ship_phone_no
+	, ship_req_dt
+	, ship_req_time
+	, ship_ivc_no1
+	, ship_ivc_no2
+from
+	translation_result tr
+inner join yahoo_info yi on yi.seq_id = tr.trans_target_id and tr.trans_target_type = 'Y'
+left outer join translation_err terr on terr.trans_target_id = yi.seq_id and terr.trans_target_type = 'Y'
+<where>
+	<if test="trans_target_id != null">
+		tr.trans_target_id = #{trans_target_id}
+	</if>
+	<if test="seq_id_list != null">
+		tr.seq_id in
+		<foreach item="item" index="index" collection="seq_id_list"
+			open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="delivery_company != null and delivery_company != ''">
+	and ship_company_cd = #{delivery_company}
+	</if>
+</where>
+order by tr.seq_id desc
+</select>
+
+<delete id="deleteYahooInfo" parameterType="String">
+delete from
+	yahoo_info
+where
+	seq_id = #{seq_id}
+</delete>
+
+</mapper>

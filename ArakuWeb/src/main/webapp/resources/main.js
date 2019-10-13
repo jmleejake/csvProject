@@ -16,3 +16,8 @@ $("#btn_q10").on("click", function() {
 	console.log("q10");
 	location.href="q10/fileView";
 });
+
+$("#btn_yahoo").on("click", function() {
+	console.log("yahoo");
+	location.href="yahoo/fileView";
+});

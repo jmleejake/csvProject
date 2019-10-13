@@ -30,6 +30,12 @@ function preCheck(type) {
 	if ("q10" == type) {
 		hasFile = $("#q-upload")[0].files.length;
 	}
+	if ("yhsh" == type) {
+		hasFile = $("#yhsh-upload")[0].files.length;
+	}
+	if ("yhch" == type) {
+		hasFile = $("#yhch-upload")[0].files.length;
+	}
 	
 	if (hasFile <= 0) {
 		$.notify({

@@ -16,16 +16,20 @@ public class CommonUtil {
 	public static final String SEARCH_TYPE_SRCH = "srch";
 	public static final String SEARCH_TYPE_SAGAWA = "saga";
 	
+	public static final String UPDATE_TYPE_TWOMORE="twomore";
+	
 	public static final String SPLIT_BY_TAB = "	";
 	public static final String SPLIT_BY_STAR = "\\*";
 	public static final String SPLIT_BY_NPER = "\n";
 	public static final String SPLIT_BY_COLON = ":";
+	public static final String SPLIT_BY_SEMICOLON = ";";
 	public static final String SPLIT_BY_SLASH = "/";
 	public static final String JPCOMMA = "、";
 	
 	public static final String TRANS_TARGET_R = "R"; /*R:楽天*/
 	public static final String TRANS_TARGET_A = "A"; /*A:アマゾン*/
 	public static final String TRANS_TARGET_Q = "Q"; /*Q:qoo10*/
+	public static final String TRANS_TARGET_Y = "Y"; /*Y:yahoo*/
 	public static final String TRANS_ERR = "ERR"; /*エラーテキスト*/
 	
 	public static final String ORDER_STATUS_COMPLETE = "出荷準備済";

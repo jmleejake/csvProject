@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -761,7 +759,7 @@ public class Q10DAO {
 			throws IOException
 			, CsvDataTypeMismatchException
 			, CsvRequiredFieldEmptyException {
-		String ret = "ダウンロードを失敗しました。";
+		String ret = "CLICKPOST DOWNLOAD FAILED";
 		IQ10Mapper mapper = sqlSession.getMapper(IQ10Mapper.class);
 		
 		ArrayList<String> seq_id_list = new ArrayList<>();
@@ -878,7 +876,7 @@ public class Q10DAO {
 		            fileList.add(cpDownPath+"CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0) +"-"+i1+".csv");
 				}
 			}
-			ret = "ダウンロードを完了しました。<br>ファイルはこちです。<br>"+fileList;
+			ret = "CLICKPOST DOWNLOAD SUCCESS<br>[FILE PATH]: "+fileList;
 		}else {
 			try
 			(
@@ -899,7 +897,7 @@ public class Q10DAO {
 
 	            beanToCsv.write(cList);
 			}
-			ret = "ダウンロードを完了しました。<br>ファイルはこちです。<br>"+cpDownPath+"CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0) + ".csv";
+			ret = "CLICKPOST DOWNLOAD SUCCESS<br>[FILE PATH]: "+cpDownPath+"CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0) + ".csv";
 		}
 		return ret;
 	}

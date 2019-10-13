@@ -119,6 +119,15 @@ public class RakutenController {
 		return listDao.registerTransInfo(transVO);
 	}
 	
+	@RequestMapping(value="/delTrans")
+	public String delTransInfo(@RequestBody ArrayList<TranslationVO> transVO) {
+		log.info("delTransInfo");
+		for (TranslationVO vo : transVO) {
+			listDao.delTransInfo(vo.getSeq_id());
+		}
+		return "redirect:getTrans";
+	}
+	
 	@ResponseBody
 	@RequestMapping(value="/showRegionMaster")
 	public ArrayList<RegionMasterVO> showRegionMaster(RegionMasterVO vo) {

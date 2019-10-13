@@ -52,6 +52,7 @@ import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
 import jp.prj.araku.rakuten.mapper.IRakutenMapper;
 import jp.prj.araku.rakuten.vo.RakutenDeleteVO;
+import jp.prj.araku.rakuten.vo.RakutenDuplicateVO;
 import jp.prj.araku.rakuten.vo.RakutenVO;
 import jp.prj.araku.util.ArakuVO;
 import jp.prj.araku.util.CommonUtil;
@@ -82,6 +83,8 @@ public class RakutenDAO {
 		
 		BufferedReader reader = null;
 		ArrayList<RakutenVO> errList = new ArrayList<>();
+		// 2019-10-09: 別紙처리
+    	HashSet<String> exceptionList = new HashSet<>();
 		try  {
 			reader = new BufferedReader(
 					new InputStreamReader(rakUpload.getInputStream(), fileEncoding));
@@ -121,8 +124,6 @@ public class RakutenDAO {
             	searchVO.setOrder_no(vo.getOrder_no());
             	
             	ArrayList<RakutenVO> dupCheckList = mapper.getRakutenInfo(searchVO);
-            	// 2019-10-05: 別紙처리
-            	HashSet<String> exceptionList = new HashSet<>();
         		
             	// 이미 존재하는 受注番号가 있으면
         		if (dupCheckList.size() == 1) {
@@ -140,17 +141,18 @@ public class RakutenDAO {
         					forException.setSeq_id(dupCheckList.get(0).getSeq_id());
         					forException.setProduct_name("[別紙"+(exceptionList.size())+"] "+dupCheckList.get(0).getProduct_name());
         					mapper.updateRakutenInfo(forException);
-        					dupCheckList.get(0).setProduct_name("[別紙"+(exceptionList.size())+"] "+dupCheckList.get(0).getProduct_name());
+        					// 2019-10-09: 別紙처리
+        					dupCheckList.get(0).setAttach_no("[別紙"+(exceptionList.size())+"] ");
         					errList.add(dupCheckList.get(0));
         				}
-        				vo.setProduct_name("[別紙"+(exceptionList.size())+"] "+vo.getProduct_name());
+        				vo.setAttach_no("[別紙"+(exceptionList.size())+"] ");
         				errList.add(vo);
             			continue;
         			}
         		}
         		
         		// あす楽希望이 1인 경우
-        		if (vo.getTomorrow_hope().equals("1")) {
+        		if (null != vo.getTomorrow_hope() && vo.getTomorrow_hope().equals("1")) {
         			// お届け日指定 컬럼에 데이터 등록일 +1
         			vo.setDelivery_date_sel(CommonUtil.getDate("yyyy/MM/dd", 1));
         			// お届け時間帯 컬럼에 午前中
@@ -239,17 +241,38 @@ public class RakutenDAO {
 //			session.setAttribute("errSize", errList.size());
 //			session.setAttribute("errList", errList);
 			if(errList.size() > 0) {
+				ArrayList<RakutenDuplicateVO> duplList = new ArrayList<>();
 				for(RakutenVO rvo : errList) {
 					// 2019-10-08: 다건주문자에 대하여 파일다운로드시 널체크추가
 					if(null != rvo.getProduct_option()) {
 						rvo.setProduct_option(rvo.getProduct_option().replaceAll("\n", ""));
 					}
 					
-					if(null != rvo.getComment()) {
-						rvo.setComment(rvo.getComment().replaceAll("\n", ""));
-					}
-					
+					// 2019-10-09: 別紙처리
+					RakutenDuplicateVO rdVO = new RakutenDuplicateVO();
+					rdVO.setAttach_no(rvo.getAttach_no());
+					rdVO.setProduct_id(rvo.getProduct_id());
+					rdVO.setProduct_name(rvo.getProduct_name());
+					rdVO.setProduct_option(rvo.getProduct_option());
+					rdVO.setOrder_no(rvo.getOrder_no());
+					rdVO.setOrder_name(rvo.getOrder_name());
+					rdVO.setOrder_name_kana(rvo.getOrder_name_kana());
+					rdVO.setOrder_surname(rvo.getOrder_surname());
+					rdVO.setOrder_surname_kana(rvo.getOrder_surname_kana());
+					duplList.add(rdVO);
 				}
+				String[] header = {
+						"別紙番号"
+						, "注文番号"
+						, "商品ID"
+						, "商品名"
+						, "項目・選択肢"
+						, "注文者姓"
+						, "注文者名"
+						, "注文者姓カナ"
+						, "注文者名カナ"
+				};
+				String[] blank= {"","","","","","","","",""};
 				try
 				(
 					FileOutputStream fos = new FileOutputStream(duplDownPath+"[DUPL] "+CommonUtil.getDate("YYYYMMdd", 0) + ".csv");
@@ -261,17 +284,26 @@ public class RakutenDAO {
 							, CSVWriter.DEFAULT_LINE_END);
 				) 
 				{
-					StatefulBeanToCsv<RakutenVO> beanToCsv = new StatefulBeanToCsvBuilder(writer)
-		                    .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
-		                    .build();
-					
-					csvWriter.writeNext(CommonUtil.rakutenHeader());
+					// 2019-10-09: 정해준 포맷으로 출력될수있게 처리 	
+					StatefulBeanToCsv<RakutenDuplicateVO> beanToCsv = new StatefulBeanToCsvBuilder(writer)
+			                    .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
+			                    .build();
+						
+						csvWriter.writeNext(header);
 
-		            try {
-						beanToCsv.write(errList);
-					} catch (CsvDataTypeMismatchException | CsvRequiredFieldEmptyException e) {
-						e.printStackTrace();
-					}
+			            try {
+							//beanToCsv.write(duplList);
+			            	for(String str : exceptionList) {
+			            		for(RakutenDuplicateVO vo : duplList) {
+			            			if(str.equals(vo.getOrder_no())) {
+			            				beanToCsv.write(vo);
+			            			}
+			            		}
+			            		csvWriter.writeNext(blank);
+			            	}
+						} catch (CsvDataTypeMismatchException | CsvRequiredFieldEmptyException e) {
+							e.printStackTrace();
+						}
 				}
 			}
 			
@@ -1214,7 +1246,7 @@ public class RakutenDAO {
 			throws IOException
 			, CsvDataTypeMismatchException
 			, CsvRequiredFieldEmptyException {
-		String ret = "ダウンロードを失敗しました。";
+		String ret = "CLICKPOST DOWNLOAD FAILED";
 		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
 		
 		ArrayList<String> seq_id_list = new ArrayList<>();
@@ -1303,7 +1335,7 @@ public class RakutenDAO {
 		            fileList.add(cpDownPath+"CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0) +"-"+i1+".csv");
 				}
 			}
-			ret = "ダウンロードを完了しました。<br>ファイルはこちです。<br>"+fileList;
+			ret = "CLICKPOST DOWNLOAD SUCCESS<br>[FILE PATH]: "+fileList;
 		}else {
 			try
 			(
@@ -1324,7 +1356,7 @@ public class RakutenDAO {
 
 	            beanToCsv.write(cList);
 			}
-			ret = "ダウンロードを完了しました。<br>ファイルはこちです。<br>"+cpDownPath+"CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0) + ".csv";
+			ret = "CLICKPOST DOWNLOAD SUCCESS<br>[FILE PATH]: "+cpDownPath+"CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0) + ".csv";
 		}
 		
 		return ret;

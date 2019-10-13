@@ -348,8 +348,11 @@ public class RakutenVO {
 	private String start_date;
 	/**検索用*/
 	private String search_type;
-	
 	private ArrayList<String> seq_id_list;
+	
+	// 2019-10-09: 別紙처리
+	/**別紙番号*/
+	private String attach_no;
 	
 	public String getSeq_id() {
 		return seq_id;
@@ -1059,6 +1062,13 @@ public class RakutenVO {
 	}
 	public void setSeq_id_list(ArrayList<String> seq_id_list) {
 		this.seq_id_list = seq_id_list;
+	}
+	
+	public String getAttach_no() {
+		return attach_no;
+	}
+	public void setAttach_no(String attach_no) {
+		this.attach_no = attach_no;
 	}
 	
 	@Override

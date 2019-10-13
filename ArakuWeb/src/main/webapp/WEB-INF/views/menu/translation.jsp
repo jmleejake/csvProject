@@ -21,6 +21,9 @@ $(document).ready(function() {
 <c:if test="${'Q' == type }">
 <jsp:include page="../q10Top.jsp"></jsp:include>
 </c:if>
+<c:if test="${'Y' == type }">
+<jsp:include page="../yahooTop.jsp"></jsp:include>
+</c:if>
 <div class="container-fluid">
 <div class="well container-fluid">
 	<form action="getTrans" id="transForm">
