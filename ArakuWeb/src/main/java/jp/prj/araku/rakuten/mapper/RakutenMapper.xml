@@ -386,10 +386,19 @@ left outer join translation_err terr on terr.trans_target_id = ri.seq_id and ter
 		<when test="search_type =='saga'">
 		<trim prefixOverrides="AND |OR ">
 		<if test="delivery_name != null and delivery_name != ''">
-		delivery_surname like '%${delivery_name}%' 
+		(delivery_surname like '%${delivery_name}%' 
 		or delivery_surname_kana like '%${delivery_name}%'
 		or delivery_name like '%${delivery_name}%' 
-		or delivery_name_kana like '%${delivery_name}%'
+		or delivery_name_kana like '%${delivery_name}%')
+		</if>
+		<if test="delivery_tel1 != null and delivery_tel1 != ''">
+		and delivery_tel1 = #{delivery_tel1}
+		</if>
+		<if test="delivery_tel2 != null and delivery_tel2 != ''">
+		and delivery_tel2 = #{delivery_tel2}
+		</if>
+		<if test="delivery_tel3 != null and delivery_tel3 != ''">
+		and delivery_tel3 = #{delivery_tel3}
 		</if>
 		</trim>
 		</when>
@@ -557,6 +566,9 @@ set
 	</if>
 	<if test="delivery_company != null and delivery_company !=''">
 	, delivery_company = #{delivery_company}
+	</if>
+	<if test="product_name != null and product_name !=''">
+	, product_name = #{product_name}
 	</if>
 where
 	seq_id = #{seq_id}

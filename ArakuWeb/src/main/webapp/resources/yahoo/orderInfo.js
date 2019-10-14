@@ -160,7 +160,7 @@ $("#btn_delete").on("click", function() {
 	alertify.confirm("本当に削除しますか？", function (e) {
 		if (e) {
 			$.ajax({
-			    url: "delQ10"
+			    url: "delYahoo"
 		    	, type:"post"
 			    , dataType: "json"  
 			    , contentType : "application/json"

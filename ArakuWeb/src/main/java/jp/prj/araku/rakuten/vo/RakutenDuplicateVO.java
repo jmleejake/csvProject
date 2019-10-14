@@ -18,18 +18,21 @@ public class RakutenDuplicateVO {
 	/**項目・選択肢*/
 	@CsvBindByPosition(position=4)
 	private String product_option;
-	/**注文者姓*/
+	/**個数*/
 	@CsvBindByPosition(position=5)
-	private String order_surname;
-	/**注文者名*/
+	private String unit_no;
+	/**送付先姓*/
 	@CsvBindByPosition(position=6)
-	private String order_name;
-	/**注文者姓カナ*/
+	private String delivery_surname;
+	/**送付先名*/
 	@CsvBindByPosition(position=7)
-	private String order_surname_kana;
-	/**注文者名カナ*/
+	private String delivery_name;
+	/**送付先姓カナ*/
 	@CsvBindByPosition(position=8)
-	private String order_name_kana;
+	private String delivery_surname_kana;
+	/**送付先名カナ*/
+	@CsvBindByPosition(position=9)
+	private String delivery_name_kana;
 	
 	public String getAttach_no() {
 		return attach_no;
@@ -61,29 +64,35 @@ public class RakutenDuplicateVO {
 	public void setProduct_option(String product_option) {
 		this.product_option = product_option;
 	}
-	public String getOrder_surname() {
-		return order_surname;
+	public String getUnit_no() {
+		return unit_no;
 	}
-	public void setOrder_surname(String order_surname) {
-		this.order_surname = order_surname;
+	public void setUnit_no(String unit_no) {
+		this.unit_no = unit_no;
 	}
-	public String getOrder_name() {
-		return order_name;
+	public String getDelivery_surname() {
+		return delivery_surname;
 	}
-	public void setOrder_name(String order_name) {
-		this.order_name = order_name;
+	public void setDelivery_surname(String delivery_surname) {
+		this.delivery_surname = delivery_surname;
 	}
-	public String getOrder_surname_kana() {
-		return order_surname_kana;
+	public String getDelivery_name() {
+		return delivery_name;
 	}
-	public void setOrder_surname_kana(String order_surname_kana) {
-		this.order_surname_kana = order_surname_kana;
+	public void setDelivery_name(String delivery_name) {
+		this.delivery_name = delivery_name;
 	}
-	public String getOrder_name_kana() {
-		return order_name_kana;
+	public String getDelivery_surname_kana() {
+		return delivery_surname_kana;
 	}
-	public void setOrder_name_kana(String order_name_kana) {
-		this.order_name_kana = order_name_kana;
+	public void setDelivery_surname_kana(String delivery_surname_kana) {
+		this.delivery_surname_kana = delivery_surname_kana;
+	}
+	public String getDelivery_name_kana() {
+		return delivery_name_kana;
+	}
+	public void setDelivery_name_kana(String delivery_name_kana) {
+		this.delivery_name_kana = delivery_name_kana;
 	}
 
 }

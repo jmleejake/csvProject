@@ -139,7 +139,7 @@ public class RakutenDAO {
         				if(exceptionList.add(vo.getOrder_no().trim())) {
         					RakutenVO forException = new RakutenVO();
         					forException.setSeq_id(dupCheckList.get(0).getSeq_id());
-        					forException.setProduct_name("[別紙"+(exceptionList.size())+"] "+dupCheckList.get(0).getProduct_name());
+        					forException.setProduct_name("[別紙"+(exceptionList.size())+"]");
         					mapper.updateRakutenInfo(forException);
         					// 2019-10-09: 別紙처리
         					dupCheckList.get(0).setAttach_no("[別紙"+(exceptionList.size())+"] ");
@@ -255,10 +255,11 @@ public class RakutenDAO {
 					rdVO.setProduct_name(rvo.getProduct_name());
 					rdVO.setProduct_option(rvo.getProduct_option());
 					rdVO.setOrder_no(rvo.getOrder_no());
-					rdVO.setOrder_name(rvo.getOrder_name());
-					rdVO.setOrder_name_kana(rvo.getOrder_name_kana());
-					rdVO.setOrder_surname(rvo.getOrder_surname());
-					rdVO.setOrder_surname_kana(rvo.getOrder_surname_kana());
+					rdVO.setDelivery_name(rvo.getDelivery_name());
+					rdVO.setDelivery_surname(rvo.getDelivery_surname());
+					rdVO.setDelivery_name_kana(rvo.getDelivery_name_kana());
+					rdVO.setDelivery_surname_kana(rvo.getDelivery_surname_kana());
+					rdVO.setUnit_no(rvo.getUnit_no());
 					duplList.add(rdVO);
 				}
 				String[] header = {
@@ -267,10 +268,11 @@ public class RakutenDAO {
 						, "商品ID"
 						, "商品名"
 						, "項目・選択肢"
-						, "注文者姓"
-						, "注文者名"
-						, "注文者姓カナ"
-						, "注文者名カナ"
+						, "個数"
+						, "送付先姓"
+						, "送付先名"
+						, "送付先姓カナ"
+						, "送付先名カナ"
 				};
 				String[] blank= {"","","","","","","","",""};
 				try
@@ -1006,21 +1008,32 @@ public class RakutenDAO {
             	// 데이터가 있는지 체크
             	RakutenVO searchVO = new RakutenVO();
             	searchVO.setSearch_type(CommonUtil.SEARCH_TYPE_SAGAWA);
-            	searchVO.setDelivery_name(vo.getDelivery_name2());
+            	String[] strArr = vo.getDelivery_name1().split("　");
+            	if(strArr.length > 1) {
+            		searchVO.setDelivery_name(strArr[1]);
+            	} else {
+            		searchVO.setDelivery_name(vo.getDelivery_name1());
+            	}
+            	if(vo.getDelivery_tel() != null) {
+        			String[] strArr2 = vo.getDelivery_tel().split("-");
+                	searchVO.setDelivery_tel1(strArr2[0]);
+                	searchVO.setDelivery_tel2(strArr2[1]);
+                	searchVO.setDelivery_tel3(strArr2[2]);
+        		}
             	
-            	/*
-            	 * お届け先名称２ (delivery_name2)을 키로 해서 
+            	/* 2019-10-14
+            	 * 送付先名, 送付先電話番号1-3
+            	 * 두가지를 키값으로하여
             	 * お問合せ送り状No(contact_no) 값을 갱신
             	 * */
             	ArrayList<RakutenVO> searchRetList = mapper.getRakutenInfo(searchVO);
             	
             	RakutenVO searchRet = new RakutenVO();
-            	if (searchRetList.size() > 0) {
+            	if (searchRetList.size() == 1) {
+            		// 결과값이 1건이 아닌경우는 키가된 값에대하여 결과값이 제대로 나오지 못한 경우이므로 continue
             		searchRet = searchRetList.get(0);
             	} else {
-            		searchVO.setDelivery_name(vo.getDelivery_name1());
-            		searchRetList = mapper.getRakutenInfo(searchVO);
-            		searchRet = searchRetList.get(0);
+            		continue;
             	}
             	
             	searchVO.setSeq_id(searchRet.getSeq_id());
