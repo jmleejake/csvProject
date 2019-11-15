@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.prj.araku.tablet.mapper.ITabletPrdMapper">
+
+<insert id="insertPrdInfo" parameterType="Prd" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
+insert into prd_info (prd_cd, jan_cd, prd_nm, prd_dtl, prd_cnt, order_no)
+values (#{prd_cd}, #{jan_cd}, #{prd_nm}, #{prd_dtl}, #{prd_cnt}, #{order_no})
+</insert>
+
+<select id="getPrdInfo" parameterType="Prd" resultType="Prd">
+select
+	seq_id
+	, date_format(register_date, '%Y/%m/%d') register_date
+	, date_format(update_date, '%Y/%m/%d') update_date
+	, prd_cd
+	, jan_cd
+	, prd_nm
+	, prd_dtl
+	, prd_cnt
+	, order_no
+from
+	prd_info
+<where>
+	<trim prefixOverrides="AND |OR ">
+	<if test="prd_cd != null and prd_cd != ''">
+	prd_cd like '%${prd_cd}%'
+	</if>
+	<if test="prd_nm != null and prd_nm != ''">
+	and prd_nm like '%${prd_nm}%'
+	</if>
+	</trim>
+</where>
+order by seq_id desc
+</select>
+
+<update id="updatePrdInfo" parameterType="Q10">
+update
+	prd_info
+set
+	update_date = now()
+	<if test="prd_cd != null and prd_cd !=''">
+	, prd_cd = #{prd_cd}
+	</if>
+	<if test="jan_cd != null and jan_cd !=''">
+	, jan_cd = #{jan_cd}
+	</if>
+	<if test="prd_nm != null and prd_nm !=''">
+	, prd_nm = #{prd_nm}
+	</if>
+	<if test="prd_dtl != null and prd_dtl !=''">
+	, prd_dtl = #{prd_dtl}
+	</if>
+	<if test="prd_cnt != null and prd_cnt !=''">
+	, prd_cnt = #{prd_cnt}
+	</if>
+	<if test="order_no != null and order_no !=''">
+	, order_no = #{order_no}
+	</if>
+where
+	seq_id = #{seq_id}
+</update>
+
+<delete id="deletePrdInfo" parameterType="String">
+delete from
+	prd_info
+where
+	seq_id = #{seq_id}
+</delete>
+</mapper>

@@ -25,6 +25,8 @@ import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
+import jp.prj.araku.tablet.dao.TabletPrdDAO;
+import jp.prj.araku.tablet.vo.TabletPrdVO;
 import jp.prj.araku.util.CommonUtil;
 import jp.prj.araku.yahoo.dao.YahooDAO;
 import jp.prj.araku.yahoo.vo.YahooVO;
@@ -45,6 +47,9 @@ public class YahooController {
 	
 	@Autowired
 	ListDAO listDao;
+	
+	@Autowired
+	TabletPrdDAO tabletPrdDao;
 	
 	@RequestMapping(value = "/fileView")
 	public String fileView() {
@@ -257,5 +262,26 @@ public class YahooController {
 			log.error(e.toString());
 		}
 		return ret;
+	}
+	
+	@RequestMapping(value="/showPrdMaster", method=RequestMethod.GET)
+	@ResponseBody
+	public ArrayList<TabletPrdVO> getPrdInfo(TabletPrdVO vo) {
+		log.info("getPrdInfo");
+		return tabletPrdDao.getPrdInfo(vo);
+	}
+	
+	@RequestMapping(value="/maniPrdMaster", method=RequestMethod.POST)
+	@ResponseBody
+	public ArrayList<TabletPrdVO> manipulatePrdInfo(@RequestBody ArrayList<TabletPrdVO> list) {
+		log.info("manipulatePrdInfo");
+		return tabletPrdDao.manipulatePrdInfo(list);
+	}
+	
+	@RequestMapping(value="/delPrdMaster", method=RequestMethod.POST)
+	@ResponseBody
+	public ArrayList<TabletPrdVO> deletePrdInfo(@RequestBody ArrayList<TabletPrdVO> list) {
+		log.info("manipulatePrdInfo");
+		return tabletPrdDao.deletePrdInfo(list);
 	}
 }

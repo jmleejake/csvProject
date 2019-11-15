@@ -11,6 +11,7 @@ $(document).ready(function() {
 	$("#region").addClass("active");
 	showRegionMaster();
 	showExceptionMaster();
+	showPrdMaster();
 });
 </script>
 </head>
@@ -27,6 +28,42 @@ $(document).ready(function() {
 <c:if test="${'Y' == type }">
 <jsp:include page="../yahooTop.jsp"></jsp:include>
 </c:if>
+<div class="container-fluid">
+<div class="well container-fluid">
+<h3>商品名管理マスタ</h3>
+
+<div class="well container-fluid">
+	<form id="prdFrm" action="showPrdMaster">
+	<div class="col-sm-4">
+	<label>商品管理番号</label>
+	<input type="text" name="prd_cd" class="form-control" style="width: 300px;">
+	</div>
+	<div class="col-sm-4">
+	<label>商品名</label>
+	<input type="text" name="prd_nm" class="form-control" style="width: 300px;">
+	</div>
+	<div class="col-sm-4" style="margin-top: 7px;">
+	<button id="btn_prd_srch" type="button" class="btn btn-default" style="width: 120px; margin-top: 18px;">検索</button>
+	</div>
+	</form>
+</div>
+<div class="well container-fluid">
+<div class="row">
+	<div class="col-sm-6" style="margin-top: 7px;">
+	<button id="btn_prd_add" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">列追加</button>
+	<button id="btn_prd_commit" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">登録</button>
+	</div>
+	<div class="col-sm-6" style="margin-top: 7px;">
+	<button id="btn_prd_delete" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">削除</button>
+	</div>
+</div>
+
+<div id="prdGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
+</div>
+</div>
+<script src="./../resources/menu/prdMaster.js"></script>
+</div>
+
 <div class="container-fluid">
 <div class="well container-fluid">
 <h3>地域区分マスタ</h3>
