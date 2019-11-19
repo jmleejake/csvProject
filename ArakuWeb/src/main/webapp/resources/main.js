@@ -21,3 +21,8 @@ $("#btn_yahoo").on("click", function() {
 	console.log("yahoo");
 	location.href="yahoo/fileView";
 });
+
+$("#btn_tablet").on("click", function() {
+	console.log("tablet");
+	location.href = "tablet/prdMng";
+});

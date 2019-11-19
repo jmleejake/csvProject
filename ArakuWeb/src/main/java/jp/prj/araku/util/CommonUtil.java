@@ -30,6 +30,7 @@ public class CommonUtil {
 	public static final String TRANS_TARGET_A = "A"; /*A:アマゾン*/
 	public static final String TRANS_TARGET_Q = "Q"; /*Q:qoo10*/
 	public static final String TRANS_TARGET_Y = "Y"; /*Y:yahoo*/
+	public static final String TRANS_TARGET_TA = "TA"; /*TA:tablet*/
 	public static final String TRANS_ERR = "ERR"; /*エラーテキスト*/
 	
 	public static final String ORDER_STATUS_COMPLETE = "出荷準備済";

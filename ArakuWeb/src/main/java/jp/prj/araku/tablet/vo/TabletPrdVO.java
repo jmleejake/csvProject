@@ -1,5 +1,7 @@
 package jp.prj.araku.tablet.vo;
 
+import com.opencsv.bean.CsvBindByPosition;
+
 public class TabletPrdVO {
 	/**区分ID*/
 	private String seq_id;
@@ -19,6 +21,19 @@ public class TabletPrdVO {
 	private String prd_cnt;
 	/**順番*/
 	private String order_no;
+	
+	/**注文者姓*/
+	private String order_surname;
+	/**注文者名*/
+	private String order_name;
+	/**送付先姓*/
+	private String delivery_surname;
+	/**送付先名*/
+	private String delivery_name;
+	/**お荷物伝票番号*/
+	private String baggage_claim_no;
+	/**個数*/
+	private String unit_no;
 	
 	public String getSeq_id() {
 		return seq_id;
@@ -73,5 +88,41 @@ public class TabletPrdVO {
 	}
 	public void setOrder_no(String order_no) {
 		this.order_no = order_no;
+	}
+	public String getOrder_surname() {
+		return order_surname;
+	}
+	public void setOrder_surname(String order_surname) {
+		this.order_surname = order_surname;
+	}
+	public String getOrder_name() {
+		return order_name;
+	}
+	public void setOrder_name(String order_name) {
+		this.order_name = order_name;
+	}
+	public String getDelivery_surname() {
+		return delivery_surname;
+	}
+	public void setDelivery_surname(String delivery_surname) {
+		this.delivery_surname = delivery_surname;
+	}
+	public String getDelivery_name() {
+		return delivery_name;
+	}
+	public void setDelivery_name(String delivery_name) {
+		this.delivery_name = delivery_name;
+	}
+	public String getBaggage_claim_no() {
+		return baggage_claim_no;
+	}
+	public void setBaggage_claim_no(String baggage_claim_no) {
+		this.baggage_claim_no = baggage_claim_no;
+	}
+	public String getUnit_no() {
+		return unit_no;
+	}
+	public void setUnit_no(String unit_no) {
+		this.unit_no = unit_no;
 	}
 }

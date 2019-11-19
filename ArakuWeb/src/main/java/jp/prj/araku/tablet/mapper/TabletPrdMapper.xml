@@ -36,7 +36,7 @@ from
 order by seq_id desc
 </select>
 
-<update id="updatePrdInfo" parameterType="Q10">
+<update id="updatePrdInfo" parameterType="Prd">
 update
 	prd_info
 set
@@ -69,4 +69,19 @@ delete from
 where
 	seq_id = #{seq_id}
 </delete>
+
+<select id="getPrdManage" parameterType="Prd" resultType="Prd">
+select 
+	delivery_surname, delivery_name
+	, order_surname, order_name
+	, prd_cd, jan_cd, prd_nm, prd_dtl
+	, unit_no, prd_cnt, pi.order_no
+	, baggage_claim_no
+from 
+	rakuten_info ri
+inner join prd_info pi on pi.prd_cd = ri.product_manage_no
+where 
+	baggage_claim_no = #{baggage_claim_no}
+order by prd_cd, pi.order_no
+</select>
 </mapper>

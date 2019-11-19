@@ -42,4 +42,9 @@ public class TabletPrdDAO {
 		
 		return mapper.getPrdInfo(null);
 	}
+	
+	public ArrayList<TabletPrdVO> getPrdManage(TabletPrdVO vo) {
+		ITabletPrdMapper mapper = sqlSession.getMapper(ITabletPrdMapper.class);
+		return mapper.getPrdManage(vo);
+	}
 }

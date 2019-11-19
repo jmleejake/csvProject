@@ -22,6 +22,7 @@
 <button id="btn_amazon" class="btn btn-lg" style="width: 150px;">AMAZON</button>
 <button id="btn_q10" class="btn btn-lg" style="width: 150px;">QOO10</button>
 <button id="btn_yahoo" class="btn btn-lg" style="width: 150px;">YAHOO</button>
+<button id="btn_tablet" class="btn btn-lg" style="width: 150px;">タブレット</button>
 </div>
 </div>
 <script src="./resources/main.js"></script>

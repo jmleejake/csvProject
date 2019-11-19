@@ -28,6 +28,9 @@ $(document).ready(function() {
 <c:if test="${'Y' == type }">
 <jsp:include page="../yahooTop.jsp"></jsp:include>
 </c:if>
+<c:if test="${'TA' == type }">
+<jsp:include page="../tabletTop.jsp"></jsp:include>
+</c:if>
 <div class="container-fluid">
 <div class="well container-fluid">
 <h3>商品名管理マスタ</h3>

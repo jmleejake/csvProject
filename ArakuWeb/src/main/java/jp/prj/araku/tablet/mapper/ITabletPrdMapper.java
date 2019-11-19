@@ -9,4 +9,5 @@ public interface ITabletPrdMapper {
 	public ArrayList<TabletPrdVO> getPrdInfo(TabletPrdVO vo);
 	public int updatePrdInfo(TabletPrdVO vo);
 	public int deletePrdInfo(String seq_id);
+	public ArrayList<TabletPrdVO> getPrdManage(TabletPrdVO vo);
 }
