@@ -1016,9 +1016,11 @@ public class RakutenDAO {
             	}
             	if(vo.getDelivery_tel() != null) {
         			String[] strArr2 = vo.getDelivery_tel().split("-");
-                	searchVO.setDelivery_tel1(strArr2[0]);
-                	searchVO.setDelivery_tel2(strArr2[1]);
-                	searchVO.setDelivery_tel3(strArr2[2]);
+        			if(strArr2.length > 2) {
+        				searchVO.setDelivery_tel1(strArr2[0]);
+        				searchVO.setDelivery_tel2(strArr2[1]);
+        				searchVO.setDelivery_tel3(strArr2[2]);
+        			}
         		}
             	
             	/* 2019-10-14
