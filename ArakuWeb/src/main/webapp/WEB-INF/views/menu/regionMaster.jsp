@@ -12,6 +12,7 @@ $(document).ready(function() {
 	showRegionMaster();
 	showExceptionMaster();
 	showPrdMaster();
+	showDealerMaster();
 });
 </script>
 </head>
@@ -65,6 +66,27 @@ $(document).ready(function() {
 </div>
 </div>
 <script src="./../resources/menu/prdMaster.js"></script>
+</div>
+
+<div class="container-fluid">
+<div class="well container-fluid">
+<h3>取引先マスタ</h3>
+
+<div class="well container-fluid">
+<div class="row">
+	<div class="col-sm-6" style="margin-top: 7px;">
+	<button id="btn_dealer_add" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">列追加</button>
+	<button id="btn_dealer_commit" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">登録</button>
+	</div>
+	<div class="col-sm-6" style="margin-top: 7px;">
+	<button id="btn_dealer_delete" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">削除</button>
+	</div>
+</div>
+
+<div id="dealerGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
+</div>
+</div>
+<script src="./../resources/menu/dealerMaster.js"></script>
 </div>
 
 <div class="container-fluid">

@@ -1,8 +1,12 @@
 package jp.prj.araku.tablet.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,17 +15,25 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
+
 import jp.prj.araku.list.dao.ListDAO;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.TranslationVO;
 import jp.prj.araku.tablet.dao.TabletPrdDAO;
+import jp.prj.araku.tablet.vo.DealerVO;
+import jp.prj.araku.tablet.vo.StockVO;
 import jp.prj.araku.tablet.vo.TabletPrdVO;
 import jp.prj.araku.util.CommonUtil;
 
 @RequestMapping(value="tablet")
 @Controller
 public class TabletPrdController {
+	@Value("${FILE_ENCODING}")
+	private String fileEncoding;
+	
 	@Autowired
 	ListDAO listDao;
 	
@@ -119,6 +131,49 @@ public class TabletPrdController {
 		TabletPrdVO vo = new TabletPrdVO();
 		vo.setBaggage_claim_no(baggage_claim_no);
 		return tabletPrdDao.getPrdManage(vo);
+	}
+	
+	@RequestMapping(value="/showDealerMaster", method=RequestMethod.GET)
+	@ResponseBody
+	public ArrayList<DealerVO> getDealerInfo(DealerVO vo) {
+		return tabletPrdDao.getDealerInfo(vo);
+	}
+	
+	@RequestMapping(value="/maniDealerMaster", method=RequestMethod.POST)
+	@ResponseBody
+	public ArrayList<DealerVO> manipulateDealerInfo(@RequestBody ArrayList<DealerVO> list) {
+		return tabletPrdDao.manipulateDealerInfo(list);
+	}
+	
+	@RequestMapping(value="/delDealerMaster", method=RequestMethod.POST)
+	@ResponseBody
+	public ArrayList<DealerVO> deleteDealerInfo(@RequestBody ArrayList<DealerVO> list) {
+		return tabletPrdDao.deleteDealerInfo(list);
+	}
+	
+	@RequestMapping(value="/showStockMng")
+	@ResponseBody
+	public ArrayList<StockVO> showStockManage(StockVO vo) {
+		return tabletPrdDao.getStockManage(vo);
+	}
+	
+	@RequestMapping(value="/maniStockMng", method=RequestMethod.POST)
+	@ResponseBody
+	public ArrayList<StockVO> manipulateStockManage(@RequestBody ArrayList<StockVO> list) {
+		return tabletPrdDao.manipulateStockManage(list);
+	}
+	
+	@RequestMapping(value="/stockDown", method=RequestMethod.POST)
+	public void processStockDownload(
+			HttpServletResponse response
+			, @RequestParam(name="hidSeqId", required=false) String seqIds) {
+		String[] arr = seqIds.split(",");
+		try {
+			tabletPrdDao.processStockDownload(response, arr, fileEncoding);
+		} catch (IOException e) {
+		} catch (CsvDataTypeMismatchException e) {
+		} catch (CsvRequiredFieldEmptyException e) {
+		}
 	}
 	
 }

@@ -60,7 +60,14 @@ set
 	, order_no = #{order_no}
 	</if>
 where
-	seq_id = #{seq_id}
+	<choose>
+		<when test="update_type == 'cnt'">
+		jan_cd = #{jan_cd}
+		</when>
+		<otherwise>
+		seq_id = #{seq_id}
+		</otherwise>
+	</choose>
 </update>
 
 <delete id="deletePrdInfo" parameterType="String">
@@ -84,4 +91,95 @@ where
 	baggage_claim_no = #{baggage_claim_no}
 order by prd_cd, pi.order_no
 </select>
+
+<select id="getDealerInfo" parameterType="Dealer" resultType="Dealer">
+select
+	seq_id
+	, register_date
+	, update_date
+	, dealer_id
+	, dealer_nm
+from
+	dealer_info
+order by seq_id desc
+</select>
+
+<insert id="insertDealerInfo" parameterType="Dealer" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
+insert into dealer_info(dealer_id, dealer_nm)
+values (#{dealer_id}, #{dealer_nm})
+</insert>
+
+<update id="updateDealerInfo" parameterType="Dealer">
+update
+	dealer_info
+set
+	update_date = now()
+	<if test="dealer_id != null and dealer_id !=''">
+	, dealer_id = #{dealer_id}
+	</if>
+	<if test="dealer_nm != null and dealer_nm !=''">
+	, dealer_nm = #{dealer_nm}
+	</if>
+where
+	seq_id = #{seq_id}
+</update>
+
+<delete id="deleteDealerInfo" parameterType="String">
+delete from
+	dealer_info
+where
+	seq_id = #{seq_id}
+</delete>
+
+<select id="getStockManage" parameterType="Stock" resultType="Stock">
+select
+	sti.seq_id, jan_cd, prd_nm, prd_cnt, di.dealer_id, di.dealer_nm
+	, date_format(receive_date, '%Y/%m/%d') receive_date
+from
+	stock_info sti
+inner join dealer_info di on di.dealer_id = sti.dealer_id
+<where>
+	<trim prefixOverrides="AND |OR ">
+		<if test="seq_id != null and seq_id != ''">
+			sti.seq_id = #{seq_id}
+		</if>
+		<if test="jan_cd != null and jan_cd != ''">
+			and jan_cd = #{jan_cd}
+		</if>
+		<if test="receive_date != null and receive_date != ''">
+			and receive_date between
+				str_to_date(concat(#{receive_date},' ','00:00:00'), '%Y/%m/%d %H:%i:%S')  
+				and str_to_date(concat(#{receive_date},' ','23:59:59'), '%Y/%m/%d %H:%i:%S')
+		</if>
+		<if test="dealer_id != null and dealer_id != ''">
+			and (di.dealer_id like '%${dealer_id}%' 
+			or di.dealer_nm like '%${dealer_id}%')
+		</if>
+	</trim>
+</where>
+</select>
+
+<select id="getPrdInfoForStock" parameterType="String" resultType="Prd">
+select
+	seq_id, jan_cd prd_cd, prd_nm, prd_dtl, prd_cnt
+from
+	prd_info
+where
+	jan_cd = #{jan_cd}
+</select>
+
+<insert id="insertStockManage" parameterType="Stock" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
+insert stock_info (dealer_id, jan_cd, prd_nm, prd_cnt, receive_date)
+values (#{dealer_id}, #{jan_cd}, #{prd_nm}, #{prd_cnt}, now())
+</insert>
+
+<update id="updateStockManage" parameterType="Stock">
+update 
+	stock_info
+set 
+	receive_date = now()
+	, prd_cnt = #{prd_cnt}
+where 
+	seq_id = #{seq_id}
+</update>
 </mapper>

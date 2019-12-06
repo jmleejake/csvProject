@@ -1,7 +1,5 @@
 package jp.prj.araku.tablet.vo;
 
-import com.opencsv.bean.CsvBindByPosition;
-
 public class TabletPrdVO {
 	/**区分ID*/
 	private String seq_id;
@@ -34,6 +32,16 @@ public class TabletPrdVO {
 	private String baggage_claim_no;
 	/**個数*/
 	private String unit_no;
+	
+	/**取引先ID*/
+	private String dealer_id;
+	/**取引先名*/
+	private String dealer_nm;
+	
+	/**마스터에서의 업데이트인지 재고관리에서의 수량 업데이트인지의 구분값*/
+	private String update_type;
+	/**入庫日*/
+	private String receive_date;
 	
 	public String getSeq_id() {
 		return seq_id;
@@ -124,5 +132,29 @@ public class TabletPrdVO {
 	}
 	public void setUnit_no(String unit_no) {
 		this.unit_no = unit_no;
+	}
+	public String getDealer_id() {
+		return dealer_id;
+	}
+	public void setDealer_id(String dealer_id) {
+		this.dealer_id = dealer_id;
+	}
+	public String getDealer_nm() {
+		return dealer_nm;
+	}
+	public void setDealer_nm(String dealer_nm) {
+		this.dealer_nm = dealer_nm;
+	}
+	public String getUpdate_type() {
+		return update_type;
+	}
+	public void setUpdate_type(String update_type) {
+		this.update_type = update_type;
+	}
+	public String getReceive_date() {
+		return receive_date;
+	}
+	public void setReceive_date(String receive_date) {
+		this.receive_date = receive_date;
 	}
 }

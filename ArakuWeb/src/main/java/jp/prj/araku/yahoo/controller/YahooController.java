@@ -26,6 +26,7 @@ import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
 import jp.prj.araku.tablet.dao.TabletPrdDAO;
+import jp.prj.araku.tablet.vo.DealerVO;
 import jp.prj.araku.tablet.vo.TabletPrdVO;
 import jp.prj.araku.util.CommonUtil;
 import jp.prj.araku.yahoo.dao.YahooDAO;
@@ -283,5 +284,23 @@ public class YahooController {
 	public ArrayList<TabletPrdVO> deletePrdInfo(@RequestBody ArrayList<TabletPrdVO> list) {
 		log.info("manipulatePrdInfo");
 		return tabletPrdDao.deletePrdInfo(list);
+	}
+	
+	@RequestMapping(value="/showDealerMaster", method=RequestMethod.GET)
+	@ResponseBody
+	public ArrayList<DealerVO> getDealerInfo(DealerVO vo) {
+		return tabletPrdDao.getDealerInfo(vo);
+	}
+	
+	@RequestMapping(value="/maniDealerMaster", method=RequestMethod.POST)
+	@ResponseBody
+	public ArrayList<DealerVO> manipulateDealerInfo(@RequestBody ArrayList<DealerVO> list) {
+		return tabletPrdDao.manipulateDealerInfo(list);
+	}
+	
+	@RequestMapping(value="/delDealerMaster", method=RequestMethod.POST)
+	@ResponseBody
+	public ArrayList<DealerVO> deleteDealerInfo(@RequestBody ArrayList<DealerVO> list) {
+		return tabletPrdDao.deleteDealerInfo(list);
 	}
 }

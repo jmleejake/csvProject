@@ -18,6 +18,8 @@
 		<typeAlias type="jp.prj.araku.q10.vo.Q10VO" alias="Q10" />
 		<typeAlias type="jp.prj.araku.yahoo.vo.YahooVO" alias="Yahoo" />
 		<typeAlias type="jp.prj.araku.tablet.vo.TabletPrdVO" alias="Prd" />
+		<typeAlias type="jp.prj.araku.tablet.vo.DealerVO" alias="Dealer" />
+		<typeAlias type="jp.prj.araku.tablet.vo.StockVO" alias="Stock" />
 	</typeAliases>
 	<mappers>
 		<mapper resource="jp/prj/araku/list/mapper/ListMapper.xml" />
