@@ -6,7 +6,7 @@
 var columnDefs = [
 	{headerName: "注文内容", field: "prd_nm", width: 200}
 	, {headerName: "", field: "prd_dtl", width: 300}
-	, {headerName: "注文数", field: "unit_no", width: 100}
+	, {headerName: "注文数", field: "prd_cnt", width: 100}
 	, {headerName: "読込数", field: "", width: 100}
 ];
 
@@ -66,10 +66,12 @@ $("#btn_srch").on("click", function() {
 	var bgc_no = $("#bgc_no").val();
     
     $.ajax({
-        type: "get",
-        url: url,
-        data: {bgc_no:bgc_no},
-        success: setRowData
+        type: "get"
+        ,url: "showPrdMng"
+        ,dataType: "json"
+        , contentType: 'application/json'
+        ,data: {bgc_no:bgc_no}
+        ,success: setRowData
     });
 
 });
