@@ -8,6 +8,7 @@
 <script>
 $(document).ready(function() {
 	$("#prdM").addClass("active");
+	$("#bgc_no").focus();
 });
 </script>
 </head>
@@ -15,18 +16,16 @@ $(document).ready(function() {
 <jsp:include page="../tabletTop.jsp"></jsp:include>
 <div class="container-fluid">
 <div class="well container-fluid">
-	<form action="showPrdMng" id="prdMngForm">
 	<div class="col-sm-4" style="margin-top: 10px;">
 	<label id="prdMngName"></label>
 	</div>
 	<div class="col-sm-4" style="margin-top: 10px;">
 	<label>お荷物伝票番号</label>
-	<input type="text" name="bgc_no" class="form-control" style="width: 200px;">
+	<input type="text" id="bgc_no" class="form-control" style="width: 200px;">
 	</div>
 	<div class="col-sm-4" style="margin-top: 10px;">
 	<button type="button" id="btn_srch" class="btn btn-default" style="width: 120px; margin-top: 18px;">検索</button>
 	</div>
-	</form>
 </div>
 <div class="well container-fluid">
 <!-- 

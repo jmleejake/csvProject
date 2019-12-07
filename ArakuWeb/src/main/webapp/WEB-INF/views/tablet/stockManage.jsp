@@ -13,6 +13,8 @@ $(document).ready(function() {
 		language: "ja"
 		, autoclose: true
 	});
+	
+	$("#inp_jancd").focus();
 });
 </script>
 </head>

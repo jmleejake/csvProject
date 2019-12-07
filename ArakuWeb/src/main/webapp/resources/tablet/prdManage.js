@@ -63,13 +63,12 @@ function isFirstColumn(params) {
 }
 
 $("#btn_srch").on("click", function() {
-	var form = $("#prdMngForm");
-    var url = form.attr('action');
+	var bgc_no = $("#bgc_no").val();
     
     $.ajax({
         type: "get",
         url: url,
-        data: form.serialize(), // serializes the form's elements.
+        data: {bgc_no:bgc_no},
         success: setRowData
     });
 
