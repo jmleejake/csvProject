@@ -58,7 +58,7 @@ import jp.prj.araku.util.ArakuVO;
 import jp.prj.araku.util.CommonUtil;
 
 /**
- * [MOD-1011] 半角→全角へ変換する。　　kim
+ * [MOD-1011] 半角→全角へ変換する。　　
  * */
 @Repository
 public class RakutenDAO {
@@ -101,7 +101,7 @@ public class RakutenDAO {
             	RakutenVO vo = iterator.next();
             	
             	// 2019-10-05: 注1】이라는 항목에 대해서 빈 값으로 처리후 insert처리
-            	if(null != vo.getProduct_option() && "注1".contains(vo.getProduct_option())) {
+            	if(null != vo.getProduct_option() && "注".contains(vo.getProduct_option())) {
             		vo.setProduct_option("");
             	}
             	
@@ -407,25 +407,29 @@ public class RakutenDAO {
 					}
 					
 					log.debug(String.format("%d :: %s", i, strArr[i]));
-					String[] data = strArr[i].split(CommonUtil.SPLIT_BY_COLON);
-					String value = null;
-					if (data.length > 1) {
-						// 예외적인 경우로 콜론 바로 뒤에 데이터가 있는것이 아니라 콜론 두개 뒤에 있는 경우가 있어 스플릿 결과의 맨 마지막 값을 가져올 수 있도록 처리
-						value = data[data.length-1];
-						log.debug(String.format("option value1 :: %s", value));
-						
-						transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
-						transVO.setKeyword(value.trim());
-						searchRet = listMapper.getTransInfo(transVO);
-						
-						try {
-							list.add(searchRet.get(0).getAfter_trans().trim());
-						} catch (NullPointerException e) {
-							errVO.setErr_text(CommonUtil.TRANS_ERR);
-							listMapper.insertTranslationErr(errVO);
-							continue;
-						}
-					} 
+					
+					//2020.1.16 kim  옵션처리전에 注 표시가 있으면 처리하지 않고 다음 옵션처리함.
+	            	if(null != strArr[i] && !strArr[i].contains("注")) {
+						String[] data = strArr[i].split(CommonUtil.SPLIT_BY_COLON);
+						String value = null;
+						if (data.length > 1) {
+							// 예외적인 경우로 콜론 바로 뒤에 데이터가 있는것이 아니라 콜론 두개 뒤에 있는 경우가 있어 스플릿 결과의 맨 마지막 값을 가져올 수 있도록 처리
+							value = data[data.length-1];
+							log.debug(String.format("option value1 :: %s", value));
+							
+							transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+							transVO.setKeyword(value.trim());
+							searchRet = listMapper.getTransInfo(transVO);
+							
+							try {
+								list.add(searchRet.get(0).getAfter_trans().trim());
+							} catch (NullPointerException e) {
+								errVO.setErr_text(CommonUtil.TRANS_ERR);
+								listMapper.insertTranslationErr(errVO);
+								continue;
+							}
+						} 
+	            	}
 					/*
 					// [MOD-0826]
 					else {
@@ -621,34 +625,119 @@ public class RakutenDAO {
 					continue;
 				}
 				YamatoVO yVO = new YamatoVO();
+				// 2019/12/24  キム 클리크포스트를 야마토 ネコポス로 설정함. 　⇒　ＳＴＡＲＴ
+				if (tmp.getProduct_name().contains("全国送料無料")) {
+					yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_7);
+				}else {
+					yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_0);
+				}
+				if (tmp.getProduct_name().contains("冷凍")) {
+					yVO.setCool_type(CommonUtil.COOL_TYPE_1);
+				}
+				if (tmp.getProduct_name().contains("冷蔵")) {
+					yVO.setCool_type(CommonUtil.COOL_TYPE_2);		
+				}
+				// 2019/12/24  キム 클리크포스트를 야마토 ネコポス로 설정함. 　⇒　ＥＮＤ
+				
 				yVO.setCustomer_no(tmp.getOrder_no().replace("\"", ""));
-				yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_0);
-				yVO.setComment(tmp.getComment().replace("\n", "").replace("\"", "").replace("[配送日時指定:]", "").replace("[備考:]", ""));
+//				yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_0);
+				
+				// 2019/12/24  キム 야마토 배송날짜를 설정함. 　⇒　ＳＴＡＲＴ
+				String strComment = tmp.getComment().replace("\n", "").replace("\"", "").replace("[配送日時指定:]", "").replace("[備考:]", "");
+				if (strComment.contains(CommonUtil.TOMORROW_MORNING)) {
+					yVO.setEstimate_delivery_date(CommonUtil.getDate("YYYY/MM/dd", 1));
+					yVO.setDelivery_time(CommonUtil.YA_TOMORROW_MORNING_CODE);
+				}
+				if (strComment.contains(CommonUtil.TIMEMAP1)) {
+					yVO.setDelivery_time(CommonUtil.YA_TOMORROW_TIMEMAP1);
+				}	
+				if (strComment.contains(CommonUtil.TIMEMAP2)) {
+					yVO.setDelivery_time(CommonUtil.YA_TOMORROW_TIMEMAP2);
+				}
+				if (strComment.contains(CommonUtil.TIMEMAP3)) {
+					yVO.setDelivery_time(CommonUtil.YA_TOMORROW_TIMEMAP3);
+				}
+				if (strComment.contains(CommonUtil.TIMEMAP4)) {
+					yVO.setDelivery_time(CommonUtil.YA_TOMORROW_TIMEMAP4);
+				}
+				
+				String strXsplit ;
+				if(strComment.contains("-")) {
+					strXsplit = strComment.substring(0,4) + "/" + strComment.substring(5,7) +  "/" +strComment.substring(8,10);
+					yVO.setEstimate_delivery_date(strXsplit);
+				} 
+				
+				yVO.setComment(strComment);
+				//yVO.setComment(tmp.getComment().replace("\n", "").replace("\"", "").replace("[配送日時指定:]", "").replace("[備考:]", ""));
+				// 2019/12/24  キム 야마토 배송날짜를 설정함. 　⇒　END
+				
 				yVO.setCollect_cash(tmp.getTotal_amt().replace("\"", ""));
 				yVO.setEstimate_ship_date(CommonUtil.getDate("YYYY/MM/dd", 0));
-				yVO.setBill_customer_code("048299821004-311");
+				yVO.setBill_customer_code("048242380101");
+//				yVO.setBill_customer_code("048299821004-311");
 				yVO.setMultiple_key("1");
 				
 				yVO.setClient_post_no("3330845");
 				yVO.setClient_add("埼玉県川口市上青木西１丁目19-39");
 				yVO.setClient_building("エレガンス滝澤ビル1F");
-				yVO.setClient_name("有限会社ItempiaJapan (R)");
+				//2020/01/13  キム お届け先名とご依頼主名がおなじではない場合、ご依頼主名を登録する。
+				if(tmp.getDelivery_surname().equals(tmp.getOrder_surname()) && tmp.getDelivery_name().equals(tmp.getOrder_name() )) {
+					yVO.setClient_name("有限会社ItempiaJapan (R)");
+				}else {
+					yVO.setClient_name(tmp.getOrder_surname() +  " " +  tmp.getOrder_name() + " (R)");
+				}
 //				yVO.setClient_name_kana(tmp.getOrder_surname_kana().replace("\"", "") + " " + tmp.getOrder_name_kana().replace("\"", ""));
 				yVO.setClient_tel("048-242-3801");
 				
 				yVO.setDelivery_post_no(tmp.getDelivery_post_no1().replace("\"", "") + tmp.getDelivery_post_no2().replace("\"", ""));
-				yVO.setDelivery_add(tmp.getDelivery_add1().replace("\"", "") + "" + tmp.getDelivery_add2().replace("\"", "") + "" + tmp.getDelivery_add3().replace("\"", ""));
-				yVO.setDelivery_name(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
+
+				// 2019/12/24  キム ヤマト 주소 컬럼에 대하여 전각 16자 이상이면 안되는 사항이 있어 수정. 　⇒　ＳＴＡＲＴ
+				String addStr = tmp.getDelivery_add1().replace("\"", "") + "" + tmp.getDelivery_add2().replace("\"", "") + "" + tmp.getDelivery_add3().replace("\"", "");
+				if(addStr.length() > 16) {
+					yVO.setDelivery_add(addStr.substring(0, 16));
+			
+					if(addStr.length() > 32) {
+						yVO.setDelivery_building(addStr.substring(16, 32));
+						yVO.setDelivery_company1(addStr.substring(32, addStr.length()));
+					}else {
+						yVO.setDelivery_building(addStr.substring(16, addStr.length()));
+					}
+				}else {
+					yVO.setDelivery_add(addStr);
+				}
+				//yVO.setDelivery_add(tmp.getDelivery_add1().replace("\"", "") + "" + tmp.getDelivery_add2().replace("\"", "") + "" + tmp.getDelivery_add3().replace("\"", ""));
+				try {
+					String strdeliveryname = tmp.getDelivery_name();
+					if (!strdeliveryname.equals(null)) {
+						yVO.setDelivery_name(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
+					}
+				}
+				catch (NullPointerException e){
+					yVO.setDelivery_name(tmp.getDelivery_surname().replace("\"", ""));				
+				}
+				// 2019/12/24  キム 클리크포스트를 야마토 ネコポス로 설정함. 　⇒　ＥＮＤ
 //				yVO.setDelivery_name_kana(tmp.getDelivery_surname_kana().replace("\"", "") + " " + tmp.getDelivery_name_kana());
 				yVO.setDelivery_name_title(CommonUtil.TITLE_SAMA);
 				yVO.setDelivery_tel(tmp.getDelivery_tel1().replace("\"", "") + "-" + tmp.getDelivery_tel2().replace("\"", "") + "-" + tmp.getDelivery_tel3().replace("\"", ""));
+
+				// 2019/12/24  キム ヤマト 품명컬럼에 대하여 전각 25자 이상이면 안되는 사항이 있어 수정. 　⇒　ＳＴＡＲＴ
+				String productStr = tmp.getResult_text();
+				if (!productStr.equals(null)) {
+					if(productStr.length() > 25) {
+						yVO.setProduct_name1(productStr.substring(0, 25));
+						yVO.setProduct_name2(productStr.substring(25, productStr.length()));
+					}else {
+						yVO.setProduct_name1(productStr);
+					}
+				}
+				// 2019/12/24  キム 클리크포스트를 야마토 ネコポス로 설정함. 　⇒　ＥＮＤ
 				
 				// あす楽希望이 1인 경우
         		if (tmp.getTomorrow_hope().equals("1")) {
         			yVO.setDelivery_time(CommonUtil.YA_TOMORROW_MORNING_CODE);
         		}
 				
-				yVO.setProduct_name1(tmp.getResult_text().replace("\"", ""));
+				//yVO.setProduct_name1(tmp.getResult_text().replace("\"", ""));
 				
 				// csv작성을 위한 리스트작성
 				yList.add(yVO);
@@ -1162,7 +1251,7 @@ public class RakutenDAO {
 		}
 	}
 	
-	public void clickPostFormatDownload(
+	public void clickPostFormatDownload_(
 			HttpServletResponse response
 			, String[] id_lst
 			, String fileEncoding) 
@@ -1210,7 +1299,7 @@ public class RakutenDAO {
 			
 			ArrayList<RakutenVO> list = mapper.getTransResult(vo);
 			ArrayList<ArakuVO> cList = new ArrayList<>();
-			
+
 			for (RakutenVO tmp : list) {
 				if(tmp.getProduct_name().contains("【全国送料無料】")) {
 				/*if(tmp.getProduct_name().indexOf("[全国送料無料]") != -1) {*/
@@ -1230,21 +1319,21 @@ public class RakutenDAO {
 					
 					String product_name = tmp.getResult_text().replace("\"", "");
 	        		// 반각문자를 전각문자로 치환 (https://kurochan-note.hatenablog.jp/entry/2014/02/04/213737)
-	        		product_name = Normalizer.normalize(product_name, Normalizer.Form.NFKC);
-	        		// clickpost 정책에 따라  内容品의 문자가 전각15바이트가 넘어가면 잘라내고 집어 넣을수있게 처리
-	        		if (product_name.length() > 15) {
-	        			product_name = product_name.substring(0, 15);
-	        		}
+					product_name = Normalizer.normalize(product_name, Normalizer.Form.NFKC);
+					// clickpost 정책에 따라  内容品의 문자가 전각15바이트가 넘어가면 잘라내고 집어 넣을수있게 처리
+					if (product_name.length() > 15) {
+						product_name = product_name.substring(0, 15);
+					}
 					cVO.setDelivery_contents(product_name);
 					
 					// csv작성을 위한 리스트작성
-	        		cList.add(cVO);
+					cList.add(cVO);
 				}
-        		
+
 			}
 			
 			CommonUtil.executeCSVDownload(csvWriter, writer, header, cList);
-			
+
 		} finally {
 			if (csvWriter != null) {
 				csvWriter.close();

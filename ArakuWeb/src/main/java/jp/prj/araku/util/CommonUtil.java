@@ -35,10 +35,23 @@ public class CommonUtil {
 	
 	public static final String ORDER_STATUS_COMPLETE = "出荷準備済";
 	public static final String TOMORROW_MORNING = "午前中";
+	public static final String TIMEMAP1 = "14：00～16：00";
+	public static final String TIMEMAP2 = "16：00～18：00";
+	public static final String TIMEMAP3 = "18：00～20：00";
+	public static final String TIMEMAP4 = "19：00～21：00";
 	public static final String YA_TOMORROW_MORNING_CODE = "0812";
+	public static final String YA_TOMORROW_TIMEMAP1 = "1416";
+	public static final String YA_TOMORROW_TIMEMAP2 = "1618";
+	public static final String YA_TOMORROW_TIMEMAP3 = "1820";
+	public static final String YA_TOMORROW_TIMEMAP4 = "1921";
 	public static final String SA_TOMORROW_MORNING_CODE = "01";
 	public static final String TITLE_SAMA = "様";
-	public static final String INVOICE_TYPE_0 = "0";
+	public static final String INVOICE_TYPE_0 = "0";/*発払い*/
+	public static final String INVOICE_TYPE_2 = "2";/*コレクト*/
+	public static final String INVOICE_TYPE_3 = "3";/*ＤＭ便*/
+	public static final String INVOICE_TYPE_7 = "7"; /*ネコポス*/
+	public static final String COOL_TYPE_1 = "1"; /*冷凍*/
+	public static final String COOL_TYPE_2 = "2"; /*冷蔵*/
 	
 	public static String getStartDate() {
 		Calendar cal = Calendar.getInstance( );

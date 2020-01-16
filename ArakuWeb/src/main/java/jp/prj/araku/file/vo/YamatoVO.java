@@ -33,7 +33,7 @@ public class YamatoVO extends ArakuVO {
 	 2 : クール冷蔵*/
 	@CsvBindByPosition(position=2)
 	private String cool_type;
-	/**伝票番号
+	/**伝票番号4
 	半角数字12文字
 
 	※B2クラウドにて付与*/

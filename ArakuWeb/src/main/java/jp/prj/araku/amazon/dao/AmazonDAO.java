@@ -335,23 +335,59 @@ public class AmazonDAO {
 					continue;
 				}
 				YamatoVO yVO = new YamatoVO();
+				// 2019/12/24  キム 클리크포스트를 야마토 ネコポス로 설정함. 　⇒　ＳＴＡＲＴ
+				if (tmp.getResult_text().contains("全無")) {
+					yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_7);
+				}	else {
+					yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_0);
+				}
+				if (tmp.getProduct_name().contains("冷凍")) {
+					yVO.setCool_type(CommonUtil.COOL_TYPE_1);
+				}
+				if (tmp.getProduct_name().contains("冷蔵")) {
+					yVO.setCool_type(CommonUtil.COOL_TYPE_2);		
+				}
+				// 2019/12/24  キム 클리크포스트를 야마토 ネコポス로 설정함. 　⇒　ＥＮＤ
+				
 				yVO.setCustomer_no(tmp.getOrder_id().replace("\"", ""));
-				yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_0);
+				//yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_0);
 				if ("COD".equals(tmp.getPayment_method())) {
 					yVO.setCollect_cash(tmp.getCod_collectible_amount().replace("\"", ""));
 				}
 				yVO.setEstimate_ship_date(CommonUtil.getDate("YYYY/MM/dd", 0));
-				yVO.setBill_customer_code("048299821004-311");
+				yVO.setBill_customer_code("048242380101");
+//				yVO.setBill_customer_code("048299821004-311");
+				
 				yVO.setMultiple_key("1");
 				
 				yVO.setClient_post_no("3330845");
 				yVO.setClient_add("埼玉県川口市上青木西１丁目19-39");
 				yVO.setClient_building("エレガンス滝澤ビル1F");
-				yVO.setClient_name("有限会社ItempiaJapan (A)");
+				//2020/01/13  キム お届け先名とご依頼主名がおなじではない場合、ご依頼主名を登録する。
+				if(tmp.getRecipient_name().equals(tmp.getBuyer_name())) {
+					yVO.setClient_name("有限会社ItempiaJapan (A)");
+				}else {
+					yVO.setClient_name(tmp.getBuyer_name()+ " (A)");
+				}
 				yVO.setClient_tel("048-242-3801");
 				
 				yVO.setDelivery_post_no(tmp.getShip_postal_code().replace("\"", "").replace("-", ""));
-				yVO.setDelivery_add(tmp.getShip_state().replace("\"", "") + "" + tmp.getShip_address1().replace("\"", "") + "" + tmp.getShip_address2().replace("\"", "") + "" + tmp.getShip_address3().replace("\"", ""));
+				// 2019/12/24  キム ヤマト 주소 컬럼에 대하여 전각 16자 이상이면 안되는 사항이 있어 수정. 　⇒　ＳＴＡＲＴ
+				String addStr = tmp.getShip_state().replace("\"", "") + "" + tmp.getShip_address1().replace("\"", "") + "" + tmp.getShip_address2().replace("\"", "") + "" + tmp.getShip_address3().replace("\"", "");
+				if(addStr.length() > 16) {
+					yVO.setDelivery_add(addStr.substring(0, 16));
+
+					if(addStr.length() > 32) {
+						yVO.setDelivery_building(addStr.substring(16, 32));
+						yVO.setDelivery_company1(addStr.substring(32, addStr.length()));
+					}else {
+						yVO.setDelivery_building(addStr.substring(16, addStr.length()));
+					}
+				}else {
+					yVO.setDelivery_add(addStr);
+				}
+				//yVO.setDelivery_add(tmp.getShip_state().replace("\"", "") + "" + tmp.getShip_address1().replace("\"", "") + "" + tmp.getShip_address2().replace("\"", "") + "" + tmp.getShip_address3().replace("\"", ""));
+				// 2019/12/24  キム 클리크포스트를 야마토 ネコポス로 설정함. 　⇒　ＥＮＤ
 				yVO.setDelivery_name(tmp.getRecipient_name().replace("\"", ""));
 				yVO.setDelivery_name_title(CommonUtil.TITLE_SAMA);
 				String phone_no = tmp.getBuyer_phone_number();
@@ -368,10 +404,23 @@ public class AmazonDAO {
 				
 				// 配送サービスレベル가 NextDay인 경우
         		if ("NextDay".equals(tmp.getShip_service_level())) {
+					yVO.setEstimate_delivery_date(CommonUtil.getDate("YYYY/MM/dd", 1));
         			yVO.setDelivery_time(CommonUtil.YA_TOMORROW_MORNING_CODE);
         		}
 				
-				yVO.setProduct_name1(tmp.getResult_text().replace("\"", ""));
+				// 2019/12/24  キム ヤマト 품명컬럼에 대하여 전각 25자 이상이면 안되는 사항이 있어 수정. 　⇒　ＳＴＡＲＴ
+				String productStr = tmp.getResult_text();
+				if (!productStr.equals(null)) {
+					if(productStr.length() > 25) {
+						yVO.setProduct_name1(productStr.substring(0, 25));
+						yVO.setProduct_name2(productStr.substring(25, productStr.length()));
+					}else {
+						yVO.setProduct_name1(productStr);
+					}
+				}
+				// 2019/12/24  キム 클리크포스트를 야마토 ネコポス로 설정함. 　⇒　ＥＮＤ
+				
+				//yVO.setProduct_name1(tmp.getResult_text().replace("\"", ""));
 				
 				// csv작성을 위한 리스트작성
 				yList.add(yVO);
