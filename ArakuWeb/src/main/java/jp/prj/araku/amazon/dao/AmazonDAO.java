@@ -9,6 +9,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -22,14 +23,18 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ibm.icu.text.Transliterator;
 import com.opencsv.CSVWriter;
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 import jp.prj.araku.amazon.mapper.IAmazonMapper;
+import jp.prj.araku.amazon.vo.AmazonFileVO;
 import jp.prj.araku.amazon.vo.AmazonVO;
 import jp.prj.araku.file.vo.ClickPostVO;
+import jp.prj.araku.file.vo.NewYamatoVO;
 import jp.prj.araku.file.vo.SagawaVO;
 import jp.prj.araku.file.vo.YamatoVO;
 import jp.prj.araku.list.mapper.IListMapper;
@@ -799,5 +804,142 @@ public class AmazonDAO {
 			ret = "CLICKPOST DOWNLOAD SUCCESS<br>[FILE PATH]: "+cpDownPath+"CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0) + ".csv";
 		}
 		return ret;
+	}
+	
+	public void amazonYamatoUpdate(MultipartFile yamaUpload, String fileEncoding) throws IOException {
+		log.info("amazonYamatoUpdate");
+		log.debug("encoding : " + fileEncoding);
+		log.debug("contentType: " + yamaUpload.getContentType());
+		log.debug("name: " + yamaUpload.getName());
+		log.debug("original name: " + yamaUpload.getOriginalFilename());
+		log.debug("size: " + yamaUpload.getSize());
+		
+		IAmazonMapper mapper = sqlSession.getMapper(IAmazonMapper.class);
+		
+		BufferedReader reader = null;
+		try  {
+			reader = new BufferedReader(
+					new InputStreamReader(yamaUpload.getInputStream(), fileEncoding));
+			
+			CsvToBean<NewYamatoVO> csvToBean = new CsvToBeanBuilder<NewYamatoVO>(reader)
+                    .withType(NewYamatoVO.class)
+                    .withSkipLines(1)
+                    .withIgnoreLeadingWhiteSpace(true)
+                    .build();
+
+            Iterator<NewYamatoVO> iterator = csvToBean.iterator();
+
+            while (iterator.hasNext()) {
+            	NewYamatoVO vo = iterator.next();
+            	
+            	// 데이터가 있는지 체크
+            	AmazonVO searchVO = new AmazonVO();
+            	searchVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+            	searchVO.setOrder_id(vo.getCustomer_no());
+            	
+            	/*
+            	 * お客様管理番号(customer_no) 값을 키로 해서
+            	 * 伝票番号(slip_no) 값을 갱신
+            	 * */
+            	ArrayList<AmazonVO> searchRetList = mapper.getAmazonInfo(searchVO);
+            	
+            	if (searchRetList.size() > 0) {
+            		AmazonVO searchRet = searchRetList.get(0);
+            		
+            		searchVO.setSeq_id(searchRet.getSeq_id());
+                	searchVO.setBaggage_claim_no(vo.getSlip_no());
+                	
+                	// お荷物伝票番号값 update
+                	mapper.updateAmazonInfo(searchVO);
+            	}
+            }
+            
+		} finally {
+			if (reader != null) {
+				reader.close();
+			}
+		}
+	}
+	
+	public void downloadYahooFile(
+			HttpServletResponse response
+			, String[] id_lst
+			, String fileEncoding) 
+					throws IOException
+					, CsvDataTypeMismatchException
+					, CsvRequiredFieldEmptyException  {
+		
+		IAmazonMapper mapper = sqlSession.getMapper(IAmazonMapper.class);
+		ArrayList<AmazonFileVO> ret = new ArrayList<>();
+		
+		AmazonVO ama = new AmazonVO();
+		ArrayList<String> seq_id_list = new ArrayList<>();
+		for (String seq_id : id_lst) {
+			seq_id_list.add(seq_id);
+		}
+		ama.setSeq_id_list(seq_id_list);
+		
+		ArrayList<AmazonVO> list = mapper.getAmazonInfo(ama);
+		
+		for(AmazonVO vo : list) {
+			AmazonFileVO fileVO = new AmazonFileVO();
+			fileVO.setOrder_id(vo.getOrder_id());
+			fileVO.setShip_date(CommonUtil.getDate("yyyy-MM-dd", 0));
+			fileVO.setCarrier_code("OTHER");
+			fileVO.setCarrier_name("ヤマト運輸");
+			fileVO.setTracking_number(vo.getBaggage_claim_no());
+			fileVO.setShip_method("宅配便");
+			ret.add(fileVO);
+		}
+		
+		String[] contents1= {"TemplateType=OrderFulfillment","Version=2011.1102","この行はAmazonが使用しますので変更や削除しないでください。","","","","","",""};
+		String[] contents2= {"注文番号","注文商品番号","出荷数","出荷日","配送業者コード","配送業者名","お問い合わせ伝票番号","配送方法","代金引換"};
+		String[] contents3= {"order-id","order-item-id","quantity","ship-date","carrier-code","carrier-name","tracking-number","ship-method","cod-collection-method"};
+		
+		BufferedWriter writer =  null;
+		CSVWriter	csvWriter = null;
+		try {
+			String fileName = "Yama-AFile"+CommonUtil.getDate("YYYYMMdd", 0) + ".txt";
+			response.setContentType("text/plain");
+			// creates mock data
+			String headerKey = "Content-Disposition";
+			String headerValue = String.format("attachment; filename=\"%s\"",
+					fileName);
+			response.setHeader(headerKey, headerValue);
+			response.setCharacterEncoding(fileEncoding);
+				
+			writer = new BufferedWriter(response.getWriter());
+			csvWriter = new CSVWriter(writer
+					, '\t'
+					, CSVWriter.NO_QUOTE_CHARACTER
+					, CSVWriter.DEFAULT_ESCAPE_CHARACTER
+					, CSVWriter.DEFAULT_LINE_END);
+		
+			csvWriter.writeNext(contents1);
+			csvWriter.writeNext(contents2);
+			csvWriter.writeNext(contents3);
+			
+			for(AmazonFileVO vo : ret) {
+				String[] strArr = new String[9];
+				strArr[0] = vo.getOrder_id();
+				strArr[1] = vo.getOrder_item_id();
+				strArr[2] = vo.getQuantity();
+				strArr[3] = vo.getShip_date();
+				strArr[4] = vo.getCarrier_code();
+				strArr[5] = vo.getCarrier_name();
+				strArr[6] = vo.getTracking_number();
+				strArr[7] = vo.getShip_method();
+				strArr[8] = vo.getCod_collection_method();
+				csvWriter.writeNext(strArr);
+			}
+		}finally {
+			if (csvWriter != null) {
+				csvWriter.close();
+			}
+			
+			if (writer != null) {
+				writer.close();
+			}
+		}
 	}
 }

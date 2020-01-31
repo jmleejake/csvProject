@@ -112,6 +112,8 @@ select
 	, scheduled_delivery_end_date
 	, points_granted
 	, is_prime
+	, delivery_company
+	, baggage_claim_no
 from
 	amazon_info ai
 left outer join translation_err terr on terr.trans_target_id = ai.seq_id and terr.trans_target_type = 'A'
@@ -128,6 +130,9 @@ left outer join translation_err terr on terr.trans_target_id = ai.seq_id and ter
 	</if>
 	<if test="order_id != null and order_id != ''">
 	and order_id like '%${order_id}%'
+	</if>
+	<if test="baggage_claim_no != null and baggage_claim_no != ''">
+	and baggage_claim_no like '%${baggage_claim_no}%'
 	</if>
 	</trim>
 	</when>
@@ -231,6 +236,9 @@ set
 	update_date = now()
 	<if test="delivery_company != null and delivery_company !=''">
 	, delivery_company = #{delivery_company}
+	</if>
+	<if test="baggage_claim_no != null and baggage_claim_no !=''">
+	, baggage_claim_no = #{baggage_claim_no}
 	</if>
 where
 	seq_id = #{seq_id}

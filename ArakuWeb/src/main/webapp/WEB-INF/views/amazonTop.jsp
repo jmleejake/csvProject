@@ -64,6 +64,9 @@ $(document).ready(function() {
 				<li id="region" class="nav-item">
 				<a class="nav-link" href="regionView">マスタ管理</a>
 				</li>
+				<li id="aFile" class="nav-item">
+				<a class="nav-link" href="aFileDownView">Amazon更新ファイル</a>
+				</li>
 			</ul>
 		</div>
 	</div>

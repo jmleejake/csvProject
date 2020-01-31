@@ -304,4 +304,36 @@ public class AmazonController {
 	public ArrayList<DealerVO> deleteDealerInfo(@RequestBody ArrayList<DealerVO> list) {
 		return tabletPrdDao.deleteDealerInfo(list);
 	}
+	
+	@RequestMapping(value="/yamaUpload", method=RequestMethod.POST)
+	public String processYamatoUpload(MultipartFile yamaUpload) throws IOException {
+		log.info("processYamatoUpload");
+		dao.amazonYamatoUpdate(yamaUpload, fileEncoding);
+		return "redirect:aFileDownView";
+	}
+	
+	@RequestMapping(value = "/aFileDownView")
+	public String amazonFileDownView() {
+		log.info("Welcome to amazon file download view");
+		return "amazon/amazonFileDown";
+	}
+	
+	@RequestMapping(value="/aFileDown", method=RequestMethod.POST)
+	public void downloadYahooFile(
+			HttpServletResponse response,
+			@RequestParam(value="id_lst") String id_lst) {
+		
+		id_lst = id_lst.replace("[", "");
+		id_lst = id_lst.replace("]", "");
+		String[] seq_id_list = id_lst.split(",");
+		try {
+			dao.downloadYahooFile(response, seq_id_list, fileEncoding);
+		} catch (IOException e) {
+			log.error(e.toString());
+		} catch (CsvDataTypeMismatchException e) {
+			log.error(e.toString());
+		} catch (CsvRequiredFieldEmptyException e) {
+			log.error(e.toString());
+		}
+	}
 }

@@ -92,6 +92,9 @@ public class AmazonVO {
 	private String is_prime;
 	
 	private ArrayList<String> seq_id_list;
+	
+	/**お荷物伝票番号*/
+	private String baggage_claim_no;
  	
 	public String getSeq_id() {
 		return seq_id;
@@ -345,192 +348,11 @@ public class AmazonVO {
 	public void setErr_text(String err_text) {
 		this.err_text = err_text;
 	}
-	
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("AmazonVO [");
-		if (seq_id != null) {
-			builder.append("seq_id=");
-			builder.append(seq_id);
-			builder.append(", ");
-		}
-		if (register_date != null) {
-			builder.append("register_date=");
-			builder.append(register_date);
-			builder.append(", ");
-		}
-		if (update_date != null) {
-			builder.append("update_date=");
-			builder.append(update_date);
-			builder.append(", ");
-		}
-		if (delivery_company != null) {
-			builder.append("delivery_company=");
-			builder.append(delivery_company);
-			builder.append(", ");
-		}
-		if (order_id != null) {
-			builder.append("order_id=");
-			builder.append(order_id);
-			builder.append(", ");
-		}
-		if (order_item_id != null) {
-			builder.append("order_item_id=");
-			builder.append(order_item_id);
-			builder.append(", ");
-		}
-		if (purchase_date != null) {
-			builder.append("purchase_date=");
-			builder.append(purchase_date);
-			builder.append(", ");
-		}
-		if (payments_date != null) {
-			builder.append("payments_date=");
-			builder.append(payments_date);
-			builder.append(", ");
-		}
-		if (reporting_date != null) {
-			builder.append("reporting_date=");
-			builder.append(reporting_date);
-			builder.append(", ");
-		}
-		if (promise_date != null) {
-			builder.append("promise_date=");
-			builder.append(promise_date);
-			builder.append(", ");
-		}
-		if (days_past_promise != null) {
-			builder.append("days_past_promise=");
-			builder.append(days_past_promise);
-			builder.append(", ");
-		}
-		if (buyer_email != null) {
-			builder.append("buyer_email=");
-			builder.append(buyer_email);
-			builder.append(", ");
-		}
-		if (buyer_name != null) {
-			builder.append("buyer_name=");
-			builder.append(buyer_name);
-			builder.append(", ");
-		}
-		if (buyer_phone_number != null) {
-			builder.append("buyer_phone_number=");
-			builder.append(buyer_phone_number);
-			builder.append(", ");
-		}
-		if (sku != null) {
-			builder.append("sku=");
-			builder.append(sku);
-			builder.append(", ");
-		}
-		if (product_name != null) {
-			builder.append("product_name=");
-			builder.append(product_name);
-			builder.append(", ");
-		}
-		if (quantity_purchased != null) {
-			builder.append("quantity_purchased=");
-			builder.append(quantity_purchased);
-			builder.append(", ");
-		}
-		if (quantity_shipped != null) {
-			builder.append("quantity_shipped=");
-			builder.append(quantity_shipped);
-			builder.append(", ");
-		}
-		if (quantity_to_ship != null) {
-			builder.append("quantity_to_ship=");
-			builder.append(quantity_to_ship);
-			builder.append(", ");
-		}
-		if (ship_service_level != null) {
-			builder.append("ship_service_level=");
-			builder.append(ship_service_level);
-			builder.append(", ");
-		}
-		if (recipient_name != null) {
-			builder.append("recipient_name=");
-			builder.append(recipient_name);
-			builder.append(", ");
-		}
-		if (ship_address1 != null) {
-			builder.append("ship_address1=");
-			builder.append(ship_address1);
-			builder.append(", ");
-		}
-		if (ship_address2 != null) {
-			builder.append("ship_address2=");
-			builder.append(ship_address2);
-			builder.append(", ");
-		}
-		if (ship_address3 != null) {
-			builder.append("ship_address3=");
-			builder.append(ship_address3);
-			builder.append(", ");
-		}
-		if (ship_city != null) {
-			builder.append("ship_city=");
-			builder.append(ship_city);
-			builder.append(", ");
-		}
-		if (ship_state != null) {
-			builder.append("ship_state=");
-			builder.append(ship_state);
-			builder.append(", ");
-		}
-		if (ship_postal_code != null) {
-			builder.append("ship_postal_code=");
-			builder.append(ship_postal_code);
-			builder.append(", ");
-		}
-		if (ship_country != null) {
-			builder.append("ship_country=");
-			builder.append(ship_country);
-			builder.append(", ");
-		}
-		if (payment_method != null) {
-			builder.append("payment_method=");
-			builder.append(payment_method);
-			builder.append(", ");
-		}
-		if (cod_collectible_amount != null) {
-			builder.append("cod_collectible_amount=");
-			builder.append(cod_collectible_amount);
-			builder.append(", ");
-		}
-		if (already_paid != null) {
-			builder.append("already_paid=");
-			builder.append(already_paid);
-			builder.append(", ");
-		}
-		if (payment_method_fee != null) {
-			builder.append("payment_method_fee=");
-			builder.append(payment_method_fee);
-			builder.append(", ");
-		}
-		if (scheduled_delivery_start_date != null) {
-			builder.append("scheduled_delivery_start_date=");
-			builder.append(scheduled_delivery_start_date);
-			builder.append(", ");
-		}
-		if (scheduled_delivery_end_date != null) {
-			builder.append("scheduled_delivery_end_date=");
-			builder.append(scheduled_delivery_end_date);
-			builder.append(", ");
-		}
-		if (points_granted != null) {
-			builder.append("points_granted=");
-			builder.append(points_granted);
-			builder.append(", ");
-		}
-		if (is_prime != null) {
-			builder.append("is_prime=");
-			builder.append(is_prime);
-		}
-		builder.append("]");
-		return builder.toString();
+	public String getBaggage_claim_no() {
+		return baggage_claim_no;
+	}
+	public void setBaggage_claim_no(String baggage_claim_no) {
+		this.baggage_claim_no = baggage_claim_no;
 	}
 	
 }
