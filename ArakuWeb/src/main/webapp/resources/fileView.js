@@ -36,6 +36,9 @@ function preCheck(type) {
 	if ("yhch" == type) {
 		hasFile = $("#yhch-upload")[0].files.length;
 	}
+	if ("tanpin" == type) {
+		hasFile = $("#tanpin-upload")[0].files.length;
+	}
 	
 	if (hasFile <= 0) {
 		$.notify({

@@ -23,6 +23,7 @@
 <button id="btn_q10" class="btn btn-lg" style="width: 150px;">QOO10</button>
 <button id="btn_yahoo" class="btn btn-lg" style="width: 150px;">YAHOO</button>
 <button id="btn_tablet" class="btn btn-lg" style="width: 150px;">タブレット</button>
+<button id="btn_tanpin" class="btn btn-lg" style="width: 150px;">単品商品管理</button>
 </div>
 </div>
 <script src="./resources/main.js"></script>

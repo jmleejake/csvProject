@@ -26,3 +26,8 @@ $("#btn_tablet").on("click", function() {
 	console.log("tablet");
 	location.href = "tablet/prdMng";
 });
+
+$("#btn_tanpin").on("click", function() {
+	console.log("tanpin");
+	location.href = "tanpin/prdMng";
+});

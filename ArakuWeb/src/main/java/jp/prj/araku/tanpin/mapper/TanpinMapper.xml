@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.prj.araku.tanpin.mapper.ITanpinMapper">
+
+<insert id="insertTanpinInfo" parameterType="Tanpin" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
+insert into tanpin_info (
+maker_cd
+, maker_nm
+, prd_cd
+, prd_nm
+, capacity
+, inprice
+, price
+, std_price
+, tax_inc
+, tax_rt
+, dealer_id
+, dealer_nm
+)
+values(
+#{maker_cd}
+, #{maker_nm}
+, #{prd_cd}
+, #{prd_nm}
+, #{capacity}
+, #{inprice}
+, #{price}
+, #{std_price}
+, #{tax_inc}
+, #{tax_rt}
+, #{dealer_id}
+, #{dealer_nm}
+)
+</insert>
+
+<select id="getTanpinInfo" parameterType="Tanpin" resultType="Tanpin">
+<choose>
+	<when test="select_type == 'maker'">
+	select distinct maker_cd, maker_nm
+	</when>
+	<when test="select_type == 'dealer'">
+	select distinct dealer_id, dealer_nm
+	</when>
+	<otherwise>
+	select
+		seq_id
+		, date_format(register_date, '%Y/%m/%d') register_date
+		, date_format(update_date, '%Y/%m/%d') update_date
+		, maker_cd
+		, maker_nm
+		, prd_cd
+		, prd_nm
+		, capacity
+		, inprice
+		, price
+		, std_price
+		, tax_inc
+		, tax_rt
+		, dealer_id
+		, dealer_nm
+	</otherwise>
+</choose>
+from
+	tanpin_info
+<where>
+	<if test="prd_cd != null and prd_cd !=''">
+	prd_cd = #{prd_cd}
+	</if>
+	<if test="search_type =='srch'">
+	<trim prefixOverrides="AND |OR ">
+	<if test="maker_cd != null and maker_cd !=''">
+	and maker_cd = #{maker_cd}
+	</if>
+	<if test="dealer_id != null and dealer_id !=''">
+	and dealer_id = #{dealer_id}
+	</if>
+	<if test="prd_nm != null and prd_nm !=''">
+	and prd_nm like '%${prd_nm}%'
+	</if>
+	</trim>
+	</if>
+</where>
+order by register_date desc, update_date desc
+</select>
+
+<update id="updateTanpinInfo" parameterType="Tanpin">
+update
+	tanpin_info
+set
+	update_date = now()
+	<if test="maker_cd != null and maker_cd !=''">
+	, maker_cd = #{maker_cd}
+	</if>
+	<if test="maker_nm != null and maker_nm !=''">
+	, maker_nm = #{maker_nm}
+	</if>
+	<if test="prd_nm != null and prd_nm !=''">
+	, prd_nm = #{prd_nm}
+	</if>
+	<if test="capacity != null and capacity !=''">
+	, capacity = #{capacity}
+	</if>
+	<if test="inprice != null and inprice !=''">
+	, inprice = #{inprice}
+	</if>
+	<if test="price != null and price !=''">
+	, price = #{price}
+	</if>
+	<if test="std_price != null and std_price !=''">
+	, std_price = #{std_price}
+	</if>
+	<if test="tax_inc != null and tax_inc !=''">
+	, tax_inc = #{tax_inc}
+	</if>
+	<if test="tax_rt != null and tax_rt !=''">
+	, tax_rt = #{tax_rt}
+	</if>
+	<if test="dealer_id != null and dealer_id !=''">
+	, dealer_id = #{dealer_id}
+	</if>
+	<if test="dealer_nm != null and dealer_nm !=''">
+	, dealer_nm = #{dealer_nm}
+	</if>
+where
+	seq_id = #{seq_id}
+	<if test="prd_cd != null and prd_cd !=''">
+	and prd_cd = #{prd_cd}
+	</if>
+</update>
+
+<delete id="deleteTanpinInfo" parameterType="java.lang.String">
+delete from tanpin_info
+where seq_id = #{seq_id}
+</delete>
+
+</mapper>

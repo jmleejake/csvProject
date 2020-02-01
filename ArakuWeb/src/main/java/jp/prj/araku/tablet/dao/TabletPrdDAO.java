@@ -13,13 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.opencsv.CSVWriter;
-import com.opencsv.bean.StatefulBeanToCsv;
-import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
-import jp.prj.araku.file.vo.RCSVDownVO;
-import jp.prj.araku.rakuten.vo.RakutenDuplicateVO;
 import jp.prj.araku.tablet.mapper.ITabletPrdMapper;
 import jp.prj.araku.tablet.vo.DealerVO;
 import jp.prj.araku.tablet.vo.StockVO;

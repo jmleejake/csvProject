@@ -1,0 +1,100 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix ="c" uri ="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="./../resources/fileView.css">
+<script src="./../resources/fileView.js"></script>
+<script src="./../resources/jquery/jquery.min.js"></script>
+<script src="./../resources/bootstrap-notify/bootstrap-notify.min.js"></script>
+<script>
+$(document).ready(function() {
+	$("#prdM").addClass("active");
+	
+	/* File Upload*/
+	$('#tanpin-csv').on('click', 'button', function () {
+        $('#tanpin-upload').click();
+        return false;
+    });
+	
+	$('#tanpin-upload').on('change', function() {
+	    //選択したファイル情報を取得し変数に格納
+	    var file = $(this).prop('files')[0];
+	    //アイコンを選択中に変更
+	    $('#tanpin-csv').find('.icon').addClass('select').html('選択中');
+	    //未選択→選択の場合（.filenameが存在しない場合）はファイル名表示用の<div>タグを追加
+	    if(!($('.tanpin-filename').length)){
+	        $('#tanpin-csv').append('<div class="tanpin-filename"></div>');
+	    };
+	    //ファイル名を表示
+	    $('.tanpin-filename').html('ファイル名：' + file.name);
+	});
+	/* //File Upload*/
+});
+</script>
+</head>
+<body>
+<jsp:include page="../tanpinTop.jsp"></jsp:include>
+<div class="container-fluid">
+<div class="well container-fluid">
+	<div class="col-sm-3" >
+	<div class="dropdown">
+		<button class="btn btn-primary dropdown-toggle" id="menu1" type="button" data-toggle="dropdown">
+		メーカー名<span id="selectedMaker"></span>  <span class="caret"></span></button>
+		<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+			<c:forEach items="${makers }" var="maker">
+			<li role="presentation"><a role="menuitem" href="javascript:setSearch('M', '${maker.maker_cd }', '${maker.maker_nm }')">${maker.maker_nm }</a></li>
+			</c:forEach>
+		</ul>
+	</div>
+	</div>
+	<div class="col-sm-3" >
+	<form id="frm">
+	<input type="text" name="prd_nm" class="form-control" style="width: 250px;" placeholder="商品名">
+	<input type="hidden" name="maker_cd" id="hidMakerCd">
+	<input type="hidden" name="dealer_id" id="hidDealerId">
+	<input type="hidden" name="search_type" value="srch"> 
+	</form>
+	</div>
+	<div class="col-sm-3" >
+	<div class="dropdown">
+		<button class="btn btn-primary dropdown-toggle" id="menu1" type="button" data-toggle="dropdown">
+		取引先<span id="selectedDealer"></span>  <span class="caret"></span></button>
+		<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+			<c:forEach items="${dealers }" var="dealer">
+			<li role="presentation"><a role="menuitem" href="javascript:setSearch('D', '${dealer.dealer_id }', '${dealer.dealer_nm }')">${dealer.dealer_nm }</a></li>
+			</c:forEach>
+		</ul>
+	</div>
+	</div>
+	<div class="col-sm-3">
+	<button type="button" id="btn_srch" class="btn btn-default" style="width: 120px;">検索</button>
+	</div>
+</div>
+<div class="well container-fluid">
+	<div class="col-sm-8">
+	<form id="tanpin-frm" action="fileUpload" method="post" enctype="multipart/form-data" onsubmit="return preCheck('tanpin');" >
+		<div id="tanpin-csv" class="file-up col-sm-8">
+		<input type="file" id="tanpin-upload" name="upload" multiple="multiple" style="display:none">
+		<button class="original_btn" style="width: 150px;">単品管理ファイル</button>
+		<span class="icon">未選択</span>
+		</div>
+		<div class="col-sm-4">
+		<input type="submit" class="original_btn" value="アップロード">
+		</div>
+	</form>
+	</div>
+	<div class="col-sm-4">
+	<button type="button" id="btn_down" class="btn btn-info" style="width: 120px;">ダウンロード</button>
+	<button type="button" id="btn_del" class="btn btn-danger" style="width: 120px;">削除</button>
+	</div>
+</div>
+<div class="well container-fluid">
+
+<div id="prdMGrid" style="width:auto; height: 600px;" class="ag-theme-balham"></div>
+</div>
+</div>
+<script src="./../resources/tanpin/prdManage.js"></script>
+</body>
+</html>
