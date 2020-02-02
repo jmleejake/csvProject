@@ -468,6 +468,12 @@ public class RakutenDAO {
 				Set<String> optionNames = map.keySet();
 				buf = new StringBuffer(transedName);
 				buf.append(" ");
+				
+				// 2020/01/27 ネコポス対応の為、注文件数が１以上の場合、通常出荷にする。
+				if (transedName.contains("全無") && unitNo >1) {
+					buf = new StringBuffer(transedName + "×" + su);
+				}
+				
 				for (String optionName : optionNames) {
 					// 옵션개수, 상품개수를 곱하여 치환결과에 반영
 //					buf.append(optionName + "*" + (map.get(optionName)*productSetNo*unitNo)); // [MOD-0819]
@@ -493,7 +499,7 @@ public class RakutenDAO {
 			String last = buf.toString();
 			String finalStr = null;
 			try {
-				finalStr = last.substring(0, last.lastIndexOf(";"));
+				finalStr = last.substring(0, last.lastIndexOf(","));
 			} catch (StringIndexOutOfBoundsException e) {
 				finalStr = last;
 			}
@@ -511,7 +517,13 @@ public class RakutenDAO {
 			TranslationResultVO resultVO = new TranslationResultVO();
 			resultVO.setTrans_target_id(vo.getSeq_id());
 			resultVO.setTrans_target_type(CommonUtil.TRANS_TARGET_R);
-			resultVO.setResult_text(finalStr);
+			
+			//20200116 kim　変換後が空白の場合、”.”を設定する。
+			if (vo.getProduct_name().contains("別紙")) {
+				resultVO.setResult_text(".");
+			}else {
+				resultVO.setResult_text(finalStr);
+			}
 			
 			// 이미 치환된 결과가 있는 trans_target_id이면 update, 아니면 insert
 			ArrayList<RakutenVO> transResult = rMapper.getTransResult(resultVO);
@@ -626,7 +638,7 @@ public class RakutenDAO {
 				}
 				YamatoVO yVO = new YamatoVO();
 				// 2019/12/24  キム 클리크포스트를 야마토 ネコポス로 설정함. 　⇒　ＳＴＡＲＴ
-				if (tmp.getProduct_name().contains("全国送料無料")) {
+				if (tmp.getProduct_name().contains("全国送料無料") && tmp.getUnit_no() .equals("1")  ) {
 					yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_7);
 				}else {
 					yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_0);
@@ -644,6 +656,7 @@ public class RakutenDAO {
 				
 				// 2019/12/24  キム 야마토 배송날짜를 설정함. 　⇒　ＳＴＡＲＴ
 				String strComment = tmp.getComment().replace("\n", "").replace("\"", "").replace("[配送日時指定:]", "").replace("[備考:]", "");
+				// 備考欄の内容を分析して日付を設定する。
 				if (strComment.contains(CommonUtil.TOMORROW_MORNING)) {
 					yVO.setEstimate_delivery_date(CommonUtil.getDate("YYYY/MM/dd", 1));
 					yVO.setDelivery_time(CommonUtil.YA_TOMORROW_MORNING_CODE);
@@ -661,14 +674,24 @@ public class RakutenDAO {
 					yVO.setDelivery_time(CommonUtil.YA_TOMORROW_TIMEMAP4);
 				}
 				
+				// 20200116 kim 時間帯指定：午前中で、お届け予定日が空白の場合、次の日付を設定する。
+				if ("1".equals(tmp.getTomorrow_hope())) {
+						yVO.setEstimate_delivery_date(CommonUtil.getDate("YYYY/MM/dd", 1));
+				}
+				
 				String strXsplit ;
 				if(strComment.contains("-")) {
 					strXsplit = strComment.substring(0,4) + "/" + strComment.substring(5,7) +  "/" +strComment.substring(8,10);
 					yVO.setEstimate_delivery_date(strXsplit);
 				} 
 				
-				yVO.setComment(strComment);
-				//yVO.setComment(tmp.getComment().replace("\n", "").replace("\"", "").replace("[配送日時指定:]", "").replace("[備考:]", ""));
+				// 20200116 kim 記事(メモ)欄に領収書や連絡などの文字以外はすべて削除する。
+				//if  (strComment.contains("領収書") || strComment.contains("連絡")) {
+				//	yVO.setComment(strComment);
+				//} else {
+				//	yVO.setComment("");
+					//}
+				yVO.setComment(tmp.getComment().replace("\n", "").replace("\"", "").replace("[配送日時指定:]", "").replace("[備考:]", ""));
 				// 2019/12/24  キム 야마토 배송날짜를 설정함. 　⇒　END
 				
 				yVO.setCollect_cash(tmp.getTotal_amt().replace("\"", ""));
@@ -1181,7 +1204,7 @@ public class RakutenDAO {
             	
             	if (searchRetList.size() > 0) {
             		RakutenVO searchRet = searchRetList.get(0);
-            		
+           		
             		searchVO.setSeq_id(searchRet.getSeq_id());
                 	searchVO.setBaggage_claim_no(vo.getSlip_no());
                 	

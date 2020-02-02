@@ -117,6 +117,11 @@ public class AmazonDAO {
 		        	if (dupCheck.size() > 0) {
 		        		log.debug("already have data");
 		        	} else {
+		        		// 2020/01/27 Tom'sの”　'　”がエラーを起こす。
+		        		//if(vo.getProduct_name().contains("'")) {
+		        		//	vo.getProduct_name().replace("'", "");
+		        		//	log.debug(String.format("inserted amazon info seq_id : [%s]", vo.getProduct_name()));
+		        		//}
 		        		int result = mapper.insertAmazonInfo(vo);
 			        	log.debug(String.format("inserted amazon info seq_id : [%d]", result));
 		        	}
@@ -346,10 +351,10 @@ public class AmazonDAO {
 				}	else {
 					yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_0);
 				}
-				if (tmp.getProduct_name().contains("冷凍")) {
+				if (tmp.getResult_text().contains("冷凍")) {
 					yVO.setCool_type(CommonUtil.COOL_TYPE_1);
 				}
-				if (tmp.getProduct_name().contains("冷蔵")) {
+				if (tmp.getResult_text().contains("冷蔵")) {
 					yVO.setCool_type(CommonUtil.COOL_TYPE_2);		
 				}
 				// 2019/12/24  キム 클리크포스트를 야마토 ネコポス로 설정함. 　⇒　ＥＮＤ

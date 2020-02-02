@@ -17,7 +17,7 @@ $(document).ready(function() {
 
 </head>
 <body>
-<jsp:include page="../top.jsp"></jsp:include>
+<jsp:include page="../amazonTop.jsp"></jsp:include>
 <div class="container-fluid">
 <div class="well container-fluid">
 	<form action="showAList" id="aFileDownForm">
