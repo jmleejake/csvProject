@@ -126,3 +126,21 @@ $("#btn_del").on("click", function() {
 	});
 });
 
+$("#btn_down").on("click", function() {
+	var selectedRows = orderGridOptions.api.getSelectedRows();
+    
+    if (selectedRows.length == 0) {
+    	pleaseSelectNotify('情報を選択してください。');
+        return;
+    }
+    
+    var id_lst = [];
+    
+    for (var i=0; i<selectedRows.length; i++) {
+		id_lst.push(selectedRows[i].seq_id);
+	}
+    
+	$("#seq_id_list").val(id_lst);
+	$("#frm_down").submit();
+});
+

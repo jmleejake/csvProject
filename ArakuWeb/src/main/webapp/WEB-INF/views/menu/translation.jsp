@@ -30,7 +30,7 @@ $(document).ready(function() {
 	<input type="hidden" name="search_type" value="srch">
 	<div class="col-sm-6">
 	<label>商品名</label>
-	<input type="text" name="keyword" class="form-control" style="width: 400px;">
+	<input type="text" name="keyword" class="form-control" style="width: 400px;" onkeypress = "if(event.keyCode==13){ search(); event.preventDefault(); }">
 	</div>
 	<div class="col-sm-6" style="margin-top: 7px;">
 	<button id="btn_srch" type="button" class="btn btn-default" style="width: 120px; margin-top: 18px;">検索</button>

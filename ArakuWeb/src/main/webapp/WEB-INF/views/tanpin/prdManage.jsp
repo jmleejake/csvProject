@@ -96,5 +96,9 @@ $(document).ready(function() {
 </div>
 </div>
 <script src="./../resources/tanpin/prdManage.js"></script>
+
+<form id="frm_down" action="down" method="post">
+<input type="hidden" id="seq_id_list" name="id_lst">
+</form>
 </body>
 </html>

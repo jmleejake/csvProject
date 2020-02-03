@@ -158,7 +158,7 @@ $("#btn_prd_commit").on("click", function() {
 	});
 });
 
-$('#btn_prd_srch').on('click', function() {
+var prdSearch = function() {
 	var form = $("#prdFrm");
     var url = form.attr('action');
     
@@ -168,7 +168,10 @@ $('#btn_prd_srch').on('click', function() {
         data: form.serialize(), // serializes the form's elements.
         success: setRowData3
     });
-	
+}
+
+$('#btn_prd_srch').on('click', function() {
+	prdSearch();
 });
 
 $("#btn_prd_add").on("click", function() {

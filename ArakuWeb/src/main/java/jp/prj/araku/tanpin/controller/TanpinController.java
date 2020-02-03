@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,8 +13,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 import jp.prj.araku.tanpin.dao.TanpinDAO;
 import jp.prj.araku.tanpin.vo.TanpinVO;
@@ -51,9 +56,24 @@ public class TanpinController {
 		return dao.getTanpinInfo(vo);
 	}
 	
-	@RequestMapping(value="delTanpin", method=RequestMethod.POST)
+	@RequestMapping(value="/delTanpin", method=RequestMethod.POST)
 	public String deleteTanpinInfo(@RequestBody ArrayList<TanpinVO> list) {
 		dao.deleteTanpinInfo(list);
 		return "redirect:getTanpin";
+	}
+	
+	@RequestMapping(value="/down", method=RequestMethod.POST)
+	public void downloadTanpinInfo(
+			HttpServletResponse response,
+			@RequestParam(value="id_lst") String id_lst) {
+		id_lst = id_lst.replace("[", "");
+		id_lst = id_lst.replace("]", "");
+		String[] seq_id_list = id_lst.split(",");
+		try {
+			dao.downloadTanpinInfo(response, seq_id_list, fileEncoding);
+		} catch (IOException e) {
+		} catch (CsvDataTypeMismatchException e) {
+		} catch (CsvRequiredFieldEmptyException e) {
+		}
 	}
 }

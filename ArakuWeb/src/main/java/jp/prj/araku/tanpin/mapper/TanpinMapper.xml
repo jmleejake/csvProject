@@ -69,6 +69,13 @@ from
 	<if test="prd_cd != null and prd_cd !=''">
 	prd_cd = #{prd_cd}
 	</if>
+	<if test="seq_id_list != null">
+		seq_id in
+		<foreach item="item" index="index" collection="seq_id_list"
+			open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
 	<if test="search_type =='srch'">
 	<trim prefixOverrides="AND |OR ">
 	<if test="maker_cd != null and maker_cd !=''">

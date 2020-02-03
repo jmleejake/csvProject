@@ -136,7 +136,7 @@ $("#btn_adown").on("click", function() {
         return;
     }
     
-var id_lst = [];
+    var id_lst = [];
     
     for (var i=0; i<selectedRows.length; i++) {
 		id_lst.push(selectedRows[i].seq_id);

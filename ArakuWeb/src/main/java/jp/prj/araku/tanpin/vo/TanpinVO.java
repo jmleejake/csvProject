@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 import com.opencsv.bean.CsvBindByPosition;
 
-public class TanpinVO {
+import jp.prj.araku.util.ArakuVO;
+
+public class TanpinVO extends ArakuVO {
 	/**区分ID*/
 	private String seq_id;
 	/**データ登録日*/

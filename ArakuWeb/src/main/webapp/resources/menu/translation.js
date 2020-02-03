@@ -119,7 +119,7 @@ function setRowData(result) {
 	transGridOptions.api.setRowData(rowData);
 }
 
-$('#btn_srch').on('click', function() {
+var search = function() {
 	console.log("search");
 	var form = $("#transForm");
     var url = form.attr('action');
@@ -130,7 +130,10 @@ $('#btn_srch').on('click', function() {
         data: form.serialize(), // serializes the form's elements.
         success: setRowData
     });
-	
+}
+
+$('#btn_srch').on('click', function() {
+	search();
 });
 
 $("#btn_create").on("click", function() {

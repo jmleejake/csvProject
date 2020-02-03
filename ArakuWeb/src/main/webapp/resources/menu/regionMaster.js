@@ -147,7 +147,7 @@ $("#btn_commit").on("click", function() {
 	});
 });
 
-$('#btn_srch').on('click', function() {
+var search = function() {
 	var form = $("#regionFrm");
     var url = form.attr('action');
     
@@ -157,5 +157,8 @@ $('#btn_srch').on('click', function() {
         data: form.serialize(), // serializes the form's elements.
         success: setRowData
     });
-	
+}
+
+$('#btn_srch').on('click', function() {
+	search();
 });

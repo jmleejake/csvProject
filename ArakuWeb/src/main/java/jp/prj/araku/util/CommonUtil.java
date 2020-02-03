@@ -1,6 +1,7 @@
 package jp.prj.araku.util;
 
 import java.io.BufferedWriter;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -373,6 +374,12 @@ public class CommonUtil {
 				, "メンバーシッププログラム受注タイプ"
 			};
 		return header;
+	}
+	
+	public static String toCommaFormat(long pdMoney) {
+		DecimalFormat form = new DecimalFormat("#,###");
+	    form.setDecimalSeparatorAlwaysShown(false);
+        return form.format(pdMoney);
 	}
 	
 }

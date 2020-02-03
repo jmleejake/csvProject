@@ -116,7 +116,7 @@ $("#btn_commit2").on("click", function() {
 	});
 });
 
-$('#btn_srch2').on('click', function() {
+var exceptionSearch = function() {
 	var form = $("#exceptionFrm");
     var url = form.attr('action');
     
@@ -126,7 +126,10 @@ $('#btn_srch2').on('click', function() {
         data: form.serialize(), // serializes the form's elements.
         success: setRowData2
     });
-	
+}
+
+$('#btn_srch2').on('click', function() {
+	exceptionSearch();
 });
 
 $("#btn_add").on("click", function() {
