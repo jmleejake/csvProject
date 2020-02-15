@@ -1,4 +1,4 @@
-package jp.prj.araku.tanpin.controller;
+package jp.prj.araku.product.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,49 +19,49 @@ import org.springframework.web.multipart.MultipartFile;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
-import jp.prj.araku.tanpin.dao.TanpinDAO;
-import jp.prj.araku.tanpin.vo.TanpinVO;
+import jp.prj.araku.product.dao.ProductAnalysisDAO;
+import jp.prj.araku.product.vo.ProductAnalysisVO;
 
 @RequestMapping(value="prdAnalysis")
 @Controller
-public class TanpinController {
+public class ProductAnalysisController {
 	@Value("${FILE_ENCODING}")
 	private String fileEncoding;
 	
 	@Autowired
-	private TanpinDAO dao;
+	private ProductAnalysisDAO dao;
 	
-	public String tanpinFileUpload() {
-		return "tanpin/prdManage";
+	@RequestMapping(value="/listView")
+	public String showPrdAnalysis() {
+		return "productAnalysis/prdAnalysis";
 	}
 	
-	@RequestMapping(value="/prdMng")
-	public String showPrdManage(Model model) {
-		model.addAttribute("dealers", dao.getTanpinInfo("dealer"));
-		model.addAttribute("makers", dao.getTanpinInfo("maker"));
-		return "tanpin/prdManage";
-	}
-	
-	@RequestMapping(value="/fileUpload", method=RequestMethod.POST)
+	@RequestMapping(value="/prdAnalFileUp", method=RequestMethod.POST)
 	public String manipulateTanpinInfo(
 			HttpServletRequest request, MultipartFile upload) throws IOException {
-		dao.manipulateTanpinInfo(request, upload, fileEncoding);
-		return "redirect:prdMng";
+		dao.insertPrdAnalysis(request, upload, fileEncoding);
+		return "redirect:listView";
 	}
 	
 	@ResponseBody
-	@RequestMapping(value="/getTanpin")
-	public ArrayList<TanpinVO> getTanpinInfo(TanpinVO vo) {
-		return dao.getTanpinInfo(vo);
+	@RequestMapping(value="/getPrdAnal")
+	public ArrayList<ProductAnalysisVO> getPrdAnalysis(ProductAnalysisVO vo) {
+		return dao.getPrdAnalysis(vo);
 	}
 	
-	@RequestMapping(value="/delTanpin", method=RequestMethod.POST)
-	public String deleteTanpinInfo(@RequestBody ArrayList<TanpinVO> list) {
-		dao.deleteTanpinInfo(list);
-		return "redirect:getTanpin";
+	@RequestMapping(value="/delPrdAnal", method=RequestMethod.POST)
+	public String deletePrdAnalysis(@RequestBody ArrayList<ProductAnalysisVO> list) {
+		dao.deletePrdAnalysis(list);
+		return "redirect:getPrdAnal";
 	}
 	
-	@RequestMapping(value="/down", method=RequestMethod.POST)
+	@RequestMapping(value="/updPrdAnal", method=RequestMethod.POST)
+	public String updatePrdAnalysis(@RequestBody ArrayList<ProductAnalysisVO> list) {
+		dao.updatePrdAnalysis(list);
+		return "redirect:getPrdAnal";
+	}
+	
+	@RequestMapping(value="/downPrdAnal", method=RequestMethod.POST)
 	public void downloadTanpinInfo(
 			HttpServletResponse response,
 			@RequestParam(value="id_lst") String id_lst) {
@@ -70,10 +69,11 @@ public class TanpinController {
 		id_lst = id_lst.replace("]", "");
 		String[] seq_id_list = id_lst.split(",");
 		try {
-			dao.downloadTanpinInfo(response, seq_id_list, fileEncoding);
+			dao.downloadPrdAnalysis(response, seq_id_list, fileEncoding);
 		} catch (IOException e) {
 		} catch (CsvDataTypeMismatchException e) {
 		} catch (CsvRequiredFieldEmptyException e) {
 		}
 	}
+
 }

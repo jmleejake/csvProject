@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.prj.araku.product.mapper.IProductAnalysisMapper">
+
+<insert id="insertPrdAnalysis" parameterType="PrdAnalysis" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
+insert into product_analysis (
+	memo
+	, prd_nm
+	, sku
+	, url
+	, prd_config
+	, prd_price
+	, prd_pkg
+	, ship_cost
+	, sales_comm_ratio
+	, sales_price
+	, etc
+	, ttl_price
+	, sales_comm_price
+	, benefit
+	, benefit_ratio
+) values (
+	#{memo}
+	, #{prd_nm}
+	, #{sku}
+	, #{url}
+	, #{prd_config}
+	, #{prd_price}
+	, #{prd_pkg}
+	, #{ship_cost}
+	, #{sales_comm_ratio}
+	, #{sales_price}
+	, #{etc}
+	, #{ttl_price}
+	, #{sales_comm_price}
+	, #{benefit}
+	, #{benefit_ratio}
+)
+</insert>
+
+<select id="getPrdAnalysis" parameterType="PrdAnalysis" resultType="PrdAnalysis">
+select
+	seq_id
+	, date_format(register_date, '%Y/%m/%d') register_date
+	, date_format(update_date, '%Y/%m/%d') update_date
+	, memo
+	, prd_nm
+	, sku
+	, url
+	, prd_config
+	, prd_price
+	, prd_pkg
+	, ship_cost
+	, add_ship_cost
+	, sales_comm_ratio
+	, sales_price
+	, etc
+	, ttl_price
+	, sales_comm_price
+	, benefit
+	, benefit_ratio
+from
+	product_analysis
+<where>
+	<if test="seq_id_list != null">
+		seq_id in
+		<foreach item="item" index="index" collection="seq_id_list"
+			open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="search_type =='srch'">
+		<trim prefixOverrides="AND |OR ">
+			<if test="memo != null and memo !=''">
+			and memo like '%${memo}%'
+			</if>
+			<if test="prd_nm != null and prd_nm !=''">
+			and prd_nm like '%${prd_nm}%'
+			</if>
+		</trim>
+	</if>
+</where>
+</select>
+
+<update id="updatePrdAnalysis" parameterType="PrdAnalysis">
+update 
+	product_analysis
+set
+	update_date = now()
+	<if test="memo != null and memo !=''">
+	, memo = #{memo}
+	</if>
+	<if test="prd_nm != null and prd_nm !=''">
+	, prd_nm = #{prd_nm}
+	</if>
+	<if test="url != null and url !=''">
+	, url = #{url}
+	</if>
+	<if test="prd_config != null and prd_config !=''">
+	, prd_config = #{prd_config}
+	</if>
+	<if test="prd_price != null and prd_price !=''">
+	, prd_price = #{prd_price}
+	</if>
+	<if test="prd_pkg != null and prd_pkg !=''">
+	, prd_pkg = #{prd_pkg}
+	</if>
+	<if test="ship_cost != null and ship_cost !=''">
+	, ship_cost = #{ship_cost}
+	</if>
+	<if test="sales_comm_ratio != null and sales_comm_ratio !=''">
+	, sales_comm_ratio = #{sales_comm_ratio}
+	</if>
+	<if test="sales_price != null and sales_price !=''">
+	, sales_price = #{sales_price}
+	</if>
+	<if test="etc != null and etc !=''">
+	, etc = #{etc}
+	</if>
+	<if test="ttl_price != null and ttl_price !=''">
+	, ttl_price = #{ttl_price}
+	</if>
+	<if test="sales_comm_price != null and sales_comm_price !=''">
+	, sales_comm_price = #{sales_comm_price}
+	</if>
+	<if test="benefit != null and benefit !=''">
+	, benefit = #{benefit}
+	</if>
+	<if test="benefit_ratio != null and benefit_ratio !=''">
+	, benefit_ratio = #{benefit_ratio}
+	</if>
+where
+	seq_id = #{seq_id}
+</update>
+
+<delete id="deletePrdAnalysis" parameterType="String">
+delete from 
+	product_analysis
+where
+	seq_id = #{seq_id}
+</delete>
+
+</mapper>

@@ -39,6 +39,9 @@ function preCheck(type) {
 	if ("tanpin" == type) {
 		hasFile = $("#tanpin-upload")[0].files.length;
 	}
+	if ("prdAnal" == type) {
+		hasFile = $("#prdAnalysis-upload")[0].files.length;
+	}
 	
 	if (hasFile <= 0) {
 		$.notify({

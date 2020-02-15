@@ -29,5 +29,10 @@ $("#btn_tablet").on("click", function() {
 
 $("#btn_tanpin").on("click", function() {
 	console.log("tanpin");
-	location.href = "tanpin/prdMng";
+	location.href = "prdAnalysis/prdMng";
+});
+
+$("#btn_prdAnal").on("click", function() {
+	console.log("product analysis");
+	location.href = "prdAnalysis/listView";
 });

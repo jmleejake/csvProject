@@ -21,6 +21,7 @@
 		<typeAlias type="jp.prj.araku.tablet.vo.DealerVO" alias="Dealer" />
 		<typeAlias type="jp.prj.araku.tablet.vo.StockVO" alias="Stock" />
 		<typeAlias type="jp.prj.araku.tanpin.vo.TanpinVO" alias="Tanpin" />
+		<typeAlias type="jp.prj.araku.product.vo.ProductAnalysisVO" alias="PrdAnalysis" />
 	</typeAliases>
 	<mappers>
 		<mapper resource="jp/prj/araku/list/mapper/ListMapper.xml" />
@@ -31,5 +32,6 @@
 		<mapper resource="jp/prj/araku/yahoo/mapper/YahooMapper.xml" />
 		<mapper resource="jp/prj/araku/tablet/mapper/TabletPrdMapper.xml" />
 		<mapper resource="jp/prj/araku/tanpin/mapper/TanpinMapper.xml" />
+		<mapper resource="jp/prj/araku/product/mapper/ProductAnalysisMapper.xml" />
 	</mappers>
 </configuration>

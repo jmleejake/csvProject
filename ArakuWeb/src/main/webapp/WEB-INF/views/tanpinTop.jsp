@@ -56,6 +56,11 @@ $(document).ready(function() {
 				<a class="nav-link" href="prdMng">単品商品管理</a>
 				</li>
 			</ul>
+			<ul class="nav navbar-nav">
+				<li id="prdA" class="nav-item">
+				<a class="nav-link" href="listView">商品分析</a>
+				</li>
+			</ul>
 		</div>
 	</div>
 </nav>
