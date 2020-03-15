@@ -67,6 +67,9 @@ $(document).ready(function() {
 				<li id="aFile" class="nav-item">
 				<a class="nav-link" href="aFileDownView">Amazon更新ファイル</a>
 				</li>
+				<li id="tabChumon" class="nav-item">
+				<a class="nav-link" href="tabChumonView">タブレット注文画面</a>
+				</li>
 			</ul>
 		</div>
 	</div>

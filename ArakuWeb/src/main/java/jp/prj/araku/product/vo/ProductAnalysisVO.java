@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 import com.opencsv.bean.CsvBindByPosition;
 
-import jp.prj.araku.util.ArakuVO;
-
 /**
  * 商品分析
  * */

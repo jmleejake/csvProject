@@ -336,4 +336,11 @@ public class AmazonController {
 			log.error(e.toString());
 		}
 	}
+	
+	@RequestMapping(value = "/tabChumonView")
+	public String tabChumonView(Model model) {
+		log.info("Welcome to amazon tablet chumon view");
+		model.addAttribute("type", CommonUtil.TRANS_TARGET_A);
+		return "menu/tabletOrder";
+	}
 }

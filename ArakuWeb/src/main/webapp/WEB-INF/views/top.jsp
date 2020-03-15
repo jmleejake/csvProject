@@ -70,6 +70,9 @@ $(document).ready(function() {
 				<li id="rFile" class="nav-item">
 				<a class="nav-link" href="rFileDownView">楽天更新ファイル</a>
 				</li>
+				<li id="tabChumon" class="nav-item">
+				<a class="nav-link" href="tabChumonView">タブレット注文画面</a>
+				</li>
 				<!--
 				<li id="yuUp" class="nav-item">
 				<a class="nav-link" href="yuView">ゆプリある</a>

@@ -461,4 +461,11 @@ public class RakutenController {
 	public ArrayList<DealerVO> deleteDealerInfo(@RequestBody ArrayList<DealerVO> list) {
 		return tabletPrdDao.deleteDealerInfo(list);
 	}
+	
+	@RequestMapping(value = "/tabChumonView")
+	public String tabChumonView(Model model) {
+		log.info("Welcome to rakuten tablet chumon view");
+		model.addAttribute("type", CommonUtil.TRANS_TARGET_R);
+		return "menu/tabletOrder";
+	}
 }
