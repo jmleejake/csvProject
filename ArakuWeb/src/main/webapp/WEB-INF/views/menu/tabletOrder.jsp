@@ -24,7 +24,7 @@ function goUrl() {
 	console.log("goUrl");
 	console.log(type);
 	console.log(id);
-	id = id.split('a').join('');
+	id = id.split('A').join('');
 	console.log("after: "+id);
 	
 	if('R' === type) {
@@ -37,14 +37,18 @@ function goUrl() {
             	baggage_claim_no:id
             }
             , success: function(res) {
-            	console.log(res[0].order_no);
-            	$('#baggage_id').val("");
-            	isValid = false;
-            	$('#baggage_id').focus();
-            	window.open(
-	            	"https://order-rp.rms.rakuten.co.jp/order-rb/individual-order-detail-sc/init?orderNumber="+res[0].order_no,
-	       			'_blank' // <- This is what makes it open in a new window.
-       			);
+            	if(null != res && '' != res) {
+            		console.log(res[0].order_no);
+                	$('#baggage_id').val("");
+                	isValid = false;
+                	$('#baggage_id').focus();
+                	window.open(
+    	            	"https://order-rp.rms.rakuten.co.jp/order-rb/individual-order-detail-sc/init?orderNumber="+res[0].order_no,
+    	       			'_blank' // <- This is what makes it open in a new window.
+           			);
+            	}else {
+            		alert("検索結果がない！");
+            	}
             }
         });
 		
@@ -58,14 +62,18 @@ function goUrl() {
             	baggage_claim_no:id
             }
             , success: function(res) {
-            	console.log(res[0].order_id);
-            	$('#baggage_id').val("");
-            	isValid = false;
-            	$('#baggage_id').focus();
-            	window.open(
-	            	"https://sellercentral.amazon.co.jp/orders-v3/order/"+res[0].order_id,
-	       			'_blank' // <- This is what makes it open in a new window.
-       			);
+            	if(null != res && '' != res) {
+            		console.log(res[0].order_id);
+                	$('#baggage_id').val("");
+                	isValid = false;
+                	$('#baggage_id').focus();
+                	window.open(
+    	            	"https://sellercentral.amazon.co.jp/orders-v3/order/"+res[0].order_id,
+    	       			'_blank' // <- This is what makes it open in a new window.
+           			);
+            	}else {
+            		alert("検索結果がない！");
+            	}
             }
         });
 	}
