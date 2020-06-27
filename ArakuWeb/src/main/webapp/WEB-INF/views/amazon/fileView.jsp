@@ -109,7 +109,7 @@ $(document).ready(function() {
 <form id="saga-frm2006" action="sagaUpload2006" method="post" enctype="multipart/form-data" onsubmit="return preCheck('saga2006');" >
 <div id="saga-csv2006" class="file-up col-sm-8">
 <input type="file" id="saga-upload2006" name="sagaUpload2006" multiple="multiple" style="display:none">
-<button class="original_btn">202006<br/>SAGAWA CSV</button>
+<button class="original_btn">グローバル<br/>SAGAWA CSV</button>
 <span class="icon">未選択</span>
 </div>
 <div class="col-sm-4">
