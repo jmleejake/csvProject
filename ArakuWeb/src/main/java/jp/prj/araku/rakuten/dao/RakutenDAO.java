@@ -1549,21 +1549,28 @@ public class RakutenDAO {
 				for (ExceptionMasterVO exVO : exList) {
 					String str= tmp.getResult_text();
 					// 例外テーブルに含んている場合、ファイル作成するように変更する。　2020/06/01
-					if(str.equals(exVO.getException_data())) {
+					if(str.contains(exVO.getException_data())) {
 						if(str.length() > 10) {
 							for (int i = 0; i < str.length(); i += 10) {
 								GlobalSagawaDownVO gsaVO = new GlobalSagawaDownVO();
 								gsaVO.setSeller_cd("Fastbox2");
 								gsaVO.setPick_dt(CommonUtil.getDate("YYYYMMdd", 0));
 								gsaVO.setOrder_no(tmp.getOrder_no());
-								gsaVO.setConsign_nm(tmp.getDelivery_name());
-								gsaVO.setConsign_nm_kana(tmp.getDelivery_name_kana());
+								gsaVO.setConsign_nm(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
+								gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", "") + " " + tmp.getDelivery_name_kana().replace("\"", ""));
 								gsaVO.setConsign_add1(tmp.getDelivery_add1());
 								gsaVO.setConsign_add2(tmp.getDelivery_add2() + " " + tmp.getDelivery_add3());
 								gsaVO.setConsign_post_no(tmp.getDelivery_post_no1()+"-"+tmp.getDelivery_post_no2());
 								gsaVO.setConsign_tel(tmp.getDelivery_tel1()+"-"+tmp.getDelivery_tel2()+"-"+tmp.getDelivery_tel3());
-								gsaVO.setDelivery_dt(tmp.getDelivery_ata_datetime());
-								gsaVO.setDelivery_tm(tmp.getDelivery_time());
+								// あす楽希望이 1인 경우
+				        		if (tmp.getTomorrow_hope().equals("1")) {
+				        			gsaVO.setDelivery_tm(CommonUtil.SA_TOMORROW_MORNING_CODE);
+				        		}
+				        		
+				        		// 2019-09-21: 배송일 컬럼에 대하여 YYYYMMDD의 형태로 처리
+				        		if  (tmp.getDelivery_date_sel() != null) {
+				        			gsaVO.setDelivery_dt(tmp.getDelivery_date_sel().replaceAll("/", "").replaceAll("-", ""));
+				        		}
 								gsaVO.setPkg(tmp.getUnit_no());
 								gsaVO.setItem_nm(str.substring(i, Math.min(i + 10, str.length())).trim());
 								gsaVO.setItem_origin("JP");
@@ -1572,16 +1579,23 @@ public class RakutenDAO {
 						}else {
 							GlobalSagawaDownVO gsaVO = new GlobalSagawaDownVO();
 							gsaVO.setSeller_cd("Fastbox2");
-							gsaVO.setPick_dt(CommonUtil.getDate("YYYYMMDD", 0));
+							gsaVO.setPick_dt(CommonUtil.getDate("YYYYMMdd", 0));
 							gsaVO.setOrder_no(tmp.getOrder_no());
-							gsaVO.setConsign_nm(tmp.getDelivery_name());
-							gsaVO.setConsign_nm_kana(tmp.getDelivery_name_kana());
+							gsaVO.setConsign_nm(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
+							gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", "") + " " + tmp.getDelivery_name_kana().replace("\"", ""));
 							gsaVO.setConsign_add1(tmp.getDelivery_add1());
 							gsaVO.setConsign_add2(tmp.getDelivery_add2() + " " + tmp.getDelivery_add3());
 							gsaVO.setConsign_post_no(tmp.getDelivery_post_no1()+"-"+tmp.getDelivery_post_no2());
 							gsaVO.setConsign_tel(tmp.getDelivery_tel1()+"-"+tmp.getDelivery_tel2()+"-"+tmp.getDelivery_tel3());
-							gsaVO.setDelivery_dt(tmp.getDelivery_ata_datetime());
-							gsaVO.setDelivery_tm(tmp.getDelivery_time());
+							// あす楽希望이 1인 경우
+			        		if (tmp.getTomorrow_hope().equals("1")) {
+			        			gsaVO.setDelivery_tm(CommonUtil.SA_TOMORROW_MORNING_CODE);
+			        		}
+			        		
+			        		// 2019-09-21: 배송일 컬럼에 대하여 YYYYMMDD의 형태로 처리
+			        		if  (tmp.getDelivery_date_sel() != null) {
+			        			gsaVO.setDelivery_dt(tmp.getDelivery_date_sel().replaceAll("/", "").replaceAll("-", ""));
+			        		}
 							gsaVO.setPkg(tmp.getUnit_no());
 							gsaVO.setItem_nm(str);
 							gsaVO.setItem_origin("JP");

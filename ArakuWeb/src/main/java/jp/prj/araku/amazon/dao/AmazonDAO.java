@@ -1007,7 +1007,7 @@ public class AmazonDAO {
 			for (AmazonVO tmp : list) {
 				for (ExceptionMasterVO exVO : exList) {
 					String str= tmp.getResult_text();
-					if(str.equals(exVO.getException_data())) {
+					if(str.contains(exVO.getException_data())) {
 						if(str.length() > 10) {
 							for (int i = 0; i < str.length(); i += 10) {
 								GlobalSagawaDownVO gsaVO = new GlobalSagawaDownVO();
@@ -1020,8 +1020,11 @@ public class AmazonDAO {
 								gsaVO.setConsign_add2(tmp.getShip_address2() + " " + tmp.getShip_address3());
 								gsaVO.setConsign_post_no(tmp.getShip_postal_code());
 								gsaVO.setConsign_tel(tmp.getBuyer_phone_number());
-								//gsaVO.setDelivery_dt();
-								//gsaVO.setDelivery_tm();
+								// 配送サービスレベル가 NextDay인 경우
+				        		if ("NextDay".equals(tmp.getShip_service_level())) {
+				        			gsaVO.setDelivery_tm(CommonUtil.SA_TOMORROW_MORNING_CODE);
+				        			gsaVO.setDelivery_dt(CommonUtil.getDate("YYYYMMdd", 1)); // 2019-09-21: 배송일 컬럼에 대하여 YYYYMMDD의 형태로 처리
+				        		}
 								//gsaVO.setPkg();
 								gsaVO.setItem_nm(str.substring(i, Math.min(i + 10, str.length())).trim());
 								gsaVO.setItem_origin("JP");
@@ -1038,8 +1041,11 @@ public class AmazonDAO {
 							gsaVO.setConsign_add2(tmp.getShip_address2() + " " + tmp.getShip_address3());
 							gsaVO.setConsign_post_no(tmp.getShip_postal_code());
 							gsaVO.setConsign_tel(tmp.getBuyer_phone_number());
-							//gsaVO.setDelivery_dt();
-							//gsaVO.setDelivery_tm();
+							// 配送サービスレベル가 NextDay인 경우
+			        		if ("NextDay".equals(tmp.getShip_service_level())) {
+			        			gsaVO.setDelivery_tm(CommonUtil.SA_TOMORROW_MORNING_CODE);
+			        			gsaVO.setDelivery_dt(CommonUtil.getDate("YYYYMMdd", 1)); // 2019-09-21: 배송일 컬럼에 대하여 YYYYMMDD의 형태로 처리
+			        		}
 							//gsaVO.setPkg();
 							gsaVO.setItem_nm(str);
 							gsaVO.setItem_origin("JP");
