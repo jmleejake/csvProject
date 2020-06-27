@@ -1506,6 +1506,7 @@ public class RakutenDAO {
 		log.debug("encoding : " + fileEncoding);
 		
 		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
+		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
 		BufferedWriter writer = null;
 		CSVWriter csvWriter = null;
 		
@@ -1541,46 +1542,52 @@ public class RakutenDAO {
 			vo.setSeq_id_list(seq_id_list);
 			
 			ArrayList<RakutenVO> list = mapper.getTransResult(vo);
+			ArrayList<ExceptionMasterVO> exList = listMapper.getExceptionMaster(null);
 			ArrayList<ArakuVO> gsaList = new ArrayList<>();
 
 			for (RakutenVO tmp : list) {
-				String str= tmp.getResult_text();
-				if(str.length() > 10) {
-					for (int i = 0; i < str.length(); i += 10) {
-						GlobalSagawaDownVO gsaVO = new GlobalSagawaDownVO();
-						gsaVO.setSeller_cd("Fastbox2");
-						gsaVO.setPick_dt(CommonUtil.getDate("YYYYMMdd", 0));
-						gsaVO.setOrder_no(tmp.getOrder_no());
-						gsaVO.setConsign_nm(tmp.getDelivery_name());
-						gsaVO.setConsign_nm_kana(tmp.getDelivery_name_kana());
-						gsaVO.setConsign_add1(tmp.getDelivery_add1());
-						gsaVO.setConsign_add2(tmp.getDelivery_add2() + " " + tmp.getDelivery_add3());
-						gsaVO.setConsign_post_no(tmp.getDelivery_post_no1()+"-"+tmp.getDelivery_post_no2());
-						gsaVO.setConsign_tel(tmp.getDelivery_tel1()+"-"+tmp.getDelivery_tel2()+"-"+tmp.getDelivery_tel3());
-						gsaVO.setDelivery_dt(tmp.getDelivery_ata_datetime());
-						gsaVO.setDelivery_tm(tmp.getDelivery_time());
-						gsaVO.setPkg(tmp.getUnit_no());
-						gsaVO.setItem_nm(str.substring(i, Math.min(i + 10, str.length())).trim());
-						gsaVO.setItem_origin("JP");
-						gsaList.add(gsaVO);
+				for (ExceptionMasterVO exVO : exList) {
+					String str= tmp.getResult_text();
+					// 例外テーブルに含んている場合、ファイル作成するように変更する。　2020/06/01
+					if(str.equals(exVO.getException_data())) {
+						if(str.length() > 10) {
+							for (int i = 0; i < str.length(); i += 10) {
+								GlobalSagawaDownVO gsaVO = new GlobalSagawaDownVO();
+								gsaVO.setSeller_cd("Fastbox2");
+								gsaVO.setPick_dt(CommonUtil.getDate("YYYYMMdd", 0));
+								gsaVO.setOrder_no(tmp.getOrder_no());
+								gsaVO.setConsign_nm(tmp.getDelivery_name());
+								gsaVO.setConsign_nm_kana(tmp.getDelivery_name_kana());
+								gsaVO.setConsign_add1(tmp.getDelivery_add1());
+								gsaVO.setConsign_add2(tmp.getDelivery_add2() + " " + tmp.getDelivery_add3());
+								gsaVO.setConsign_post_no(tmp.getDelivery_post_no1()+"-"+tmp.getDelivery_post_no2());
+								gsaVO.setConsign_tel(tmp.getDelivery_tel1()+"-"+tmp.getDelivery_tel2()+"-"+tmp.getDelivery_tel3());
+								gsaVO.setDelivery_dt(tmp.getDelivery_ata_datetime());
+								gsaVO.setDelivery_tm(tmp.getDelivery_time());
+								gsaVO.setPkg(tmp.getUnit_no());
+								gsaVO.setItem_nm(str.substring(i, Math.min(i + 10, str.length())).trim());
+								gsaVO.setItem_origin("JP");
+								gsaList.add(gsaVO);
+							}
+						}else {
+							GlobalSagawaDownVO gsaVO = new GlobalSagawaDownVO();
+							gsaVO.setSeller_cd("Fastbox2");
+							gsaVO.setPick_dt(CommonUtil.getDate("YYYYMMDD", 0));
+							gsaVO.setOrder_no(tmp.getOrder_no());
+							gsaVO.setConsign_nm(tmp.getDelivery_name());
+							gsaVO.setConsign_nm_kana(tmp.getDelivery_name_kana());
+							gsaVO.setConsign_add1(tmp.getDelivery_add1());
+							gsaVO.setConsign_add2(tmp.getDelivery_add2() + " " + tmp.getDelivery_add3());
+							gsaVO.setConsign_post_no(tmp.getDelivery_post_no1()+"-"+tmp.getDelivery_post_no2());
+							gsaVO.setConsign_tel(tmp.getDelivery_tel1()+"-"+tmp.getDelivery_tel2()+"-"+tmp.getDelivery_tel3());
+							gsaVO.setDelivery_dt(tmp.getDelivery_ata_datetime());
+							gsaVO.setDelivery_tm(tmp.getDelivery_time());
+							gsaVO.setPkg(tmp.getUnit_no());
+							gsaVO.setItem_nm(str);
+							gsaVO.setItem_origin("JP");
+							gsaList.add(gsaVO);
+						}
 					}
-				}else {
-					GlobalSagawaDownVO gsaVO = new GlobalSagawaDownVO();
-					gsaVO.setSeller_cd("Fastbox2");
-					gsaVO.setPick_dt(CommonUtil.getDate("YYYYMMDD", 0));
-					gsaVO.setOrder_no(tmp.getOrder_no());
-					gsaVO.setConsign_nm(tmp.getDelivery_name());
-					gsaVO.setConsign_nm_kana(tmp.getDelivery_name_kana());
-					gsaVO.setConsign_add1(tmp.getDelivery_add1());
-					gsaVO.setConsign_add2(tmp.getDelivery_add2() + " " + tmp.getDelivery_add3());
-					gsaVO.setConsign_post_no(tmp.getDelivery_post_no1()+"-"+tmp.getDelivery_post_no2());
-					gsaVO.setConsign_tel(tmp.getDelivery_tel1()+"-"+tmp.getDelivery_tel2()+"-"+tmp.getDelivery_tel3());
-					gsaVO.setDelivery_dt(tmp.getDelivery_ata_datetime());
-					gsaVO.setDelivery_tm(tmp.getDelivery_time());
-					gsaVO.setPkg(tmp.getUnit_no());
-					gsaVO.setItem_nm(str);
-					gsaVO.setItem_origin("JP");
-					gsaList.add(gsaVO);
 				}
 			}
 			

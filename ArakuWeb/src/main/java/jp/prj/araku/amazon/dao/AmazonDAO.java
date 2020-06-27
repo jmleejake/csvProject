@@ -965,6 +965,7 @@ public class AmazonDAO {
 		log.debug("encoding : " + fileEncoding);
 		
 		IAmazonMapper mapper = sqlSession.getMapper(IAmazonMapper.class);
+		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
 		BufferedWriter writer = null;
 		CSVWriter csvWriter = null;
 		
@@ -1000,46 +1001,51 @@ public class AmazonDAO {
 			vo.setSeq_id_list(seq_id_list);
 			
 			ArrayList<AmazonVO> list = mapper.getTransResult(vo);
+			ArrayList<ExceptionMasterVO> exList = listMapper.getExceptionMaster(null);
 			ArrayList<ArakuVO> gsaList = new ArrayList<>();
 			
 			for (AmazonVO tmp : list) {
-				String str= tmp.getResult_text();
-				if(str.length() > 10) {
-					for (int i = 0; i < str.length(); i += 10) {
-						GlobalSagawaDownVO gsaVO = new GlobalSagawaDownVO();
-						gsaVO.setSeller_cd("Fastbox2");
-						gsaVO.setPick_dt(CommonUtil.getDate("YYYYMMdd", 0));
-						gsaVO.setOrder_no(tmp.getOrder_id());
-						gsaVO.setConsign_nm(tmp.getRecipient_name());
-						//gsaVO.setConsign_nm_kana();
-						gsaVO.setConsign_add1(tmp.getShip_address1());
-						gsaVO.setConsign_add2(tmp.getShip_address2() + " " + tmp.getShip_address3());
-						gsaVO.setConsign_post_no(tmp.getShip_postal_code());
-						gsaVO.setConsign_tel(tmp.getBuyer_phone_number());
-						//gsaVO.setDelivery_dt();
-						//gsaVO.setDelivery_tm();
-						//gsaVO.setPkg();
-						gsaVO.setItem_nm(str.substring(i, Math.min(i + 10, str.length())).trim());
-						gsaVO.setItem_origin("JP");
-						gsaList.add(gsaVO);
+				for (ExceptionMasterVO exVO : exList) {
+					String str= tmp.getResult_text();
+					if(str.equals(exVO.getException_data())) {
+						if(str.length() > 10) {
+							for (int i = 0; i < str.length(); i += 10) {
+								GlobalSagawaDownVO gsaVO = new GlobalSagawaDownVO();
+								gsaVO.setSeller_cd("Fastbox2");
+								gsaVO.setPick_dt(CommonUtil.getDate("YYYYMMdd", 0));
+								gsaVO.setOrder_no(tmp.getOrder_id());
+								gsaVO.setConsign_nm(tmp.getRecipient_name());
+								//gsaVO.setConsign_nm_kana();
+								gsaVO.setConsign_add1(tmp.getShip_address1());
+								gsaVO.setConsign_add2(tmp.getShip_address2() + " " + tmp.getShip_address3());
+								gsaVO.setConsign_post_no(tmp.getShip_postal_code());
+								gsaVO.setConsign_tel(tmp.getBuyer_phone_number());
+								//gsaVO.setDelivery_dt();
+								//gsaVO.setDelivery_tm();
+								//gsaVO.setPkg();
+								gsaVO.setItem_nm(str.substring(i, Math.min(i + 10, str.length())).trim());
+								gsaVO.setItem_origin("JP");
+								gsaList.add(gsaVO);
+							}
+						}else {
+							GlobalSagawaDownVO gsaVO = new GlobalSagawaDownVO();
+							gsaVO.setSeller_cd("Fastbox2");
+							gsaVO.setPick_dt(CommonUtil.getDate("YYYYMMdd", 0));
+							gsaVO.setOrder_no(tmp.getOrder_id());
+							gsaVO.setConsign_nm(tmp.getRecipient_name());
+							//gsaVO.setConsign_nm_kana();
+							gsaVO.setConsign_add1(tmp.getShip_address1());
+							gsaVO.setConsign_add2(tmp.getShip_address2() + " " + tmp.getShip_address3());
+							gsaVO.setConsign_post_no(tmp.getShip_postal_code());
+							gsaVO.setConsign_tel(tmp.getBuyer_phone_number());
+							//gsaVO.setDelivery_dt();
+							//gsaVO.setDelivery_tm();
+							//gsaVO.setPkg();
+							gsaVO.setItem_nm(str);
+							gsaVO.setItem_origin("JP");
+							gsaList.add(gsaVO);
+						}
 					}
-				}else {
-					GlobalSagawaDownVO gsaVO = new GlobalSagawaDownVO();
-					gsaVO.setSeller_cd("Fastbox2");
-					gsaVO.setPick_dt(CommonUtil.getDate("YYYYMMdd", 0));
-					gsaVO.setOrder_no(tmp.getOrder_id());
-					gsaVO.setConsign_nm(tmp.getRecipient_name());
-					//gsaVO.setConsign_nm_kana();
-					gsaVO.setConsign_add1(tmp.getShip_address1());
-					gsaVO.setConsign_add2(tmp.getShip_address2() + " " + tmp.getShip_address3());
-					gsaVO.setConsign_post_no(tmp.getShip_postal_code());
-					gsaVO.setConsign_tel(tmp.getBuyer_phone_number());
-					//gsaVO.setDelivery_dt();
-					//gsaVO.setDelivery_tm();
-					//gsaVO.setPkg();
-					gsaVO.setItem_nm(str);
-					gsaVO.setItem_origin("JP");
-					gsaList.add(gsaVO);
 				}
 			}
 			
