@@ -39,10 +39,13 @@ import jp.prj.araku.file.vo.SagawaVO;
 import jp.prj.araku.file.vo.YamatoVO;
 import jp.prj.araku.list.mapper.IListMapper;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
+import jp.prj.araku.list.vo.GlobalSagawaDownVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.TranslationErrorVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
+import jp.prj.araku.rakuten.mapper.IRakutenMapper;
+import jp.prj.araku.rakuten.vo.RakutenVO;
 import jp.prj.araku.util.ArakuVO;
 import jp.prj.araku.util.CommonUtil;
 
@@ -854,6 +857,7 @@ public class AmazonDAO {
             		
             		searchVO.setSeq_id(searchRet.getSeq_id());
                 	searchVO.setBaggage_claim_no(vo.getSlip_no());
+                	searchVO.setDelivery_company("1001");
                 	
                 	// お荷物伝票番号값 update
                 	mapper.updateAmazonInfo(searchVO);
@@ -939,6 +943,108 @@ public class AmazonDAO {
 				csvWriter.writeNext(strArr);
 			}
 		}finally {
+			if (csvWriter != null) {
+				csvWriter.close();
+			}
+			
+			if (writer != null) {
+				writer.close();
+			}
+		}
+	}
+	
+	public void downloadGlobalSagawa(
+			HttpServletResponse response
+			, String[] id_lst
+			, String fileEncoding) 
+			throws IOException
+			, CsvDataTypeMismatchException
+			, CsvRequiredFieldEmptyException {
+		log.info("downloadGlobalSagawa");
+		
+		log.debug("encoding : " + fileEncoding);
+		
+		IAmazonMapper mapper = sqlSession.getMapper(IAmazonMapper.class);
+		BufferedWriter writer = null;
+		CSVWriter csvWriter = null;
+		
+		try {
+			String csvFileName = "GSAGA" + CommonUtil.getDate("YYYYMMdd", 0) + ".csv";
+
+			response.setContentType("text/csv");
+
+			// creates mock data
+			String headerKey = "Content-Disposition";
+			String headerValue = String.format("attachment; filename=\"%s\"",
+					csvFileName);
+			response.setHeader(headerKey, headerValue);
+			response.setCharacterEncoding(fileEncoding);
+			
+			writer = new BufferedWriter(response.getWriter());
+			
+			csvWriter = new CSVWriter(writer
+					, CSVWriter.DEFAULT_SEPARATOR
+					, CSVWriter.NO_QUOTE_CHARACTER
+					, CSVWriter.DEFAULT_ESCAPE_CHARACTER
+					, CSVWriter.DEFAULT_LINE_END);
+			
+			String[] header = CommonUtil.deliveryCompanyHeader("GSAGA");
+			
+			log.debug("seq_id_list : " + id_lst.toString());
+			ArrayList<String> seq_id_list = new ArrayList<>();
+			for (String seq_id : id_lst) {
+				seq_id_list.add(seq_id);
+			}
+			
+			TranslationResultVO vo = new TranslationResultVO();
+			vo.setSeq_id_list(seq_id_list);
+			
+			ArrayList<AmazonVO> list = mapper.getTransResult(vo);
+			ArrayList<ArakuVO> gsaList = new ArrayList<>();
+			
+			for (AmazonVO tmp : list) {
+				String str= tmp.getResult_text();
+				if(str.length() > 10) {
+					for (int i = 0; i < str.length(); i += 10) {
+						GlobalSagawaDownVO gsaVO = new GlobalSagawaDownVO();
+						gsaVO.setSeller_cd("Fastbox2");
+						gsaVO.setPick_dt(CommonUtil.getDate("YYYYMMdd", 0));
+						gsaVO.setOrder_no(tmp.getOrder_id());
+						gsaVO.setConsign_nm(tmp.getRecipient_name());
+						//gsaVO.setConsign_nm_kana();
+						gsaVO.setConsign_add1(tmp.getShip_address1());
+						gsaVO.setConsign_add2(tmp.getShip_address2() + " " + tmp.getShip_address3());
+						gsaVO.setConsign_post_no(tmp.getShip_postal_code());
+						gsaVO.setConsign_tel(tmp.getBuyer_phone_number());
+						//gsaVO.setDelivery_dt();
+						//gsaVO.setDelivery_tm();
+						//gsaVO.setPkg();
+						gsaVO.setItem_nm(str.substring(i, Math.min(i + 10, str.length())).trim());
+						gsaVO.setItem_origin("JP");
+						gsaList.add(gsaVO);
+					}
+				}else {
+					GlobalSagawaDownVO gsaVO = new GlobalSagawaDownVO();
+					gsaVO.setSeller_cd("Fastbox2");
+					gsaVO.setPick_dt(CommonUtil.getDate("YYYYMMdd", 0));
+					gsaVO.setOrder_no(tmp.getOrder_id());
+					gsaVO.setConsign_nm(tmp.getRecipient_name());
+					//gsaVO.setConsign_nm_kana();
+					gsaVO.setConsign_add1(tmp.getShip_address1());
+					gsaVO.setConsign_add2(tmp.getShip_address2() + " " + tmp.getShip_address3());
+					gsaVO.setConsign_post_no(tmp.getShip_postal_code());
+					gsaVO.setConsign_tel(tmp.getBuyer_phone_number());
+					//gsaVO.setDelivery_dt();
+					//gsaVO.setDelivery_tm();
+					//gsaVO.setPkg();
+					gsaVO.setItem_nm(str);
+					gsaVO.setItem_origin("JP");
+					gsaList.add(gsaVO);
+				}
+			}
+			
+			CommonUtil.executeCSVDownload(csvWriter, writer, header, gsaList);
+		} finally {
 			if (csvWriter != null) {
 				csvWriter.close();
 			}

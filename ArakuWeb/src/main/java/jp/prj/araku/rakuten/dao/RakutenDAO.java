@@ -46,6 +46,7 @@ import jp.prj.araku.file.vo.SagawaVO;
 import jp.prj.araku.file.vo.YamatoVO;
 import jp.prj.araku.list.mapper.IListMapper;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
+import jp.prj.araku.list.vo.GlobalSagawaDownVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.TranslationErrorVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
@@ -1154,6 +1155,7 @@ public class RakutenDAO {
             	
             	searchVO.setSeq_id(searchRet.getSeq_id());
             	searchVO.setBaggage_claim_no(vo.getContact_no());
+            	searchVO.setDelivery_company("1002");
             	
             	// お荷物伝票番号값 update
             	mapper.updateRakutenInfo(searchVO);
@@ -1209,6 +1211,7 @@ public class RakutenDAO {
            		
             		searchVO.setSeq_id(searchRet.getSeq_id());
                 	searchVO.setBaggage_claim_no(vo.getSlip_no());
+                	searchVO.setDelivery_company("1001");
                 	
                 	// お荷物伝票番号값 update
                 	mapper.updateRakutenInfo(searchVO);
@@ -1276,7 +1279,7 @@ public class RakutenDAO {
 		}
 	}
 	
-	public void clickPostFormatDownload_(
+	public void clickPostFormatDownload(
 			HttpServletResponse response
 			, String[] id_lst
 			, String fileEncoding) 
@@ -1489,5 +1492,107 @@ public class RakutenDAO {
 		}
 		
 		return ret;
+	}
+	
+	public void downloadGlobalSagawa(
+			HttpServletResponse response
+			, String[] id_lst
+			, String fileEncoding) 
+			throws IOException
+			, CsvDataTypeMismatchException
+			, CsvRequiredFieldEmptyException {
+		log.info("downloadGlobalSagawa");
+		
+		log.debug("encoding : " + fileEncoding);
+		
+		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
+		BufferedWriter writer = null;
+		CSVWriter csvWriter = null;
+		
+		try {
+			String csvFileName = "GSAGA" + CommonUtil.getDate("YYYYMMdd", 0) + ".csv";
+
+			response.setContentType("text/csv");
+
+			// creates mock data
+			String headerKey = "Content-Disposition";
+			String headerValue = String.format("attachment; filename=\"%s\"",
+					csvFileName);
+			response.setHeader(headerKey, headerValue);
+			response.setCharacterEncoding(fileEncoding);
+			
+			writer = new BufferedWriter(response.getWriter());
+			
+			csvWriter = new CSVWriter(writer
+					, CSVWriter.DEFAULT_SEPARATOR
+					, CSVWriter.NO_QUOTE_CHARACTER
+					, CSVWriter.DEFAULT_ESCAPE_CHARACTER
+					, CSVWriter.DEFAULT_LINE_END);
+			
+			String[] header = CommonUtil.deliveryCompanyHeader("GSAGA");
+			
+			log.debug("seq_id_list : " + id_lst.toString());
+			ArrayList<String> seq_id_list = new ArrayList<>();
+			for (String seq_id : id_lst) {
+				seq_id_list.add(seq_id);
+			}
+			
+			TranslationResultVO vo = new TranslationResultVO();
+			vo.setSeq_id_list(seq_id_list);
+			
+			ArrayList<RakutenVO> list = mapper.getTransResult(vo);
+			ArrayList<ArakuVO> gsaList = new ArrayList<>();
+
+			for (RakutenVO tmp : list) {
+				String str= tmp.getResult_text();
+				if(str.length() > 10) {
+					for (int i = 0; i < str.length(); i += 10) {
+						GlobalSagawaDownVO gsaVO = new GlobalSagawaDownVO();
+						gsaVO.setSeller_cd("Fastbox2");
+						gsaVO.setPick_dt(CommonUtil.getDate("YYYYMMdd", 0));
+						gsaVO.setOrder_no(tmp.getOrder_no());
+						gsaVO.setConsign_nm(tmp.getDelivery_name());
+						gsaVO.setConsign_nm_kana(tmp.getDelivery_name_kana());
+						gsaVO.setConsign_add1(tmp.getDelivery_add1());
+						gsaVO.setConsign_add2(tmp.getDelivery_add2() + " " + tmp.getDelivery_add3());
+						gsaVO.setConsign_post_no(tmp.getDelivery_post_no1()+"-"+tmp.getDelivery_post_no2());
+						gsaVO.setConsign_tel(tmp.getDelivery_tel1()+"-"+tmp.getDelivery_tel2()+"-"+tmp.getDelivery_tel3());
+						gsaVO.setDelivery_dt(tmp.getDelivery_ata_datetime());
+						gsaVO.setDelivery_tm(tmp.getDelivery_time());
+						gsaVO.setPkg(tmp.getUnit_no());
+						gsaVO.setItem_nm(str.substring(i, Math.min(i + 10, str.length())).trim());
+						gsaVO.setItem_origin("JP");
+						gsaList.add(gsaVO);
+					}
+				}else {
+					GlobalSagawaDownVO gsaVO = new GlobalSagawaDownVO();
+					gsaVO.setSeller_cd("Fastbox2");
+					gsaVO.setPick_dt(CommonUtil.getDate("YYYYMMDD", 0));
+					gsaVO.setOrder_no(tmp.getOrder_no());
+					gsaVO.setConsign_nm(tmp.getDelivery_name());
+					gsaVO.setConsign_nm_kana(tmp.getDelivery_name_kana());
+					gsaVO.setConsign_add1(tmp.getDelivery_add1());
+					gsaVO.setConsign_add2(tmp.getDelivery_add2() + " " + tmp.getDelivery_add3());
+					gsaVO.setConsign_post_no(tmp.getDelivery_post_no1()+"-"+tmp.getDelivery_post_no2());
+					gsaVO.setConsign_tel(tmp.getDelivery_tel1()+"-"+tmp.getDelivery_tel2()+"-"+tmp.getDelivery_tel3());
+					gsaVO.setDelivery_dt(tmp.getDelivery_ata_datetime());
+					gsaVO.setDelivery_tm(tmp.getDelivery_time());
+					gsaVO.setPkg(tmp.getUnit_no());
+					gsaVO.setItem_nm(str);
+					gsaVO.setItem_origin("JP");
+					gsaList.add(gsaVO);
+				}
+			}
+			
+			CommonUtil.executeCSVDownload(csvWriter, writer, header, gsaList);
+		} finally {
+			if (csvWriter != null) {
+				csvWriter.close();
+			}
+			
+			if (writer != null) {
+				writer.close();
+			}
+		}
 	}
 }

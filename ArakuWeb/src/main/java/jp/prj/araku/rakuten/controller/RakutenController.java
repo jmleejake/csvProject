@@ -475,4 +475,23 @@ public class RakutenController {
 		listDao.processSagawaUpdate2006(sagaUpload2006, fileEncoding, "rak");
 		return "redirect:rFileDownView";
 	}
+	
+	@RequestMapping(value="/globalSaDown", method=RequestMethod.POST)
+	public void downloadGlobalSagawaFile(
+			HttpServletResponse response,
+			@RequestParam(value="id_lst") String id_lst) {
+		
+		id_lst = id_lst.replace("[", "");
+		id_lst = id_lst.replace("]", "");
+		String[] seq_id_list = id_lst.split(",");
+		try {
+			dao.downloadGlobalSagawa(response, seq_id_list, fileEncoding);
+		} catch (IOException e) {
+			log.error(e.toString());
+		} catch (CsvDataTypeMismatchException e) {
+			log.error(e.toString());
+		} catch (CsvRequiredFieldEmptyException e) {
+			log.error(e.toString());
+		}
+	}
 }

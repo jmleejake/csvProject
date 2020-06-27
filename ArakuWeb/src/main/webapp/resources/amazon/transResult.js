@@ -177,6 +177,12 @@ $("#btn_cp_down").on("click", function() {
 	 $("#frm_down4").submit();
 });
 
+//글로벌 사가와 CSV파일 다운로드
+$("#btn_glb_sa_down").on("click", function() {
+	console.log("global sagawa download button clicked");
+	 $("#frm_down5").submit();
+});
+
 //あす楽例外 체크박스 클릭시 서버로 보낼 값 세팅
 $("#tomoEx").on("click", function() {
 	$("#sa_chk").val("");

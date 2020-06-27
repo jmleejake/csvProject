@@ -18,7 +18,6 @@ import com.opencsv.bean.CsvToBeanBuilder;
 
 import jp.prj.araku.amazon.mapper.IAmazonMapper;
 import jp.prj.araku.amazon.vo.AmazonVO;
-import jp.prj.araku.file.vo.NewYamatoVO;
 import jp.prj.araku.list.mapper.IListMapper;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.RakutenSearchVO;
@@ -208,6 +207,7 @@ public class ListDAO {
                 			AmazonVO upVO = new AmazonVO();
                 			upVO.setSeq_id(srchLst.get(0).getSeq_id());
                 			upVO.setBaggage_claim_no(vo.getHawb_no());
+                			upVO.setDelivery_company("1002");
                 			amaMapper.updateAmazonInfo(upVO);
                 		}
                 	}
@@ -221,6 +221,7 @@ public class ListDAO {
                 			RakutenVO upVO = new RakutenVO();
                 			upVO.setSeq_id(srchLst.get(0).getSeq_id());
                 			upVO.setBaggage_claim_no(vo.getHawb_no());
+                			upVO.setDelivery_company("1002");
                 			rakMapper.updateRakutenInfo(upVO);
                 		}
                 	}

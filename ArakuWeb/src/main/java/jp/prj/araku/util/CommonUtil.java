@@ -258,6 +258,30 @@ public class CommonUtil {
 					,"内容品"
 				};
 			ret = arr3;
+		}else if("GSAGA".equals(type)) {
+			String[] arr4= {
+					"Seller CODE"
+					,"PICKUP_DATE"
+					,"ORDER_NO"
+					,"CONSIGNEE_NAME"
+					,"YOMIGANA"
+					,"CONSIGNEE_ADDRESS1"
+					,"CONSIGNEE_ADDRESS2"
+					,"CONSIGNEE_POSTALCODE"
+					,"CONSIGNEE_PHONENO"
+					,"CONSIGNEE_MAILADDRESS"
+					,"DELIVERY_DATE"
+					,"DELIVERY_TIME"
+					,"PKG"
+					,"WEIGHT"
+					,"ITEM_CODE"
+					,"ITEM_NAME"
+					,"ITEM_PCS"
+					,"UNIT_PRICE"
+					,"ITEM_ORIGIN"
+
+			};
+			ret = arr4;
 		}
 		return ret;
 	}
