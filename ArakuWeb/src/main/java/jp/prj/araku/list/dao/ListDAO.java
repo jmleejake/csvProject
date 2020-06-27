@@ -1,19 +1,33 @@
 package jp.prj.araku.list.dao;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
+
+import jp.prj.araku.amazon.mapper.IAmazonMapper;
+import jp.prj.araku.amazon.vo.AmazonVO;
+import jp.prj.araku.file.vo.NewYamatoVO;
 import jp.prj.araku.list.mapper.IListMapper;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.RakutenSearchVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
+import jp.prj.araku.list.vo.SagawaUpdateVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
+import jp.prj.araku.rakuten.mapper.IRakutenMapper;
+import jp.prj.araku.rakuten.vo.RakutenVO;
 import jp.prj.araku.util.CommonUtil;
 
 /**
@@ -154,5 +168,69 @@ public class ListDAO {
 		}
 		
 		return mapper.getExceptionMaster(null);
+	}
+	
+	public void processSagawaUpdate2006(MultipartFile file, String fileEncoding, String type) throws IOException {
+		log.info("processSagawaUpdate2006");
+		log.debug("encoding : " + fileEncoding);
+		log.debug("contentType: " + file.getContentType());
+		log.debug("name: " + file.getName());
+		log.debug("original name: " + file.getOriginalFilename());
+		log.debug("size: " + file.getSize());
+		log.debug("type: " + type);
+		
+		IAmazonMapper amaMapper = sqlSession.getMapper(IAmazonMapper.class);
+		IRakutenMapper rakMapper = sqlSession.getMapper(IRakutenMapper.class);
+		
+		BufferedReader reader = null;
+		try  {
+			reader = new BufferedReader(
+					new InputStreamReader(file.getInputStream(), fileEncoding));
+			
+			CsvToBean<SagawaUpdateVO> csvToBean = new CsvToBeanBuilder<SagawaUpdateVO>(reader)
+                    .withType(SagawaUpdateVO.class)
+                    .withSkipLines(1)
+                    .withIgnoreLeadingWhiteSpace(true)
+                    .build();
+
+            Iterator<SagawaUpdateVO> iterator = csvToBean.iterator();
+
+            while (iterator.hasNext()) {
+            	SagawaUpdateVO vo = iterator.next();
+            	
+            	if("ama".equals(type)) {
+        			AmazonVO searchVO = new AmazonVO();
+        			searchVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+                	searchVO.setOrder_id(vo.getRef_no());
+                	ArrayList<AmazonVO> srchLst = amaMapper.getAmazonInfo(searchVO);
+                	if(srchLst.size() > 0) {
+                		if(null == srchLst.get(0).getBaggage_claim_no()) {
+                			AmazonVO upVO = new AmazonVO();
+                			upVO.setSeq_id(srchLst.get(0).getSeq_id());
+                			upVO.setBaggage_claim_no(vo.getHawb_no());
+                			amaMapper.updateAmazonInfo(upVO);
+                		}
+                	}
+        		}else if("rak".equals(type)) {
+        			RakutenVO searchVO = new RakutenVO();
+                	searchVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+                	searchVO.setOrder_no(vo.getRef_no());
+        			ArrayList<RakutenVO> srchLst = rakMapper.getRakutenInfo(searchVO);
+        			if(srchLst.size() > 0) {
+                		if(null == srchLst.get(0).getBaggage_claim_no()) {
+                			RakutenVO upVO = new RakutenVO();
+                			upVO.setSeq_id(srchLst.get(0).getSeq_id());
+                			upVO.setBaggage_claim_no(vo.getHawb_no());
+                			rakMapper.updateRakutenInfo(upVO);
+                		}
+                	}
+        		}
+            }
+            
+		} finally {
+			if (reader != null) {
+				reader.close();
+			}
+		}
 	}
 }

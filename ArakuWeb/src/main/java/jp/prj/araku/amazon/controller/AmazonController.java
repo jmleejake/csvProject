@@ -343,4 +343,11 @@ public class AmazonController {
 		model.addAttribute("type", CommonUtil.TRANS_TARGET_A);
 		return "menu/tabletOrder";
 	}
+	
+	@RequestMapping(value="/sagaUpload2006", method=RequestMethod.POST)
+	public String processSagawaUpdate2006(MultipartFile sagaUpload2006) throws IOException {
+		log.info("amazon > processSagawaUpdate2006");
+		listDao.processSagawaUpdate2006(sagaUpload2006, fileEncoding, "ama");
+		return "redirect:aFileDownView";
+	}
 }

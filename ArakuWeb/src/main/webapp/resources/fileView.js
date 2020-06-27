@@ -42,6 +42,9 @@ function preCheck(type) {
 	if ("prdAnal" == type) {
 		hasFile = $("#prdAnalysis-upload")[0].files.length;
 	}
+	if ("saga2006" == type) {
+		hasFile = $("#saga-upload2006")[0].files.length;
+	}
 	
 	if (hasFile <= 0) {
 		$.notify({

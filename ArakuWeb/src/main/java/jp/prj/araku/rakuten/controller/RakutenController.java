@@ -468,4 +468,11 @@ public class RakutenController {
 		model.addAttribute("type", CommonUtil.TRANS_TARGET_R);
 		return "menu/tabletOrder";
 	}
+	
+	@RequestMapping(value="/sagaUpload2006", method=RequestMethod.POST)
+	public String processSagawaUpdate2006(MultipartFile sagaUpload2006) throws IOException {
+		log.info("rakuten > processSagawaUpdate2006");
+		listDao.processSagawaUpdate2006(sagaUpload2006, fileEncoding, "rak");
+		return "redirect:rFileDownView";
+	}
 }
