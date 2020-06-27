@@ -431,8 +431,21 @@ public class Q10DAO {
 					continue;
 				}
 				YamatoVO yVO = new YamatoVO();
+				// 2020/06/20  キム 클리크포스트를 야마토 ネコポス로 설정함. 　⇒　ＳＴＡＲＴ
+				if (tmp.getResult_text().contains("全無")) {
+					yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_7);
+				}	else {
+					yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_0);
+				}
+				if (tmp.getResult_text().contains("冷凍")) {
+					yVO.setCool_type(CommonUtil.COOL_TYPE_1);
+				}
+				if (tmp.getResult_text().contains("冷蔵")) {
+					yVO.setCool_type(CommonUtil.COOL_TYPE_2);		
+				}
+				// 2020/06/20  キム 클리크포스트를 야마토 ネコポス로 설정함. 　⇒　ＥＮＤ
 				yVO.setCustomer_no(tmp.getOrder_no().replace("\"", ""));
-				yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_0);
+				//yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_0);
 				yVO.setCollect_cash(tmp.getTotal_price().replace("\"", ""));
 				yVO.setEstimate_ship_date(CommonUtil.getDate("YYYY/MM/dd", 0));
 				yVO.setBill_customer_code("048299821004-311");

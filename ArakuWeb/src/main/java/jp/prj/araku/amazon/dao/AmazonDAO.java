@@ -498,91 +498,92 @@ public class AmazonDAO {
 			
 			TranslationResultVO vo = new TranslationResultVO();
 			vo.setSeq_id_list(seq_id_list);
-			vo.setDelivery_company(delivery_company);
+//			配送会社のマスタ情報をチェックするため。コメントアウトする。 2020.06.01  kim
+//			vo.setDelivery_company(delivery_company);
 			
 			ArrayList<AmazonVO> list = mapper.getTransResult(vo);
 			ArrayList<ExceptionMasterVO> exList = listMapper.getExceptionMaster(null);
-			boolean chkRet = false;
+//			boolean chkRet = false;
 			ArrayList<ArakuVO> sList = new ArrayList<>();
 			
 			for (AmazonVO tmp : list) {
+//				例外テーブルに含んている場合、ファイル作成するように変更する。　2020/06/01
 				for (ExceptionMasterVO exVO : exList) {
-					chkRet = false;
+//					chkRet = false;
 					if (tmp.getResult_text().contains(exVO.getException_data())) {
-						chkRet = true;
+//						chkRet = true;
+						
+						SagawaVO sVO = new SagawaVO();
+						sVO.setDelivery_add1(tmp.getShip_state().replace("\"", ""));
+						sVO.setDelivery_add2(tmp.getShip_address1().replace("\"", ""));
+						sVO.setDelivery_add3(tmp.getShip_address2().replace("\"", "") + "" + tmp.getShip_address3().replace("\"", ""));
+						sVO.setDelivery_post_no(tmp.getShip_postal_code().replace("\"", ""));
+						String phone_no = tmp.getBuyer_phone_number();
+						if (phone_no.contains("-")) {
+							sVO.setDelivery_tel(phone_no);
+						} else {
+							if (phone_no.length() == 10) {
+								sVO.setDelivery_tel(phone_no.substring(0, 2) + "-" + phone_no.subSequence(2, 6) + "-" + phone_no.subSequence(6, 10));
+							} else if (phone_no.length() == 11) {
+								sVO.setDelivery_tel(phone_no.substring(0, 3) + "-" + phone_no.subSequence(3, 7) + "-" + phone_no.subSequence(7, 11));
+							}
+						}
+					//				sVO.setDelivery_tel(tmp.getDelivery_tel1().replace("\"", "") + "-" + tmp.getDelivery_tel2().replace("\"", "") + "-" + tmp.getDelivery_tel3().replace("\"", ""));
+									sVO.setDelivery_name1(tmp.getRecipient_name().replace("\"", ""));
+									
+									sVO.setClient_add1("埼玉県川口市");
+									sVO.setClient_add2("上青木西１丁目19-39エレガンス滝澤ビル1F");
+									sVO.setClient_name1("有限会社");
+									sVO.setClient_name2("ItempiaJapan (A)");
+									sVO.setClient_tel("048-242-3801");
+									
+									// 配送サービスレベル가 NextDay인 경우
+					        		if ("NextDay".equals(tmp.getShip_service_level())) {
+					        			sVO.setDelivery_time(CommonUtil.SA_TOMORROW_MORNING_CODE);
+					        			sVO.setDelivery_date(CommonUtil.getDate("YYYYMMdd", 1)); // 2019-09-21: 배송일 컬럼에 대하여 YYYYMMDD의 형태로 처리
+					        		}
+									
+					        		String product_name = tmp.getResult_text().replace("\"", "");
+					        		
+					        		// 2019-09-21: 전각처리 / 전각처리된 상품명1-5에 대하여 각 14자리가 들어갈수있게 처리 
+					        		Transliterator transliterator = Transliterator.getInstance("Halfwidth-Fullwidth");
+					        		product_name = transliterator.transliterate(product_name);
+					        		if(product_name.length() > 14) {
+					        			sVO.setProduct_name1(product_name.substring(0,14));
+					        			sVO.setProduct_name2(product_name.substring(14,product_name.length()));
+					        			
+					        			if(sVO.getProduct_name2().length() > 14) {
+					        				String str1 = sVO.getProduct_name2();
+					            			sVO.setProduct_name2(str1.substring(0,14));
+					            			sVO.setProduct_name3(str1.substring(14,str1.length()));
+					            			
+					            			if(sVO.getProduct_name3().length() > 14) {
+					            				String str2 = sVO.getProduct_name3();
+					            				sVO.setProduct_name3(str2.substring(0,14));
+					            				sVO.setProduct_name4(str2.substring(14,str2.length()));
+					            				
+					            				if(sVO.getProduct_name4().length() > 14) {
+					            					String str3 = sVO.getProduct_name4();
+					            					sVO.setProduct_name4(str3.substring(0,14));
+					            					sVO.setProduct_name5(str3.substring(14,str3.length()));
+					            					
+					            					if(sVO.getProduct_name5().length() > 14) {
+					            						sVO.setProduct_name5(sVO.getProduct_name5().substring(0,14));
+					            					}
+					            				}
+					            			}
+					            		}
+					        		}else {
+					        			sVO.setProduct_name1(product_name);
+					        		}
+					        		
+									// csv작성을 위한 리스트작성
+									sList.add(sVO);
 					}
 				}
-				if (chkRet) {
-					continue;
-				}
-				SagawaVO sVO = new SagawaVO();
-				sVO.setDelivery_add1(tmp.getShip_state().replace("\"", ""));
-				sVO.setDelivery_add2(tmp.getShip_address1().replace("\"", ""));
-				sVO.setDelivery_add3(tmp.getShip_address2().replace("\"", "") + "" + tmp.getShip_address3().replace("\"", ""));
-				sVO.setDelivery_post_no(tmp.getShip_postal_code().replace("\"", ""));
-				String phone_no = tmp.getBuyer_phone_number();
-				if (phone_no.contains("-")) {
-					sVO.setDelivery_tel(phone_no);
-				} else {
-					if (phone_no.length() == 10) {
-						sVO.setDelivery_tel(phone_no.substring(0, 2) + "-" + phone_no.subSequence(2, 6) + "-" + phone_no.subSequence(6, 10));
-					} else if (phone_no.length() == 11) {
-						sVO.setDelivery_tel(phone_no.substring(0, 3) + "-" + phone_no.subSequence(3, 7) + "-" + phone_no.subSequence(7, 11));
-					}
-				}
-//				sVO.setDelivery_tel(tmp.getDelivery_tel1().replace("\"", "") + "-" + tmp.getDelivery_tel2().replace("\"", "") + "-" + tmp.getDelivery_tel3().replace("\"", ""));
-				sVO.setDelivery_name1(tmp.getRecipient_name().replace("\"", ""));
-				
-				sVO.setClient_add1("埼玉県川口市");
-				sVO.setClient_add2("上青木西１丁目19-39エレガンス滝澤ビル1F");
-				sVO.setClient_name1("有限会社");
-				sVO.setClient_name2("ItempiaJapan (A)");
-				sVO.setClient_tel("048-242-3801");
-				
-				// 配送サービスレベル가 NextDay인 경우
-        		if ("NextDay".equals(tmp.getShip_service_level())) {
-        			sVO.setDelivery_time(CommonUtil.SA_TOMORROW_MORNING_CODE);
-        			sVO.setDelivery_date(CommonUtil.getDate("YYYYMMdd", 1)); // 2019-09-21: 배송일 컬럼에 대하여 YYYYMMDD의 형태로 처리
-        		}
-				
-        		String product_name = tmp.getResult_text().replace("\"", "");
-        		
-        		// 2019-09-21: 전각처리 / 전각처리된 상품명1-5에 대하여 각 14자리가 들어갈수있게 처리 
-        		Transliterator transliterator = Transliterator.getInstance("Halfwidth-Fullwidth");
-        		product_name = transliterator.transliterate(product_name);
-        		if(product_name.length() > 14) {
-        			sVO.setProduct_name1(product_name.substring(0,14));
-        			sVO.setProduct_name2(product_name.substring(14,product_name.length()));
-        			
-        			if(sVO.getProduct_name2().length() > 14) {
-        				String str1 = sVO.getProduct_name2();
-            			sVO.setProduct_name2(str1.substring(0,14));
-            			sVO.setProduct_name3(str1.substring(14,str1.length()));
-            			
-            			if(sVO.getProduct_name3().length() > 14) {
-            				String str2 = sVO.getProduct_name3();
-            				sVO.setProduct_name3(str2.substring(0,14));
-            				sVO.setProduct_name4(str2.substring(14,str2.length()));
-            				
-            				if(sVO.getProduct_name4().length() > 14) {
-            					String str3 = sVO.getProduct_name4();
-            					sVO.setProduct_name4(str3.substring(0,14));
-            					sVO.setProduct_name5(str3.substring(14,str3.length()));
-            					
-            					if(sVO.getProduct_name5().length() > 14) {
-            						sVO.setProduct_name5(sVO.getProduct_name5().substring(0,14));
-            					}
-            				}
-            			}
-            		}
-        		}else {
-        			sVO.setProduct_name1(product_name);
-        		}
-        		
-				// csv작성을 위한 리스트작성
-				sList.add(sVO);
 			}
-			
+
+
 			CommonUtil.executeCSVDownload(csvWriter, writer, header, sList);
 			
 		} finally {
