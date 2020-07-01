@@ -185,3 +185,42 @@ $("#btn_commit").on("click", function() {
 		, success: setRowData
 	});
 });
+
+
+$("#btn_yama").on("click", function() {
+	var selectedRows = rFileDownGridOptions.api.getSelectedRows();
+    
+    if (selectedRows.length == 0) {
+    	pleaseSelectNotify('情報を選択してください。');
+        return;
+    }
+    
+    var id_lst = [];
+    
+    for (var i=0; i<selectedRows.length; i++) {
+		id_lst.push(selectedRows[i].seq_id);
+	}
+    
+	$("#seq_id_list").val(id_lst);
+	$("#delCompany").val("1001");
+	$("#frm_rFileDown").submit();
+});
+
+$("#btn_saga").on("click", function() {
+	var selectedRows = rFileDownGridOptions.api.getSelectedRows();
+    
+    if (selectedRows.length == 0) {
+    	pleaseSelectNotify('情報を選択してください。');
+        return;
+    }
+    
+    var id_lst = [];
+    
+    for (var i=0; i<selectedRows.length; i++) {
+		id_lst.push(selectedRows[i].seq_id);
+	}
+    
+	$("#seq_id_list").val(id_lst);
+	$("#delCompany").val("1002");
+	$("#frm_rFileDown").submit();
+});

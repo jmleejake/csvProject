@@ -1225,12 +1225,17 @@ public class RakutenDAO {
 		}
 	}
 	
-	public void rCSVDownload(HttpServletResponse response, String[] id_lst, String fileEncoding) 
+	public void rCSVDownload(
+			HttpServletResponse response
+			, String[] id_lst
+			, String fileEncoding
+			, String delivery_company) 
 			throws IOException
 			, CsvDataTypeMismatchException
 			, CsvRequiredFieldEmptyException {
 		log.info("rCSVDownload");
 		log.debug("seq_id_list : " + id_lst.toString());
+		log.debug("delivery_company : " + delivery_company);
 		log.debug("encoding : " + fileEncoding);
 		
 		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
@@ -1238,7 +1243,8 @@ public class RakutenDAO {
 		CSVWriter csvWriter = null;
 		
 		try {
-			String csvFileName = "R" + CommonUtil.getDate("YYYYMMdd", 0) + ".csv";
+			String fileNm = "1001".equals(delivery_company) ? "YAMA" : "SAGA";
+			String csvFileName = "R_"+fileNm+ CommonUtil.getDate("YYYYMMdd", 0) + ".csv";
 
 			response.setContentType("text/csv");
 
@@ -1265,6 +1271,7 @@ public class RakutenDAO {
 				seq_id_list.add(seq_id);
 			}
 			vo.setSeq_id_list(seq_id_list);
+			vo.setDelivery_company(delivery_company);
 			ArrayList<ArakuVO> list = mapper.getRCSVDownList(vo);
 			
 			CommonUtil.executeCSVDownload(csvWriter, writer, header, list);

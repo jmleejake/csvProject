@@ -602,6 +602,9 @@ from
 			#{item}
 		</foreach>
 	</if>
+	<if test="delivery_company != null">
+		and delivery_company = #{delivery_company}
+	</if>
 </where>
 </select>
 

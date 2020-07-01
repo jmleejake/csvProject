@@ -379,7 +379,8 @@ public class RakutenController {
 	@RequestMapping(value="/rFileDown", method=RequestMethod.POST)
 	public void processRakutenFileDownload(
 			HttpServletResponse response
-			, @RequestParam(value="id_lst") String id_lst) {
+			, @RequestParam(value="id_lst") String id_lst
+			, @RequestParam(value="delivery_company") String delivery_company) {
 		log.info("processRakutenFileDownload");
 		
 		log.debug("id list : " + id_lst);
@@ -388,7 +389,7 @@ public class RakutenController {
 		id_lst = id_lst.replace("]", "");
 		String[] seq_id_list = id_lst.split(",");
 		try {
-				dao.rCSVDownload(response, seq_id_list, fileEncoding);
+				dao.rCSVDownload(response, seq_id_list, fileEncoding, delivery_company);
 		} catch (IOException e) {
 			log.error(e.toString());
 		} catch (CsvDataTypeMismatchException e) {

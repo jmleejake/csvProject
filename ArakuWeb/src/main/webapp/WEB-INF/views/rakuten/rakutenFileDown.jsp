@@ -69,7 +69,11 @@ $(document).ready(function() {
 	<!-- 
 	<button id="btn_commit" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">登録</button>
 	-->
+	<!-- 
 	<button id="btn_rdown" type="button" class="btn btn-default" style="width: 140px; margin-bottom: 10px;">楽天更新ファイル</button>
+	-->
+	<button id="btn_yama" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">YAMATO</button>
+	<button id="btn_saga" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">SAGAWA</button>
 	</div>
 </div>
 
@@ -80,6 +84,7 @@ $(document).ready(function() {
 
 <form id="frm_rFileDown" action="rFileDown" method="post">
 <input type="hidden" id="seq_id_list" name="id_lst">
+<input type="hidden" id="delCompany" name="delivery_company">
 </form>
 </body>
 </html>
