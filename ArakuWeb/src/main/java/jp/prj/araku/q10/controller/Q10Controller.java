@@ -22,6 +22,7 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 import jp.prj.araku.list.dao.ListDAO;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
+import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
@@ -305,5 +306,26 @@ public class Q10Controller {
 	@ResponseBody
 	public ArrayList<DealerVO> deleteDealerInfo(@RequestBody ArrayList<DealerVO> list) {
 		return tabletPrdDao.deleteDealerInfo(list);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/showExceptionRegionMaster")
+	public ArrayList<ExceptionRegionMasterVO> showExceptionRegionMaster(ExceptionRegionMasterVO vo) {
+		log.info("showExceptionRegionMaster");
+		return listDao.getExceptionRegionMaster(vo);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/modExceptionRegionMaster")
+	public ArrayList<ExceptionRegionMasterVO> manipulateExceptionRegionMaster(@RequestBody ArrayList<ExceptionRegionMasterVO> list) {
+		log.info("manipulateExceptionRegionMaster");
+		return listDao.manipulateExceptionRegionMaster(list);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/delExceptionRegionMaster")
+	public ArrayList<ExceptionRegionMasterVO> deleteExceptionRegionMaster(@RequestBody ArrayList<ExceptionRegionMasterVO> list) {
+		log.info("deleteExceptionRegionMaster");
+		return listDao.deleteExceptionRegionMaster(list);
 	}
 }

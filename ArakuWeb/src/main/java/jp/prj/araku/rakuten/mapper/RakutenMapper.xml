@@ -587,6 +587,9 @@ select
 	, delivery_tel1
 	, delivery_tel2
 	, delivery_tel3
+	, delivery_add1
+	, delivery_add2
+	, delivery_add3
 	, delivery_company
 	, '' free_space
 	, ship_id

@@ -25,6 +25,7 @@ import jp.prj.araku.batch.dao.BatchDAO;
 import jp.prj.araku.batch.vo.ItemOutputVO;
 import jp.prj.araku.list.dao.ListDAO;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
+import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
@@ -494,5 +495,26 @@ public class RakutenController {
 		} catch (CsvRequiredFieldEmptyException e) {
 			log.error(e.toString());
 		}
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/showExceptionRegionMaster")
+	public ArrayList<ExceptionRegionMasterVO> showExceptionRegionMaster(ExceptionRegionMasterVO vo) {
+		log.info("showExceptionRegionMaster");
+		return listDao.getExceptionRegionMaster(vo);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/modExceptionRegionMaster")
+	public ArrayList<ExceptionRegionMasterVO> manipulateExceptionRegionMaster(@RequestBody ArrayList<ExceptionRegionMasterVO> list) {
+		log.info("manipulateExceptionRegionMaster");
+		return listDao.manipulateExceptionRegionMaster(list);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/delExceptionRegionMaster")
+	public ArrayList<ExceptionRegionMasterVO> deleteExceptionRegionMaster(@RequestBody ArrayList<ExceptionRegionMasterVO> list) {
+		log.info("deleteExceptionRegionMaster");
+		return listDao.deleteExceptionRegionMaster(list);
 	}
 }

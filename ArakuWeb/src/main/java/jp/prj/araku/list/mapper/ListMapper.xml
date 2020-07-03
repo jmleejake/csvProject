@@ -177,4 +177,40 @@ delete from exception_master
 where seq_id = #{seq_id}
 </delete>
 
+<select id="getExceptionRegionMaster" parameterType="ExceptionRegionMaster" resultType="ExceptionRegionMaster">
+select
+	seq_id
+	, exception_data
+from
+	exception_region_master
+<where>
+	<if test="keyword != null">
+		exception_data like '%${keyword}%'
+	</if>
+	<if test="seq_id_list != null">
+		seq_id in
+		<foreach item="item" index="index" collection="seq_id_list"
+			open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+</where>
+</select>
+
+<insert id="insertExceptionRegionMaster" parameterType="ExceptionRegionMaster" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
+insert into exception_region_master (exception_data) 
+values (#{exception_data})
+</insert>
+
+<update id="updateExceptionRegionMaster" parameterType="ExceptionRegionMaster">
+update exception_region_master
+set exception_data = #{exception_data}
+where seq_id = #{seq_id}
+</update>
+
+<delete id="deleteExceptionRegionMaster" parameterType="String">
+delete from exception_region_master
+where seq_id = #{seq_id}
+</delete>
+
 </mapper>

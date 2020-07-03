@@ -13,6 +13,7 @@ $(document).ready(function() {
 	showExceptionMaster();
 	showPrdMaster();
 	showDealerMaster();
+	showExceptionRegionMaster();
 });
 </script>
 </head>
@@ -32,6 +33,7 @@ $(document).ready(function() {
 <c:if test="${'TA' == type }">
 <jsp:include page="../tabletTop.jsp"></jsp:include>
 </c:if>
+<!-- S상품관리마스터 -->
 <div class="container-fluid">
 <div class="well container-fluid">
 <h3>商品名管理マスタ</h3>
@@ -69,8 +71,13 @@ $(document).ready(function() {
 </div>
 <script src="./../resources/menu/prdMaster.js"></script>
 </div>
+<!-- E상품관리마스터 -->
 
+<!-- S거래처,지역마스터 -->
 <div class="container-fluid">
+
+<!-- S거래처마스터 -->
+<div class="container-fluid col-sm-6">
 <div class="well container-fluid">
 <h3>取引先マスタ</h3>
 
@@ -85,13 +92,15 @@ $(document).ready(function() {
 	</div>
 </div>
 
-<div id="dealerGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
+<div id="dealerGrid" style="width:auto; height: 600px;" class="ag-theme-balham"></div>
 </div>
 </div>
 <script src="./../resources/menu/dealerMaster.js"></script>
 </div>
+<!-- E거래처마스터 -->
 
-<div class="container-fluid">
+<!-- S지역마스터 -->
+<div class="container-fluid col-sm-6">
 <div class="well container-fluid">
 <h3>地域区分マスタ</h3>
 
@@ -119,8 +128,17 @@ $(document).ready(function() {
 </div>
 <script src="./../resources/menu/regionMaster.js"></script>
 </div>
+<!-- E지역마스터 -->
 
+</div>
+<!-- E거래처,지역마스터 -->
+
+
+<!-- S예외데이터, 지역예외데이터 마스터 -->
 <div class="container-fluid">
+
+<!-- S예외데이터 마스터 -->
+<div class="container-fluid col-sm-6">
 <div class="well container-fluid">
 <h3>例外データマスタ</h3>
 
@@ -152,5 +170,45 @@ $(document).ready(function() {
 </div>
 <script src="./../resources/menu/exceptionMaster.js"></script>
 </div>
+<!-- E예외데이터 마스터 -->
+
+<!-- S지역예외데이터 마스터 -->
+<div class="container-fluid col-sm-6">
+<div class="well container-fluid">
+<h3>例外地域マスタ</h3>
+
+<div class="well container-fluid">
+	<form id="exceptionRegionFrm" action="showExceptionRegionMaster">
+	<div class="col-sm-6">
+	<label>例外地域データ</label>
+	<input type="text" name="keyword" class="form-control" style="width: 300px;"
+	onkeypress = "if(event.keyCode==13){ exceptionRegionSearch(); event.preventDefault(); }">
+	</div>
+	<div class="col-sm-6" style="margin-top: 7px;">
+	<button id="btn_RegionSrch" type="button" class="btn btn-default" style="width: 120px; margin-top: 18px;">検索</button>
+	</div>
+	</form>
+</div>
+<div class="well container-fluid">
+<div class="row">
+	<div class="col-sm-6" style="margin-top: 7px;">
+	<button id="btn_regionAdd" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">列追加</button>
+	<button id="btn_regionCommit" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">登録</button>
+	</div>
+	<div class="col-sm-6" style="margin-top: 7px;">
+	<button id="btn_regionDelete" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">削除</button>
+	</div>
+</div>
+
+<div id="exceptionRegionGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
+</div>
+</div>
+<script src="./../resources/menu/exceptionRegionMaster.js"></script>
+</div>
+<!-- E지역예외데이터 마스터 -->
+
+</div>
+<!-- E예외데이터, 지역예외데이터 마스터 -->
+
 </body>
 </html>

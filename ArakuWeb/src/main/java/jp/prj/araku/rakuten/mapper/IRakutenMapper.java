@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import jp.prj.araku.file.vo.RCSVDownVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.rakuten.vo.RakutenVO;
-import jp.prj.araku.util.ArakuVO;
 
 public interface IRakutenMapper {
 	public int insertRakutenInfo(RakutenVO vo);
@@ -13,6 +12,6 @@ public interface IRakutenMapper {
 	public int deleteRakutenInfo(String seq_id);
 	public int updateRakutenInfo(RakutenVO vo);
 	public ArrayList<RakutenVO> getTransResult(TranslationResultVO vo);
-	public ArrayList<ArakuVO> getRCSVDownList(RCSVDownVO vo);
+	public ArrayList<RCSVDownVO> getRCSVDownList(RCSVDownVO vo);
 	public int updateRakutenRegistDate(String seq_id);
 }

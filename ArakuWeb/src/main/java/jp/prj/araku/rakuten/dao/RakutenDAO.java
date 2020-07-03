@@ -46,6 +46,7 @@ import jp.prj.araku.file.vo.SagawaVO;
 import jp.prj.araku.file.vo.YamatoVO;
 import jp.prj.araku.list.mapper.IListMapper;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
+import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
 import jp.prj.araku.list.vo.GlobalSagawaDownVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.TranslationErrorVO;
@@ -1239,6 +1240,7 @@ public class RakutenDAO {
 		log.debug("encoding : " + fileEncoding);
 		
 		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
+		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
 		BufferedWriter writer = null;
 		CSVWriter csvWriter = null;
 		
@@ -1272,7 +1274,33 @@ public class RakutenDAO {
 			}
 			vo.setSeq_id_list(seq_id_list);
 			vo.setDelivery_company(delivery_company);
-			ArrayList<ArakuVO> list = mapper.getRCSVDownList(vo);
+			ArrayList<ArakuVO> list = new ArrayList<>();
+			ArrayList<RCSVDownVO> csvList = mapper.getRCSVDownList(vo);
+			ArrayList<ExceptionRegionMasterVO> exRegionList = listMapper.getExceptionRegionMaster(null);
+			
+			/**
+			 * 사가와 대상 목록중 예외지역마스터(例外地域マスタ)에 있는 값인 경우
+			 * 해당 데이터의 배송회사를 야마토로 update치고
+			 * 야마토로 다운로드 될 수 있게 처리
+			 * */
+			for(RCSVDownVO csv : csvList) {
+				boolean isEx = false;
+				if("SAGA".equals(fileNm)) {
+					for(ExceptionRegionMasterVO region : exRegionList) {
+						if(csv.getDelivery_add1().contains(region.getException_data())) {
+							isEx = true;
+							RakutenVO rv = new RakutenVO();
+							rv.setSeq_id(csv.getSeq_id());
+							rv.setDelivery_company("1001");
+							mapper.updateRakutenInfo(rv);
+						}
+					}
+				}
+				
+				if(!isEx) {
+					list.add(csv);
+				}
+			}
 			
 			CommonUtil.executeCSVDownload(csvWriter, writer, header, list);
 		} finally {

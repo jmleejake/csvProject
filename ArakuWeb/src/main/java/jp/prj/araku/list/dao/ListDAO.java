@@ -20,6 +20,7 @@ import jp.prj.araku.amazon.mapper.IAmazonMapper;
 import jp.prj.araku.amazon.vo.AmazonVO;
 import jp.prj.araku.list.mapper.IListMapper;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
+import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
 import jp.prj.araku.list.vo.RakutenSearchVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.SagawaUpdateVO;
@@ -233,5 +234,47 @@ public class ListDAO {
 				reader.close();
 			}
 		}
+	}
+	
+	public ArrayList<ExceptionRegionMasterVO> getExceptionRegionMaster(ExceptionRegionMasterVO vo) {
+		log.info("getExceptionMaster");
+		log.debug(vo);
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		return mapper.getExceptionRegionMaster(vo);
+	}
+	
+	public ArrayList<ExceptionRegionMasterVO> manipulateExceptionRegionMaster(ArrayList<ExceptionRegionMasterVO> list) {
+		log.info("registerExceptionMaster");
+		log.debug(list);
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		
+		ArrayList<String> seq_id_list = new ArrayList<>();
+		for (ExceptionRegionMasterVO vo : list) {
+			if (vo.getSeq_id() != null) {
+				mapper.updateExceptionRegionMaster(vo);
+				seq_id_list.add(vo.getSeq_id());
+				log.debug(String.format("updated seq_id: %s", vo.getSeq_id()));
+			} else {
+				mapper.insertExceptionRegionMaster(vo);
+				seq_id_list.add(vo.getSeq_id());
+				log.debug(String.format("inserted seq_id: %s", vo.getSeq_id()));
+			}
+		}
+		ExceptionRegionMasterVO exVO = new  ExceptionRegionMasterVO();
+		exVO.setSeq_id_list(seq_id_list);
+		
+		return getExceptionRegionMaster(exVO);
+	}
+	
+	public ArrayList<ExceptionRegionMasterVO> deleteExceptionRegionMaster(ArrayList<ExceptionRegionMasterVO> list) {
+		log.info("deleteExceptionMaster");
+		log.debug(list);
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		
+		for (ExceptionRegionMasterVO vo : list) {
+			mapper.deleteExceptionRegionMaster(vo.getSeq_id());
+		}
+		
+		return getExceptionRegionMaster(null);
 	}
 }

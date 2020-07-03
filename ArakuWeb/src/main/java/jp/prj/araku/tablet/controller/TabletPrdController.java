@@ -20,6 +20,7 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 import jp.prj.araku.list.dao.ListDAO;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
+import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.TranslationVO;
 import jp.prj.araku.tablet.dao.TabletPrdDAO;
@@ -174,6 +175,24 @@ public class TabletPrdController {
 		} catch (CsvDataTypeMismatchException e) {
 		} catch (CsvRequiredFieldEmptyException e) {
 		}
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/showExceptionRegionMaster")
+	public ArrayList<ExceptionRegionMasterVO> showExceptionRegionMaster(ExceptionRegionMasterVO vo) {
+		return listDao.getExceptionRegionMaster(vo);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/modExceptionRegionMaster")
+	public ArrayList<ExceptionRegionMasterVO> manipulateExceptionRegionMaster(@RequestBody ArrayList<ExceptionRegionMasterVO> list) {
+		return listDao.manipulateExceptionRegionMaster(list);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/delExceptionRegionMaster")
+	public ArrayList<ExceptionRegionMasterVO> deleteExceptionRegionMaster(@RequestBody ArrayList<ExceptionRegionMasterVO> list) {
+		return listDao.deleteExceptionRegionMaster(list);
 	}
 	
 }

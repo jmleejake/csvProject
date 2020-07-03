@@ -14,6 +14,7 @@
 		<typeAlias type="jp.prj.araku.list.vo.TranslationErrorVO" alias="TransErr"/>
 		<typeAlias type="jp.prj.araku.rakuten.vo.RakutenVO" alias="Rakuten"/>
 		<typeAlias type="jp.prj.araku.list.vo.ExceptionMasterVO" alias="ExceptionMaster" />
+		<typeAlias type="jp.prj.araku.list.vo.ExceptionRegionMasterVO" alias="ExceptionRegionMaster" />
 		<typeAlias type="jp.prj.araku.batch.vo.ItemOutputVO" alias="ItemOut" />
 		<typeAlias type="jp.prj.araku.q10.vo.Q10VO" alias="Q10" />
 		<typeAlias type="jp.prj.araku.yahoo.vo.YahooVO" alias="Yahoo" />

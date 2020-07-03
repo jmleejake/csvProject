@@ -45,7 +45,7 @@ $(document).ready(function() {
 				<span class="icon-bar"></span>
 			</button>
 			<!-- Logo -->
-			<a class="navbar-brand" href="fileView">
+			<a class="navbar-brand" href="/araku">
 			<img src="./../resources/img/kana-a.png" alt="Brand" style="width:45px; margin-top:-11px;">
 			</a>
 		</div>
