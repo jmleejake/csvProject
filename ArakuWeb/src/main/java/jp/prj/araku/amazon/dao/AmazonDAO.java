@@ -1014,8 +1014,8 @@ public class AmazonDAO {
 								gsaVO.setOrder_no(tmp.getOrder_id());
 								gsaVO.setConsign_nm(tmp.getRecipient_name());
 								//gsaVO.setConsign_nm_kana();
-								gsaVO.setConsign_add1(tmp.getShip_address1());
-								gsaVO.setConsign_add2(tmp.getShip_address2() + " " + tmp.getShip_address3());
+								gsaVO.setConsign_add1(tmp.getShip_address1() + tmp.getShip_address2() + " " + tmp.getShip_address3());
+								//gsaVO.setConsign_add2(tmp.getShip_address2() + " " + tmp.getShip_address3());
 								gsaVO.setConsign_post_no(tmp.getShip_postal_code());
 								gsaVO.setConsign_tel(tmp.getBuyer_phone_number());
 								// 配送サービスレベル가 NextDay인 경우
@@ -1025,6 +1025,9 @@ public class AmazonDAO {
 				        		}
 								//gsaVO.setPkg();
 								gsaVO.setItem_nm(str.substring(i, Math.min(i + 10, str.length())).trim());
+								gsaVO.setDelivery_tm("10");
+								gsaVO.setUnit_price("500");	
+								gsaVO.setItem_pcs("9");		
 								gsaVO.setItem_origin("JP");
 								gsaList.add(gsaVO);
 							}
@@ -1035,8 +1038,8 @@ public class AmazonDAO {
 							gsaVO.setOrder_no(tmp.getOrder_id());
 							gsaVO.setConsign_nm(tmp.getRecipient_name());
 							//gsaVO.setConsign_nm_kana();
-							gsaVO.setConsign_add1(tmp.getShip_address1());
-							gsaVO.setConsign_add2(tmp.getShip_address2() + " " + tmp.getShip_address3());
+							gsaVO.setConsign_add1(tmp.getShip_address1()+tmp.getShip_address2() + " " + tmp.getShip_address3());
+							//gsaVO.setConsign_add2(tmp.getShip_address2() + " " + tmp.getShip_address3());
 							gsaVO.setConsign_post_no(tmp.getShip_postal_code());
 							gsaVO.setConsign_tel(tmp.getBuyer_phone_number());
 							// 配送サービスレベル가 NextDay인 경우
@@ -1046,6 +1049,9 @@ public class AmazonDAO {
 			        		}
 							//gsaVO.setPkg();
 							gsaVO.setItem_nm(str);
+							gsaVO.setDelivery_tm("10");
+							gsaVO.setUnit_price("500");	
+							gsaVO.setItem_pcs("9");		
 							gsaVO.setItem_origin("JP");
 							gsaList.add(gsaVO);
 						}

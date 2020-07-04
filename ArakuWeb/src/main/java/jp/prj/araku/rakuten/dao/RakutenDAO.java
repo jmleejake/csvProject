@@ -1593,8 +1593,8 @@ public class RakutenDAO {
 								gsaVO.setOrder_no(tmp.getOrder_no());
 								gsaVO.setConsign_nm(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
 								gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", "") + " " + tmp.getDelivery_name_kana().replace("\"", ""));
-								gsaVO.setConsign_add1(tmp.getDelivery_add1());
-								gsaVO.setConsign_add2(tmp.getDelivery_add2() + " " + tmp.getDelivery_add3());
+								gsaVO.setConsign_add1(tmp.getDelivery_add1()+tmp.getDelivery_add2() + " " + tmp.getDelivery_add3());
+								//gsaVO.setConsign_add2(tmp.getDelivery_add2() + " " + tmp.getDelivery_add3());
 								gsaVO.setConsign_post_no(tmp.getDelivery_post_no1()+"-"+tmp.getDelivery_post_no2());
 								gsaVO.setConsign_tel(tmp.getDelivery_tel1()+"-"+tmp.getDelivery_tel2()+"-"+tmp.getDelivery_tel3());
 								// あす楽希望이 1인 경우
@@ -1608,6 +1608,9 @@ public class RakutenDAO {
 				        		}
 								gsaVO.setPkg(tmp.getUnit_no());
 								gsaVO.setItem_nm(str.substring(i, Math.min(i + 10, str.length())).trim());
+								gsaVO.setDelivery_tm("10");
+								gsaVO.setUnit_price("500");	
+								gsaVO.setItem_pcs("9");					
 								gsaVO.setItem_origin("JP");
 								gsaList.add(gsaVO);
 							}
@@ -1618,8 +1621,8 @@ public class RakutenDAO {
 							gsaVO.setOrder_no(tmp.getOrder_no());
 							gsaVO.setConsign_nm(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
 							gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", "") + " " + tmp.getDelivery_name_kana().replace("\"", ""));
-							gsaVO.setConsign_add1(tmp.getDelivery_add1());
-							gsaVO.setConsign_add2(tmp.getDelivery_add2() + " " + tmp.getDelivery_add3());
+							gsaVO.setConsign_add1(tmp.getDelivery_add1()+tmp.getDelivery_add2() + " " + tmp.getDelivery_add3());
+							//gsaVO.setConsign_add2(tmp.getDelivery_add2() + " " + tmp.getDelivery_add3());
 							gsaVO.setConsign_post_no(tmp.getDelivery_post_no1()+"-"+tmp.getDelivery_post_no2());
 							gsaVO.setConsign_tel(tmp.getDelivery_tel1()+"-"+tmp.getDelivery_tel2()+"-"+tmp.getDelivery_tel3());
 							// あす楽希望이 1인 경우
@@ -1633,6 +1636,9 @@ public class RakutenDAO {
 			        		}
 							gsaVO.setPkg(tmp.getUnit_no());
 							gsaVO.setItem_nm(str);
+							gsaVO.setDelivery_tm("10");
+							gsaVO.setUnit_price("500");	
+							gsaVO.setItem_pcs("9");		
 							gsaVO.setItem_origin("JP");
 							gsaList.add(gsaVO);
 						}
