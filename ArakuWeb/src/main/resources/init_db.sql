@@ -651,6 +651,45 @@ seq_id bigint unsigned primary key auto_increment /*区分ID*/
 ) default charset = utf8;
 
 
+/*2019-10-11: yahoo_info*/
+delete from yahoo_info;
+create table yahoo_info (
+	seq_id bigint unsigned primary key  auto_increment /*区分ID*/
+	, register_date datetime default now() /*データ登録日*/
+	, update_date datetime /*データ修正日*/
+	, order_id varchar(10) /*注文番号*/
+	, line_id varchar(5) /*注文内容*/
+	, title varchar(1500) /*商品名*/
+	, qty varchar(5) /*個数*/
+	, id varchar(100) /*ストアアカウント付き注文番号*/
+	, item_id varchar(100) /*商品コード*/
+	, item_option_val varchar(1500) /*商品オプション*/
+	, lead_time_txt varchar(500) /*あす楽*/
+	, item_tax_ratio varchar(5) /*税金率*/
+	, order_time varchar(20) /*注文時間*/
+	, order_status varchar(30) /*処理ステータス*/
+	, ship_nm varchar(30) /*お届け先氏名*/
+	, ship_fst_nm varchar(30) /*お届け先名前*/
+	, ship_last_nm varchar(30) /*お届け先名氏*/
+	, ship_add1 varchar(100) /*お届け住所１行目*/
+	, ship_add2 varchar(100) /*お届け住所２行目*/
+	, ship_city varchar(100) /*お届け市区町村*/
+	, ship_pre varchar(100) /*お届け先都道府県*/
+	, ship_post_no varchar(10) /*お届け先郵便番号*/
+	, ship_nm_kana varchar(100) /*お届け先氏名カナ*/
+	, ship_fst_nm_kana varchar(100) /*お届け先名前カナ*/
+	, ship_last_nm_kana varchar(100) /*お届け先名字カナ*/
+	, ship_phone_no varchar(10) /*お届け先電話番号*/
+	, ship_req_dt varchar(10) /*お届け希望日*/
+	, ship_req_time varchar(20) /*お届け希望時間*/
+	, ship_company_cd varchar(5) /*配送会社*/
+	, ship_ivc_no1 varchar(10) /*お問い合わせ伝票番号*/
+	, ship_ivc_no2 varchar(10) /*お問い合わせ伝票番号２*/
+) default charset = utf8;
+
+
+
+
 /*
  * 190220 데이터 증가에 따른 쿼리 속도 개선을 위해 
  * rakuten_info, amazon_info 테이블에
@@ -717,35 +756,119 @@ set register_date = now();
 select * from exception_master
 
 
-/*
- * 181105
- * 예외데이터 테스트용 데이터
+
+/**
+ * tablet용 쿼리
  * */
-update rakuten_info
-set delivery_add1 = '石川県'
-where seq_id in (5,2,7,4);
 
-update rakuten_info
-set delivery_add1 = '東京都'
-where seq_id in (6,1,3);
+/**
+ * 商品名管理T
+ * */
+drop table prd_info;
+create table prd_info (
+seq_id bigint unsigned primary key auto_increment /*区分ID*/
+, register_date datetime default now() /*データ登録日*/
+, update_date datetime /*データ修正日*/
+, prd_cd varchar(100) /*商品管理番号*/
+, jan_cd varchar(100) /*ＪＡＮコード*/
+, prd_nm varchar(500) /*商品名*/
+, prd_dtl varchar(500) /*商品詳細*/
+, prd_cnt varchar(3) /*商品数*/
+, order_no varchar(3) /*順番*/
+) default charset = utf8;
+
+
+
+/**
+ * 取引先管理T
+ * */
+drop table dealer_info;
+create table dealer_info (
+seq_id bigint unsigned primary key auto_increment /*区分ID*/
+, register_date datetime default now() /*データ登録日*/
+, update_date datetime /*データ修正日*/
+, dealer_id varchar(20) /*取引先ID*/
+, dealer_nm varchar(100) /*取引先名*/
+) default charset = utf8;
+
+
+
+/**
+ * 入出庫在庫統合管理T
+ * */
+drop table stock_info;
+create table stock_info (
+seq_id bigint unsigned primary key auto_increment /*区分ID*/
+, register_date datetime default now() /*データ登録日*/
+, update_date datetime /*データ修正日*/
+, dealer_id varchar(20) /*取引先*/
+, prd_nm varchar(500) /*商品名*/
+, receive_date datetime /*入庫日*/
+, jan_cd varchar(100) /*ＪＡＮコード*/
+, prd_cnt varchar(3) /*商品数量*/
+) default charset = utf8;
+
+
+
 
 /*
- * 190107
- * items 일괄정보데이터 테이블
+ * 200131 tanpin kanri work
+ * */	
+drop table tanpin_info;
+create table tanpin_info (
+seq_id bigint unsigned primary key auto_increment /*区分ID*/
+, register_date datetime default now() /*データ登録日*/
+, update_date datetime /*データ修正日*/
+, maker_cd varchar(20) /*商品メーカー*/
+, maker_nm varchar(100) /*商品メーカー名*/
+, prd_cd varchar(20) /*商品コード*/
+, prd_nm varchar(100) /*商品名*/
+, capacity varchar(10) /*容量*/
+, inprice varchar(6) /*仕入金額*/
+, price varchar(6) /*販売金額*/
+, std_price varchar(6) /*商品販売基準金額*/
+, tax_inc varchar(10) /*商品税(抜、込)*/
+, tax_rt varchar(2) /*商品税率*/
+, dealer_id varchar(20) /*取引先code*/
+, dealer_nm varchar(100) /*取引先会社名*/
+) default charset = utf8;
+
+/*
+ * 200213 product analysis work
  * */
-select * from items_info
+drop table product_analysis;
+create table product_analysis (
+seq_id bigint unsigned primary key auto_increment /*区分ID*/
+, register_date datetime default now() /*データ登録日*/
+, update_date datetime /*データ修正日*/
+, memo varchar(100) /*MEMO*/
+, prd_nm varchar(1000) /*商品名*/
+, sku varchar(13) /*ＳＫＵ*/
+, url varchar(500) /*URL*/
+, prd_config varchar(3) /*商品構成*/
+, prd_price varchar(30) /*1個当たり仕入金額(税別)*/
+, prd_pkg varchar(30) /*包装(箱+印刷+他)*/
+, ship_cost varchar(30) /*送料*/
+, add_ship_cost varchar(30) /*追加送料*/
+, sales_comm_ratio varchar(30) /*販売手数料*/
+, sales_price varchar(30) /*販売価格*/
+, etc varchar(1000) /*備考*/
+, ttl_price varchar(30) /*合計仕入価格*/
+, sales_comm_price varchar(30) /*販売手数料金額*/
+, benefit varchar(30) /*利益*/
+, benefit_ratio varchar(30) /*利益率*/
+) default charset = utf8;
 
-update items_info
-set ctrl_col = '8n'
-where seq_id in (4,5,6)
-
-select * from q10_info
-where seq_id in (92,93)
 
 
 
-select * from rakuten_info /*comment*/
-select * from amazon_info
-select * from q10_info
+/*例外地域マスタ*/
+drop table exception_region_master;
+create table exception_region_master (
+	seq_id bigint unsigned primary key  auto_increment /*区分ID*/
+	, register_date datetime default now() /*データ登録日*/
+	, update_date datetime /*データ修正日*/
+	, exception_data varchar(20) /*例外データ*/
+) default charset = utf8;
 
 
