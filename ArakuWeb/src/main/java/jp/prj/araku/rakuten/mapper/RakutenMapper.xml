@@ -422,6 +422,7 @@ where
 <select id="getTransResult" resultType="Rakuten" parameterType="TransResult">
 select
 	tr.seq_id
+	, ri.seq_id real_seq_id
 	, err_text
 	, date_format(ri.register_date, '%Y/%m/%d') register_date
 	, date_format(ri.update_date, '%Y/%m/%d') update_date

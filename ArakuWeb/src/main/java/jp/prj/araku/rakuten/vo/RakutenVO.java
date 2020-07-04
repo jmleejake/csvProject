@@ -354,6 +354,8 @@ public class RakutenVO {
 	/**別紙番号*/
 	private String attach_no;
 	
+	private String real_seq_id;
+	
 	public String getSeq_id() {
 		return seq_id;
 	}
@@ -1069,6 +1071,13 @@ public class RakutenVO {
 	}
 	public void setAttach_no(String attach_no) {
 		this.attach_no = attach_no;
+	}
+	
+	public String getReal_seq_id() {
+		return real_seq_id;
+	}
+	public void setReal_seq_id(String real_seq_id) {
+		this.real_seq_id = real_seq_id;
 	}
 	
 	@Override

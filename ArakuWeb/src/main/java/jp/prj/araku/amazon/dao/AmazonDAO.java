@@ -39,6 +39,7 @@ import jp.prj.araku.file.vo.SagawaVO;
 import jp.prj.araku.file.vo.YamatoVO;
 import jp.prj.araku.list.mapper.IListMapper;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
+import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
 import jp.prj.araku.list.vo.GlobalSagawaDownVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.TranslationErrorVO;
@@ -504,10 +505,25 @@ public class AmazonDAO {
 			
 			ArrayList<AmazonVO> list = mapper.getTransResult(vo);
 			ArrayList<ExceptionMasterVO> exList = listMapper.getExceptionMaster(null);
+			ArrayList<ExceptionRegionMasterVO> exRegionList = listMapper.getExceptionRegionMaster(null);
 //			boolean chkRet = false;
 			ArrayList<ArakuVO> sList = new ArrayList<>();
 			
 			for (AmazonVO tmp : list) {
+				boolean isEx = false;
+				for(ExceptionRegionMasterVO region : exRegionList) {
+					
+					if(tmp.getShip_address1().contains(region.getException_data())) {
+						isEx = true;
+						AmazonVO av = new AmazonVO();
+						av.setSeq_id(tmp.getReal_seq_id());
+						av.setDelivery_company("1001");
+						mapper.updateAmazonInfo(av);
+					}
+				}
+				
+				if(isEx) continue;
+				
 //				例外テーブルに含んている場合、ファイル作成するように変更する。　2020/06/01
 				for (ExceptionMasterVO exVO : exList) {
 //					chkRet = false;
@@ -1000,9 +1016,28 @@ public class AmazonDAO {
 			
 			ArrayList<AmazonVO> list = mapper.getTransResult(vo);
 			ArrayList<ExceptionMasterVO> exList = listMapper.getExceptionMaster(null);
+			ArrayList<ExceptionRegionMasterVO> exRegionList = listMapper.getExceptionRegionMaster(null);
 			ArrayList<ArakuVO> gsaList = new ArrayList<>();
 			
 			for (AmazonVO tmp : list) {
+				/**
+				 * 사가와 대상 목록중 예외지역마스터(例外地域マスタ)에 있는 값인 경우
+				 * 해당 데이터의 배송회사를 야마토로 update치고
+				 * 야마토로 다운로드 될 수 있게 처리
+				 * */
+				boolean isEx = false;
+				for(ExceptionRegionMasterVO region : exRegionList) {
+					if(tmp.getShip_address1().contains(region.getException_data())) {
+						isEx = true;
+						AmazonVO av = new AmazonVO();
+						av.setSeq_id(tmp.getReal_seq_id());
+						av.setDelivery_company("1001");
+						mapper.updateAmazonInfo(av);
+					}
+				}
+				
+				if(isEx) continue;
+				
 				for (ExceptionMasterVO exVO : exList) {
 					String str= tmp.getResult_text();
 					if(str.contains(exVO.getException_data())) {

@@ -95,6 +95,8 @@ public class AmazonVO {
 	
 	/**お荷物伝票番号*/
 	private String baggage_claim_no;
+	
+	private String real_seq_id;
  	
 	public String getSeq_id() {
 		return seq_id;
@@ -353,6 +355,12 @@ public class AmazonVO {
 	}
 	public void setBaggage_claim_no(String baggage_claim_no) {
 		this.baggage_claim_no = baggage_claim_no;
+	}
+	public String getReal_seq_id() {
+		return real_seq_id;
+	}
+	public void setReal_seq_id(String real_seq_id) {
+		this.real_seq_id = real_seq_id;
 	}
 	
 }

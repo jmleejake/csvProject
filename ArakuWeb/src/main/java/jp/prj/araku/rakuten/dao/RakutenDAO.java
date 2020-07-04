@@ -849,12 +849,31 @@ public class RakutenDAO {
 			ArrayList<ExceptionMasterVO> exList = listMapper.getExceptionMaster(null);
 //			boolean chkRet = false;
 			ArrayList<ArakuVO> sList = new ArrayList<>();
+			ArrayList<ExceptionRegionMasterVO> exRegionList = listMapper.getExceptionRegionMaster(null);
 			
 			for (RakutenVO tmp : list) {
+				/**
+				 * 사가와 대상 목록중 예외지역마스터(例外地域マスタ)에 있는 값인 경우
+				 * 해당 데이터의 배송회사를 야마토로 update치고
+				 * 야마토로 다운로드 될 수 있게 처리
+				 * */
+				boolean isEx = false;
+				for(ExceptionRegionMasterVO region : exRegionList) {
+					if(tmp.getDelivery_add1().contains(region.getException_data())) {
+						isEx = true;
+						RakutenVO rv = new RakutenVO();
+						rv.setSeq_id(tmp.getReal_seq_id());
+						rv.setDelivery_company("1001");
+						mapper.updateRakutenInfo(rv);
+					}
+				}
+				
+				if(isEx) continue;
+				
 				for (ExceptionMasterVO exVO : exList) {
-//					chkRet = false;
+//						chkRet = false;
 					if (tmp.getResult_text().contains(exVO.getException_data())) {
-//						chkRet = true;
+//							chkRet = true;
 						SagawaVO sVO = new SagawaVO();
 						sVO.setDelivery_add1(tmp.getDelivery_add1().replace("\"", ""));
 						sVO.setDelivery_add2(tmp.getDelivery_add2().replace("\"", ""));
@@ -862,7 +881,7 @@ public class RakutenDAO {
 						sVO.setDelivery_post_no(tmp.getDelivery_post_no1().replace("\"", "") + "-" +  tmp.getDelivery_post_no2().replace("\"", ""));
 						sVO.setDelivery_tel(tmp.getDelivery_tel1().replace("\"", "") + "-" + tmp.getDelivery_tel2().replace("\"", "") + "-" + tmp.getDelivery_tel3().replace("\"", ""));
 						sVO.setDelivery_name1(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
-//						sVO.setDelivery_name2(tmp.getDelivery_name().replace("\"", "") + " " + CommonUtil.TITLE_SAMA); //様는 제거하고 두개로 나누지 않고 1에만 이름을 세팅
+//							sVO.setDelivery_name2(tmp.getDelivery_name().replace("\"", "") + " " + CommonUtil.TITLE_SAMA); //様는 제거하고 두개로 나누지 않고 1에만 이름을 세팅
 						
 						sVO.setClient_add1("埼玉県川口市");
 						sVO.setClient_add2("上青木西１丁目19-39エレガンス滝澤ビル1F");
@@ -917,10 +936,9 @@ public class RakutenDAO {
 						sList.add(sVO);
 					}
 				}
-//				if (chkRet) {
-//					continue;
-//				}
-
+//					if (chkRet) {
+//						continue;
+//					}
 			}
 			
 			CommonUtil.executeCSVDownload(csvWriter, writer, header, sList);
@@ -1240,7 +1258,6 @@ public class RakutenDAO {
 		log.debug("encoding : " + fileEncoding);
 		
 		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
-		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
 		BufferedWriter writer = null;
 		CSVWriter csvWriter = null;
 		
@@ -1276,30 +1293,9 @@ public class RakutenDAO {
 			vo.setDelivery_company(delivery_company);
 			ArrayList<ArakuVO> list = new ArrayList<>();
 			ArrayList<RCSVDownVO> csvList = mapper.getRCSVDownList(vo);
-			ArrayList<ExceptionRegionMasterVO> exRegionList = listMapper.getExceptionRegionMaster(null);
 			
-			/**
-			 * 사가와 대상 목록중 예외지역마스터(例外地域マスタ)에 있는 값인 경우
-			 * 해당 데이터의 배송회사를 야마토로 update치고
-			 * 야마토로 다운로드 될 수 있게 처리
-			 * */
 			for(RCSVDownVO csv : csvList) {
-				boolean isEx = false;
-				if("SAGA".equals(fileNm)) {
-					for(ExceptionRegionMasterVO region : exRegionList) {
-						if(csv.getDelivery_add1().contains(region.getException_data())) {
-							isEx = true;
-							RakutenVO rv = new RakutenVO();
-							rv.setSeq_id(csv.getSeq_id());
-							rv.setDelivery_company("1001");
-							mapper.updateRakutenInfo(rv);
-						}
-					}
-				}
-				
-				if(!isEx) {
-					list.add(csv);
-				}
+				list.add(csv);
 			}
 			
 			CommonUtil.executeCSVDownload(csvWriter, writer, header, list);
@@ -1578,9 +1574,28 @@ public class RakutenDAO {
 			
 			ArrayList<RakutenVO> list = mapper.getTransResult(vo);
 			ArrayList<ExceptionMasterVO> exList = listMapper.getExceptionMaster(null);
+			ArrayList<ExceptionRegionMasterVO> exRegionList = listMapper.getExceptionRegionMaster(null);
 			ArrayList<ArakuVO> gsaList = new ArrayList<>();
 
 			for (RakutenVO tmp : list) {
+				/**
+				 * 사가와 대상 목록중 예외지역마스터(例外地域マスタ)에 있는 값인 경우
+				 * 해당 데이터의 배송회사를 야마토로 update치고
+				 * 야마토로 다운로드 될 수 있게 처리
+				 * */
+				boolean isEx = false;
+				for(ExceptionRegionMasterVO region : exRegionList) {
+					if(tmp.getDelivery_add1().contains(region.getException_data())) {
+						isEx = true;
+						RakutenVO rv = new RakutenVO();
+						rv.setSeq_id(tmp.getReal_seq_id());
+						rv.setDelivery_company("1001");
+						mapper.updateRakutenInfo(rv);
+					}
+				}
+				
+				if(isEx) continue;
+				
 				for (ExceptionMasterVO exVO : exList) {
 					String str= tmp.getResult_text();
 					// 例外テーブルに含んている場合、ファイル作成するように変更する。　2020/06/01
@@ -1593,8 +1608,8 @@ public class RakutenDAO {
 								gsaVO.setOrder_no(tmp.getOrder_no());
 								gsaVO.setConsign_nm(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
 								gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", "") + " " + tmp.getDelivery_name_kana().replace("\"", ""));
-								gsaVO.setConsign_add1(tmp.getDelivery_add1()+tmp.getDelivery_add2() + " " + tmp.getDelivery_add3());
-								//gsaVO.setConsign_add2(tmp.getDelivery_add2() + " " + tmp.getDelivery_add3());
+								gsaVO.setConsign_add1(tmp.getDelivery_add1());
+								gsaVO.setConsign_add2(tmp.getDelivery_add2() + " " + tmp.getDelivery_add3());
 								gsaVO.setConsign_post_no(tmp.getDelivery_post_no1()+"-"+tmp.getDelivery_post_no2());
 								gsaVO.setConsign_tel(tmp.getDelivery_tel1()+"-"+tmp.getDelivery_tel2()+"-"+tmp.getDelivery_tel3());
 								// あす楽希望이 1인 경우
@@ -1608,9 +1623,6 @@ public class RakutenDAO {
 				        		}
 								gsaVO.setPkg(tmp.getUnit_no());
 								gsaVO.setItem_nm(str.substring(i, Math.min(i + 10, str.length())).trim());
-								gsaVO.setDelivery_tm("10");
-								gsaVO.setUnit_price("500");	
-								gsaVO.setItem_pcs("9");					
 								gsaVO.setItem_origin("JP");
 								gsaList.add(gsaVO);
 							}
@@ -1621,8 +1633,8 @@ public class RakutenDAO {
 							gsaVO.setOrder_no(tmp.getOrder_no());
 							gsaVO.setConsign_nm(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
 							gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", "") + " " + tmp.getDelivery_name_kana().replace("\"", ""));
-							gsaVO.setConsign_add1(tmp.getDelivery_add1()+tmp.getDelivery_add2() + " " + tmp.getDelivery_add3());
-							//gsaVO.setConsign_add2(tmp.getDelivery_add2() + " " + tmp.getDelivery_add3());
+							gsaVO.setConsign_add1(tmp.getDelivery_add1());
+							gsaVO.setConsign_add2(tmp.getDelivery_add2() + " " + tmp.getDelivery_add3());
 							gsaVO.setConsign_post_no(tmp.getDelivery_post_no1()+"-"+tmp.getDelivery_post_no2());
 							gsaVO.setConsign_tel(tmp.getDelivery_tel1()+"-"+tmp.getDelivery_tel2()+"-"+tmp.getDelivery_tel3());
 							// あす楽希望이 1인 경우
@@ -1636,9 +1648,6 @@ public class RakutenDAO {
 			        		}
 							gsaVO.setPkg(tmp.getUnit_no());
 							gsaVO.setItem_nm(str);
-							gsaVO.setDelivery_tm("10");
-							gsaVO.setUnit_price("500");	
-							gsaVO.setItem_pcs("9");		
 							gsaVO.setItem_origin("JP");
 							gsaList.add(gsaVO);
 						}
