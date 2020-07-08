@@ -14,6 +14,27 @@ $(document).ready(function() {
 	showPrdMaster();
 	showDealerMaster();
 	showExceptionRegionMaster();
+	
+	/*
+	 * [마스터화면] 일주일 이상의 라쿠텐, 아마존, 큐텐, 야후 데이터 삭제
+	 * */
+	$("#btn_weekDataDel").on("click", function() {
+		var tag = "<tr>";
+		$.ajax({
+		    url: "delWeekData"
+		    , contentType: "application/json; charset=utf-8"
+		    , success: function(res) {
+		    	res.forEach(function(data) {
+		    		tag+="<td style='padding:3px;'>";
+		    		tag+=data;
+		    		tag+="</td>";
+		    	});
+		    	tag += "</tr>";
+		    	tag += "<tr><td colspan='4' style='text-align:center;'>削除完了</td></tr>";
+		    	$("#t_result").append(tag);
+		    }
+		});
+	});
 });
 </script>
 </head>
@@ -33,6 +54,18 @@ $(document).ready(function() {
 <c:if test="${'TA' == type }">
 <jsp:include page="../tabletTop.jsp"></jsp:include>
 </c:if>
+<div class="container-fluid">
+<div class="well container-fluid">
+<div class="col-sm-3">
+<button id="btn_weekDataDel" class="btn btn-danger">一週以上データ削除</button>
+</div>
+<div class="col-sm-6">
+<table>
+	<tbody id="t_result"></tbody>
+</table>
+</div>
+</div>
+</div>
 <!-- S상품관리마스터 -->
 <div class="container-fluid">
 <div class="well container-fluid">

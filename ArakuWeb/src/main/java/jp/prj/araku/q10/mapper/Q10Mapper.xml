@@ -169,6 +169,9 @@ left outer join translation_err terr on terr.trans_target_id = qi.seq_id and ter
 	</if>
 	</trim>
 	</when>
+	<when test="search_type =='weekData'">
+	<![CDATA[ qi.register_date < date_add(now(), interval -7 day) ]]>
+	</when>
 	<otherwise>
 	<if test="seq_id_list != null">
 		qi.seq_id in

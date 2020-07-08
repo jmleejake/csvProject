@@ -16,6 +16,7 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 public class CommonUtil {
 	public static final String SEARCH_TYPE_SRCH = "srch";
 	public static final String SEARCH_TYPE_SAGAWA = "saga";
+	public static final String SEARCH_TYPE_WEEKDATA = "weekData";
 	
 	public static final String UPDATE_TYPE_TWOMORE="twomore";
 	

@@ -328,4 +328,11 @@ public class Q10Controller {
 		log.info("deleteExceptionRegionMaster");
 		return listDao.deleteExceptionRegionMaster(list);
 	}
+	
+	@ResponseBody
+	@RequestMapping(value="/delWeekData")
+	public ArrayList<String> deleteAllWeekAfterData() {
+		return listDao.deleteAllWeekAfterData();
+	}
+	
 }

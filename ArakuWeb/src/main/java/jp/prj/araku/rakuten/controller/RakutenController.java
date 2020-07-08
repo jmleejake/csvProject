@@ -517,4 +517,10 @@ public class RakutenController {
 		log.info("deleteExceptionRegionMaster");
 		return listDao.deleteExceptionRegionMaster(list);
 	}
+	
+	@ResponseBody
+	@RequestMapping(value="/delWeekData")
+	public ArrayList<String> deleteAllWeekAfterData() {
+		return listDao.deleteAllWeekAfterData();
+	}
 }

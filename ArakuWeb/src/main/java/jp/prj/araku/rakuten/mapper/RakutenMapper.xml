@@ -402,6 +402,9 @@ left outer join translation_err terr on terr.trans_target_id = ri.seq_id and ter
 		</if>
 		</trim>
 		</when>
+		<when test="search_type =='weekData'">
+		<![CDATA[ ri.register_date < date_add(now(), interval -7 day) ]]>
+		</when>
 		<otherwise>
 		<if test="start_date != null and start_date != ''">
 		ri.register_date between str_to_date(#{start_date}, '%Y/%m/%d %H:%i:%s') and now()

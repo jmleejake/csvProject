@@ -26,9 +26,13 @@ import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.SagawaUpdateVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
+import jp.prj.araku.q10.mapper.IQ10Mapper;
+import jp.prj.araku.q10.vo.Q10VO;
 import jp.prj.araku.rakuten.mapper.IRakutenMapper;
 import jp.prj.araku.rakuten.vo.RakutenVO;
 import jp.prj.araku.util.CommonUtil;
+import jp.prj.araku.yahoo.mapper.IYahooMapper;
+import jp.prj.araku.yahoo.vo.YahooVO;
 
 /**
  * @comment
@@ -276,5 +280,60 @@ public class ListDAO {
 		}
 		
 		return getExceptionRegionMaster(null);
+	}
+	
+	public ArrayList<String> deleteAllWeekAfterData() {
+		log.info("deleteAllWeekAfterData");
+		ArrayList<String> ret = new ArrayList<>();
+		IRakutenMapper rMapper = sqlSession.getMapper(IRakutenMapper.class);
+		IAmazonMapper aMapper = sqlSession.getMapper(IAmazonMapper.class);
+		IQ10Mapper qMapper = sqlSession.getMapper(IQ10Mapper.class);
+		IYahooMapper yMapper = sqlSession.getMapper(IYahooMapper.class);
+		
+		RakutenVO rVO = new RakutenVO();
+		rVO.setSearch_type(CommonUtil.SEARCH_TYPE_WEEKDATA);
+		ArrayList<RakutenVO> rList = rMapper.getRakutenInfo(rVO);
+		int cnt = 0;
+		for(RakutenVO vo : rList) {
+			String seq_id = vo.getSeq_id();
+			rMapper.deleteRakutenInfo(seq_id);
+			cnt++;
+		}
+		ret.add("RAKUTEN: "+cnt+"件");
+		cnt = 0;
+		AmazonVO aVO = new AmazonVO();
+		aVO.setSearch_type(CommonUtil.SEARCH_TYPE_WEEKDATA);
+		ArrayList<AmazonVO> aList = aMapper.getAmazonInfo(aVO);
+		for(AmazonVO vo : aList) {
+			String seq_id = vo.getSeq_id();
+			aMapper.deleteAmazonInfo(seq_id);
+			cnt++;
+		}
+		ret.add("AMAZON: "+cnt+"件");
+		cnt = 0;
+		Q10VO qVO = new Q10VO();
+		qVO.setSearch_type(CommonUtil.SEARCH_TYPE_WEEKDATA);
+		ArrayList<Q10VO> qList = qMapper.getQ10Info(qVO);
+		for(Q10VO vo : qList) {
+			String seq_id = vo.getSeq_id();
+			qMapper.deleteQ10Info(seq_id);
+			cnt++;
+					
+		}
+		ret.add("Q10: "+cnt+"件");
+		cnt = 0;
+		YahooVO yVO = new YahooVO();
+		yVO.setSearch_type(CommonUtil.SEARCH_TYPE_WEEKDATA);
+		ArrayList<YahooVO> yList = yMapper.getYahooInfo(yVO);
+		for(YahooVO vo : yList) {
+			String seq_id = vo.getSeq_id();
+			yMapper.deleteYahooInfo(seq_id);
+			cnt++;
+		}
+		ret.add("YAHOO: "+cnt+"件");
+		
+		log.info("return: " + ret.toString());
+		
+		return ret;
 	}
 }

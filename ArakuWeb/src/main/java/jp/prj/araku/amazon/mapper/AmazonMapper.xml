@@ -136,6 +136,9 @@ left outer join translation_err terr on terr.trans_target_id = ai.seq_id and ter
 	</if>
 	</trim>
 	</when>
+	<when test="search_type =='weekData'">
+	<![CDATA[ ai.register_date < date_add(now(), interval -7 day) ]]>
+	</when>
 	<otherwise>
 	<if test="order_id != null and order_id != '' and order_item_id != null and order_item_id != ''">
 	order_id = #{order_id}
