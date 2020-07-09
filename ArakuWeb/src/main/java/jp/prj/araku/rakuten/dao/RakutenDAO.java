@@ -136,6 +136,7 @@ public class RakutenDAO {
         				// 다음 레코드로 진행
                 		continue;
         			} else {
+        				/* 2020-07-10
         				// 商品ID가 다르면 한사람이 여러 상품을 주문한 것으로 간주, 에러리스트에 넣은후 다음 레코드로 진행
         				log.debug("[ERR]: " + vo.getOrder_no());
         				if(exceptionList.add(vo.getOrder_no().trim())) {
@@ -150,6 +151,7 @@ public class RakutenDAO {
         				vo.setAttach_no("[別紙"+(exceptionList.size())+"] ");
         				errList.add(vo);
             			continue;
+            			*/
         			}
         		}
         		
@@ -164,10 +166,12 @@ public class RakutenDAO {
         		try {
         			mapper.insertRakutenInfo(vo);
         		} catch (Exception e) {
+        			/* 2020-07-10
         			// 에러 발생시 에러리스트에 넣은후 다음 레코드로 진행
         			log.debug("[ERR]: " + vo.getOrder_no());
         			errList.add(vo);
         			continue;
+        			*/
 				}
                 log.debug("inserted rakuten seq_id :: " + vo.getSeq_id());
                 log.debug("==========================");
@@ -242,6 +246,7 @@ public class RakutenDAO {
 //			HttpSession session = req.getSession();
 //			session.setAttribute("errSize", errList.size());
 //			session.setAttribute("errList", errList);
+			/* 2020-07-10
 			if(errList.size() > 0) {
 				ArrayList<RakutenDuplicateVO> duplList = new ArrayList<>();
 				for(RakutenVO rvo : errList) {
@@ -310,6 +315,7 @@ public class RakutenDAO {
 						}
 				}
 			}
+			*/
 			
 			ret = "アップロードを完了しました。";
 		}
