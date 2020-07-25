@@ -17,6 +17,7 @@ public class CommonUtil {
 	public static final String SEARCH_TYPE_SRCH = "srch";
 	public static final String SEARCH_TYPE_SAGAWA = "saga";
 	public static final String SEARCH_TYPE_WEEKDATA = "weekData";
+	public static final String SEARCH_TYPE_SCREEN = "screen";
 	
 	public static final String UPDATE_TYPE_TWOMORE="twomore";
 	
@@ -29,6 +30,7 @@ public class CommonUtil {
 	public static final String JPCOMMA = "、";
 	
 	public static final String TRANS_TARGET_R = "R"; /*R:楽天*/
+	public static final String TRANS_TARGET_RF = "RF"; /*RF:楽天の冷凍冷蔵区分*/
 	public static final String TRANS_TARGET_A = "A"; /*A:アマゾン*/
 	public static final String TRANS_TARGET_Q = "Q"; /*Q:qoo10*/
 	public static final String TRANS_TARGET_Y = "Y"; /*Y:yahoo*/

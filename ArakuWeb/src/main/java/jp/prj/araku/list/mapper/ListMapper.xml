@@ -30,11 +30,17 @@ from
 		</if>
 		</trim>
 		</when>
+		<when test="search_type =='screen'">
+		<if test="keyword != null and keyword != ''"> 
+		(before_trans like '%${keyword}%' or after_trans like '%${keyword}%')
+		</if>
+		</when>
 		<otherwise>
 		register_date between str_to_date(#{start_date}, '%Y/%m/%d %H:%i:%s') and now()
 		</otherwise>
 	</choose>
 </where>	
+order by register_date desc, update_date desc
 </select>
 
 <insert id="addTransInfo" parameterType="Trans" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">

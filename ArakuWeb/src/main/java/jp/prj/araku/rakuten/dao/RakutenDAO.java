@@ -54,7 +54,6 @@ import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
 import jp.prj.araku.rakuten.mapper.IRakutenMapper;
 import jp.prj.araku.rakuten.vo.RakutenDeleteVO;
-import jp.prj.araku.rakuten.vo.RakutenDuplicateVO;
 import jp.prj.araku.rakuten.vo.RakutenVO;
 import jp.prj.araku.util.ArakuVO;
 import jp.prj.araku.util.CommonUtil;
@@ -69,7 +68,7 @@ public class RakutenDAO {
 	
 	private static final Logger log = Logger.getLogger("jp.prj.araku.rakuten");
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+//	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Transactional
 	public String insertRakutenInfo(MultipartFile rakUpload, String fileEncoding, HttpServletRequest req, String duplDownPath) throws IOException {
 		log.info("insertRakutenInfo");
@@ -84,9 +83,9 @@ public class RakutenDAO {
 		log.debug("size: " + rakUpload.getSize());
 		
 		BufferedReader reader = null;
-		ArrayList<RakutenVO> errList = new ArrayList<>();
+//		ArrayList<RakutenVO> errList = new ArrayList<>();
 		// 2019-10-09: 別紙처리
-    	HashSet<String> exceptionList = new HashSet<>();
+//    	HashSet<String> exceptionList = new HashSet<>();
 		try  {
 			reader = new BufferedReader(
 					new InputStreamReader(rakUpload.getInputStream(), fileEncoding));
@@ -120,6 +119,14 @@ public class RakutenDAO {
             		}
             	}
             	
+            	// あす楽希望이 1인 경우
+        		if (null != vo.getTomorrow_hope() && vo.getTomorrow_hope().equals("1")) {
+        			// お届け日指定 컬럼에 데이터 등록일 +1
+        			vo.setDelivery_date_sel(CommonUtil.getDate("yyyy/MM/dd", 1));
+        			// お届け時間帯 컬럼에 午前中
+        			vo.setDelivery_time(CommonUtil.TOMORROW_MORNING);
+        		}
+            	
             	// 데이터 중복체크
             	RakutenVO searchVO = new RakutenVO();
             	searchVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
@@ -127,6 +134,7 @@ public class RakutenDAO {
             	
             	ArrayList<RakutenVO> dupCheckList = mapper.getRakutenInfo(searchVO);
         		
+            	boolean isInserted = false;
             	// 이미 존재하는 受注番号가 있으면
         		if (dupCheckList.size() == 1) {
         			// 2019-10-08: 업로드시 존재하는 주문번호가 있다면 등록일을 현재일로 갱신
@@ -136,6 +144,19 @@ public class RakutenDAO {
         				// 다음 레코드로 진행
                 		continue;
         			} else {
+        				/*
+        				 * 2020-07-23
+        				 *   1. 라쿠텐파일 업로드시 한 주문번호에 여러건의 상품번호가 있을경우 
+        				 *   냉동냉장구분마스터(rakuten_frozen_info) 테이블에 해당 데이터들을 넣어준다.
+        				 *   2. 업로드후 주문정보화면에서 치환작업 진행시 
+        				 *   냉동냉장구분마스터(rakuten_frozen_info) 테이블에 데이터가 있을 경우
+        				 *   해당 데이터들에 대해서도 함께 진행한다.
+        				 * */
+        				mapper.insertRakutenFrozenInfo(vo);
+        				log.debug("insertRakutenFrozenInfo seq_id :: " + vo.getSeq_id());
+        				isInserted = true;
+                        log.debug("==========================");
+        				
         				/* 2020-07-10
         				// 商品ID가 다르면 한사람이 여러 상품을 주문한 것으로 간주, 에러리스트에 넣은후 다음 레코드로 진행
         				log.debug("[ERR]: " + vo.getOrder_no());
@@ -155,26 +176,20 @@ public class RakutenDAO {
         			}
         		}
         		
-        		// あす楽希望이 1인 경우
-        		if (null != vo.getTomorrow_hope() && vo.getTomorrow_hope().equals("1")) {
-        			// お届け日指定 컬럼에 데이터 등록일 +1
-        			vo.setDelivery_date_sel(CommonUtil.getDate("yyyy/MM/dd", 1));
-        			// お届け時間帯 컬럼에 午前中
-        			vo.setDelivery_time(CommonUtil.TOMORROW_MORNING);
+        		if(!isInserted) {
+        			try {
+            			mapper.insertRakutenInfo(vo);
+            		} catch (Exception e) {
+            			/* 2020-07-10
+            			// 에러 발생시 에러리스트에 넣은후 다음 레코드로 진행
+            			log.debug("[ERR]: " + vo.getOrder_no());
+            			errList.add(vo);
+            			continue;
+            			*/
+    				}
+                    log.debug("insertRakutenInfo seq_id :: " + vo.getSeq_id());
+                    log.debug("==========================");
         		}
-        		
-        		try {
-        			mapper.insertRakutenInfo(vo);
-        		} catch (Exception e) {
-        			/* 2020-07-10
-        			// 에러 발생시 에러리스트에 넣은후 다음 레코드로 진행
-        			log.debug("[ERR]: " + vo.getOrder_no());
-        			errList.add(vo);
-        			continue;
-        			*/
-				}
-                log.debug("inserted rakuten seq_id :: " + vo.getSeq_id());
-                log.debug("==========================");
                 
                 // 項目・選択肢 (상품옵션) 처리
                 TranslationVO transVO = new TranslationVO();
@@ -351,6 +366,17 @@ public class RakutenDAO {
 		
 		IRakutenMapper rMapper = sqlSession.getMapper(IRakutenMapper.class);
 		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
+		
+		/*
+		 * 2020-07-23
+		 *   1. 라쿠텐파일 업로드시 한 주문번호에 여러건의 상품번호가 있을경우 
+		 *   냉동냉장구분마스터(rakuten_frozen_info) 테이블에 해당 데이터들을 넣어준다.
+		 *   2. 업로드후 주문정보화면에서 치환작업 진행시 
+		 *   냉동냉장구분마스터(rakuten_frozen_info) 테이블에 데이터가 있을 경우
+		 *   해당 데이터들에 대해서도 함께 진행한다.
+		 * */
+		ArrayList<RakutenVO> frozenList = rMapper.getRakutenFrozenInfo();
+		ret.addAll(executeFrozenTranslate(frozenList));
 		
 		TranslationVO transVO = new TranslationVO();
 		String transedName;
@@ -552,6 +578,216 @@ public class RakutenDAO {
 		return ret;
 	}
 	
+	@Transactional
+	public ArrayList<String> executeFrozenTranslate(ArrayList<RakutenVO> targetList) {
+		log.info("executeFrozenTranslate");
+		log.debug(targetList);
+		
+		ArrayList<String> ret = new ArrayList<>();
+		
+		IRakutenMapper rMapper = sqlSession.getMapper(IRakutenMapper.class);
+		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
+		
+		TranslationVO transVO = new TranslationVO();
+		String transedName;
+//		int productSetNo, unitNo;
+		int unitNo;
+		for (RakutenVO vo : targetList) {
+			// 이전에 에러처리 된 데이터가 있을경우 제거
+			TranslationErrorVO errVO = new TranslationErrorVO();
+			errVO.setTrans_target_id(vo.getSeq_id());
+			errVO.setTrans_target_type(CommonUtil.TRANS_TARGET_RF);
+			String err_seq_id = listMapper.getTranslationErr(errVO);
+			if (err_seq_id != null && err_seq_id != "") {
+				errVO.setSeq_id(err_seq_id);
+				listMapper.deleteTranslationErr(errVO);
+			}
+			
+			transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+			transVO.setKeyword(vo.getProduct_name());
+			ArrayList<TranslationVO> searchRet = listMapper.getTransInfo(transVO);
+			
+			if(searchRet.size() > 0) {
+				// 치환후 상품명
+				transedName = searchRet.get(0).getAfter_trans();
+				// 치환한 결과가 없을 경우 에러처리
+				if (transedName == null) {
+					errVO.setErr_text(CommonUtil.TRANS_ERR);
+					listMapper.insertTranslationErr(errVO);
+					transedName = "";
+				}
+			} else {
+				errVO.setErr_text(CommonUtil.TRANS_ERR);
+				listMapper.insertTranslationErr(errVO);
+				transedName = "";
+			}
+			// 상품세트수
+			// [MOD-0819]
+//			String[] arr = transedName.split(CommonUtil.SPLIT_BY_STAR);
+//			productSetNo = Integer.parseInt(arr[1]);
+			// 상품개수
+			unitNo = Integer.parseInt(vo.getUnit_no());
+			
+			// [MOD-1011] 
+			Integer intsu = new Integer (unitNo); 
+			String sintsu = intsu.toString(); 
+			String su = CommonUtil.hankakuNumToZenkaku(sintsu); 
+			
+			StringBuffer buf = null;
+			String optionContent = vo.getProduct_option();
+			if(optionContent != null && optionContent.length() > 1) {
+				// 옵션에 대한 처리
+				HashSet<String> cntCheck = new HashSet<>();
+				HashMap<String, Integer> map = new HashMap<>();
+				
+				String[] strArr = vo.getProduct_option().split(CommonUtil.SPLIT_BY_NPER);
+				ArrayList<String> list = new ArrayList<>();
+				for (int i=0; i<strArr.length; i++) {
+					// 이전에 에러처리 된 데이터가 있을경우 제거 (옵션이 여러개인 경우 중복제거)
+					err_seq_id = listMapper.getTranslationErr(errVO);
+					if (err_seq_id != null && err_seq_id != "") {
+						errVO.setSeq_id(err_seq_id);
+						listMapper.deleteTranslationErr(errVO);
+					}
+					
+					log.debug(String.format("%d :: %s", i, strArr[i]));
+					
+					//2020.1.16 kim  옵션처리전에 注 표시가 있으면 처리하지 않고 다음 옵션처리함.
+	            	if(null != strArr[i] && !strArr[i].contains("注")) {
+						String[] data = strArr[i].split(CommonUtil.SPLIT_BY_COLON);
+						String value = null;
+						if (data.length > 1) {
+							// 예외적인 경우로 콜론 바로 뒤에 데이터가 있는것이 아니라 콜론 두개 뒤에 있는 경우가 있어 스플릿 결과의 맨 마지막 값을 가져올 수 있도록 처리
+							value = data[data.length-1];
+							log.debug(String.format("option value1 :: %s", value));
+							
+							transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+							transVO.setKeyword(value.trim());
+							searchRet = listMapper.getTransInfo(transVO);
+							
+							try {
+								list.add(searchRet.get(0).getAfter_trans().trim());
+							} catch (NullPointerException e) {
+								errVO.setErr_text(CommonUtil.TRANS_ERR);
+								listMapper.insertTranslationErr(errVO);
+								continue;
+							}
+						} 
+	            	}
+					/*
+					// [MOD-0826]
+					else {
+						// 콜론이 아닌 일본어자판 컴마로 나뉘어져있는 경우가 있어 처리
+						data = strArr[i].split(CommonUtil.JPCOMMA);
+						for (String value2 : data) {
+							log.debug(String.format("option value2 :: %s", value2));
+							list.add(value2.trim());
+						}
+					}
+					
+					// 거의 없겠다만 콜론과 일본어자판 컴마가 같이 있는 경우도 있어 처리
+					if (data[0].contains(CommonUtil.JPCOMMA)) {
+						data = data[0].split(CommonUtil.JPCOMMA);
+						for (String value3 : data) {
+							log.debug(String.format("option value3 :: %s", value3));
+							list.add(value3.trim());
+						}
+					}
+					*/
+				}
+				log.debug("option list : " + list);
+				
+				for (String str : list) {
+					String trimmed = str.trim();
+					if (cntCheck.add(trimmed)) {
+						map.put(trimmed, 1);
+					} else {
+						// 이미 존재하는 옵션명의 경우 +1후 map에 저장
+						int recnt = map.get(trimmed);
+						map.put(trimmed, recnt+1);
+					}
+				}
+				log.debug("option map : " + map);
+				
+				Set<String> optionNames = map.keySet();
+				buf = new StringBuffer(transedName);
+				buf.append(" ");
+				
+				// 2020/01/27 ネコポス対応の為、注文件数が１以上の場合、通常出荷にする。
+				if (transedName.contains("全無") && unitNo >1) {
+					buf = new StringBuffer(transedName + "×" + su);
+				}
+				
+				for (String optionName : optionNames) {
+					// 옵션개수, 상품개수를 곱하여 치환결과에 반영
+//					buf.append(optionName + "*" + (map.get(optionName)*productSetNo*unitNo)); // [MOD-0819]
+//					buf.append(optionName + "*" + (map.get(optionName)*unitNo)); // [MOD-1011] 
+					
+					Integer unitsu = map.get(optionName)*unitNo; 
+					// [MOD-1011] 
+					String unitsu1 = unitsu.toString(); 
+					String su1 = CommonUtil.hankakuNumToZenkaku(unitsu1); 
+					buf.append(optionName + "×" +su1); 
+
+					if (optionNames.size() > 1) {
+						buf.append(";");
+					}
+				}
+			} else {
+				// 옵션이 없는 경우, 상품세트수와 상품개수를 곱하여 치환결과에 반영
+//				buf = new StringBuffer(arr[0] + "*" + (productSetNo*unitNo)); // [MOD-0819]
+//				buf = new StringBuffer(transedName + "*" + unitNo); // [MOD-1011] 
+				buf = new StringBuffer(transedName + "×" + su);
+			}
+			
+			String last = buf.toString();
+			String finalStr = null;
+			try {
+				finalStr = last.substring(0, last.lastIndexOf(","));
+			} catch (StringIndexOutOfBoundsException e) {
+				finalStr = last;
+			}
+			log.debug("final String : " + finalStr);
+			
+			// 지역별 배송코드 세팅 (csv다운로드 기능)
+			RegionMasterVO rmVO = new RegionMasterVO();
+			rmVO.setKeyword(vo.getDelivery_add1());
+			ArrayList<RegionMasterVO> regionM = listMapper.getRegionMaster(rmVO);
+			
+			vo.setDelivery_company(regionM.get(0).getDelivery_company());
+			log.debug("Update Rakuten Frozen info : " + vo);
+			rMapper.updateRakutenFrozenInfo(vo);
+			
+			TranslationResultVO resultVO = new TranslationResultVO();
+			resultVO.setTrans_target_id(vo.getSeq_id());
+			resultVO.setTrans_target_type(CommonUtil.TRANS_TARGET_RF);
+			
+			//20200116 kim　変換後が空白の場合、”.”を設定する。
+			if (vo.getProduct_name().contains("別紙")) {
+				resultVO.setResult_text(".");
+			}else {
+				resultVO.setResult_text(finalStr);
+			}
+			
+			// 이미 치환된 결과가 있는 trans_target_id이면 update, 아니면 insert
+			ArrayList<RakutenVO> transResult = rMapper.getTransResult(resultVO);
+			if (transResult.size() > 0) {
+				listMapper.modTransResult(resultVO);
+				
+				log.debug("seq_id : " + transResult.get(0).getSeq_id());
+				ret.add(transResult.get(0).getSeq_id());
+			} else {
+				listMapper.addTransResult(resultVO);
+				
+				log.debug("seq_id : " + resultVO.getSeq_id());
+				ret.add(resultVO.getSeq_id());
+			}
+			
+		}
+		
+		return ret;
+	}
+	
 	public ArrayList<RakutenVO> getTransResult(String id_lst) {
 		log.info("getTransResult");
 		id_lst = id_lst.replace("[", "");
@@ -566,7 +802,96 @@ public class RakutenDAO {
 		TranslationResultVO vo = new TranslationResultVO();
 		vo.setSeq_id_list(list);
 		
-		return mapper.getTransResult(vo);
+		ArrayList<RakutenVO> ret = mapper.getTransResult(vo);
+		
+		String orderNo;
+		HashMap<String, ArrayList<Integer>> zenkoku = new HashMap<>();
+		HashMap<String, ArrayList<Integer>> frozen = new HashMap<>();
+		HashMap<String, ArrayList<Integer>> fridge = new HashMap<>();
+		
+		ArrayList<Integer> zenkokuCnt = new ArrayList<>();
+		ArrayList<Integer> frozenCnt = new ArrayList<>();
+		ArrayList<Integer> fridgeCnt = new ArrayList<>();
+		
+		HashSet<String> orderNoLst = new HashSet<>();
+		
+		for(int i=0; i<ret.size(); i++) {
+			RakutenVO rVO = ret.get(i);
+			orderNo = rVO.getOrder_no();
+			
+			if(!orderNoLst.add(orderNo)) {
+				if (rVO.getProduct_name().contains("全国送料無料")) {
+					zenkokuCnt.add(i);
+					zenkoku.put(orderNo, zenkokuCnt);
+				}else if (rVO.getProduct_name().contains("冷凍")) {
+					frozenCnt.add(i);
+					frozen.put(orderNo, frozenCnt);
+				}else if (rVO.getProduct_name().contains("冷蔵")) {
+					fridgeCnt.add(i);
+					fridge.put(orderNo, fridgeCnt);
+				}else {
+					zenkokuCnt.add(i);
+					zenkoku.put(orderNo, zenkokuCnt);
+				}
+			}else {
+				zenkokuCnt = new ArrayList<>();
+				frozenCnt = new ArrayList<>();
+				fridgeCnt = new ArrayList<>();
+				
+				if (rVO.getProduct_name().contains("全国送料無料")) {
+					zenkokuCnt.add(i);
+					zenkoku.put(orderNo, zenkokuCnt);
+				}else if (rVO.getProduct_name().contains("冷凍")) {
+					frozenCnt.add(i);
+					frozen.put(orderNo, frozenCnt);
+				}else if (rVO.getProduct_name().contains("冷蔵")) {
+					fridgeCnt.add(i);
+					fridge.put(orderNo, fridgeCnt);
+				}else {
+					zenkokuCnt.add(i);
+					zenkoku.put(orderNo, zenkokuCnt);
+				}
+			}
+			
+			
+		}
+		
+		for(String key : orderNoLst) {
+			ArrayList<Integer> iZen = zenkoku.get(key);
+			ArrayList<Integer> iFro = frozen.get(key);
+			ArrayList<Integer> iFri = fridge.get(key);
+			
+			if(null != iZen && iZen.size() > 1) {
+				for(int j=0; j<iZen.size(); j++) {
+					int val = iZen.get(j);
+					if(j==0) {
+						ret.get(val).setResult_text(".");
+					}else {
+						ret.remove(val);
+					}
+				}
+			}else if(null != iFro && iFro.size() > 1) {
+				for(int j=0; j<iFro.size(); j++) {
+					int val = iFro.get(j);
+					if(j==0) {
+						ret.get(val).setResult_text(".");
+					}else {
+						ret.remove(val);
+					}
+				}
+			}else if(null != iFri && iFri.size() > 1) {
+				for(int j=0; j<iFri.size(); j++) {
+					int val = iFri.get(j);
+					if(j==0) {
+						ret.get(val).setResult_text(".");
+					}else {
+						ret.remove(val);
+					}
+				}
+			}
+		}
+		
+		return ret;
 	}
 	
 	public void yamatoFormatDownload(
@@ -1671,5 +1996,11 @@ public class RakutenDAO {
 				writer.close();
 			}
 		}
+	}
+	
+	public int deleteRakutenFrozenInfo() {
+		log.info("deleteRakutenFrozenInfo");
+		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
+		return mapper.deleteRakutenFrozenInfo();
 	}
 }

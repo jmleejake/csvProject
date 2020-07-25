@@ -27,7 +27,7 @@ $(document).ready(function() {
 <div class="container-fluid">
 <div class="well container-fluid">
 	<form action="getTrans" id="transForm">
-	<input type="hidden" name="search_type" value="srch">
+	<input type="hidden" name="search_type" value="screen">
 	<div class="col-sm-6">
 	<label>商品名</label>
 	<input type="text" name="keyword" class="form-control" style="width: 400px;" onkeypress = "if(event.keyCode==13){ search(); event.preventDefault(); }">

@@ -49,7 +49,8 @@ public class ListDAO {
 	public ArrayList<TranslationVO> getTransInfo(TranslationVO vo) {
 		log.info("getTransInfo");
 		// 초기상태일때 2틀간의 데이터를 얻을수있게 처리 (*srch는 검색할때 넘기는 값)
-		if (!CommonUtil.SEARCH_TYPE_SRCH.equals(vo.getSearch_type())) {
+		if (!(CommonUtil.SEARCH_TYPE_SRCH.equals(vo.getSearch_type()) && 
+				CommonUtil.SEARCH_TYPE_SCREEN.equals(vo.getSearch_type()))) {
 			vo.setStart_date(CommonUtil.getStartDate());
 		}
 		log.debug(vo);
