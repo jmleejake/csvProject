@@ -97,7 +97,7 @@ public class ProductAnalysisDAO {
 	/**
 	 * 계산식에 의해 VO를 세팅 (insert, update시 사용)
 	 * @param vo
-	 * @param ｉｆ 
+	 * @param ｉｆ (2020-07-28)
 	 * @return
 	 */
 	public ProductAnalysisVO setData(ProductAnalysisVO vo, boolean ｉｆ) {
