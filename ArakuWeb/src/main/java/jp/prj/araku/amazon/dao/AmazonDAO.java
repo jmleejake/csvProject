@@ -286,6 +286,7 @@ public class AmazonDAO {
 		
 		IAmazonMapper mapper = sqlSession.getMapper(IAmazonMapper.class);
 		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
+		ArrayList<ExceptionRegionMasterVO> exRegionList = listMapper.getExceptionRegionMaster(null);
 		BufferedWriter writer = null;
 		CSVWriter csvWriter = null;
 		
@@ -343,9 +344,29 @@ public class AmazonDAO {
 						chkRet = true;
 					}
 				}
-				if (chkRet) {
+//				if (chkRet) {
+//					continue;
+//				}
+				
+				/**
+				 * 例外地域マスタに登録されている地域情報はヤマトによって発送する。
+				 * やまとにてDLする処理する。
+				 * */
+				boolean isExY = false;
+				for(ExceptionRegionMasterVO region : exRegionList) {
+					if(tmp.getShip_state().contains(region.getException_data())) {
+						isExY = true;
+					}
+
+					if(tmp.getShip_address1().contains(region.getException_data())) {
+						isExY = true;
+					}
+				}
+				
+				if (chkRet && !isExY) {
 					continue;
 				}
+	
 				YamatoVO yVO = new YamatoVO();
 				// 2019/12/24  キム 클리크포스트를 야마토 ネコポス로 설정함. 　⇒　ＳＴＡＲＴ
 				if (tmp.getResult_text().contains("全無")) {
@@ -1020,27 +1041,38 @@ public class AmazonDAO {
 			ArrayList<ArakuVO> gsaList = new ArrayList<>();
 			
 			for (AmazonVO tmp : list) {
+//				/**
+//				 * 사가와 대상 목록중 예외지역마스터(例外地域マスタ)에 있는 값인 경우
+//				 * 해당 데이터의 배송회사를 야마토로 update치고
+//				 * 야마토로 다운로드 될 수 있게 처리
+//				 * */
+//				boolean isEx = false;
+//				for(ExceptionRegionMasterVO region : exRegionList) {
+//					if(tmp.getShip_address1().contains(region.getException_data())) {
+//						isEx = true;
+//						AmazonVO av = new AmazonVO();
+//						av.setSeq_id(tmp.getReal_seq_id());
+//						av.setDelivery_company("1001");
+//						mapper.updateAmazonInfo(av);
+//					}
+//				}
+//				
+//				if(isEx) continue;
+				
 				/**
-				 * 사가와 대상 목록중 예외지역마스터(例外地域マスタ)에 있는 값인 경우
-				 * 해당 데이터의 배송회사를 야마토로 update치고
-				 * 야마토로 다운로드 될 수 있게 처리
+				 * 例外地域マスタに登録されている地域情報はヤマトによって発送する。
+				 * やまとにてDLする処理する。
 				 * */
 				boolean isEx = false;
 				for(ExceptionRegionMasterVO region : exRegionList) {
-					if(tmp.getShip_address1().contains(region.getException_data())) {
+					if(tmp.getShip_state().contains(region.getException_data())) {
 						isEx = true;
-						AmazonVO av = new AmazonVO();
-						av.setSeq_id(tmp.getReal_seq_id());
-						av.setDelivery_company("1001");
-						mapper.updateAmazonInfo(av);
 					}
 				}
 				
-				if(isEx) continue;
-				
 				for (ExceptionMasterVO exVO : exList) {
 					String str= tmp.getResult_text();
-					if(str.contains(exVO.getException_data())) {
+					if(str.contains(exVO.getException_data())  && isEx != Boolean.TRUE) {
 						if(str.length() > 10) {
 							for (int i = 0; i < str.length(); i += 10) {
 								GlobalSagawaDownVO gsaVO = new GlobalSagawaDownVO();
@@ -1049,7 +1081,7 @@ public class AmazonDAO {
 								gsaVO.setOrder_no(tmp.getOrder_id());
 								gsaVO.setConsign_nm(tmp.getRecipient_name());
 								//gsaVO.setConsign_nm_kana();
-								gsaVO.setConsign_add1(tmp.getShip_address1() + tmp.getShip_address2() + " " + tmp.getShip_address3());
+								gsaVO.setConsign_add1(tmp.getShip_state()+tmp.getShip_address1() + tmp.getShip_address2() + " " + tmp.getShip_address3());
 								//gsaVO.setConsign_add2(tmp.getShip_address2() + " " + tmp.getShip_address3());
 								gsaVO.setConsign_post_no(tmp.getShip_postal_code());
 								gsaVO.setConsign_tel(tmp.getBuyer_phone_number());
@@ -1065,6 +1097,7 @@ public class AmazonDAO {
 								gsaVO.setItem_pcs("9");		
 								gsaVO.setItem_origin("JP");
 								gsaList.add(gsaVO);
+								
 							}
 						}else {
 							GlobalSagawaDownVO gsaVO = new GlobalSagawaDownVO();
@@ -1073,7 +1106,7 @@ public class AmazonDAO {
 							gsaVO.setOrder_no(tmp.getOrder_id());
 							gsaVO.setConsign_nm(tmp.getRecipient_name());
 							//gsaVO.setConsign_nm_kana();
-							gsaVO.setConsign_add1(tmp.getShip_address1()+tmp.getShip_address2() + " " + tmp.getShip_address3());
+							gsaVO.setConsign_add1(tmp.getShip_state()+tmp.getShip_address1()+tmp.getShip_address2() + " " + tmp.getShip_address3());
 							//gsaVO.setConsign_add2(tmp.getShip_address2() + " " + tmp.getShip_address3());
 							gsaVO.setConsign_post_no(tmp.getShip_postal_code());
 							gsaVO.setConsign_tel(tmp.getBuyer_phone_number());

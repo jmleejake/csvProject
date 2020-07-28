@@ -1,5 +1,4 @@
 package jp.prj.araku.product.dao;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -15,6 +14,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
+import org.apache.commons.lang3.StringUtils;
 
 import com.opencsv.CSVWriter;
 import com.opencsv.bean.CsvToBean;
@@ -61,7 +61,7 @@ public class ProductAnalysisDAO {
 
             while (iterator.hasNext()) {
             	ProductAnalysisVO vo = iterator.next();
-            	ProductAnalysisVO setVO = setData(vo);
+            	ProductAnalysisVO setVO = setData(vo, false);
             	mapper.insertPrdAnalysis(setVO);
             }
             
@@ -89,7 +89,7 @@ public class ProductAnalysisDAO {
 		IProductAnalysisMapper mapper = sqlSession.getMapper(IProductAnalysisMapper.class);
 		
 		for(ProductAnalysisVO vo : list) {
-			ProductAnalysisVO setVO = setData(vo);
+			ProductAnalysisVO setVO = setData(vo, false);
 			mapper.updatePrdAnalysis(setVO);
 		}
 	}
@@ -97,39 +97,57 @@ public class ProductAnalysisDAO {
 	/**
 	 * 계산식에 의해 VO를 세팅 (insert, update시 사용)
 	 * @param vo
+	 * @param ｉｆ 
 	 * @return
 	 */
-	public ProductAnalysisVO setData(ProductAnalysisVO vo) {
+	public ProductAnalysisVO setData(ProductAnalysisVO vo, boolean ｉｆ) {
 		int iPrd_config = Integer.parseInt(vo.getPrd_config()); // 商品構成
     	int iPrd_price = Integer.parseInt(vo.getPrd_price()); // 1個当たり仕入金額(税別)
     	int iPrd_pkg = Integer.parseInt(vo.getPrd_pkg()); // 包装(箱+印刷+他)
     	int iShip_cost = Integer.parseInt(vo.getShip_cost()); // 送料
+    	String  iAdd_ship_cost = vo.getAdd_ship_cost(); // 追加送料
     	
-    	// 合計仕入価格 = 【（商品構成×1個当たり仕入金額(税別)）＋　包装(箱+印刷+他)　＋送料　】×1.08
-    	double dTtl_price = ((iPrd_config*iPrd_price)+iPrd_pkg+iShip_cost)*1.08;
+        if(StringUtils.isEmpty(iAdd_ship_cost)) {
+        		iAdd_ship_cost = "0";
+          }
+ 	    
+    	// 合計仕入価格 = 【（商品構成×1個当たり仕入金額(税別)）×1.08＋　包装(箱+印刷+他)　＋送料+追加送料　】  ★
+    	//double dTtl_price = ((iPrd_config*iPrd_price)+iPrd_pkg+iShip_cost+iAdd_ship_cost)*1.08;
+    	double dTtl_price = ((iPrd_config*iPrd_price)*1.08+iPrd_pkg+iShip_cost+ Integer.parseInt(iAdd_ship_cost));
+    	// 販売価格★
+    	int iSales_price = Integer.parseInt(vo.getSales_price()); 
+    	// 販売手数料（10%）
+    	//int iSales_comm_ratio =   Integer.parseInt(vo.getSales_comm_ratio());
+    	int  iSales_comm_ratio = 10;
     	
-    	// 販売手数料
-    	int iSales_comm_ratio = Integer.parseInt(vo.getSales_comm_ratio());
-    	double dSales_comm_ratio = iSales_comm_ratio / 100.0;
-    	
-    	int iSales_price = Integer.parseInt(vo.getSales_price()); // 販売価格
-    	
+    	// 販売手数料（10%）
+    	double dSales_comm_ratio = iSales_price / iSales_comm_ratio;
     	// 販売手数料金額 = 販売価格 * 販売手数料
-    	double dSales_comm_price = iSales_price*dSales_comm_ratio;
-    	// 利益 = 販売価格 - 合計仕入価格 - 販売手数料金額
+    	double dSales_comm_price = dSales_comm_ratio;
+    	// 利益 = 販売価格 - 合計仕入価格 - 販売手数料金額  ★
     	double dBenefit = iSales_price - dTtl_price - dSales_comm_price;
     	// 利益率 = 利益 / 販売価格
     	double dBenefit_ratio = dBenefit / iSales_price;
     	
-    	long lTtl_price = Math.round(dTtl_price);
-    	long lSales_comm_price = Math.round(dSales_comm_price);
-    	long lBenefit = Math.round(dBenefit);
-    	long lBenefit_ratio = Math.round(dBenefit_ratio);
+    	long lTtl_price = Math.round(dTtl_price);   // 合計仕入価格★
+    	long lSales_comm_ratio = Math.round(iSales_comm_ratio);  // 販売手数料（10%）
+    	long lSales_comm_price = Math.round(dSales_comm_price);  // 販売手数料金額
+    	long lBenefit = Math.round(dBenefit);  // 利益★
+    	int  lBenefit_ratio = (int)(dBenefit_ratio*100);  // 利益率
     	
-    	vo.setTtl_price(lTtl_price+"");
-    	vo.setSales_comm_price(lSales_comm_price+"");
-    	vo.setBenefit(lBenefit+"");
-    	vo.setBenefit_ratio(lBenefit_ratio+"");
+    	vo.setTtl_price("￥"+lTtl_price+""); // 合計仕入価格★
+    	vo.setAdd_ship_cost("￥"+iAdd_ship_cost+""); // 追加送料
+    	
+    	vo.setSales_comm_ratio(lSales_comm_ratio+"%"); // 販売手数料（10%）
+    	vo.setSales_comm_price("￥"+lSales_comm_price+""); // 販売手数料金額
+    	vo.setBenefit("￥"+lBenefit+"");  // 利益 ★
+    	vo.setBenefit_ratio(lBenefit_ratio+"%");   // 利益率
+    	
+//    	vo.setTtl_price(lTtl_price+""); // 合計仕入価格
+//    	vo.setSales_comm_ratio(lSales_comm_ratio+""); // 販売手数料（10%）
+//    	vo.setSales_comm_price(lSales_comm_price+""); // 販売手数料金額
+//    	vo.setBenefit(lBenefit+"");  // 利益
+//    	vo.setBenefit_ratio(lBenefit_ratio+"");   // 利益率
     	
     	return vo;
 	}
