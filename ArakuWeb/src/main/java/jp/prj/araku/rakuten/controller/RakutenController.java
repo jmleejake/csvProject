@@ -523,4 +523,13 @@ public class RakutenController {
 	public ArrayList<String> deleteAllWeekAfterData() {
 		return listDao.deleteAllWeekAfterData();
 	}
+	
+	@ResponseBody
+	@RequestMapping(value="/delRakutenFrozen", method = RequestMethod.POST, produces = "text/plain; charset=utf-8")
+	public String deleteRakutenFrozenInfo() {
+		String ret = "";
+		log.info("deleteRakutenFrozenInfo");
+		ret = dao.deleteRakutenFrozenInfo() + "件 削除完了しました。";
+		return ret;
+	}
 }

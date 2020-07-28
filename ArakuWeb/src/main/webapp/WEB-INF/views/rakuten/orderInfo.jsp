@@ -84,8 +84,9 @@ $(document).ready(function() {
 	</form>
 </div>
 <div class="well container-fluid">
-<button id="btn_trans" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">置換</button>
+<button id="btn_trans" type="button" class="btn btn-info" style="width: 120px; margin-bottom: 10px;">置換</button>
 <button id="btn_delete" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">削除</button>
+<button id="btn_delete_frozen" type="button" class="btn btn-danger" style="width: 180px; margin-bottom: 10px;">冷凍冷蔵区分マスタ削除</button>
 
 <div class="well container-fluid">
 <form id="del-frm" action="delFileUpload" method="post" enctype="multipart/form-data" onsubmit="return preCheck('del');" >

@@ -195,3 +195,23 @@ $("#btn_delete").on("click", function() {
 		}
 	});
 });
+
+$("#btn_delete_frozen").on("click", function() {
+	alertInit();
+	alertify.confirm("本当に冷凍冷蔵区分マスタを削除しますか？", function (e) {
+		if (e) {
+			$.ajax({
+			    url: "delRakutenFrozen"
+			    , type:"post"
+			    , success: function(res) {
+			    	console.log("11111");
+			    	console.log(res);
+			    	alertify.alert(res);
+			    	return;
+			    }
+			});
+		} else {
+			return false;
+		}
+	});
+});
