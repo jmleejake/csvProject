@@ -369,6 +369,7 @@ public class RakutenDAO {
 		
 		/*
 		 * 2020-07-23
+		 * 
 		 *   1. 라쿠텐파일 업로드시 한 주문번호에 여러건의 상품번호가 있을경우 
 		 *   냉동냉장구분마스터(rakuten_frozen_info) 테이블에 해당 데이터들을 넣어준다.
 		 *   2. 업로드후 주문정보화면에서 치환작업 진행시 
@@ -802,6 +803,7 @@ public class RakutenDAO {
 		TranslationResultVO vo = new TranslationResultVO();
 		vo.setSeq_id_list(list);
 		
+		ArrayList<RakutenVO> realRet = new ArrayList<>();
 		ArrayList<RakutenVO> ret = mapper.getTransResult(vo);
 		
 		String orderNo;
@@ -866,8 +868,7 @@ public class RakutenDAO {
 					int val = iZen.get(j);
 					if(j==0) {
 						ret.get(val).setResult_text(".");
-					}else {
-						ret.remove(val);
+						realRet.add(ret.get(val));
 					}
 				}
 			}else if(null != iFro && iFro.size() > 1) {
@@ -875,8 +876,7 @@ public class RakutenDAO {
 					int val = iFro.get(j);
 					if(j==0) {
 						ret.get(val).setResult_text(".");
-					}else {
-						ret.remove(val);
+						realRet.add(ret.get(val));
 					}
 				}
 			}else if(null != iFri && iFri.size() > 1) {
@@ -884,14 +884,26 @@ public class RakutenDAO {
 					int val = iFri.get(j);
 					if(j==0) {
 						ret.get(val).setResult_text(".");
-					}else {
-						ret.remove(val);
+						realRet.add(ret.get(val));
 					}
+				}
+			}else {
+				if(null != iZen) {
+					int val = iZen.get(0);
+					realRet.add(ret.get(val));
+				}
+				if(null != iFro) {
+					int val = iFro.get(0);
+					realRet.add(ret.get(val));
+				}
+				if(null != iFri) {
+					int val = iFri.get(0);
+					realRet.add(ret.get(val));
 				}
 			}
 		}
 		
-		return ret;
+		return realRet;
 	}
 	
 	public void yamatoFormatDownload(
@@ -946,10 +958,107 @@ public class RakutenDAO {
 			vo.setSeq_id_list(seq_id_list);
 			vo.setDelivery_company(delivery_company);
 			
+			ArrayList<RakutenVO> realRet = new ArrayList<>();
 			ArrayList<RakutenVO> list = mapper.getTransResult(vo);
 			ArrayList<ArakuVO> yList = new ArrayList<>();
 			
-			for (RakutenVO tmp : list) {
+			String orderNo;
+			HashMap<String, ArrayList<Integer>> zenkoku = new HashMap<>();
+			HashMap<String, ArrayList<Integer>> frozen = new HashMap<>();
+			HashMap<String, ArrayList<Integer>> fridge = new HashMap<>();
+			
+			ArrayList<Integer> zenkokuCnt = new ArrayList<>();
+			ArrayList<Integer> frozenCnt = new ArrayList<>();
+			ArrayList<Integer> fridgeCnt = new ArrayList<>();
+			
+			HashSet<String> orderNoLst = new HashSet<>();
+			
+			for(int i=0; i<list.size(); i++) {
+				RakutenVO rVO = list.get(i);
+				
+				orderNo = rVO.getOrder_no();
+				
+				if(!orderNoLst.add(orderNo)) {
+					if (rVO.getProduct_name().contains("全国送料無料")) {
+						zenkokuCnt.add(i);
+						zenkoku.put(orderNo, zenkokuCnt);
+					}else if (rVO.getProduct_name().contains("冷凍")) {
+						frozenCnt.add(i);
+						frozen.put(orderNo, frozenCnt);
+					}else if (rVO.getProduct_name().contains("冷蔵")) {
+						fridgeCnt.add(i);
+						fridge.put(orderNo, fridgeCnt);
+					}else {
+						zenkokuCnt.add(i);
+						zenkoku.put(orderNo, zenkokuCnt);
+					}
+				}else {
+					zenkokuCnt = new ArrayList<>();
+					frozenCnt = new ArrayList<>();
+					fridgeCnt = new ArrayList<>();
+					
+					if (rVO.getProduct_name().contains("全国送料無料")) {
+						zenkokuCnt.add(i);
+						zenkoku.put(orderNo, zenkokuCnt);
+					}else if (rVO.getProduct_name().contains("冷凍")) {
+						frozenCnt.add(i);
+						frozen.put(orderNo, frozenCnt);
+					}else if (rVO.getProduct_name().contains("冷蔵")) {
+						fridgeCnt.add(i);
+						fridge.put(orderNo, fridgeCnt);
+					}else {
+						zenkokuCnt.add(i);
+						zenkoku.put(orderNo, zenkokuCnt);
+					}
+				}
+			}
+			
+			for(String key : orderNoLst) {
+				ArrayList<Integer> iZen = zenkoku.get(key);
+				ArrayList<Integer> iFro = frozen.get(key);
+				ArrayList<Integer> iFri = fridge.get(key);
+				
+				if(null != iZen && iZen.size() > 1) {
+					for(int j=0; j<iZen.size(); j++) {
+						int val = iZen.get(j);
+						if(j==0) {
+							list.get(val).setResult_text(".");
+							realRet.add(list.get(val));
+						}
+					}
+				}else if(null != iFro && iFro.size() > 1) {
+					for(int j=0; j<iFro.size(); j++) {
+						int val = iFro.get(j);
+						if(j==0) {
+							list.get(val).setResult_text(".");
+							realRet.add(list.get(val));
+						}
+					}
+				}else if(null != iFri && iFri.size() > 1) {
+					for(int j=0; j<iFri.size(); j++) {
+						int val = iFri.get(j);
+						if(j==0) {
+							list.get(val).setResult_text(".");
+							realRet.add(list.get(val));
+						}
+					}
+				}else {
+					if(null != iZen) {
+						int val = iZen.get(0);
+						realRet.add(list.get(val));
+					}
+					if(null != iFro) {
+						int val = iFro.get(0);
+						realRet.add(list.get(val));
+					}
+					if(null != iFri) {
+						int val = iFri.get(0);
+						realRet.add(list.get(val));
+					}
+				}
+			}
+			
+			for (RakutenVO tmp : realRet) {
 				// 빠른배송을 옵션으로 둔 항목에 대하여 체크가 되어있으면 제외
 				if ("1".equals(isChecked)) {
 					if ("1".equals(tmp.getTomorrow_hope())) {
