@@ -578,6 +578,7 @@ public class RakutenDAO {
 		
 		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
 		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
+		ArrayList<ExceptionRegionMasterVO> exRegionList = listMapper.getExceptionRegionMaster(null);
 		BufferedWriter writer = null;
 		CSVWriter csvWriter = null;
 		
@@ -631,13 +632,39 @@ public class RakutenDAO {
 				boolean chkRet = false;
 				for (ExceptionMasterVO exVO : exList) {
 					if (tmp.getResult_text().contains(exVO.getException_data())) {
-						log.debug(String.format("exception_data: %s - result_txt: %s", exVO.getException_data(), tmp.getResult_text()));
-						chkRet = true;
+						//注文者とお届け先のお客様が同一の場合、佐川にて発送する。  2020/7/23  金
+						String deliveryname = tmp.getDelivery_surname().trim() + tmp.getDelivery_name().trim();   //お届け先お客様
+						String ordername =tmp.getOrder_surname().trim()+  tmp.getOrder_name().trim();		//注文者
+						
+						if (deliveryname.equals(ordername)) {					
+							log.debug(String.format("exception_data: %s - result_txt: %s", exVO.getException_data(), tmp.getResult_text()));
+							chkRet = true;
+						}else{
+							chkRet = false;
+						}
 					}
 				}
-				if (chkRet) {
+//				if (chkRet) {
+//					continue;
+//				}
+				
+				/**
+				 * 例外地域マスタに登録されている地域情報はヤマトによって発送する。
+				 * やまとにてDLする処理する。
+				 * */
+				boolean isExY = false;
+				for(
+						
+						ExceptionRegionMasterVO region : exRegionList) {
+					if(tmp.getDelivery_add1().contains(region.getException_data())) {
+						isExY = true;
+					}
+				}
+				
+				if (chkRet && !isExY) {
 					continue;
 				}
+				
 				YamatoVO yVO = new YamatoVO();
 				// 2019/12/24  キム 클리크포스트를 야마토 ネコポス로 설정함. 　⇒　ＳＴＡＲＴ
 				if (tmp.getProduct_name().contains("全国送料無料") && tmp.getUnit_no() .equals("1")  ) {
@@ -1578,36 +1605,86 @@ public class RakutenDAO {
 			ArrayList<ArakuVO> gsaList = new ArrayList<>();
 
 			for (RakutenVO tmp : list) {
+//				/**
+//				 * 사가와 대상 목록중 예외지역마스터(例外地域マスタ)에 있는 값인 경우
+//				 * 해당 데이터의 배송회사를 야마토로 update치고
+//				 * 야마토로 다운로드 될 수 있게 처리
+//				 * */
+//				boolean isEx = false;
+//				for(ExceptionRegionMasterVO region : exRegionList) {
+//					if(tmp.getDelivery_add1().contains(region.getException_data())) {
+//						isEx = true;
+//						RakutenVO rv = new RakutenVO();
+//						rv.setSeq_id(tmp.getReal_seq_id());
+//						rv.setDelivery_company("1001");
+//						mapper.updateRakutenInfo(rv);
+//					}
+//				}
+//				
+//				if(isEx) continue;
+				
 				/**
-				 * 사가와 대상 목록중 예외지역마스터(例外地域マスタ)에 있는 값인 경우
-				 * 해당 데이터의 배송회사를 야마토로 update치고
-				 * 야마토로 다운로드 될 수 있게 처리
+				 * 例外地域マスタに登録されている地域情報はヤマトによって発送する。
+				 * やまとにてDLする処理する。
 				 * */
 				boolean isEx = false;
 				for(ExceptionRegionMasterVO region : exRegionList) {
+					log.debug(String.format("exception_data: %s - result_txt: %s", region.getException_data(), tmp.getResult_text()));
 					if(tmp.getDelivery_add1().contains(region.getException_data())) {
 						isEx = true;
-						RakutenVO rv = new RakutenVO();
-						rv.setSeq_id(tmp.getReal_seq_id());
-						rv.setDelivery_company("1001");
-						mapper.updateRakutenInfo(rv);
 					}
 				}
 				
+				// ヤマト宅配便対応　
+				if(isEx) continue;
+				
+				// getDelivery_name() = null の場合、
+				try {
+					//注文者とお届け先のお客様が同一ではない場合、やまとにて発送する。  2020/7/23  金
+					String deliveryname = tmp.getDelivery_surname().trim() + tmp.getDelivery_name().trim();   //お届け先お客様
+					String ordername =tmp.getOrder_surname().trim()+  tmp.getOrder_name().trim();		//注文者
+					if (!deliveryname.equals(null) || !ordername.equals(null)) {
+						if (!deliveryname.equals(ordername)) {					
+							isEx = true;
+						}else{
+							isEx = false;
+						}
+					}
+				}
+				catch (NullPointerException e){
+					isEx = false;
+				}
+				
+				// ヤマト宅配便対応
 				if(isEx) continue;
 				
 				for (ExceptionMasterVO exVO : exList) {
 					String str= tmp.getResult_text();
 					// 例外テーブルに含んている場合、ファイル作成するように変更する。　2020/06/01
-					if(str.contains(exVO.getException_data())) {
+					if(str.contains(exVO.getException_data()) && isEx != Boolean.TRUE) {
+						
+						
 						if(str.length() > 10) {
 							for (int i = 0; i < str.length(); i += 10) {
 								GlobalSagawaDownVO gsaVO = new GlobalSagawaDownVO();
 								gsaVO.setSeller_cd("Fastbox2");
 								gsaVO.setPick_dt(CommonUtil.getDate("YYYYMMdd", 0));
 								gsaVO.setOrder_no(tmp.getOrder_no());
-								gsaVO.setConsign_nm(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
-								gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", "") + " " + tmp.getDelivery_name_kana().replace("\"", ""));
+								
+								// getDelivery_name() = null の場合、
+								try {
+									String strdeliveryname = tmp.getDelivery_name();
+									if (!strdeliveryname.equals(null)) {
+										gsaVO.setConsign_nm(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
+										gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", "") + " " + tmp.getDelivery_name_kana().replace("\"", ""));
+									}
+								}
+									catch (NullPointerException e){
+										gsaVO.setConsign_nm(tmp.getDelivery_surname().replace("\"", "") );		
+										gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", "") );
+								}
+								//gsaVO.setConsign_nm(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
+								//gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", "") + " " + tmp.getDelivery_name_kana().replace("\"", ""));
 								gsaVO.setConsign_add1(tmp.getDelivery_add1());
 								gsaVO.setConsign_add2(tmp.getDelivery_add2() + " " + tmp.getDelivery_add3());
 								gsaVO.setConsign_post_no(tmp.getDelivery_post_no1()+"-"+tmp.getDelivery_post_no2());
@@ -1631,8 +1708,21 @@ public class RakutenDAO {
 							gsaVO.setSeller_cd("Fastbox2");
 							gsaVO.setPick_dt(CommonUtil.getDate("YYYYMMdd", 0));
 							gsaVO.setOrder_no(tmp.getOrder_no());
-							gsaVO.setConsign_nm(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
-							gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", "") + " " + tmp.getDelivery_name_kana().replace("\"", ""));
+							
+							// getDelivery_name() = null の場合、
+							try {
+								String strdeliveryname = tmp.getDelivery_name();
+								if (!strdeliveryname.equals(null)) {
+									gsaVO.setConsign_nm(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
+									gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", "") + " " + tmp.getDelivery_name_kana().replace("\"", ""));
+								}
+							}
+							catch (NullPointerException e){
+									gsaVO.setConsign_nm(tmp.getDelivery_surname().replace("\"", "") );
+									gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", ""));
+							}
+							//gsaVO.setConsign_nm(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
+							//gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", "") + " " + tmp.getDelivery_name_kana().replace("\"", ""));
 							gsaVO.setConsign_add1(tmp.getDelivery_add1());
 							gsaVO.setConsign_add2(tmp.getDelivery_add2() + " " + tmp.getDelivery_add3());
 							gsaVO.setConsign_post_no(tmp.getDelivery_post_no1()+"-"+tmp.getDelivery_post_no2());
