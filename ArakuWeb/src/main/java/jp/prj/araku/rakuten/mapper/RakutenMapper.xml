@@ -644,7 +644,8 @@ where
 </delete>
 
 <select id="getTransResult" resultType="Rakuten" parameterType="TransResult">
-select
+select * from
+(select
 	tr.seq_id
 	, ri.seq_id real_seq_id
 	, err_text
@@ -778,8 +779,8 @@ left outer join translation_err terr on terr.trans_target_id = ri.seq_id and ter
 	and delivery_company = #{delivery_company}
 	</if>
 </where>
-UNION ALL
-select
+) r1
+left outer join (select
 	tr.seq_id
 	, rfi.seq_id real_seq_id
 	, err_text
@@ -912,8 +913,8 @@ left outer join translation_err terr on terr.trans_target_id = rfi.seq_id and te
 	<if test="delivery_company != null and delivery_company != ''">
 	and delivery_company = #{delivery_company}
 	</if>
-</where>
-order by order_datetime desc
+</where>) r2 on r1.order_no = r2.order_no
+order by r1.order_datetime desc
 </select>
 
 <update id="updateRakutenInfo" parameterType="Rakuten">

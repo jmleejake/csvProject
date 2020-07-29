@@ -7,10 +7,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -130,7 +134,7 @@ public class RakutenDAO {
             	// 데이터 중복체크
             	RakutenVO searchVO = new RakutenVO();
             	searchVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
-            	searchVO.setOrder_no(vo.getOrder_no());
+            	searchVO.setOrder_no(vo.getOrder_no().trim());
             	
             	ArrayList<RakutenVO> dupCheckList = mapper.getRakutenInfo(searchVO);
         		
@@ -903,6 +907,8 @@ public class RakutenDAO {
 			}
 		}
 		
+		RakutenVO.sortListVO(realRet, "getOrder_datetime", "DESC");
+		
 		return realRet;
 	}
 	
@@ -1058,6 +1064,8 @@ public class RakutenDAO {
 				}
 			}
 			
+			RakutenVO.sortListVO(realRet, "getOrder_datetime", "DESC");
+			
 			for (RakutenVO tmp : realRet) {
 				// 빠른배송을 옵션으로 둔 항목에 대하여 체크가 되어있으면 제외
 				if ("1".equals(isChecked)) {
@@ -1108,7 +1116,7 @@ public class RakutenDAO {
 				
 				YamatoVO yVO = new YamatoVO();
 				// 2019/12/24  キム 클리크포스트를 야마토 ネコポス로 설정함. 　⇒　ＳＴＡＲＴ
-				if (tmp.getProduct_name().contains("全国送料無料") && tmp.getUnit_no() .equals("1")  ) {
+				if (tmp.getProduct_name().contains("全国送料無料") && tmp.getUnit_no() .equals("1") && !(tmp.getResult_text().equals("."))) {
 					yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_7);
 				}else {
 					yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_0);
