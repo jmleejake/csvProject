@@ -786,6 +786,7 @@ public class RakutenDAO {
 				
 				log.debug("seq_id : " + resultVO.getSeq_id());
 				ret.add(resultVO.getSeq_id());
+				log.debug("商品名 : " + resultVO.getProduct_name());
 			}
 			
 		}
@@ -1705,7 +1706,7 @@ public class RakutenDAO {
             		RakutenVO searchRet = searchRetList.get(0);
            		
             		searchVO.setSeq_id(searchRet.getSeq_id());
-                	searchVO.setBaggage_claim_no(vo.getSlip_no());
+                	searchVO.setBaggage_claim_no(vo.getSlip_no().trim());
                 	searchVO.setDelivery_company("1001");
                 	
                 	// お荷物伝票番号값 update
