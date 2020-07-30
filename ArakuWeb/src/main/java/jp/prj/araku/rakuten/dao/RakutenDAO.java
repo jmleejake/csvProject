@@ -7,14 +7,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -145,8 +141,11 @@ public class RakutenDAO {
         			mapper.updateRakutenRegistDate(dupCheckList.get(0).getSeq_id());
         			// 商品ID가 같으면
         			if (vo.getProduct_id().equals(dupCheckList.get(0).getProduct_id())) {
-        				// 다음 레코드로 진행
-                		continue;
+        				mapper.insertRakutenFrozenInfo(vo);
+        				log.debug("insertRakutenFrozenInfo seq_id :: " + vo.getSeq_id());
+        				isInserted = true;
+                        log.debug("==========================");
+                        //continue;
         			} else {
         				/*
         				 * 2020-07-23
