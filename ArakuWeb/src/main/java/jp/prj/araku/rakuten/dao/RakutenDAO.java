@@ -380,7 +380,7 @@ public class RakutenDAO {
 		 *   냉동냉장구분마스터(rakuten_frozen_info) 테이블에 데이터가 있을 경우
 		 *   해당 데이터들에 대해서도 함께 진행한다.
 		 * */
-		ArrayList<RakutenVO> frozenList = rMapper.getRakutenFrozenInfo();
+		ArrayList<RakutenVO> frozenList = rMapper.getRakutenFrozenInfo(new RakutenVO());
 		ret.addAll(executeFrozenTranslate(frozenList));
 		
 		TranslationVO transVO = new TranslationVO();
@@ -2074,11 +2074,27 @@ public class RakutenDAO {
 //				if(isEx) continue;
 				
 				/**
+				 * 2020-07-30
+				 * 주문번호로 frozen_info에 검색시 
+				 * 결과가 한건이라도 존재한다면 글로벌사가와에 대한 대상이 아니므로 continue처리
+				 * */
+				boolean isEx = false;
+				RakutenVO forFrozenSrch = new RakutenVO();
+				forFrozenSrch.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+				forFrozenSrch.setOrder_no(tmp.getOrder_no());
+				ArrayList<RakutenVO> frozenList = mapper.getRakutenFrozenInfo(forFrozenSrch);
+				if(frozenList.size() > 0) {
+					isEx = true;
+				}
+				
+				// ヤマト宅配便対応　
+				if(isEx) continue;
+				
+				/**
 				 * 2020-07-28
 				 * 例外地域マスタに登録されている地域情報はヤマトによって発送する。
 				 * やまとにてDLする処理する。
 				 * */
-				boolean isEx = false;
 				for(ExceptionRegionMasterVO region : exRegionList) {
 					log.debug(String.format("exception_data: %s - result_txt: %s", region.getException_data(), tmp.getResult_text()));
 					if(tmp.getDelivery_add1().contains(region.getException_data())) {

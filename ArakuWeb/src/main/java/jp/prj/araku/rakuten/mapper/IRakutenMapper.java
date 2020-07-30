@@ -10,7 +10,7 @@ public interface IRakutenMapper {
 	public int insertRakutenInfo(RakutenVO vo);
 	public int insertRakutenFrozenInfo(RakutenVO vo);
 	public ArrayList<RakutenVO> getRakutenInfo(RakutenVO vo);
-	public ArrayList<RakutenVO> getRakutenFrozenInfo();
+	public ArrayList<RakutenVO> getRakutenFrozenInfo(RakutenVO vo);
 	public int deleteRakutenInfo(String seq_id);
 	public int updateRakutenInfo(RakutenVO vo);
 	public int updateRakutenFrozenInfo(RakutenVO vo);

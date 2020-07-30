@@ -998,7 +998,7 @@ from
 		seq_id = #{seq_id}
 </update>
 
-<select id="getRakutenFrozenInfo" resultType="Rakuten">
+<select id="getRakutenFrozenInfo" parameterType="Rakuten" resultType="Rakuten">
 select
 	seq_id
 	, date_format(register_date, '%Y/%m/%d') register_date
@@ -1114,6 +1114,22 @@ select
 	, delivery_company
 from
 	rakuten_frozen_info
+<where>
+	<if test="seq_id != null and seq_id != ''">
+	seq_id = #{seq_id}
+	</if>
+	<trim prefixOverrides="AND |OR ">
+	<if test="order_no != null and order_no != ''">
+	and order_no like '%${order_no}%'
+	</if>
+	<if test="product_name != null and product_name != ''">
+	and product_name like '%${product_name}%'
+	</if>
+	<if test="baggage_claim_no != null and baggage_claim_no !=''">
+	and baggage_claim_no like '%${baggage_claim_no}%'
+	</if>
+	</trim>
+</where>
 </select>
 
 <delete id="deleteRakutenFrozenInfo">
