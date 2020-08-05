@@ -145,7 +145,7 @@ public class RakutenDAO {
         				log.debug("insertRakutenFrozenInfo seq_id :: " + vo.getSeq_id());
         				isInserted = true;
                         log.debug("==========================");
-                        //continue;
+//                        continue;
         			} else {
         				/*
         				 * 2020-07-23
@@ -1121,10 +1121,10 @@ public class RakutenDAO {
 				}else {
 					yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_0);
 				}
-				if (tmp.getProduct_name().contains("冷凍")) {
+				if (tmp.getProduct_name().contains("冷凍") || tmp.getResult_text().contains("冷凍")) {
 					yVO.setCool_type(CommonUtil.COOL_TYPE_1);
 				}
-				if (tmp.getProduct_name().contains("冷蔵")) {
+				if (tmp.getProduct_name().contains("冷蔵") || tmp.getResult_text().contains("冷蔵")) {
 					yVO.setCool_type(CommonUtil.COOL_TYPE_2);		
 				}
 				// 2019/12/24  キム 클리크포스트를 야마토 ネコポス로 설정함. 　⇒　ＥＮＤ
