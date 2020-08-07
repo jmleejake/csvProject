@@ -2142,12 +2142,22 @@ public class RakutenDAO {
 									String strdeliveryname = tmp.getDelivery_name();
 									if (!strdeliveryname.equals(null)) {
 										gsaVO.setConsign_nm(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
-										gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", "") + " " + tmp.getDelivery_name_kana().replace("\"", ""));
+										//gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", "") + " " + tmp.getDelivery_name_kana().replace("\"", ""));
 									}
 								}
 									catch (NullPointerException e){
-										gsaVO.setConsign_nm(tmp.getDelivery_surname().replace("\"", "") );		
-										gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", "") );
+										gsaVO.setConsign_nm(tmp.getDelivery_surname().replace("\"", "") );	
+								}
+								
+								// getDelivery_surname_kana() = null の場合、
+								try {
+									String strdeliverysurnamekana = tmp.getDelivery_surname_kana();
+									if (!strdeliverysurnamekana.equals(null)) {
+										gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", "") + " " + tmp.getDelivery_name_kana().replace("\"", ""));
+									}
+								}
+								catch (NullPointerException ex){
+									gsaVO.setConsign_nm_kana("");
 								}
 								//gsaVO.setConsign_nm(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
 								//gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", "") + " " + tmp.getDelivery_name_kana().replace("\"", ""));
@@ -2180,13 +2190,23 @@ public class RakutenDAO {
 								String strdeliveryname = tmp.getDelivery_name();
 								if (!strdeliveryname.equals(null)) {
 									gsaVO.setConsign_nm(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
-									gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", "") + " " + tmp.getDelivery_name_kana().replace("\"", ""));
 								}
 							}
 							catch (NullPointerException e){
 									gsaVO.setConsign_nm(tmp.getDelivery_surname().replace("\"", "") );
-									gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", ""));
+							}		
+							
+							// getDelivery_surname_kana() = null の場合、
+							try {
+								String strdeliverysurnamekana = tmp.getDelivery_surname_kana();
+								if (!strdeliverysurnamekana.equals(null)) {
+									gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", "") + " " + tmp.getDelivery_name_kana().replace("\"", ""));
+								}
 							}
+							catch (NullPointerException ex){
+									gsaVO.setConsign_nm_kana("");
+							}	
+
 							//gsaVO.setConsign_nm(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
 							//gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", "") + " " + tmp.getDelivery_name_kana().replace("\"", ""));
 							gsaVO.setConsign_add1(tmp.getDelivery_add1());
