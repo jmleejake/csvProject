@@ -21,6 +21,7 @@ import jp.prj.araku.amazon.vo.AmazonVO;
 import jp.prj.araku.list.mapper.IListMapper;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
+import jp.prj.araku.list.vo.PrdCdMasterVO;
 import jp.prj.araku.list.vo.RakutenSearchVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.SagawaUpdateVO;
@@ -336,5 +337,36 @@ public class ListDAO {
 		log.info("return: " + ret.toString());
 		
 		return ret;
+	}
+	
+	public ArrayList<PrdCdMasterVO> getPrdCdMaster(PrdCdMasterVO vo) {
+		log.info("getPrdCdMaster");
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		return mapper.getPrdCdMaster(vo);
+	}
+	
+	public ArrayList<PrdCdMasterVO> manipulatePrdCdMaster(ArrayList<PrdCdMasterVO> list) {
+		log.info("manipulatePrdCdMaster");
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		String gbn = "";
+		for(PrdCdMasterVO vo : list) {
+			if (vo.getSeq_id() != null) {
+				mapper.updatePrdCdMaster(vo);
+				log.info("updated!! "+vo.getSeq_id());
+			}else {
+				mapper.insertPrdCdMaster(vo);
+				log.info("inserted!! "+vo.getSeq_id());
+			}
+			gbn = vo.getTarget_type();
+		}
+		PrdCdMasterVO srchVO = new PrdCdMasterVO();
+		srchVO.setTarget_type(gbn);
+		return mapper.getPrdCdMaster(srchVO);
+	}
+	
+	public int deletePrdCdMaster(String seq_id) {
+		log.info("deletePrdCdMaster");
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		return mapper.deletePrdCdMaster(seq_id);
 	}
 }

@@ -220,4 +220,46 @@ delete from exception_region_master
 where seq_id = #{seq_id}
 </delete>
 
+<select id="getPrdCdMaster" parameterType="PrdCdMaster" resultType="PrdCdMaster">
+select
+  seq_id
+  , prd_cd
+  , target_type
+  , register_date
+  , update_date
+from prdcd_master
+<where>
+  <if test="target_type != null">
+  target_type = #{target_type}
+  </if>
+  <if test="prd_cd != null and '' != prd_cd">
+  and prd_cd like '%${prd_cd}%'
+  </if>
+</where>
+</select>
+
+<insert id="insertPrdCdMaster" parameterType="PrdCdMaster" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
+insert into prdcd_master (prd_cd, target_type)
+values(#{prd_cd}, #{target_type})
+</insert>
+
+<update id="updatePrdCdMaster" parameterType="PrdCdMaster">
+update 
+  prdcd_master
+set 
+  update_date = now()
+  <if test="prd_cd != null">
+  , prd_cd = #{prd_cd}
+  </if>
+where 
+  seq_id = #{seq_id}
+</update>
+
+<delete id="deletePrdCdMaster" parameterType="String">
+delete from 
+  prdcd_master
+where 
+  seq_id = #{seq_id}
+</delete>
+
 </mapper>

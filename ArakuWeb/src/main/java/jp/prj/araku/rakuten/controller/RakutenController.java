@@ -26,6 +26,7 @@ import jp.prj.araku.batch.vo.ItemOutputVO;
 import jp.prj.araku.list.dao.ListDAO;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
+import jp.prj.araku.list.vo.PrdCdMasterVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
@@ -150,10 +151,17 @@ public class RakutenController {
 	}
 	
 	@RequestMapping(value="/csvUpload", method=RequestMethod.POST)
-	public String processCsvUpload(MultipartFile rakUpload, HttpServletRequest req) throws IOException {
+	public String processCsvUpload(
+			MultipartFile rakUpload
+			, HttpServletRequest req
+			, @RequestParam(value="type", defaultValue="NORMAL") String type) throws IOException {
 		log.info("processCsvUpload");
-		dao.insertRakutenInfo(rakUpload, fileEncoding, req, duplDownPath);
-		return "redirect:orderView";
+		dao.insertRakutenInfo(rakUpload, fileEncoding, req, duplDownPath, type);
+		String ret = "redirect:orderView";
+		if("SALES".equals(type)) {
+			ret = "redirect:salesView";
+		}
+		return ret;
 	}
 	
 	@ResponseBody
@@ -531,5 +539,42 @@ public class RakutenController {
 		log.info("deleteRakutenFrozenInfo");
 		ret = dao.deleteRakutenFrozenInfo() + "件 削除完了しました。";
 		return ret;
+	}
+	
+	@RequestMapping(value = "/salesView")
+	public String salesView() {
+		log.info("Welcome to rakuten sales view");
+		return "rakuten/salesView";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/getPrdCdMaster")
+	public ArrayList<PrdCdMasterVO> getPrdCdMaster(PrdCdMasterVO vo) {
+		return listDao.getPrdCdMaster(vo);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "maniPrdCdMaster", method = RequestMethod.POST)
+	public ArrayList<PrdCdMasterVO> manipulatePrdCdMaster(@RequestBody ArrayList<PrdCdMasterVO> list) {
+		return listDao.manipulatePrdCdMaster(list);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "showAllRList")
+	public ArrayList<RakutenVO> getAllRakutenInfo() {
+		return dao.getAllData();
+	}
+	
+	@RequestMapping(value="uriageDown", method = RequestMethod.POST)
+	public void uriageDownload(HttpServletResponse response) {
+		try {
+			dao.uriageDownload(response, fileEncoding);
+		} catch (IOException e) {
+			log.error(e.toString());
+		} catch (CsvDataTypeMismatchException e) {
+			log.error(e.toString());
+		} catch (CsvRequiredFieldEmptyException e) {
+			log.error(e.toString());
+		}
 	}
 }

@@ -403,6 +403,96 @@ public class CommonUtil {
 		return header;
 	}
 	
+	public static String[] amazonHeader() {
+		String[] header = 
+			{
+				"order-id"
+				, "order-item-id"
+				, "purchase-date"
+				, "payments-date"
+				, "reporting-date"
+				, "promise-date"
+				, "days-past-promise"
+				, "buyer-email"
+				, "buyer-name"
+				, "buyer-phone-number"
+				, "sku"
+				, "product-name"
+				, "quantity-purchased"
+				, "quantity-shipped"
+				, "quantity-to-ship"
+				, "ship-service-level"
+				, "recipient-name"
+				, "ship-address-1"
+				, "ship-address-2"
+				, "ship-address-3"
+				, "ship-city"
+				, "ship-state"
+				, "ship-postal-code"
+				, "ship-country"
+				, "payment-method"
+				, "cod-collectible-amount"
+				, "already-paid"
+				, "payment-method-fee"
+				, "scheduled-delivery-start-date"
+				, "scheduled-delivery-end-date"
+				, "points-granted"
+				, "is-prime"
+			};
+		return header;
+	}
+	
+	public static String[] q10Header() {
+		String[] header = 
+			{
+				"配送状態"
+				, "注文番号"
+				, "カート番号"
+				, "配送会社"
+				, "送り状番号"
+				, "発送日"
+				, "注文日"
+				, "入金日"
+				, "お届け希望日"
+				, "発送予定日"
+				, "配送完了日"
+				, "配送方法"
+				, "商品番号"
+				, "商品名"
+				, "数量"
+				, "オプション情報"
+				, "オプションコード"
+				, "おまけ"
+				, "受取人名"
+				, "受取人名(フリガナ)"
+				, "受取人電話番号"
+				, "受取人携帯電話番号"
+				, "住所"
+				, "郵便番号"
+				, "国家"
+				, "送料の決済"
+				, "決済サイト"
+				, "通貨"
+				, "購入者決済金額"
+				, "販売価格"
+				, "割引額"
+				, "注文金額の合計"
+				, "供給原価の合計"
+				, "購入者名"
+				, "購入者名(フリガナ)"
+				, "配送要請事項"
+				, "購入者電話番号"
+				, "購入者携帯電話番号"
+				, "販売者商品コード"
+				, "JANコード"
+				, "規格番号"
+				, "プレゼント贈り主"
+				, "外部広告"
+				, "素材"
+			};
+		return header;
+	}
+	
 	public static String toCommaFormat(long pdMoney) {
 		DecimalFormat form = new DecimalFormat("#,###");
 	    form.setDecimalSeparatorAlwaysShown(false);

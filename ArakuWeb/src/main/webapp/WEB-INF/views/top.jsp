@@ -73,6 +73,9 @@ $(document).ready(function() {
 				<li id="tabChumon" class="nav-item">
 				<a class="nav-link" href="tabChumonView">タブレット注文画面</a>
 				</li>
+				<li id="sales" class="nav-item">
+				<a class="nav-link" href="salesView">売上計算</a>
+				</li>
 				<!--
 				<li id="yuUp" class="nav-item">
 				<a class="nav-link" href="yuView">ゆプリある</a>

@@ -23,6 +23,7 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import jp.prj.araku.list.dao.ListDAO;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
+import jp.prj.araku.list.vo.PrdCdMasterVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
@@ -135,10 +136,16 @@ public class Q10Controller {
 	}
 	
 	@RequestMapping(value="/qUpload", method=RequestMethod.POST)
-	public String processCsvUpload(MultipartFile upload) throws IOException {
+	public String processCsvUpload(
+			MultipartFile upload
+			, @RequestParam(value="type", defaultValue="NORMAL") String type) throws IOException {
 		log.info("processCsvUpload");
-		dao.insertQ10Info(upload, upFileEncoding);
-		return "redirect:orderView";
+		String ret = "redirect:orderView";
+		dao.insertQ10Info(upload, upFileEncoding, type);
+		if("SALES".equals(type)) {
+			ret = "redirect:salesView";
+		}
+		return ret;
 	}
 	
 	@RequestMapping(value="/orderView")
@@ -333,6 +340,37 @@ public class Q10Controller {
 	@RequestMapping(value="/delWeekData")
 	public ArrayList<String> deleteAllWeekAfterData() {
 		return listDao.deleteAllWeekAfterData();
+	}
+	
+	@RequestMapping(value = "/salesView")
+	public String salesView() {
+		log.info("Welcome to q10 sales view");
+		return "q10/salesView";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/getPrdCdMaster")
+	public ArrayList<PrdCdMasterVO> getPrdCdMaster(PrdCdMasterVO vo) {
+		return listDao.getPrdCdMaster(vo);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "maniPrdCdMaster", method = RequestMethod.POST)
+	public ArrayList<PrdCdMasterVO> manipulatePrdCdMaster(@RequestBody ArrayList<PrdCdMasterVO> list) {
+		return listDao.manipulatePrdCdMaster(list);
+	}
+	
+	@RequestMapping(value="uriageDown", method = RequestMethod.POST)
+	public void uriageDownload(HttpServletResponse response) {
+		try {
+			dao.uriageDownload(response, downFileEncoding);
+		} catch (IOException e) {
+			log.error(e.toString());
+		} catch (CsvDataTypeMismatchException e) {
+			log.error(e.toString());
+		} catch (CsvRequiredFieldEmptyException e) {
+			log.error(e.toString());
+		}
 	}
 	
 }

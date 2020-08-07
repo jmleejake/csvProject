@@ -41,6 +41,7 @@ import jp.prj.araku.list.mapper.IListMapper;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
 import jp.prj.araku.list.vo.GlobalSagawaDownVO;
+import jp.prj.araku.list.vo.PrdCdMasterVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.TranslationErrorVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
@@ -58,7 +59,7 @@ public class AmazonDAO {
 	
 	private static final Logger log = Logger.getLogger("jp.prj.araku.amazon");
 	
-	public void insertAmazonInfo(MultipartFile amaUpload, String fileEncoding) throws IOException {
+	public void insertAmazonInfo(MultipartFile amaUpload, String fileEncoding, String type) throws IOException {
 		log.info("insertAmazonInfo");
 		
 		IAmazonMapper mapper = sqlSession.getMapper(IAmazonMapper.class);
@@ -114,6 +115,16 @@ public class AmazonDAO {
 		        	vo.setScheduled_delivery_end_date(arr[29]);
 		        	vo.setPoints_granted(arr[30]);
 		        	vo.setIs_prime(arr[31]);
+		        	
+		        	if("SALES".equals(type)) {
+	            		PrdCdMasterVO prdVO = new PrdCdMasterVO();
+	            		prdVO.setPrd_cd(vo.getOrder_item_id());
+	            		prdVO.setTarget_type(CommonUtil.TRANS_TARGET_A);
+	            		ArrayList<PrdCdMasterVO> prdMaster = listMapper.getPrdCdMaster(prdVO);
+	            		if(prdMaster.size() < 1) {
+	            			continue;
+	            		}
+	            	}
 		        	
 		        	ArrayList<AmazonVO> dupCheck = mapper.getAmazonInfo(vo);
 		        	if (dupCheck.size() > 0) {
@@ -1130,6 +1141,63 @@ public class AmazonDAO {
 			}
 			
 			CommonUtil.executeCSVDownload(csvWriter, writer, header, gsaList);
+		} finally {
+			if (csvWriter != null) {
+				csvWriter.close();
+			}
+			
+			if (writer != null) {
+				writer.close();
+			}
+		}
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void uriageDownload(
+			HttpServletResponse response
+			, String fileEncoding) 
+			throws IOException
+			, CsvDataTypeMismatchException
+			, CsvRequiredFieldEmptyException {
+		log.info("uriageDownload");
+		
+		log.debug("encoding : " + fileEncoding);
+		
+		BufferedWriter writer = null;
+		CSVWriter csvWriter = null;
+		
+		try {
+			String csvFileName = "[A]URIAGE" + CommonUtil.getDate("YYYYMMdd", 0) + ".csv";
+
+			response.setContentType("text/csv");
+
+			// creates mock data
+			String headerKey = "Content-Disposition";
+			String headerValue = String.format("attachment; filename=\"%s\"",
+					csvFileName);
+			response.setHeader(headerKey, headerValue);
+			response.setCharacterEncoding(fileEncoding);
+			
+			writer = new BufferedWriter(response.getWriter());
+			
+			csvWriter = new CSVWriter(writer
+					, CSVWriter.DEFAULT_SEPARATOR
+					, CSVWriter.NO_QUOTE_CHARACTER
+					, CSVWriter.DEFAULT_ESCAPE_CHARACTER
+					, CSVWriter.DEFAULT_LINE_END);
+			
+			String[] header = CommonUtil.amazonHeader();
+			IAmazonMapper mapper = sqlSession.getMapper(IAmazonMapper.class);
+			ArrayList<AmazonVO> list = mapper.getAmazonInfo(null);
+			
+			StatefulBeanToCsv<AmazonVO> beanToCSV = new StatefulBeanToCsvBuilder(writer)
+		            .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
+		            .build();
+			
+			csvWriter.writeNext(header);
+			
+			beanToCSV.write(list);
+			
 		} finally {
 			if (csvWriter != null) {
 				csvWriter.close();

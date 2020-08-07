@@ -48,6 +48,7 @@ import jp.prj.araku.list.mapper.IListMapper;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
 import jp.prj.araku.list.vo.GlobalSagawaDownVO;
+import jp.prj.araku.list.vo.PrdCdMasterVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.TranslationErrorVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
@@ -70,7 +71,7 @@ public class RakutenDAO {
 	
 //	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Transactional
-	public String insertRakutenInfo(MultipartFile rakUpload, String fileEncoding, HttpServletRequest req, String duplDownPath) throws IOException {
+	public String insertRakutenInfo(MultipartFile rakUpload, String fileEncoding, HttpServletRequest req, String duplDownPath, String type) throws IOException {
 		log.info("insertRakutenInfo");
 		String ret = "アップロードを失敗しました。";
 		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
@@ -100,6 +101,16 @@ public class RakutenDAO {
 
             while (iterator.hasNext()) {
             	RakutenVO vo = iterator.next();
+            	
+            	if("SALES".equals(type)) {
+            		PrdCdMasterVO prdVO = new PrdCdMasterVO();
+            		prdVO.setPrd_cd(vo.getProduct_id());
+            		prdVO.setTarget_type(CommonUtil.TRANS_TARGET_R);
+            		ArrayList<PrdCdMasterVO> prdMaster = listMapper.getPrdCdMaster(prdVO);
+            		if(prdMaster.size() < 1) {
+            			continue;
+            		}
+            	}
             	
             	// 2019-10-05: 注1】이라는 항목에 대해서 빈 값으로 처리후 insert처리
             	if(null != vo.getProduct_option() && "注".contains(vo.getProduct_option())) {
@@ -2142,12 +2153,22 @@ public class RakutenDAO {
 									String strdeliveryname = tmp.getDelivery_name();
 									if (!strdeliveryname.equals(null)) {
 										gsaVO.setConsign_nm(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
-										gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", "") + " " + tmp.getDelivery_name_kana().replace("\"", ""));
+										//gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", "") + " " + tmp.getDelivery_name_kana().replace("\"", ""));
 									}
 								}
 									catch (NullPointerException e){
-										gsaVO.setConsign_nm(tmp.getDelivery_surname().replace("\"", "") );		
-										gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", "") );
+										gsaVO.setConsign_nm(tmp.getDelivery_surname().replace("\"", "") );	
+								}
+								
+								// getDelivery_surname_kana() = null の場合、
+								try {
+									String strdeliverysurnamekana = tmp.getDelivery_surname_kana();
+									if (!strdeliverysurnamekana.equals(null)) {
+										gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", "") + " " + tmp.getDelivery_name_kana().replace("\"", ""));
+									}
+								}
+								catch (NullPointerException ex){
+									gsaVO.setConsign_nm_kana("");
 								}
 								//gsaVO.setConsign_nm(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
 								//gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", "") + " " + tmp.getDelivery_name_kana().replace("\"", ""));
@@ -2180,13 +2201,23 @@ public class RakutenDAO {
 								String strdeliveryname = tmp.getDelivery_name();
 								if (!strdeliveryname.equals(null)) {
 									gsaVO.setConsign_nm(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
-									gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", "") + " " + tmp.getDelivery_name_kana().replace("\"", ""));
 								}
 							}
 							catch (NullPointerException e){
 									gsaVO.setConsign_nm(tmp.getDelivery_surname().replace("\"", "") );
-									gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", ""));
+							}		
+							
+							// getDelivery_surname_kana() = null の場合、
+							try {
+								String strdeliverysurnamekana = tmp.getDelivery_surname_kana();
+								if (!strdeliverysurnamekana.equals(null)) {
+									gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", "") + " " + tmp.getDelivery_name_kana().replace("\"", ""));
+								}
 							}
+							catch (NullPointerException ex){
+									gsaVO.setConsign_nm_kana("");
+							}	
+
 							//gsaVO.setConsign_nm(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
 							//gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", "") + " " + tmp.getDelivery_name_kana().replace("\"", ""));
 							gsaVO.setConsign_add1(tmp.getDelivery_add1());
@@ -2227,5 +2258,69 @@ public class RakutenDAO {
 		log.info("deleteRakutenFrozenInfo");
 		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
 		return mapper.deleteRakutenFrozenInfo();
+	}
+	
+	public ArrayList<RakutenVO> getAllData() {
+		ArrayList<RakutenVO> ret = new ArrayList<>();
+		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
+		ret.addAll(mapper.getRakutenInfo(null));
+		ret.addAll(mapper.getRakutenFrozenInfo(null));
+		return ret;
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void uriageDownload(
+			HttpServletResponse response
+			, String fileEncoding) 
+			throws IOException
+			, CsvDataTypeMismatchException
+			, CsvRequiredFieldEmptyException {
+		log.info("uriageDownload");
+		
+		log.debug("encoding : " + fileEncoding);
+		
+		BufferedWriter writer = null;
+		CSVWriter csvWriter = null;
+		
+		try {
+			String csvFileName = "[R]URIAGE" + CommonUtil.getDate("YYYYMMdd", 0) + ".csv";
+
+			response.setContentType("text/csv");
+
+			// creates mock data
+			String headerKey = "Content-Disposition";
+			String headerValue = String.format("attachment; filename=\"%s\"",
+					csvFileName);
+			response.setHeader(headerKey, headerValue);
+			response.setCharacterEncoding(fileEncoding);
+			
+			writer = new BufferedWriter(response.getWriter());
+			
+			csvWriter = new CSVWriter(writer
+					, CSVWriter.DEFAULT_SEPARATOR
+					, CSVWriter.NO_QUOTE_CHARACTER
+					, CSVWriter.DEFAULT_ESCAPE_CHARACTER
+					, CSVWriter.DEFAULT_LINE_END);
+			
+			String[] header = CommonUtil.rakutenHeader();
+			ArrayList<RakutenVO> list = getAllData();
+			
+			StatefulBeanToCsv<RakutenVO> beanToCSV = new StatefulBeanToCsvBuilder(writer)
+		            .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
+		            .build();
+			
+			csvWriter.writeNext(header);
+			
+			beanToCSV.write(list);
+			
+		} finally {
+			if (csvWriter != null) {
+				csvWriter.close();
+			}
+			
+			if (writer != null) {
+				writer.close();
+			}
+		}
 	}
 }

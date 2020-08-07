@@ -25,6 +25,7 @@ import jp.prj.araku.amazon.vo.AmazonVO;
 import jp.prj.araku.list.dao.ListDAO;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
+import jp.prj.araku.list.vo.PrdCdMasterVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
@@ -92,10 +93,16 @@ public class AmazonController {
 	}
 	
 	@RequestMapping(value="/amaUpload", method=RequestMethod.POST)
-	public String processTxtUpload(MultipartFile upload) throws IOException {
+	public String processTxtUpload(
+			MultipartFile upload
+			, @RequestParam(value="type", defaultValue="NORMAL") String type) throws IOException {
 		log.info("processTxtUpload");
-		dao.insertAmazonInfo(upload, fileEncoding);
-		return "redirect:orderView";
+		String ret = "redirect:orderView";
+		dao.insertAmazonInfo(upload, fileEncoding, type);
+		if("SALES".equals(type)) {
+			ret = "redirect:salesView";
+		}
+		return ret;
 	}
 	
 	@ResponseBody
@@ -396,6 +403,37 @@ public class AmazonController {
 	@RequestMapping(value="/delWeekData")
 	public ArrayList<String> deleteAllWeekAfterData() {
 		return listDao.deleteAllWeekAfterData();
+	}
+	
+	@RequestMapping(value = "/salesView")
+	public String salesView() {
+		log.info("Welcome to amazon sales view");
+		return "amazon/salesView";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/getPrdCdMaster")
+	public ArrayList<PrdCdMasterVO> getPrdCdMaster(PrdCdMasterVO vo) {
+		return listDao.getPrdCdMaster(vo);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "maniPrdCdMaster", method = RequestMethod.POST)
+	public ArrayList<PrdCdMasterVO> manipulatePrdCdMaster(@RequestBody ArrayList<PrdCdMasterVO> list) {
+		return listDao.manipulatePrdCdMaster(list);
+	}
+	
+	@RequestMapping(value="uriageDown", method = RequestMethod.POST)
+	public void uriageDownload(HttpServletResponse response) {
+		try {
+			dao.uriageDownload(response, fileEncoding);
+		} catch (IOException e) {
+			log.error(e.toString());
+		} catch (CsvDataTypeMismatchException e) {
+			log.error(e.toString());
+		} catch (CsvRequiredFieldEmptyException e) {
+			log.error(e.toString());
+		}
 	}
 	
 }

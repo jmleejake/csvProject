@@ -38,6 +38,7 @@ import jp.prj.araku.file.vo.SagawaVO;
 import jp.prj.araku.file.vo.YamatoVO;
 import jp.prj.araku.list.mapper.IListMapper;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
+import jp.prj.araku.list.vo.PrdCdMasterVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.TranslationErrorVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
@@ -55,7 +56,7 @@ public class Q10DAO {
 	private static final Logger log = Logger.getLogger("jp.prj.araku.q10");
 	
 	@Transactional
-	public void insertQ10Info(MultipartFile qUpload, String fileEncoding) throws IOException {
+	public void insertQ10Info(MultipartFile qUpload, String fileEncoding, String type) throws IOException {
 		log.info("insertQ10Info");
 		
 		IQ10Mapper mapper =sqlSession.getMapper(IQ10Mapper.class);
@@ -82,6 +83,16 @@ public class Q10DAO {
 
             while (iterator.hasNext()) {
             	Q10VO vo = iterator.next();
+            	
+            	if("SALES".equals(type)) {
+            		PrdCdMasterVO prdVO = new PrdCdMasterVO();
+            		prdVO.setPrd_cd(vo.getItem_no());
+            		prdVO.setTarget_type(CommonUtil.TRANS_TARGET_Q);
+            		ArrayList<PrdCdMasterVO> prdMaster = listMapper.getPrdCdMaster(prdVO);
+            		if(prdMaster.size() < 1) {
+            			continue;
+            		}
+            	}
             	
             	if(vo.getOrder_no() != null) {
             		
@@ -913,5 +924,62 @@ public class Q10DAO {
 			ret = "CLICKPOST DOWNLOAD SUCCESS<br>[FILE PATH]: "+cpDownPath+"CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0) + ".csv";
 		}
 		return ret;
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void uriageDownload(
+			HttpServletResponse response
+			, String fileEncoding) 
+			throws IOException
+			, CsvDataTypeMismatchException
+			, CsvRequiredFieldEmptyException {
+		log.info("uriageDownload");
+		
+		log.debug("encoding : " + fileEncoding);
+		
+		BufferedWriter writer = null;
+		CSVWriter csvWriter = null;
+		
+		try {
+			String csvFileName = "[Q]URIAGE" + CommonUtil.getDate("YYYYMMdd", 0) + ".csv";
+
+			response.setContentType("text/csv");
+
+			// creates mock data
+			String headerKey = "Content-Disposition";
+			String headerValue = String.format("attachment; filename=\"%s\"",
+					csvFileName);
+			response.setHeader(headerKey, headerValue);
+			response.setCharacterEncoding(fileEncoding);
+			
+			writer = new BufferedWriter(response.getWriter());
+			
+			csvWriter = new CSVWriter(writer
+					, CSVWriter.DEFAULT_SEPARATOR
+					, CSVWriter.NO_QUOTE_CHARACTER
+					, CSVWriter.DEFAULT_ESCAPE_CHARACTER
+					, CSVWriter.DEFAULT_LINE_END);
+			
+			String[] header = CommonUtil.q10Header();
+			IQ10Mapper mapper = sqlSession.getMapper(IQ10Mapper.class);
+			ArrayList<Q10VO> list = mapper.getQ10Info(null);
+			
+			StatefulBeanToCsv<Q10VO> beanToCSV = new StatefulBeanToCsvBuilder(writer)
+		            .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
+		            .build();
+			
+			csvWriter.writeNext(header);
+			
+			beanToCSV.write(list);
+			
+		} finally {
+			if (csvWriter != null) {
+				csvWriter.close();
+			}
+			
+			if (writer != null) {
+				writer.close();
+			}
+		}
 	}
 }
