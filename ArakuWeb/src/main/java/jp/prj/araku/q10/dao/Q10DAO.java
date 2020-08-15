@@ -298,7 +298,11 @@ public class Q10DAO {
 				log.debug("option map : " + map);
 				
 				Set<String> optionNames = map.keySet();
-				buf = new StringBuffer(transedName);
+				try {
+					buf = new StringBuffer(transedName);
+				}catch(NullPointerException e) {
+					buf = new StringBuffer("o ");
+				}; 
 				buf.append(" ");
 				for (String optionName : optionNames) {
 					Integer unitsu = map.get(optionName)*unitNo; 

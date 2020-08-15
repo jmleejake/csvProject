@@ -32,6 +32,7 @@ import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
 import jp.prj.araku.rakuten.dao.RakutenDAO;
 import jp.prj.araku.rakuten.vo.RakutenVO;
+import jp.prj.araku.rakuten.vo.RakutenVOForUriage;
 import jp.prj.araku.tablet.dao.TabletPrdDAO;
 import jp.prj.araku.tablet.vo.DealerVO;
 import jp.prj.araku.tablet.vo.TabletPrdVO;
