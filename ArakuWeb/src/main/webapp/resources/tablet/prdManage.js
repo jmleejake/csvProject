@@ -14,7 +14,7 @@ var columnDefs = [
 var rowData = [];
 // 수정데이터 배열
 var modifiedData = [];
-var previousData, afterData;
+var previousData, afterData, baggageClaimNo;
 
 // let the grid know which columns and what data to use
 var orderGridOptions = {
@@ -30,6 +30,11 @@ new agGrid.Grid(eGridDiv, orderGridOptions);
 
 function setRowData(result) {
 	rowData = [];
+	
+	if(result.length < 1) {
+		alert(baggageClaimNo + "\n登録されていない番号です。");
+		return false;
+	}
 	
 	$("#prdMngName").html("名前： "+result[0].delivery_surname+" "+result[0].delivery_name);
 	$("#prdMngName").css("font-size", "25px");
@@ -63,7 +68,11 @@ function isFirstColumn(params) {
 }
 
 $("#btn_srch").on("click", function() {
-	var bgc_no = $("#bgc_no").val();
+	search();
+});
+
+function search() {
+var bgc_no = $("#bgc_no").val();
     
     $.ajax({
         type: "get"
@@ -73,6 +82,13 @@ $("#btn_srch").on("click", function() {
         ,data: {bgc_no:bgc_no}
         ,success: setRowData
     });
+}
 
+// propertychange change keyup paste input
+$("#bgc_no").on("change paste", function() {
+	baggageClaimNo = $("#bgc_no").val();
+	search();
+	$("#bgc_no").val("");
+	$("#bgc_no").focus();
 });
 
