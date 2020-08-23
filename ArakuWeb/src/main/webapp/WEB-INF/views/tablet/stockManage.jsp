@@ -48,11 +48,13 @@ $(document).ready(function() {
 <span id="sp_jancd"></span>
 </div>
 <div class="col-sm-3">
-<input type="text" id="inp_jancd" class="form-control" style="width: 200px;" placeholder="TEST ＪＡＮコード">
+<input type="text" id="inp_jancd" class="form-control" style="width: 200px;" placeholder="ＪＡＮコード">
 </div>
+<!-- 
 <div class="col-sm-3">
 <button id="btn_test" type="button" class="btn btn-default" style="width: 100px;">TEST</button>
 </div>
+ -->
 </div>
 <div class="col-sm-8">
 <div id="stockMGrid" style="width:auto; height: 300px;" class="ag-theme-balham"></div>

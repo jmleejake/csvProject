@@ -258,3 +258,41 @@ function fnSelectedDealerInfo() {
 	$("#sp_dealer").html("取引先名: "+selectedNm);
 	$("#sp_dealer").css("font-size", "25px");
 }
+
+// propertychange change keyup paste input
+$("#inp_jancd").on("change paste", function() {
+var jan_cd = $("#inp_jancd").val();
+	
+	if('' === jan_cd) {
+		pleaseSelectNotify('JANコードを入力してください。');
+		return;
+	}
+	
+	if('undefined' === typeof selectedID) {
+		pleaseSelectNotify('取引先を選択してください。');
+		return;
+	}
+	
+	$("#sp_jancd").html("バーコード: "+jan_cd);
+	$("#sp_jancd").css("font-size", "25px");
+	
+	modifiedData.push({
+		dealer_id: selectedID
+		, jan_cd: jan_cd
+	});
+	
+	$.ajax({
+		url: "maniStockMng"
+		, type:"post"
+		, dataType: "json"
+		, contentType: 'application/json'
+		, data:JSON.stringify(modifiedData)
+		, success: function(result){
+			setStockRowData(result);
+			// 수정데이터 초기화
+			modifiedData = [];
+			$("#inp_jancd").val("");
+			$("#inp_jancd").focus();
+    	}
+	});
+});
