@@ -1782,8 +1782,13 @@ public class RakutenDAO {
 			ArrayList<ArakuVO> list = new ArrayList<>();
 			ArrayList<RCSVDownVO> csvList = mapper.getRCSVDownList(vo);
 			
+			/*楽天更新ファイル画面にてヤマトボタン押下時に
+			 * 配送会社：1001とお荷物伝票番号が存在するもののみDLしたいです。
+			 */
 			for(RCSVDownVO csv : csvList) {
-				list.add(csv);
+				if(null != csv.getBaggage_claim_no() &&  !"".equals(csv.getBaggage_claim_no())) {
+					list.add(csv);
+				}
 			}
 			
 			CommonUtil.executeCSVDownload(csvWriter, writer, header, list);
