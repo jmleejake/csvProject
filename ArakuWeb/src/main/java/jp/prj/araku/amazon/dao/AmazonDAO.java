@@ -918,7 +918,7 @@ public class AmazonDAO {
 		}
 	}
 	
-	public void downloadYahooFile(
+	public void downloadAmazonFile(
 			HttpServletResponse response
 			, String[] id_lst
 			, String fileEncoding) 
@@ -939,14 +939,21 @@ public class AmazonDAO {
 		ArrayList<AmazonVO> list = mapper.getAmazonInfo(ama);
 		
 		for(AmazonVO vo : list) {
-			AmazonFileVO fileVO = new AmazonFileVO();
-			fileVO.setOrder_id(vo.getOrder_id());
-			fileVO.setShip_date(CommonUtil.getDate("yyyy-MM-dd", 0));
-			fileVO.setCarrier_code("OTHER");
-			fileVO.setCarrier_name("ヤマト運輸");
-			fileVO.setTracking_number(vo.getBaggage_claim_no());
-			fileVO.setShip_method("宅配便");
-			ret.add(fileVO);
+			/*楽天更新ファイル画面にてヤマトDLするときお荷物伝票番号対応したように
+			 * アマゾンもアマゾン更新ファイル画面にで
+			 * お問い合わせ伝票番号にデーターがあるもののみDLするように
+			 * 対応していただけますでしょうか
+			 * */
+			if(null != vo.getBaggage_claim_no() && !"".equals(vo.getBaggage_claim_no())) {
+				AmazonFileVO fileVO = new AmazonFileVO();
+				fileVO.setOrder_id(vo.getOrder_id());
+				fileVO.setShip_date(CommonUtil.getDate("yyyy-MM-dd", 0));
+				fileVO.setCarrier_code("OTHER");
+				fileVO.setCarrier_name("ヤマト運輸");
+				fileVO.setTracking_number(vo.getBaggage_claim_no());
+				fileVO.setShip_method("宅配便");
+				ret.add(fileVO);
+			}
 		}
 		
 		String[] contents1= {"TemplateType=OrderFulfillment","Version=2011.1102","この行はAmazonが使用しますので変更や削除しないでください。","","","","","",""};

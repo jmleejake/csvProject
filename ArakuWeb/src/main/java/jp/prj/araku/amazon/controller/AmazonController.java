@@ -327,7 +327,7 @@ public class AmazonController {
 	}
 	
 	@RequestMapping(value="/aFileDown", method=RequestMethod.POST)
-	public void downloadYahooFile(
+	public void downloadAmazonFile(
 			HttpServletResponse response,
 			@RequestParam(value="id_lst") String id_lst) {
 		
@@ -335,7 +335,7 @@ public class AmazonController {
 		id_lst = id_lst.replace("]", "");
 		String[] seq_id_list = id_lst.split(",");
 		try {
-			dao.downloadYahooFile(response, seq_id_list, fileEncoding);
+			dao.downloadAmazonFile(response, seq_id_list, fileEncoding);
 		} catch (IOException e) {
 			log.error(e.toString());
 		} catch (CsvDataTypeMismatchException e) {
