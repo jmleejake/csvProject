@@ -519,8 +519,10 @@ public class RakutenDAO {
 				buf = new StringBuffer(transedName);
 				buf.append(" ");
 				
+				// 2020/08/19 注文件数が１以上の場合、通常出荷にする。
+				if (unitNo >1) {
 				// 2020/01/27 ネコポス対応の為、注文件数が１以上の場合、通常出荷にする。
-				if (transedName.contains("全無") && unitNo >1) {
+				//if (transedName.contains("全無") && unitNo >1) {
 					buf = new StringBuffer(transedName + "×" + su);
 				}
 				
