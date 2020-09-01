@@ -1094,16 +1094,18 @@ public class RakutenDAO {
 				boolean chkRet = false;
 				for (ExceptionMasterVO exVO : exList) {
 					if (tmp.getResult_text().contains(exVO.getException_data())) {
-						//注文者とお届け先のお客様が同一の場合、佐川にて発送する。  2020/7/23  金
-						String deliveryname = tmp.getDelivery_surname().trim() + tmp.getDelivery_name().trim();   //お届け先お客様
-						String ordername =tmp.getOrder_surname().trim()+  tmp.getOrder_name().trim();		//注文者
-						
-						if (deliveryname.equals(ordername)) {					
-							log.debug(String.format("exception_data: %s - result_txt: %s", exVO.getException_data(), tmp.getResult_text()));
-							chkRet = true;
-						}else{
-							chkRet = false;
-						}
+						log.debug(String.format("exception_data: %s - result_txt: %s", exVO.getException_data(), tmp.getResult_text()));
+						chkRet = true;
+//						//注文者とお届け先のお客様が同一の場合、佐川にて発送する。  2020/7/23  金
+//						String deliveryname = tmp.getDelivery_surname().trim() + tmp.getDelivery_name().trim();   //お届け先お客様
+//						String ordername =tmp.getOrder_surname().trim()+  tmp.getOrder_name().trim();		//注文者
+//						
+//						if (deliveryname.equals(ordername)) {					
+//							log.debug(String.format("exception_data: %s - result_txt: %s", exVO.getException_data(), tmp.getResult_text()));
+//							chkRet = true;
+//						}else{
+//							chkRet = false;
+//						}
 					}
 				}
 //				if (chkRet) {
@@ -2125,25 +2127,25 @@ public class RakutenDAO {
 				// ヤマト宅配便対応　
 				if(isEx) continue;
 				
-				// getDelivery_name() = null の場合、
-				try {
-					//注文者とお届け先のお客様が同一ではない場合、やまとにて発送する。  2020/7/23  金 
-					String deliveryname = tmp.getDelivery_surname().trim() + tmp.getDelivery_name().trim();   //お届け先お客様
-					String ordername =tmp.getOrder_surname().trim()+  tmp.getOrder_name().trim();		//注文者
-					if (!deliveryname.equals(null) || !ordername.equals(null)) {
-						if (!deliveryname.equals(ordername)) {					
-							isEx = true;
-						}else{
-							isEx = false;
-						}
-					}
-				}
-				catch (NullPointerException e){
-					isEx = false;
-				}
-				
-				// ヤマト宅配便対応
-				if(isEx) continue;
+//				// getDelivery_name() = null の場合、
+//				try {
+//					//注文者とお届け先のお客様が同一ではない場合、やまとにて発送する。  2020/7/23  金 
+//					String deliveryname = tmp.getDelivery_surname().trim() + tmp.getDelivery_name().trim();   //お届け先お客様
+//					String ordername =tmp.getOrder_surname().trim()+  tmp.getOrder_name().trim();		//注文者
+//					if (!deliveryname.equals(null) || !ordername.equals(null)) {
+//						if (!deliveryname.equals(ordername)) {					
+//							isEx = true;
+//						}else{
+//							isEx = false;
+//						}
+//					}
+//				}
+//				catch (NullPointerException e){
+//					isEx = false;
+//				}
+//				
+//				// ヤマト宅配便対応
+//				if(isEx) continue;
 				
 				for (ExceptionMasterVO exVO : exList) {
 					String str= tmp.getResult_text();
@@ -2180,6 +2182,24 @@ public class RakutenDAO {
 								catch (NullPointerException ex){
 									gsaVO.setConsign_nm_kana("");
 								}
+								
+								// deliveryname　と　ordernameが一致しない場合、
+								//deliverynameの後ろに（ordernameさまから）を追加する。 START  2020/09/01  金
+								try {
+									//注文者とお届け先のお客様が同一ではない場合、deliverynameの後ろに（ordernameさまから） 
+									String deliveryname = tmp.getDelivery_surname().trim() + tmp.getDelivery_name().trim();   //お届け先お客様
+									String ordername =tmp.getOrder_surname().trim()+  tmp.getOrder_name().trim();		//注文者
+									if (!deliveryname.equals(null) || !ordername.equals(null)) {
+										if (!deliveryname.equals(ordername)) {		
+											gsaVO.setConsign_nm(deliveryname + "("+ ordername +"様から)");
+										}
+									}
+								}
+								catch (NullPointerException e){
+									gsaVO.setConsign_nm( tmp.getDelivery_surname().trim() + tmp.getDelivery_name().trim());
+								}
+								//deliverynameの後ろに（ordernameさまから）を追加する。 END  2020/09/01  金
+								
 								//gsaVO.setConsign_nm(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
 								//gsaVO.setConsign_nm_kana(tmp.getDelivery_surname_kana().replace("\"", "") + " " + tmp.getDelivery_name_kana().replace("\"", ""));
 								gsaVO.setConsign_add1(tmp.getDelivery_add1());
