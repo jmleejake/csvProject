@@ -49,6 +49,12 @@ public class CommonUtil {
 	public static final String YA_TOMORROW_TIMEMAP3 = "1820";
 	public static final String YA_TOMORROW_TIMEMAP4 = "1921";
 	public static final String SA_TOMORROW_MORNING_CODE = "01";
+	
+	public static final String SA_TOMORROW_TIMEMAP1 = "14";
+	public static final String SA_TOMORROW_TIMEMAP2 = "16";
+	public static final String SA_TOMORROW_TIMEMAP3 = "18";
+	public static final String SA_TOMORROW_TIMEMAP4 = "19";
+	
 	public static final String TITLE_SAMA = "様";
 	public static final String INVOICE_TYPE_0 = "0";/*発払い*/
 	public static final String INVOICE_TYPE_2 = "2";/*コレクト*/
