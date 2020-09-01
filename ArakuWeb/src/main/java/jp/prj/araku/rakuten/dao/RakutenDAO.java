@@ -2127,7 +2127,7 @@ public class RakutenDAO {
 				
 				// getDelivery_name() = null の場合、
 				try {
-					//注文者とお届け先のお客様が同一ではない場合、やまとにて発送する。  2020/7/23  金
+					//注文者とお届け先のお客様が同一ではない場合、やまとにて発送する。  2020/7/23  金 
 					String deliveryname = tmp.getDelivery_surname().trim() + tmp.getDelivery_name().trim();   //お届け先お客様
 					String ordername =tmp.getOrder_surname().trim()+  tmp.getOrder_name().trim();		//注文者
 					if (!deliveryname.equals(null) || !ordername.equals(null)) {
@@ -2256,6 +2256,28 @@ public class RakutenDAO {
 							gsaVO.setConsign_add2(tmp.getDelivery_add2() + " " + tmp.getDelivery_add3());
 							gsaVO.setConsign_post_no(tmp.getDelivery_post_no1()+"-"+tmp.getDelivery_post_no2());
 							gsaVO.setConsign_tel(tmp.getDelivery_tel1()+"-"+tmp.getDelivery_tel2()+"-"+tmp.getDelivery_tel3());
+		        		
+							// 2020/09/01  キム 사가와  배송날짜를 설정함. 　⇒　ＳＴＡＲＴ
+							String strComment = tmp.getComment().replace("\n", "").replace("\"", "").replace("[配送日時指定:]", "").replace("[備考:]", "");
+							// 備考欄の内容を分析して日付を設定する。
+							if (strComment.contains(CommonUtil.TOMORROW_MORNING)) {
+								gsaVO.setDelivery_dt(CommonUtil.getDate("YYYY/MM/dd", 1));
+								gsaVO.setDelivery_tm(CommonUtil.SA_TOMORROW_MORNING_CODE);
+							}
+							if (strComment.contains(CommonUtil.TIMEMAP1)) {
+								gsaVO.setDelivery_tm(CommonUtil.SA_TOMORROW_TIMEMAP1);
+							}	
+							if (strComment.contains(CommonUtil.TIMEMAP2)) {
+								gsaVO.setDelivery_tm(CommonUtil.SA_TOMORROW_TIMEMAP2);
+							}
+							if (strComment.contains(CommonUtil.TIMEMAP3)) {
+								gsaVO.setDelivery_tm(CommonUtil.SA_TOMORROW_TIMEMAP3);
+							}
+							if (strComment.contains(CommonUtil.TIMEMAP4)) {
+								gsaVO.setDelivery_tm(CommonUtil.SA_TOMORROW_TIMEMAP4);
+							}
+							// 2020/09/01  キム 사가와  배송날짜를 설정함. 　⇒　END
+							
 							// あす楽希望이 1인 경우
 			        		if (tmp.getTomorrow_hope().equals("1")) {
 			        			gsaVO.setDelivery_tm(CommonUtil.SA_TOMORROW_MORNING_CODE);
