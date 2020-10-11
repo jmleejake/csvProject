@@ -1,4 +1,4 @@
-package jp.prj.araku.jaiko.product.controller;
+package jp.prj.araku.jaiko.inventory.controller;
 
 import java.util.ArrayList;
 
@@ -11,41 +11,41 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import jp.prj.araku.jaiko.product.dao.JaikoPrdInfoDAO;
-import jp.prj.araku.jaiko.product.vo.JaikoPrdInfoVO;
+import jp.prj.araku.jaiko.inventory.dao.JaikoPrdInventoryDAO;
+import jp.prj.araku.jaiko.inventory.vo.JaikoPrdInventoryVO;
 
-@RequestMapping(value = "/jaiko/prdInfo")
+@RequestMapping(value = "/jaiko/prdInven")
 @Controller
-public class JaikoPrdInfoController {
+public class JaikoPrdInventoryController {
 	private Logger log = LoggerFactory.getLogger("jaikoLog");
 	
 	@Autowired
-	JaikoPrdInfoDAO dao;
+	JaikoPrdInventoryDAO dao;
 	
 	@RequestMapping(value = "")
-	public String showJaikoPrdInfo() {
-		return "jaiko/prdInfo";
+	public String showJaikoPrdInventory() {
+		return "jaiko/prdInventory";
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = "/getPrdInfo")
-	public ArrayList<JaikoPrdInfoVO> getJaikoPrdInfo(JaikoPrdInfoVO vo) {
+	@RequestMapping(value = "/getPrdInven")
+	public ArrayList<JaikoPrdInventoryVO> getJaikoPrdInfo(JaikoPrdInventoryVO vo) {
 		log.debug("getJaikoPrdInfo :: {}", vo);
-		return dao.getJaikoPrdInfo(vo);
+		return dao.getJaikoPrdInventory(vo);
 	}
 	
 	@ResponseBody
 	@RequestMapping(value = "/manipulate", method = RequestMethod.POST)
-	public ArrayList<JaikoPrdInfoVO> manipulateJaikoPrdInfo(@RequestBody ArrayList<JaikoPrdInfoVO> list) {
+	public ArrayList<JaikoPrdInventoryVO> manipulateJaikoPrdInfo(@RequestBody ArrayList<JaikoPrdInventoryVO> list) {
 		log.debug("manipulateJaikoPrdInfo :: {}", list);
-		return dao.manipulateJaikoPrdInfo(list);
+		return dao.manipulatePrdInventory(list);
 	}
 	
 	@ResponseBody
 	@RequestMapping(value = "/delete", method = RequestMethod.POST)
-	public ArrayList<JaikoPrdInfoVO> deleteJaikoPrdInfo(@RequestBody ArrayList<JaikoPrdInfoVO> list) {
+	public ArrayList<JaikoPrdInventoryVO> deleteJaikoPrdInfo(@RequestBody ArrayList<JaikoPrdInventoryVO> list) {
 		log.debug("deleteJaikoPrdInfo :: {}", list);
-		return dao.deleteJaikoPrdInfo(list);
+		return dao.deleteJaikoPrdInventory(list);
 	}
 
 }

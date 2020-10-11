@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.prj.araku.jaiko.inventory.mapper.IJaikoPrdInventoryMapper">
+
+<select id="getJaikoPrdInventory" parameterType="JaikoPrdInventory" resultType="JaikoPrdInventory">
+select
+  seq_id
+  , prd_cd
+  , brand_nm
+  , prd_nm
+  , jan_cd
+  , now_prd_cnt
+  , date_format(reg_dt, '%Y/%m/%d') reg_dt
+  , date_format(upd_dt, '%Y/%m/%d') upd_dt
+from jaiko_inventory_info
+<where>
+	<choose>
+	<when test="search_type == 'srch'">
+	<if test="seq_id != null and seq_id != ''">
+	seq_id = #{seq_id}
+	</if>
+	<trim prefixOverrides="and|or">
+	<if test="prd_cd != null and prd_cd != ''">
+	and prd_cd like '%${prd_cd}%'
+	</if>
+	<if test="prd_nm != null and prd_nm != ''">
+	and prd_nm like '%${prd_nm}%'
+	</if>
+	<if test="jan_cd != null and jan_cd != ''">
+	and jan_cd like '%${jan_cd}%'
+	</if>
+	</trim>
+	</when>
+	<otherwise>
+	upd_dt between date_add(now(), interval -1 day) and now()
+	</otherwise>
+	</choose>
+</where>
+order by upd_dt desc, seq_id desc
+</select>
+
+<insert id="insertJaikoPrdInventory" parameterType="JaikoPrdInventory" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
+insert into jaiko_inventory_info (prd_cd, brand_nm, prd_nm, jan_cd, now_prd_cnt)
+values (#{prd_cd}, #{brand_nm}, #{prd_nm}, #{jan_cd}, #{now_prd_cnt})
+</insert>
+
+<update id="updateJaikoPrdInventory" parameterType="JaikoPrdInventory">
+update jaiko_inventory_info
+set
+  upd_dt = now()
+  <if test="prd_cd != null and prd_cd != ''">
+  , prd_cd = #{prd_cd}
+  </if>
+  <if test="brand_nm != null and brand_nm != ''">
+  , brand_nm = #{brand_nm}
+  </if>
+  <if test="prd_nm != null and prd_nm != ''">
+  , prd_nm = #{prd_nm}
+  </if>
+  <if test="jan_cd != null and jan_cd != ''">
+  , jan_cd = #{jan_cd}
+  </if>
+  <if test="now_prd_cnt != null and now_prd_cnt != ''">
+  , now_prd_cnt = #{now_prd_cnt}
+  </if>
+where
+  seq_id = #{seq_id}
+</update>
+
+<delete id="deleteJaikoPrdInventory" parameterType="java.lang.String">
+delete from jaiko_inventory_info
+where seq_id = #{seq_id}
+</delete>
+
+</mapper>
