@@ -1,30 +1,36 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    
+<%
+String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
+%>
 <title>アラクシステム</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<link rel="stylesheet" href="./../resources/bootstrap-3.3.7/bootstrap.min.css">
-<!-- <link rel="stylesheet" href="./resources/bootswatch-theme/bootstrap.min.css"> -->
-<script src="./../resources/bootstrap-3.3.7/bootstrap.min.js"></script>
-<script src="./../resources/bootstrap-notify/bootstrap-notify.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
-<link rel="stylesheet" href="./../resources/alertfy-js-0.3.11/alertify.core.css">
-<link rel="stylesheet" href="./../resources/alertfy-js-0.3.11/alertify.default.css">
-<script src="./../resources/alertfy-js-0.3.11/alertify.min.js"></script>
+<script src="<%=svrInfo %>/resources/bootstrap-notify/bootstrap-notify.min.js"></script>
 
-<link rel="stylesheet" href="./../resources/ag-grid/ag-grid.css">
-<link rel="stylesheet" href="./../resources/ag-grid/ag-theme-balham.css">
-<script src="./../resources/ag-grid/ag-grid.min.noStyle.js"></script>
+<link rel="stylesheet" href="<%=svrInfo %>/resources/alertfy-js-0.3.11/alertify.core.css">
+<link rel="stylesheet" href="<%=svrInfo %>/resources/alertfy-js-0.3.11/alertify.default.css">
+<script src="<%=svrInfo %>/resources/alertfy-js-0.3.11/alertify.min.js"></script>
 
-<link rel="stylesheet" href="./../resources/bootstrap-datepicker-1.6.4/bootstrap-datepicker.min.css">
-<link rel="stylesheet" href="./../resources/bootstrap-datepicker-1.6.4/bootstrap-datepicker3.min.css">
-<script src="./../resources/bootstrap-datepicker-1.6.4/bootstrap-datepicker.min.js"></script>
-<script src="./../resources/bootstrap-datepicker-1.6.4/bootstrap-datepicker.ja.min.js"></script>
+<link rel="stylesheet" href="<%=svrInfo %>/resources/ag-grid/ag-grid.css">
+<link rel="stylesheet" href="<%=svrInfo %>/resources/ag-grid/ag-theme-balham.css">
+<script src="<%=svrInfo %>/resources/ag-grid/ag-grid.min.noStyle.js"></script>
 
-<script src="./../resources/common.js"></script>
-<link rel="stylesheet" href="./../resources/common.css">
+<link rel="stylesheet" href="<%=svrInfo %>/resources/bootstrap-datepicker-1.6.4/bootstrap-datepicker.min.css">
+<link rel="stylesheet" href="<%=svrInfo %>/resources/bootstrap-datepicker-1.6.4/bootstrap-datepicker3.min.css">
+<script src="<%=svrInfo %>/resources/bootstrap-datepicker-1.6.4/bootstrap-datepicker.min.js"></script>
+<script src="<%=svrInfo %>/resources/bootstrap-datepicker-1.6.4/bootstrap-datepicker.ja.min.js"></script>
+
+<link rel="stylesheet" href="<%=svrInfo %>/resources/fileView.css">
+<script src="<%=svrInfo %>/resources/fileView.js"></script>
+
+<script src="<%=svrInfo %>/resources/common.js"></script>
+<link rel="stylesheet" href="<%=svrInfo %>/resources/common.css">
 
 <script>
 $(document).ready(function() {
@@ -46,7 +52,7 @@ $(document).ready(function() {
 			</button>
 			<!-- Logo -->
 			<a class="navbar-brand" href="/araku">
-			<img src="./../resources/img/kana-a.png" alt="Brand" style="width:45px; margin-top:-11px;">
+			<img src="<%=svrInfo %>/resources/img/kana-a.png" alt="Brand" style="width:45px; margin-top:-11px;">
 			</a>
 		</div>
 	

@@ -1,22 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%
+String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
+%>
 <!DOCTYPE html>
 <html>
 <head>
-<script src="./../resources/jquery/jquery.min.js"></script>
-<script src="./../resources/bootstrap-notify/bootstrap-notify.min.js"></script>
-<script>
-$(document).ready(function() {
-	$("#stockM").addClass("active");
-	
-	$("#receive_date").datepicker({
-		language: "ja"
-		, autoclose: true
-	});
-	
-	$("#inp_jancd").focus();
-});
-</script>
 </head>
 <body>
 <jsp:include page="../tabletTop.jsp"></jsp:include>
@@ -68,9 +57,21 @@ $(document).ready(function() {
 </div>
 </div>
 </div>
-<script src="./../resources/tablet/stockManage.js"></script>
+<script src="<%=svrInfo %>/resources/tablet/stockManage.js"></script>
 <form id="frmDown" action="stockDown" method="post">
 <input type="hidden" name="hidSeqId" id="hidSeqId">
 </form>
 </body>
+<script>
+$(document).ready(function() {
+	$("#stockM").addClass("active");
+	
+	$("#receive_date").datepicker({
+		language: "ja"
+		, autoclose: true
+	});
+	
+	$("#inp_jancd").focus();
+});
+</script>
 </html>

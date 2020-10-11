@@ -5,12 +5,79 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+<body>
+<jsp:include page="../top.jsp"></jsp:include>
 
-<link rel="stylesheet" href="./../resources/fileView.css">
-<script src="./../resources/jquery/jquery.min.js"></script>
-<script src="./../resources/fileView.js"></script>
-<script src="./../resources/bootstrap-notify/bootstrap-notify.min.js"></script>
+<div class="container-fluid">
 
+<div class="well container-fluid">
+<form id="rak-frm" action="csvUpload" method="post" enctype="multipart/form-data" onsubmit="return preCheck('rak');" >
+<div id="rak-csv" class="file-up col-sm-8">
+<input type="file" id="rak-upload" name="rakUpload" multiple="multiple" style="display:none">
+<button class="original_btn">楽天CSV</button>
+<span class="icon">未選択</span>
+</div>
+<div class="col-sm-4">
+<input type="submit" class="original_btn" value="アップロード">
+</div>
+</form>
+</div>
+
+<div class="well container-fluid">
+<form id="items-frm" action="itemsUpload" method="post" enctype="multipart/form-data" onsubmit="return preCheck('items');" >
+<div id="items-csv" class="file-up col-sm-8">
+<input type="file" id="items-upload" name="itemsUpload" multiple="multiple" style="display:none">
+<button class="original_btn">CSV一括編集</button>
+<span class="icon">未選択</span>
+</div>
+<div class="col-sm-4">
+<input type="submit" class="original_btn" value="アップロード">
+</div>
+</form>
+</div>
+
+<div class="well container-fluid">
+<form id="saga-frm" action="sagaUpload" method="post" enctype="multipart/form-data" onsubmit="return preCheck('saga');" >
+<div id="saga-csv" class="file-up col-sm-8">
+<input type="file" id="saga-upload" name="sagaUpload" multiple="multiple" style="display:none">
+<button class="original_btn">SAGAWA CSV</button>
+<span class="icon">未選択</span>
+</div>
+<div class="col-sm-4">
+<input type="submit" class="original_btn" value="アップロード">
+</div>
+</form>
+</div>
+
+<div class="well container-fluid">
+<form id="yama-frm" action="yamaUpload" method="post" enctype="multipart/form-data" onsubmit="return preCheck('yama');" >
+<div id="yama-csv" class="file-up col-sm-8">
+<input type="file" id="yama-upload" name="yamaUpload" multiple="multiple" style="display:none">
+<button class="original_btn">YAMATO CSV</button>
+<span class="icon">未選択</span>
+</div>
+<div class="col-sm-4">
+<input type="submit" class="original_btn" value="アップロード">
+</div>
+</form>
+</div>
+
+<div class="well container-fluid">
+<form id="saga-frm2006" action="sagaUpload2006" method="post" enctype="multipart/form-data" onsubmit="return preCheck('saga2006');" >
+<div id="saga-csv2006" class="file-up col-sm-8">
+<input type="file" id="saga-upload2006" name="sagaUpload2006" multiple="multiple" style="display:none">
+<button class="original_btn">グローバル<br/>SAGAWA CSV</button>
+<span class="icon">未選択</span>
+</div>
+<div class="col-sm-4">
+<input type="submit" class="original_btn" value="アップロード">
+</div>
+</form>
+</div>
+
+</div>
+</body>
 <script>
 $(document).ready(function() {
 	$("#home").addClass("active");
@@ -112,77 +179,4 @@ $(document).ready(function() {
     
 });
 </script>
-</head>
-<body>
-<jsp:include page="../top.jsp"></jsp:include>
-
-<div class="container-fluid">
-
-<div class="well container-fluid">
-<form id="rak-frm" action="csvUpload" method="post" enctype="multipart/form-data" onsubmit="return preCheck('rak');" >
-<div id="rak-csv" class="file-up col-sm-8">
-<input type="file" id="rak-upload" name="rakUpload" multiple="multiple" style="display:none">
-<button class="original_btn">楽天CSV</button>
-<span class="icon">未選択</span>
-</div>
-<div class="col-sm-4">
-<input type="submit" class="original_btn" value="アップロード">
-</div>
-</form>
-</div>
-
-<div class="well container-fluid">
-<form id="items-frm" action="itemsUpload" method="post" enctype="multipart/form-data" onsubmit="return preCheck('items');" >
-<div id="items-csv" class="file-up col-sm-8">
-<input type="file" id="items-upload" name="itemsUpload" multiple="multiple" style="display:none">
-<button class="original_btn">CSV一括編集</button>
-<span class="icon">未選択</span>
-</div>
-<div class="col-sm-4">
-<input type="submit" class="original_btn" value="アップロード">
-</div>
-</form>
-</div>
-
-<div class="well container-fluid">
-<form id="saga-frm" action="sagaUpload" method="post" enctype="multipart/form-data" onsubmit="return preCheck('saga');" >
-<div id="saga-csv" class="file-up col-sm-8">
-<input type="file" id="saga-upload" name="sagaUpload" multiple="multiple" style="display:none">
-<button class="original_btn">SAGAWA CSV</button>
-<span class="icon">未選択</span>
-</div>
-<div class="col-sm-4">
-<input type="submit" class="original_btn" value="アップロード">
-</div>
-</form>
-</div>
-
-<div class="well container-fluid">
-<form id="yama-frm" action="yamaUpload" method="post" enctype="multipart/form-data" onsubmit="return preCheck('yama');" >
-<div id="yama-csv" class="file-up col-sm-8">
-<input type="file" id="yama-upload" name="yamaUpload" multiple="multiple" style="display:none">
-<button class="original_btn">YAMATO CSV</button>
-<span class="icon">未選択</span>
-</div>
-<div class="col-sm-4">
-<input type="submit" class="original_btn" value="アップロード">
-</div>
-</form>
-</div>
-
-<div class="well container-fluid">
-<form id="saga-frm2006" action="sagaUpload2006" method="post" enctype="multipart/form-data" onsubmit="return preCheck('saga2006');" >
-<div id="saga-csv2006" class="file-up col-sm-8">
-<input type="file" id="saga-upload2006" name="sagaUpload2006" multiple="multiple" style="display:none">
-<button class="original_btn">グローバル<br/>SAGAWA CSV</button>
-<span class="icon">未選択</span>
-</div>
-<div class="col-sm-4">
-<input type="submit" class="original_btn" value="アップロード">
-</div>
-</form>
-</div>
-
-</div>
-</body>
 </html>

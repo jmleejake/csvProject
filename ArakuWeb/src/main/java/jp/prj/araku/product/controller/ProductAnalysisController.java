@@ -22,7 +22,7 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import jp.prj.araku.product.dao.ProductAnalysisDAO;
 import jp.prj.araku.product.vo.ProductAnalysisVO;
 
-@RequestMapping(value="prdAnalysis")
+@RequestMapping(value="/araku/prdAnalysis")
 @Controller
 public class ProductAnalysisController {
 	@Value("${FILE_ENCODING}")

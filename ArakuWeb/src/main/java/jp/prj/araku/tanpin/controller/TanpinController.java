@@ -23,7 +23,7 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import jp.prj.araku.tanpin.dao.TanpinDAO;
 import jp.prj.araku.tanpin.vo.TanpinVO;
 
-@RequestMapping(value="prdAnalysis")
+@RequestMapping(value="/araku/prdAnalysis")
 @Controller
 public class TanpinController {
 	@Value("${FILE_ENCODING}")

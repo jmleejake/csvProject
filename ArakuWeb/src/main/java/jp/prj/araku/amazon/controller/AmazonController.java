@@ -5,7 +5,8 @@ import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -34,10 +35,10 @@ import jp.prj.araku.tablet.vo.DealerVO;
 import jp.prj.araku.tablet.vo.TabletPrdVO;
 import jp.prj.araku.util.CommonUtil;
 
-@RequestMapping(value="amazon")
+@RequestMapping(value="/araku/amazon")
 @Controller
 public class AmazonController {
-	private static final Logger log = Logger.getLogger("jp.prj.araku.amazon");
+	private Logger log = LoggerFactory.getLogger("arakuLog");
 	
 	@Value("${FILE_ENCODING}")
 	private String fileEncoding;
@@ -56,33 +57,33 @@ public class AmazonController {
 	
 	@RequestMapping(value = "/fileView")
 	public String fileView() {
-		log.info("Welcome to amazon file upload view");
+		log.debug("Welcome to amazon file upload view");
 		return "amazon/fileView";
 	}
 	
 	@RequestMapping(value="/orderView")
 	public String orderView() {
-		log.info("Welcome to amazon order view");
+		log.debug("Welcome to amazon order view");
 		return "amazon/orderInfo";
 	}
 	
 	@RequestMapping(value="/translationView")
 	public String translationView(Model model) {
-		log.info("Welcome to amazon translation view");
+		log.debug("Welcome to amazon translation view");
 		model.addAttribute("type", CommonUtil.TRANS_TARGET_A);
 		return "menu/translation";
 	}
 	
 	@RequestMapping(value = "/regionView")
 	public String regionView(Model model) {
-		log.info("Welcome to amazon region master view");
+		log.debug("Welcome to amazon region master view");
 		model.addAttribute("type", CommonUtil.TRANS_TARGET_A);
 		return "menu/regionMaster";
 	}
 	
 	@RequestMapping(value = "/resultView", method=RequestMethod.POST)
 	public String resultView(String[] list, Model model ) {
-		log.info("Welcome to amazon translation result view");
+		log.debug("Welcome to amazon translation result view");
 		ArrayList<String> idList = new ArrayList<>();
 		for (String str : list) {
 			log.debug(str);
@@ -96,7 +97,7 @@ public class AmazonController {
 	public String processTxtUpload(
 			MultipartFile upload
 			, @RequestParam(value="type", defaultValue="NORMAL") String type) throws IOException {
-		log.info("processTxtUpload");
+		log.debug("processTxtUpload");
 		String ret = "redirect:orderView";
 		dao.insertAmazonInfo(upload, fileEncoding, type);
 		if("SALES".equals(type)) {
@@ -108,27 +109,27 @@ public class AmazonController {
 	@ResponseBody
 	@RequestMapping(value="/showAList")
 	public ArrayList<AmazonVO> getAmazonInfo(AmazonVO vo) {
-		log.info("getAmazonInfo");
+		log.debug("getAmazonInfo");
 		return dao.getAmazonInfo(vo);
 	}
 	
 	@ResponseBody
 	@RequestMapping(value="/getTrans")
 	public ArrayList<TranslationVO> getTransInfo(TranslationVO transVO) {
-		log.info("getTransInfo");
+		log.debug("getTransInfo");
 		return listDao.getTransInfo(transVO);
 	}
 	
 	@ResponseBody
 	@RequestMapping(value="/modTrans")
 	public ArrayList<TranslationVO> modTransInfo(@RequestBody ArrayList<TranslationVO> transVO) {
-		log.info("modTransInfo");
+		log.debug("modTransInfo");
 		return listDao.registerTransInfo(transVO);
 	}
 	
 	@RequestMapping(value="/delTrans")
 	public String delTransInfo(@RequestBody ArrayList<TranslationVO> transVO) {
-		log.info("delTransInfo");
+		log.debug("delTransInfo");
 		for (TranslationVO vo : transVO) {
 			listDao.delTransInfo(vo.getSeq_id());
 		}
@@ -138,20 +139,20 @@ public class AmazonController {
 	@ResponseBody
 	@RequestMapping(value="/executeTrans")
 	public ArrayList<String> executeTranslate(@RequestBody ArrayList<AmazonVO> targetList) {
-		log.info("executeTranslate");
+		log.debug("executeTranslate");
 		return dao.executeTranslate(targetList);
 	}
 	
 	@ResponseBody
 	@RequestMapping(value="/getTransResult")
 	public ArrayList<AmazonVO> getTransResult(@RequestParam(value="id_lst") String id_lst) {
-		log.info("getTransResult");
+		log.debug("getTransResult");
 		return dao.getTransResult(id_lst);
 	}
 	
 	@RequestMapping(value="/delAmazon")
 	public String deleteAmazonInfo(@RequestBody ArrayList<AmazonVO> list) {
-		log.info("deleteAmazonInfo");
+		log.debug("deleteAmazonInfo");
 		dao.deleteAmazonInfo(list);
 		return "redirect:showAList";
 	}
@@ -159,14 +160,14 @@ public class AmazonController {
 	@ResponseBody
 	@RequestMapping(value="/showRegionMaster")
 	public ArrayList<RegionMasterVO> showRegionMaster(RegionMasterVO vo) {
-		log.info("showRegionMaster");
+		log.debug("showRegionMaster");
 		return listDao.showRegionMaster(vo);
 	}
 	
 	@ResponseBody
 	@RequestMapping(value="/modRegionMaster")
 	public ArrayList<RegionMasterVO> modRegionMaster(@RequestBody ArrayList<RegionMasterVO> list) {
-		log.info("modRegionMaster");
+		log.debug("modRegionMaster");
 		return listDao.modRegionMaster(list);
 	}
 	
@@ -176,7 +177,7 @@ public class AmazonController {
 			, @RequestParam(value="id_lst") String id_lst
 			, @RequestParam(value="company") String delivery_company
 			, @RequestParam(value="isChecked") String chk_ex) {
-		log.info("processYamatoDownload");
+		log.debug("processYamatoDownload");
 		
 		log.debug("id list : " + id_lst);
 		log.debug("delivery company : " + delivery_company);
@@ -202,7 +203,7 @@ public class AmazonController {
 			, @RequestParam(value="id_lst") String id_lst
 			, @RequestParam(value="company") String delivery_company
 			, @RequestParam(value="isChecked") String chk_ex) {
-		log.info("processSagawaDownload");
+		log.debug("processSagawaDownload");
 		
 		log.debug("id list : " + id_lst);
 		log.debug("delivery company : " + delivery_company);
@@ -224,28 +225,28 @@ public class AmazonController {
 	
 	@RequestMapping(value="/modTransResult")
 	public void modTransResult(TranslationResultVO vo) {
-		log.info("modTransResult");
+		log.debug("modTransResult");
 		listDao.modTransResult(vo);
 	}
 	
 	@ResponseBody
 	@RequestMapping(value="/showExceptionMaster")
 	public ArrayList<ExceptionMasterVO> showExceptionMaster(ExceptionMasterVO vo) {
-		log.info("showExceptionMaster");
+		log.debug("showExceptionMaster");
 		return listDao.getExceptionMaster(vo);
 	}
 	
 	@ResponseBody
 	@RequestMapping(value="/modExceptionMaster")
 	public ArrayList<ExceptionMasterVO> processExceptionMaster(@RequestBody ArrayList<ExceptionMasterVO> list) {
-		log.info("processExceptionMaster");
+		log.debug("processExceptionMaster");
 		return listDao.registerExceptionMaster(list);
 	}
 	
 	@ResponseBody
 	@RequestMapping(value="/delExceptionMaster")
 	public ArrayList<ExceptionMasterVO> deleteExceptionMaster(@RequestBody ArrayList<ExceptionMasterVO> list) {
-		log.info("deleteExceptionMaster");
+		log.debug("deleteExceptionMaster");
 		return listDao.deleteExceptionMaster(list);
 	}
 	
@@ -253,7 +254,7 @@ public class AmazonController {
 	@ResponseBody
 	public String processClickPostDownload(
 			@RequestParam(value="id_lst") String id_lst) {
-		log.info("processClickPostDownload");
+		log.debug("processClickPostDownload");
 		log.debug("id list : " + id_lst);
 		String ret = "";
 		
@@ -277,21 +278,21 @@ public class AmazonController {
 	@RequestMapping(value="/showPrdMaster", method=RequestMethod.GET)
 	@ResponseBody
 	public ArrayList<TabletPrdVO> getPrdInfo(TabletPrdVO vo) {
-		log.info("getPrdInfo");
+		log.debug("getPrdInfo");
 		return tabletPrdDao.getPrdInfo(vo);
 	}
 	
 	@RequestMapping(value="/maniPrdMaster", method=RequestMethod.POST)
 	@ResponseBody
 	public ArrayList<TabletPrdVO> manipulatePrdInfo(@RequestBody ArrayList<TabletPrdVO> list) {
-		log.info("manipulatePrdInfo");
+		log.debug("manipulatePrdInfo");
 		return tabletPrdDao.manipulatePrdInfo(list);
 	}
 	
 	@RequestMapping(value="/delPrdMaster", method=RequestMethod.POST)
 	@ResponseBody
 	public ArrayList<TabletPrdVO> deletePrdInfo(@RequestBody ArrayList<TabletPrdVO> list) {
-		log.info("manipulatePrdInfo");
+		log.debug("manipulatePrdInfo");
 		return tabletPrdDao.deletePrdInfo(list);
 	}
 	
@@ -315,14 +316,14 @@ public class AmazonController {
 	
 	@RequestMapping(value="/yamaUpload", method=RequestMethod.POST)
 	public String processYamatoUpload(MultipartFile yamaUpload) throws IOException {
-		log.info("processYamatoUpload");
+		log.debug("processYamatoUpload");
 		dao.amazonYamatoUpdate(yamaUpload, fileEncoding);
 		return "redirect:aFileDownView";
 	}
 	
 	@RequestMapping(value = "/aFileDownView")
 	public String amazonFileDownView() {
-		log.info("Welcome to amazon file download view");
+		log.debug("Welcome to amazon file download view");
 		return "amazon/amazonFileDown";
 	}
 	
@@ -347,14 +348,14 @@ public class AmazonController {
 	
 	@RequestMapping(value = "/tabChumonView")
 	public String tabChumonView(Model model) {
-		log.info("Welcome to amazon tablet chumon view");
+		log.debug("Welcome to amazon tablet chumon view");
 		model.addAttribute("type", CommonUtil.TRANS_TARGET_A);
 		return "menu/tabletOrder";
 	}
 	
 	@RequestMapping(value="/sagaUpload2006", method=RequestMethod.POST)
 	public String processSagawaUpdate2006(MultipartFile sagaUpload2006) throws IOException {
-		log.info("amazon > processSagawaUpdate2006");
+		log.debug("amazon > processSagawaUpdate2006");
 		listDao.processSagawaUpdate2006(sagaUpload2006, fileEncoding, "ama");
 		return "redirect:aFileDownView";
 	}
@@ -381,21 +382,21 @@ public class AmazonController {
 	@ResponseBody
 	@RequestMapping(value="/showExceptionRegionMaster")
 	public ArrayList<ExceptionRegionMasterVO> showExceptionRegionMaster(ExceptionRegionMasterVO vo) {
-		log.info("showExceptionRegionMaster");
+		log.debug("showExceptionRegionMaster");
 		return listDao.getExceptionRegionMaster(vo);
 	}
 	
 	@ResponseBody
 	@RequestMapping(value="/modExceptionRegionMaster")
 	public ArrayList<ExceptionRegionMasterVO> manipulateExceptionRegionMaster(@RequestBody ArrayList<ExceptionRegionMasterVO> list) {
-		log.info("manipulateExceptionRegionMaster");
+		log.debug("manipulateExceptionRegionMaster");
 		return listDao.manipulateExceptionRegionMaster(list);
 	}
 	
 	@ResponseBody
 	@RequestMapping(value="/delExceptionRegionMaster")
 	public ArrayList<ExceptionRegionMasterVO> deleteExceptionRegionMaster(@RequestBody ArrayList<ExceptionRegionMasterVO> list) {
-		log.info("deleteExceptionRegionMaster");
+		log.debug("deleteExceptionRegionMaster");
 		return listDao.deleteExceptionRegionMaster(list);
 	}
 	
@@ -407,7 +408,7 @@ public class AmazonController {
 	
 	@RequestMapping(value = "/salesView")
 	public String salesView() {
-		log.info("Welcome to amazon sales view");
+		log.debug("Welcome to amazon sales view");
 		return "amazon/salesView";
 	}
 	

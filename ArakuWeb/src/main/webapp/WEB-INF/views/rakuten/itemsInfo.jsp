@@ -1,26 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%
+String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
+%>
 <!DOCTYPE html>
 <html>
 <head>
-<script src="./../resources/jquery/jquery.min.js"></script>
-<script src="./../resources/bootstrap-notify/bootstrap-notify.min.js"></script>
-<script>
-$(document).ready(function() {
-	$("#items").addClass("active");
-	
-	$("#start_date").datepicker({
-		language: "ja"
-		, autoclose: true
-	});
-	
-	$("#end_date").datepicker({
-		language: "ja"
-		, autoclose: true
-	});
-	
-});
-</script>
 </head>
 <body>
 <jsp:include page="../top.jsp"></jsp:include>
@@ -60,7 +45,7 @@ $(document).ready(function() {
 <div id="itemsGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
 </div>
 </div>
-<script src="./../resources/rakuten/itemsInfo.js"></script>
+<script src="<%=svrInfo %>/resources/rakuten/itemsInfo.js"></script>
 <form id="frm_idown" action="itemDown" method="post">
 <input id="idown_std" type="hidden" name="start_date">
 <input id="idown_ed" type="hidden" name="end_date">
@@ -74,4 +59,20 @@ $(document).ready(function() {
 <input id="seldown_ed" type="hidden" name="end_date">
 </form>
 </body>
+<script>
+$(document).ready(function() {
+	$("#items").addClass("active");
+	
+	$("#start_date").datepicker({
+		language: "ja"
+		, autoclose: true
+	});
+	
+	$("#end_date").datepicker({
+		language: "ja"
+		, autoclose: true
+	});
+	
+});
+</script>
 </html>

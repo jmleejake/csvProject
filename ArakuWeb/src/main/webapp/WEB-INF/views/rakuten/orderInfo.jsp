@@ -1,42 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%
+String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
+%>
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="./../resources/fileView.css">
-<script src="./../resources/jquery/jquery.min.js"></script>
-<script src="./../resources/fileView.js"></script>
-<script src="./../resources/bootstrap-notify/bootstrap-notify.min.js"></script>
-<script>
-$(document).ready(function() {
-	$("#order").addClass("active");
-	
-	$("#register_date").datepicker({
-		language: "ja"
-		, autoclose: true
-	});
-	
-	errMsg("${errSize}");
-	
-	$('#del-csv').on('click', 'button', function () {
-        $('#del-upload').click();
-        return false;
-    });
-	
-	$('#del-upload').on('change', function() {
-	    //選択したファイル情報を取得し変数に格納
-	    var file = $(this).prop('files')[0];
-	    //アイコンを選択中に変更
-	    $('#del-csv').find('.icon').addClass('select').html('選択中');
-	    //未選択→選択の場合（.filenameが存在しない場合）はファイル名表示用の<div>タグを追加
-	    if(!($('.del-filename').length)){
-	        $('#del-csv').append('<div class="del-filename"></div>');
-	    };
-	    //ファイル名を表示
-	    $('.del-filename').html('ファイル名：' + file.name);
-	});
-});
-</script>
 </head>
 <body>
 <jsp:include page="../top.jsp"></jsp:include>
@@ -104,11 +73,41 @@ $(document).ready(function() {
 <div id="orderGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
 </div>
 </div>
-<script src="./../resources/rakuten/orderInfo.js"></script>
+<script src="<%=svrInfo %>/resources/rakuten/orderInfo.js"></script>
 <form action="resultView" id="order_frm" method="post">
 <input type="hidden" id="hid_data" name="list" >
 </form>
 <form action="errListDown" id="edown_frm" method="post"></form>
 <form action="orderView" id="callView"></form>
 </body>
+<script>
+$(document).ready(function() {
+	$("#order").addClass("active");
+	
+	$("#register_date").datepicker({
+		language: "ja"
+		, autoclose: true
+	});
+	
+	errMsg("${errSize}");
+	
+	$('#del-csv').on('click', 'button', function () {
+        $('#del-upload').click();
+        return false;
+    });
+	
+	$('#del-upload').on('change', function() {
+	    //選択したファイル情報を取得し変数に格納
+	    var file = $(this).prop('files')[0];
+	    //アイコンを選択中に変更
+	    $('#del-csv').find('.icon').addClass('select').html('選択中');
+	    //未選択→選択の場合（.filenameが存在しない場合）はファイル名表示用の<div>タグを追加
+	    if(!($('.del-filename').length)){
+	        $('#del-csv').append('<div class="del-filename"></div>');
+	    };
+	    //ファイル名を表示
+	    $('.del-filename').html('ファイル名：' + file.name);
+	});
+});
+</script>
 </html>

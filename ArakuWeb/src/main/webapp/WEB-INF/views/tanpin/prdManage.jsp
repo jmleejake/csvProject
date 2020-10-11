@@ -1,38 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix ="c" uri ="http://java.sun.com/jsp/jstl/core" %>
+<%
+String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
+%>
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="./../resources/fileView.css">
-<script src="./../resources/fileView.js"></script>
-<script src="./../resources/jquery/jquery.min.js"></script>
-<script src="./../resources/bootstrap-notify/bootstrap-notify.min.js"></script>
-<script>
-$(document).ready(function() {
-	$("#prdM").addClass("active");
-	
-	/* File Upload*/
-	$('#tanpin-csv').on('click', 'button', function () {
-        $('#tanpin-upload').click();
-        return false;
-    });
-	
-	$('#tanpin-upload').on('change', function() {
-	    //選択したファイル情報を取得し変数に格納
-	    var file = $(this).prop('files')[0];
-	    //アイコンを選択中に変更
-	    $('#tanpin-csv').find('.icon').addClass('select').html('選択中');
-	    //未選択→選択の場合（.filenameが存在しない場合）はファイル名表示用の<div>タグを追加
-	    if(!($('.tanpin-filename').length)){
-	        $('#tanpin-csv').append('<div class="tanpin-filename"></div>');
-	    };
-	    //ファイル名を表示
-	    $('.tanpin-filename').html('ファイル名：' + file.name);
-	});
-	/* //File Upload*/
-});
-</script>
 </head>
 <body>
 <jsp:include page="../tanpinTop.jsp"></jsp:include>
@@ -95,10 +69,35 @@ $(document).ready(function() {
 <div id="prdMGrid" style="width:auto; height: 600px;" class="ag-theme-balham"></div>
 </div>
 </div>
-<script src="./../resources/tanpin/prdManage.js"></script>
+<script src="<%=svrInfo %>/resources/tanpin/prdManage.js"></script>
 
 <form id="frm_down" action="down" method="post">
 <input type="hidden" id="seq_id_list" name="id_lst">
 </form>
 </body>
+<script>
+$(document).ready(function() {
+	$("#prdM").addClass("active");
+	
+	/* File Upload*/
+	$('#tanpin-csv').on('click', 'button', function () {
+        $('#tanpin-upload').click();
+        return false;
+    });
+	
+	$('#tanpin-upload').on('change', function() {
+	    //選択したファイル情報を取得し変数に格納
+	    var file = $(this).prop('files')[0];
+	    //アイコンを選択中に変更
+	    $('#tanpin-csv').find('.icon').addClass('select').html('選択中');
+	    //未選択→選択の場合（.filenameが存在しない場合）はファイル名表示用の<div>タグを追加
+	    if(!($('.tanpin-filename').length)){
+	        $('#tanpin-csv').append('<div class="tanpin-filename"></div>');
+	    };
+	    //ファイル名を表示
+	    $('.tanpin-filename').html('ファイル名：' + file.name);
+	});
+	/* //File Upload*/
+});
+</script>
 </html>

@@ -1,41 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
 <%@ page session="false" %>
+<%
+String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
+%>
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
-<link rel="stylesheet" href="./../resources/fileView.css">
-<script src="./../resources/jquery/jquery.min.js"></script>
-<script src="./../resources/fileView.js"></script>
-<script src="./../resources/bootstrap-notify/bootstrap-notify.min.js"></script>
-
-<script>
-$(document).ready(function() {
-	$("#sales").addClass("active");
-	showPrdCdMaster("Q");
-	
-	$('#q-txt').on('click', 'button', function () {
-        $('#q-upload').click();
-        return false;
-    });
-
-    $('#q-upload').on('change', function() {
-        //選択したファイル情報を取得し変数に格納
-        var file = $(this).prop('files')[0];
-        //アイコンを選択中に変更
-        $('#q-txt').find('.icon').addClass('select').html('選択中');
-        //未選択→選択の場合（.filenameが存在しない場合）はファイル名表示用の<div>タグを追加
-        if(!($('.q-filename').length)){
-            $('#q-txt').append('<div class="q-filename"></div>');
-        };
-        //ファイル名を表示
-        $('.q-filename').html('ファイル名：' + file.name);
-    });
-    
-});
-</script>
 </head>
 <body>
 <jsp:include page="../q10Top.jsp"></jsp:include>
@@ -75,7 +46,7 @@ $(document).ready(function() {
 <div id="prdCdGrid" style="width:auto; height: 300px;" class="ag-theme-balham"></div>
 </div>
 </div>
-<script src="./../resources/menu/prdCdMaster.js"></script>
+<script src="<%=svrInfo %>/resources/menu/prdCdMaster.js"></script>
 </div>
 <!-- E지역예외데이터 마스터 -->
 </div>
@@ -105,7 +76,32 @@ $(document).ready(function() {
 
 <div id="orderGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
 </div>
-<script src="./../resources/q10/orderInfo2.js"></script>
+<script src="<%=svrInfo %>/resources/q10/orderInfo2.js"></script>
 <form id="frm" action="uriageDown" method="post"></form>
 </body>
+<script>
+$(document).ready(function() {
+	$("#sales").addClass("active");
+	showPrdCdMaster("Q");
+	
+	$('#q-txt').on('click', 'button', function () {
+        $('#q-upload').click();
+        return false;
+    });
+
+    $('#q-upload').on('change', function() {
+        //選択したファイル情報を取得し変数に格納
+        var file = $(this).prop('files')[0];
+        //アイコンを選択中に変更
+        $('#q-txt').find('.icon').addClass('select').html('選択中');
+        //未選択→選択の場合（.filenameが存在しない場合）はファイル名表示用の<div>タグを追加
+        if(!($('.q-filename').length)){
+            $('#q-txt').append('<div class="q-filename"></div>');
+        };
+        //ファイル名を表示
+        $('.q-filename').html('ファイル名：' + file.name);
+    });
+    
+});
+</script>
 </html>

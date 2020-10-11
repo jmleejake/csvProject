@@ -5,7 +5,8 @@ import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -34,10 +35,10 @@ import jp.prj.araku.tablet.vo.DealerVO;
 import jp.prj.araku.tablet.vo.TabletPrdVO;
 import jp.prj.araku.util.CommonUtil;
 
-@RequestMapping(value="q10")
+@RequestMapping(value="/araku/q10")
 @Controller
 public class Q10Controller {
-	private static final Logger log = Logger.getLogger("jp.prj.araku.q10");
+	private Logger log = LoggerFactory.getLogger("arakuLog");
 	
 	@Value("${Q10_FILE_ENCODING}")
 	private String upFileEncoding;
@@ -59,20 +60,20 @@ public class Q10Controller {
 	
 	@RequestMapping(value = "/fileView")
 	public String fileView() {
-		log.info("Welcome to q10 file upload view");
+		log.debug("Welcome to q10 file upload view");
 		return "q10/fileView";
 	}
 	
 	@RequestMapping(value="/translationView")
 	public String translationView(Model model) {
-		log.info("Welcome to q10 translation view");
+		log.debug("Welcome to q10 translation view");
 		model.addAttribute("type", CommonUtil.TRANS_TARGET_Q);
 		return "menu/translation";
 	}
 	
 	@RequestMapping(value = "/regionView")
 	public String regionView(Model model) {
-		log.info("Welcome to q10 region master view");
+		log.debug("Welcome to q10 region master view");
 		model.addAttribute("type", CommonUtil.TRANS_TARGET_Q);
 		return "menu/regionMaster";
 	}
@@ -80,20 +81,20 @@ public class Q10Controller {
 	@ResponseBody
 	@RequestMapping(value="/getTrans")
 	public ArrayList<TranslationVO> getTransInfo(TranslationVO transVO) {
-		log.info("getTransInfo");
+		log.debug("getTransInfo");
 		return listDao.getTransInfo(transVO);
 	}
 	
 	@ResponseBody
 	@RequestMapping(value="/modTrans")
 	public ArrayList<TranslationVO> modTransInfo(@RequestBody ArrayList<TranslationVO> transVO) {
-		log.info("modTransInfo");
+		log.debug("modTransInfo");
 		return listDao.registerTransInfo(transVO);
 	}
 	
 	@RequestMapping(value="/delTrans")
 	public String delTransInfo(@RequestBody ArrayList<TranslationVO> transVO) {
-		log.info("delTransInfo");
+		log.debug("delTransInfo");
 		for (TranslationVO vo : transVO) {
 			listDao.delTransInfo(vo.getSeq_id());
 		}
@@ -103,35 +104,35 @@ public class Q10Controller {
 	@ResponseBody
 	@RequestMapping(value="/showRegionMaster")
 	public ArrayList<RegionMasterVO> showRegionMaster(RegionMasterVO vo) {
-		log.info("showRegionMaster");
+		log.debug("showRegionMaster");
 		return listDao.showRegionMaster(vo);
 	}
 	
 	@ResponseBody
 	@RequestMapping(value="/modRegionMaster")
 	public ArrayList<RegionMasterVO> modRegionMaster(@RequestBody ArrayList<RegionMasterVO> list) {
-		log.info("modRegionMaster");
+		log.debug("modRegionMaster");
 		return listDao.modRegionMaster(list);
 	}
 	
 	@ResponseBody
 	@RequestMapping(value="/showExceptionMaster")
 	public ArrayList<ExceptionMasterVO> showExceptionMaster(ExceptionMasterVO vo) {
-		log.info("showExceptionMaster");
+		log.debug("showExceptionMaster");
 		return listDao.getExceptionMaster(vo);
 	}
 	
 	@ResponseBody
 	@RequestMapping(value="/modExceptionMaster")
 	public ArrayList<ExceptionMasterVO> processExceptionMaster(@RequestBody ArrayList<ExceptionMasterVO> list) {
-		log.info("processExceptionMaster");
+		log.debug("processExceptionMaster");
 		return listDao.registerExceptionMaster(list);
 	}
 	
 	@ResponseBody
 	@RequestMapping(value="/delExceptionMaster")
 	public ArrayList<ExceptionMasterVO> deleteExceptionMaster(@RequestBody ArrayList<ExceptionMasterVO> list) {
-		log.info("deleteExceptionMaster");
+		log.debug("deleteExceptionMaster");
 		return listDao.deleteExceptionMaster(list);
 	}
 	
@@ -139,7 +140,7 @@ public class Q10Controller {
 	public String processCsvUpload(
 			MultipartFile upload
 			, @RequestParam(value="type", defaultValue="NORMAL") String type) throws IOException {
-		log.info("processCsvUpload");
+		log.debug("processCsvUpload");
 		String ret = "redirect:orderView";
 		dao.insertQ10Info(upload, upFileEncoding, type);
 		if("SALES".equals(type)) {
@@ -150,27 +151,27 @@ public class Q10Controller {
 	
 	@RequestMapping(value="/orderView")
 	public String orderView() {
-		log.info("Welcome to q10 order view");
+		log.debug("Welcome to q10 order view");
 		return "q10/orderInfo";
 	}
 	
 	@ResponseBody
 	@RequestMapping(value="/showQList")
 	public ArrayList<Q10VO> getQ10Info(Q10VO vo) {
-		log.info("getQ10Info");
+		log.debug("getQ10Info");
 		return dao.getQ10Info(vo);
 	}
 	
 	@ResponseBody
 	@RequestMapping(value="/executeTrans")
 	public ArrayList<String> executeTranslate(@RequestBody ArrayList<Q10VO> targetList) {
-		log.info("executeTranslate");
+		log.debug("executeTranslate");
 		return dao.executeTranslate(targetList);
 	}
 	
 	@RequestMapping(value = "/resultView", method=RequestMethod.POST)
 	public String resultView(String[] list, Model model ) {
-		log.info("Welcome to q10 translation result view");
+		log.debug("Welcome to q10 translation result view");
 		ArrayList<String> idList = new ArrayList<>();
 		for (String str : list) {
 			log.debug(str);
@@ -183,19 +184,19 @@ public class Q10Controller {
 	@ResponseBody
 	@RequestMapping(value="/getTransResult")
 	public ArrayList<Q10VO> getTransResult(@RequestParam(value="id_lst") String id_lst) {
-		log.info("getTransResult");
+		log.debug("getTransResult");
 		return dao.getTransResult(id_lst);
 	}
 	
 	@RequestMapping(value="/modTransResult")
 	public void modTransResult(TranslationResultVO vo) {
-		log.info("modTransResult");
+		log.debug("modTransResult");
 		listDao.modTransResult(vo);
 	}
 	
 	@RequestMapping(value="/delQ10")
 	public String deleteQ10Info(@RequestBody ArrayList<Q10VO> list) {
-		log.info("deleteQ10Info");
+		log.debug("deleteQ10Info");
 		dao.deleteQ10Info(list);
 		return "redirect:showQList";
 	}
@@ -205,7 +206,7 @@ public class Q10Controller {
 			HttpServletResponse response
 			, @RequestParam(value="id_lst") String id_lst
 			, @RequestParam(value="company") String delivery_company) {
-		log.info("processYamatoDownload");
+		log.debug("processYamatoDownload");
 		
 		log.debug("id list : " + id_lst);
 		log.debug("delivery company : " + delivery_company);
@@ -229,7 +230,7 @@ public class Q10Controller {
 			HttpServletResponse response
 			, @RequestParam(value="id_lst") String id_lst
 			, @RequestParam(value="company") String delivery_company) {
-		log.info("processSagawaDownload");
+		log.debug("processSagawaDownload");
 		
 		log.debug("id list : " + id_lst);
 		log.debug("delivery company : " + delivery_company);
@@ -252,7 +253,7 @@ public class Q10Controller {
 	@ResponseBody
 	public String processClickPostDownload(
 			@RequestParam(value="id_lst") String id_lst) {
-		log.info("processClickPostDownload");
+		log.debug("processClickPostDownload");
 		
 		log.debug("id list : " + id_lst);
 		
@@ -279,21 +280,21 @@ public class Q10Controller {
 	@RequestMapping(value="/showPrdMaster", method=RequestMethod.GET)
 	@ResponseBody
 	public ArrayList<TabletPrdVO> getPrdInfo(TabletPrdVO vo) {
-		log.info("getPrdInfo");
+		log.debug("getPrdInfo");
 		return tabletPrdDao.getPrdInfo(vo);
 	}
 	
 	@RequestMapping(value="/maniPrdMaster", method=RequestMethod.POST)
 	@ResponseBody
 	public ArrayList<TabletPrdVO> manipulatePrdInfo(@RequestBody ArrayList<TabletPrdVO> list) {
-		log.info("manipulatePrdInfo");
+		log.debug("manipulatePrdInfo");
 		return tabletPrdDao.manipulatePrdInfo(list);
 	}
 	
 	@RequestMapping(value="/delPrdMaster", method=RequestMethod.POST)
 	@ResponseBody
 	public ArrayList<TabletPrdVO> deletePrdInfo(@RequestBody ArrayList<TabletPrdVO> list) {
-		log.info("manipulatePrdInfo");
+		log.debug("manipulatePrdInfo");
 		return tabletPrdDao.deletePrdInfo(list);
 	}
 	
@@ -318,21 +319,21 @@ public class Q10Controller {
 	@ResponseBody
 	@RequestMapping(value="/showExceptionRegionMaster")
 	public ArrayList<ExceptionRegionMasterVO> showExceptionRegionMaster(ExceptionRegionMasterVO vo) {
-		log.info("showExceptionRegionMaster");
+		log.debug("showExceptionRegionMaster");
 		return listDao.getExceptionRegionMaster(vo);
 	}
 	
 	@ResponseBody
 	@RequestMapping(value="/modExceptionRegionMaster")
 	public ArrayList<ExceptionRegionMasterVO> manipulateExceptionRegionMaster(@RequestBody ArrayList<ExceptionRegionMasterVO> list) {
-		log.info("manipulateExceptionRegionMaster");
+		log.debug("manipulateExceptionRegionMaster");
 		return listDao.manipulateExceptionRegionMaster(list);
 	}
 	
 	@ResponseBody
 	@RequestMapping(value="/delExceptionRegionMaster")
 	public ArrayList<ExceptionRegionMasterVO> deleteExceptionRegionMaster(@RequestBody ArrayList<ExceptionRegionMasterVO> list) {
-		log.info("deleteExceptionRegionMaster");
+		log.debug("deleteExceptionRegionMaster");
 		return listDao.deleteExceptionRegionMaster(list);
 	}
 	
@@ -344,7 +345,7 @@ public class Q10Controller {
 	
 	@RequestMapping(value = "/salesView")
 	public String salesView() {
-		log.info("Welcome to q10 sales view");
+		log.debug("Welcome to q10 sales view");
 		return "q10/salesView";
 	}
 	

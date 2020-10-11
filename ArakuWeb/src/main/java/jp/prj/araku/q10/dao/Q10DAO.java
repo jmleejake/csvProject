@@ -18,7 +18,8 @@ import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.ibatis.session.SqlSession;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,11 +54,11 @@ public class Q10DAO {
 	@Autowired
 	SqlSession sqlSession;
 	
-	private static final Logger log = Logger.getLogger("jp.prj.araku.q10");
+	private Logger log = LoggerFactory.getLogger("arakuLog");
 	
 	@Transactional
 	public void insertQ10Info(MultipartFile qUpload, String fileEncoding, String type) throws IOException {
-		log.info("insertQ10Info");
+		log.debug("insertQ10Info");
 		
 		IQ10Mapper mapper =sqlSession.getMapper(IQ10Mapper.class);
 		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
@@ -162,20 +163,20 @@ public class Q10DAO {
 	}
 	
 	public ArrayList<Q10VO> getQ10Info(Q10VO vo) {
-		log.info("getQ10Info");
+		log.debug("getQ10Info");
 		// 초기상태일때 2틀간의 데이터를 얻을수있게 처리 (*srch는 검색할때 넘기는 값)
 		if (!CommonUtil.SEARCH_TYPE_SRCH.equals(vo.getSearch_type())) {
 			vo.setStart_date(CommonUtil.getStartDate());
 		}
-		log.debug(vo);
+		log.debug("{}", vo);
 		IQ10Mapper mapper = sqlSession.getMapper(IQ10Mapper.class);
 		return mapper.getQ10Info(vo);
 	}
 	
 	@Transactional
 	public ArrayList<String> executeTranslate(ArrayList<Q10VO> targetList) {
-		log.info("executeTranslate");
-		log.debug(targetList);
+		log.debug("executeTranslate");
+		log.debug("{}", targetList);
 		
 		ArrayList<String> ret = new ArrayList<>();
 		
@@ -352,7 +353,7 @@ public class Q10DAO {
 	}
 	
 	public ArrayList<Q10VO> getTransResult(String id_lst) {
-		log.info("getTransResult");
+		log.debug("getTransResult");
 		id_lst = id_lst.replace("[", "");
 		id_lst = id_lst.replace("]", "");
 		String[] strArr = id_lst.split(",");
@@ -369,8 +370,8 @@ public class Q10DAO {
 	}
 	
 	public void deleteQ10Info(ArrayList<Q10VO> list) {
-		log.info("deleteQ10Info");
-		log.debug(list);
+		log.debug("deleteQ10Info");
+		log.debug("{}", list);
 		
 		IQ10Mapper mapper = sqlSession.getMapper(IQ10Mapper.class);
 		for(Q10VO vo : list) {
@@ -386,7 +387,7 @@ public class Q10DAO {
 			throws IOException
 			, CsvDataTypeMismatchException
 			, CsvRequiredFieldEmptyException {
-		log.info("yamatoFormatDownload");
+		log.debug("yamatoFormatDownload");
 		
 		log.debug("encoding : " + fileEncoding);
 		
@@ -508,7 +509,7 @@ public class Q10DAO {
 			throws IOException
 			, CsvDataTypeMismatchException
 			, CsvRequiredFieldEmptyException {
-		log.info("sagawaFormatDownload");
+		log.debug("sagawaFormatDownload");
 		
 		log.debug("encoding : " + fileEncoding);
 		
@@ -669,7 +670,7 @@ public class Q10DAO {
 			throws IOException
 			, CsvDataTypeMismatchException
 			, CsvRequiredFieldEmptyException {
-		log.info("clickPostFormatDownload");
+		log.debug("clickPostFormatDownload");
 		
 		log.debug("encoding : " + fileEncoding);
 		
@@ -937,7 +938,7 @@ public class Q10DAO {
 			throws IOException
 			, CsvDataTypeMismatchException
 			, CsvRequiredFieldEmptyException {
-		log.info("uriageDownload");
+		log.debug("uriageDownload");
 		
 		log.debug("encoding : " + fileEncoding);
 		

@@ -11,7 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.ibatis.session.SqlSession;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,7 +30,7 @@ import jp.prj.araku.util.CommonUtil;
 
 @Repository
 public class TanpinDAO {
-	private static final Logger log = Logger.getLogger("jp.prj.araku.list");
+	private Logger log = LoggerFactory.getLogger("arakuLog");
 	
 	@Autowired
 	SqlSession sqlSession;

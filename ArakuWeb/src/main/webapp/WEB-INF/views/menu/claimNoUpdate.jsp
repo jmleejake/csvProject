@@ -2,15 +2,13 @@
     pageEncoding="utf-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
+<%
+String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
+%>
 <!DOCTYPE html>
 <html>
 <head>
-<script src="./resources/jquery/jquery.min.js"></script>
-<script>
-$(document).ready(function() {
-	$("#claimNo").addClass("active");
-});
-</script>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 </head>
 <body>
 <jsp:include page="../top.jsp"></jsp:include>
@@ -53,6 +51,11 @@ $(document).ready(function() {
 <div id="claimUpGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
 </div>
 </div>
-<script src="./resources/menu/claimUp.js"></script>
+<script src="<%=svrInfo %>/resources/menu/claimUp.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	$("#claimNo").addClass("active");
+});
+</script>
 </body>
 </html>

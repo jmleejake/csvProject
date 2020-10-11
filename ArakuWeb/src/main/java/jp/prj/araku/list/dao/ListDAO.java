@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.apache.ibatis.session.SqlSession;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,35 +46,35 @@ public class ListDAO {
 	@Autowired
 	SqlSession sqlSession;
 	
-	private static final Logger log = Logger.getLogger("jp.prj.araku.list");
+	private Logger log = LoggerFactory.getLogger("arakuLog");
 	
 	public ArrayList<TranslationVO> getTransInfo(TranslationVO vo) {
-		log.info("getTransInfo");
+		log.debug("getTransInfo");
 		// 초기상태일때 2틀간의 데이터를 얻을수있게 처리 (*srch는 검색할때 넘기는 값)
 		if (!(CommonUtil.SEARCH_TYPE_SRCH.equals(vo.getSearch_type()) && 
 				CommonUtil.SEARCH_TYPE_SCREEN.equals(vo.getSearch_type()))) {
 			vo.setStart_date(CommonUtil.getStartDate());
 		}
-		log.debug(vo);
+		log.debug("{}", vo);
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
 		return mapper.getTransInfo(vo);
 	}
 	
 	@Transactional
 	public ArrayList<TranslationVO> registerTransInfo(ArrayList<TranslationVO> transVO) {
-		log.info("registerTransInfo");
-		log.debug(transVO);
+		log.debug("registerTransInfo");
+		log.debug("{}", transVO);
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
 		
 		ArrayList<String> seq_id_list = new ArrayList<>();
 		
 		for (TranslationVO vo : transVO) {
 			if (vo.getSeq_id() != null) {
-				log.info("update process");
+				log.debug("update process");
 				mapper.modTransInfo(vo);
 				seq_id_list.add(vo.getSeq_id());
 			} else {
-				log.info("create process");
+				log.debug("create process");
 				mapper.addTransInfo(vo);
 				seq_id_list.add(vo.getSeq_id());
 			}
@@ -87,22 +88,22 @@ public class ListDAO {
 	}
 	
 	public int delTransInfo(String seq_id) {
-		log.info("delTransInfo");
+		log.debug("delTransInfo");
 		log.debug("del trans seq_id : " + seq_id);
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
 		return mapper.delTransInfo(seq_id);
 	}
 	
 	public int modTransResult(TranslationResultVO vo) {
-		log.info("updateTransResult");
-		log.debug(vo);
+		log.debug("updateTransResult");
+		log.debug("{}", vo);
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
 		return mapper.modTransResult(vo);
 	}
 	
 	public void modRakutenInfo(ArrayList<RakutenSearchVO> list) {
-		log.info("modRakutenInfo");
-		log.debug(list);
+		log.debug("modRakutenInfo");
+		log.debug("{}", list);
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
 		for (RakutenSearchVO vo : list) {
 			mapper.modRakutenInfo(vo);
@@ -110,15 +111,15 @@ public class ListDAO {
 	}
 	
 	public ArrayList<RegionMasterVO> showRegionMaster(RegionMasterVO vo) {
-		log.info("showRegionMaster");
-		log.debug(vo);
+		log.debug("showRegionMaster");
+		log.debug("{}", vo);
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
 		return mapper.getRegionMaster(vo);
 	}
 	
 	public ArrayList<RegionMasterVO> modRegionMaster(ArrayList<RegionMasterVO> list) {
-		log.info("modRegionMaster");
-		log.debug(list);
+		log.debug("modRegionMaster");
+		log.debug("{}", list);
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
 		
 		ArrayList<String> idList = new ArrayList<>();
@@ -135,15 +136,15 @@ public class ListDAO {
 	}
 	
 	public ArrayList<ExceptionMasterVO> getExceptionMaster(ExceptionMasterVO vo) {
-		log.info("getExceptionMaster");
-		log.debug(vo);
+		log.debug("getExceptionMaster");
+		log.debug("{}", vo);
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
 		return mapper.getExceptionMaster(vo);
 	}
 	
 	public ArrayList<ExceptionMasterVO> registerExceptionMaster(ArrayList<ExceptionMasterVO> list) {
-		log.info("registerExceptionMaster");
-		log.debug(list);
+		log.debug("registerExceptionMaster");
+		log.debug("{}", list);
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
 		
 		ArrayList<String> seq_id_list = new ArrayList<>();
@@ -165,8 +166,8 @@ public class ListDAO {
 	}
 	
 	public ArrayList<ExceptionMasterVO> deleteExceptionMaster(ArrayList<ExceptionMasterVO> list) {
-		log.info("deleteExceptionMaster");
-		log.debug(list);
+		log.debug("deleteExceptionMaster");
+		log.debug("{}", list);
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
 		
 		for (ExceptionMasterVO vo : list) {
@@ -177,7 +178,7 @@ public class ListDAO {
 	}
 	
 	public void processSagawaUpdate2006(MultipartFile file, String fileEncoding, String type) throws IOException {
-		log.info("processSagawaUpdate2006");
+		log.debug("processSagawaUpdate2006");
 		log.debug("encoding : " + fileEncoding);
 		log.debug("contentType: " + file.getContentType());
 		log.debug("name: " + file.getName());
@@ -243,15 +244,15 @@ public class ListDAO {
 	}
 	
 	public ArrayList<ExceptionRegionMasterVO> getExceptionRegionMaster(ExceptionRegionMasterVO vo) {
-		log.info("getExceptionMaster");
-		log.debug(vo);
+		log.debug("getExceptionMaster");
+		log.debug("{}", vo);
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
 		return mapper.getExceptionRegionMaster(vo);
 	}
 	
 	public ArrayList<ExceptionRegionMasterVO> manipulateExceptionRegionMaster(ArrayList<ExceptionRegionMasterVO> list) {
-		log.info("registerExceptionMaster");
-		log.debug(list);
+		log.debug("registerExceptionMaster");
+		log.debug("{}", list);
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
 		
 		ArrayList<String> seq_id_list = new ArrayList<>();
@@ -273,8 +274,8 @@ public class ListDAO {
 	}
 	
 	public ArrayList<ExceptionRegionMasterVO> deleteExceptionRegionMaster(ArrayList<ExceptionRegionMasterVO> list) {
-		log.info("deleteExceptionMaster");
-		log.debug(list);
+		log.debug("deleteExceptionMaster");
+		log.debug("{}", list);
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
 		
 		for (ExceptionRegionMasterVO vo : list) {
@@ -285,7 +286,7 @@ public class ListDAO {
 	}
 	
 	public ArrayList<String> deleteAllWeekAfterData() {
-		log.info("deleteAllWeekAfterData");
+		log.debug("deleteAllWeekAfterData");
 		ArrayList<String> ret = new ArrayList<>();
 		IRakutenMapper rMapper = sqlSession.getMapper(IRakutenMapper.class);
 		IAmazonMapper aMapper = sqlSession.getMapper(IAmazonMapper.class);
@@ -334,28 +335,28 @@ public class ListDAO {
 		}
 		ret.add("YAHOO: "+cnt+"件");
 		
-		log.info("return: " + ret.toString());
+		log.debug("return: " + ret.toString());
 		
 		return ret;
 	}
 	
 	public ArrayList<PrdCdMasterVO> getPrdCdMaster(PrdCdMasterVO vo) {
-		log.info("getPrdCdMaster");
+		log.debug("getPrdCdMaster");
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
 		return mapper.getPrdCdMaster(vo);
 	}
 	
 	public ArrayList<PrdCdMasterVO> manipulatePrdCdMaster(ArrayList<PrdCdMasterVO> list) {
-		log.info("manipulatePrdCdMaster");
+		log.debug("manipulatePrdCdMaster");
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
 		String gbn = "";
 		for(PrdCdMasterVO vo : list) {
 			if (vo.getSeq_id() != null) {
 				mapper.updatePrdCdMaster(vo);
-				log.info("updated!! "+vo.getSeq_id());
+				log.debug("updated!! "+vo.getSeq_id());
 			}else {
 				mapper.insertPrdCdMaster(vo);
-				log.info("inserted!! "+vo.getSeq_id());
+				log.debug("inserted!! "+vo.getSeq_id());
 			}
 			gbn = vo.getTarget_type();
 		}
@@ -365,7 +366,7 @@ public class ListDAO {
 	}
 	
 	public int deletePrdCdMaster(String seq_id) {
-		log.info("deletePrdCdMaster");
+		log.debug("deletePrdCdMaster");
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
 		return mapper.deletePrdCdMaster(seq_id);
 	}

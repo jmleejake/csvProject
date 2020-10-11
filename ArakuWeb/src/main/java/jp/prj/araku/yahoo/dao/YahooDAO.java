@@ -18,7 +18,8 @@ import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.ibatis.session.SqlSession;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,11 +58,11 @@ public class YahooDAO {
 	@Autowired
 	SqlSession sqlSession;
 	
-	private static final Logger log = Logger.getLogger("jp.prj.araku.yahoo");
+	private Logger log = LoggerFactory.getLogger("arakuLog");
 	
 	@Transactional
 	public void insertYahooInfoShouhin(MultipartFile upload, String fileEncoding) throws IOException {
-		log.info("insertYahooInfoShouhin");
+		log.debug("insertYahooInfoShouhin");
 		
 		IYahooMapper mapper =sqlSession.getMapper(IYahooMapper.class);
 		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
@@ -158,7 +159,7 @@ public class YahooDAO {
 	}
 	
 	public void insertYahooInfoChumon(MultipartFile upload, String fileEncoding) throws IOException {
-		log.info("insertYahooInfoChumon");
+		log.debug("insertYahooInfoChumon");
 		
 		IYahooMapper mapper =sqlSession.getMapper(IYahooMapper.class);
 		
@@ -231,20 +232,20 @@ public class YahooDAO {
 	}
 	
 	public ArrayList<YahooVO> getYahooInfo(YahooVO vo) {
-		log.info("getYahooInfo");
+		log.debug("getYahooInfo");
 		// Conflict Test
 		// 초기상태일때 2틀간의 데이터를 얻을수있게 처리 (*srch는 검색할때 넘기는 값)
 		if (!CommonUtil.SEARCH_TYPE_SRCH.equals(vo.getSearch_type())) {
 			vo.setStart_date(CommonUtil.getStartDate());
 		}
-		log.debug(vo);
+		log.debug("{}", vo);
 		IYahooMapper mapper = sqlSession.getMapper(IYahooMapper.class);
 		return mapper.getYahooInfo(vo);
 	}
 	
 	public void deleteYahooInfo(ArrayList<YahooVO> list) {
-		log.info("deleteRakutenInfo");
-		log.debug(list);
+		log.debug("deleteRakutenInfo");
+		log.debug("{}", list);
 		IYahooMapper mapper = sqlSession.getMapper(IYahooMapper.class);
 		for (YahooVO vo : list) {
 			mapper.deleteYahooInfo(vo.getSeq_id());
@@ -253,8 +254,8 @@ public class YahooDAO {
 	
 	@Transactional
 	public ArrayList<String> executeTranslate(ArrayList<YahooVO> targetList) {
-		log.info("executeTranslate");
-		log.debug(targetList);
+		log.debug("executeTranslate");
+		log.debug("{}", targetList);
 		
 		ArrayList<String> ret = new ArrayList<>();
 		
@@ -404,7 +405,7 @@ public class YahooDAO {
 	}
 	
 	public ArrayList<YahooVO> getTransResult(String id_lst) {
-		log.info("getTransResult");
+		log.debug("getTransResult");
 		id_lst = id_lst.replace("[", "");
 		id_lst = id_lst.replace("]", "");
 		String[] strArr = id_lst.split(",");
@@ -428,7 +429,7 @@ public class YahooDAO {
 			throws IOException
 			, CsvDataTypeMismatchException
 			, CsvRequiredFieldEmptyException {
-		log.info("yamatoFormatDownload");
+		log.debug("yamatoFormatDownload");
 		
 		log.debug("encoding : " + fileEncoding);
 		
@@ -553,7 +554,7 @@ public class YahooDAO {
 			throws IOException
 			, CsvDataTypeMismatchException
 			, CsvRequiredFieldEmptyException {
-		log.info("sagawaFormatDownload");
+		log.debug("sagawaFormatDownload");
 		
 		log.debug("encoding : " + fileEncoding);
 		

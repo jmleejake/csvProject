@@ -1,20 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%
+String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
+%>
 <!DOCTYPE html>
 <html>
 <head>
-<script src="./../resources/jquery/jquery.min.js"></script>
-<script>
-$(document).ready(function() {
-	$("#rFile").addClass("active");
-	
-	$("#register_date").datepicker({
-		language: "ja"
-		, autoclose: true
-	});
-});
-</script>
-
 </head>
 <body>
 <jsp:include page="../top.jsp"></jsp:include>
@@ -80,11 +71,21 @@ $(document).ready(function() {
 <div id="rFileDownGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
 </div>
 </div>
-<script src="./../resources/rakuten/rFileDown.js"></script>
+<script src="<%=svrInfo %>/resources/rakuten/rFileDown.js"></script>
 
 <form id="frm_rFileDown" action="rFileDown" method="post">
 <input type="hidden" id="seq_id_list" name="id_lst">
 <input type="hidden" id="delCompany" name="delivery_company">
 </form>
 </body>
+<script>
+$(document).ready(function() {
+	$("#rFile").addClass("active");
+	
+	$("#register_date").datepicker({
+		language: "ja"
+		, autoclose: true
+	});
+});
+</script>
 </html>

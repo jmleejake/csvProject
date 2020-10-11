@@ -4,13 +4,40 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+<body>
+<jsp:include page="../q10Top.jsp"></jsp:include>
 
-<link rel="stylesheet" href="./../resources/fileView.css">
-<script src="./../resources/jquery/jquery.min.js"></script>
-<script src="./../resources/fileView.js"></script>
-<script src="./../resources/bootstrap-notify/bootstrap-notify.min.js"></script>
+<div class="container-fluid">
 
+<div class="well container-fluid">
+<form id="yhsh-frm" action="yhShouhin" method="post" enctype="multipart/form-data" onsubmit="return preCheck('yhsh');">
+<div id="yhsh-txt" class="file-up col-sm-8">
+<input type="file" id="yhsh-upload" name="upload" multiple="multiple" style="display:none">
+<button class="original_btn">1.ヤフ商品</button>
+<span class="icon">未選択</span>
+</div>
+<div class="col-sm-4">
+<button id="btn_yhsh" class="original_btn">アップロード</button>
+</div>
+</form>
+</div>
+
+<div class="well container-fluid">
+<form id="yhch-frm" action="yhChumon" method="post" enctype="multipart/form-data" onsubmit="return preCheck('yhch');">
+<div id="yhch-txt" class="file-up col-sm-8">
+<input type="file" id="yhch-upload" name="upload" multiple="multiple" style="display:none">
+<button class="original_btn">2.ヤフ注文</button>
+<span class="icon">未選択</span>
+</div>
+<div class="col-sm-4">
+<button id="btn_yhch" class="original_btn">アップロード</button>
+</div>
+</form>
+</div>
+
+</div>
+</body>
 <script>
 $(document).ready(function() {
 	$("#home").addClass("active");
@@ -55,38 +82,4 @@ $(document).ready(function() {
     
 });
 </script>
-</head>
-<body>
-<jsp:include page="../q10Top.jsp"></jsp:include>
-
-<div class="container-fluid">
-
-<div class="well container-fluid">
-<form id="yhsh-frm" action="yhShouhin" method="post" enctype="multipart/form-data" onsubmit="return preCheck('yhsh');">
-<div id="yhsh-txt" class="file-up col-sm-8">
-<input type="file" id="yhsh-upload" name="upload" multiple="multiple" style="display:none">
-<button class="original_btn">1.ヤフ商品</button>
-<span class="icon">未選択</span>
-</div>
-<div class="col-sm-4">
-<button id="btn_yhsh" class="original_btn">アップロード</button>
-</div>
-</form>
-</div>
-
-<div class="well container-fluid">
-<form id="yhch-frm" action="yhChumon" method="post" enctype="multipart/form-data" onsubmit="return preCheck('yhch');">
-<div id="yhch-txt" class="file-up col-sm-8">
-<input type="file" id="yhch-upload" name="upload" multiple="multiple" style="display:none">
-<button class="original_btn">2.ヤフ注文</button>
-<span class="icon">未選択</span>
-</div>
-<div class="col-sm-4">
-<button id="btn_yhch" class="original_btn">アップロード</button>
-</div>
-</form>
-</div>
-
-</div>
-</body>
 </html>

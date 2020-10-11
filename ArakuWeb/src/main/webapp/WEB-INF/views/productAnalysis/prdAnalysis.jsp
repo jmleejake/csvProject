@@ -1,38 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix ="c" uri ="http://java.sun.com/jsp/jstl/core" %>
+<%
+String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
+%>
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="./../resources/fileView.css">
-<script src="./../resources/fileView.js"></script>
-<script src="./../resources/jquery/jquery.min.js"></script>
-<script src="./../resources/bootstrap-notify/bootstrap-notify.min.js"></script>
-<script>
-$(document).ready(function() {
-	$("#prdA").addClass("active");
-	
-	/* File Upload*/
-	$('#prdAnalysis-csv').on('click', 'button', function () {
-        $('#prdAnalysis-upload').click();
-        return false;
-    });
-	
-	$('#prdAnalysis-upload').on('change', function() {
-	    //選択したファイル情報を取得し変数に格納
-	    var file = $(this).prop('files')[0];
-	    //アイコンを選択中に変更
-	    $('#prdAnalysis-csv').find('.icon').addClass('select').html('選択中');
-	    //未選択→選択の場合（.filenameが存在しない場合）はファイル名表示用の<div>タグを追加
-	    if(!($('.prdAnalysis-filename').length)){
-	        $('#prdAnalysis-csv').append('<div class="prdAnalysis-filename"></div>');
-	    };
-	    //ファイル名を表示
-	    $('.prdAnalysis-filename').html('ファイル名：' + file.name);
-	});
-	/* //File Upload*/
-});
-</script>
 </head>
 <body>
 <jsp:include page="../tanpinTop.jsp"></jsp:include>
@@ -75,10 +49,35 @@ $(document).ready(function() {
 <div id="prdMGrid" style="width:auto; height: 600px;" class="ag-theme-balham"></div>
 </div>
 </div>
-<script src="./../resources/productAnalysis/prdAnalysis.js"></script>
+<script src="<%=svrInfo %>/resources/productAnalysis/prdAnalysis.js"></script>
 
 <form id="frm_down" action="downPrdAnal" method="post">
 <input type="hidden" id="seq_id_list" name="id_lst">
 </form>
 </body>
+<script>
+$(document).ready(function() {
+	$("#prdA").addClass("active");
+	
+	/* File Upload*/
+	$('#prdAnalysis-csv').on('click', 'button', function () {
+        $('#prdAnalysis-upload').click();
+        return false;
+    });
+	
+	$('#prdAnalysis-upload').on('change', function() {
+	    //選択したファイル情報を取得し変数に格納
+	    var file = $(this).prop('files')[0];
+	    //アイコンを選択中に変更
+	    $('#prdAnalysis-csv').find('.icon').addClass('select').html('選択中');
+	    //未選択→選択の場合（.filenameが存在しない場合）はファイル名表示用の<div>タグを追加
+	    if(!($('.prdAnalysis-filename').length)){
+	        $('#prdAnalysis-csv').append('<div class="prdAnalysis-filename"></div>');
+	    };
+	    //ファイル名を表示
+	    $('.prdAnalysis-filename').html('ファイル名：' + file.name);
+	});
+	/* //File Upload*/
+});
+</script>
 </html>

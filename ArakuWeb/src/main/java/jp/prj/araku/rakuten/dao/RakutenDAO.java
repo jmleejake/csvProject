@@ -23,7 +23,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.ibatis.session.SqlSession;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,7 +69,7 @@ public class RakutenDAO {
 	@Autowired
 	SqlSession sqlSession;
 	
-	private static final Logger log = Logger.getLogger("jp.prj.araku.rakuten");
+	private Logger log = LoggerFactory.getLogger("arakuLog");
 	
 //	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Transactional
@@ -358,14 +359,14 @@ public class RakutenDAO {
 		if (!CommonUtil.SEARCH_TYPE_SRCH.equals(vo.getSearch_type())) {
 			vo.setStart_date(CommonUtil.getStartDate());
 		}
-		log.debug(vo);
+		log.debug("{}", vo);
 		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
 		return mapper.getRakutenInfo(vo);
 	}
 	
 	public void deleteRakutenInfo(ArrayList<RakutenVO> list) {
 		log.info("deleteRakutenInfo");
-		log.debug(list);
+		log.debug("{}", list);
 		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
 		for (RakutenVO vo : list) {
 			mapper.deleteRakutenInfo(vo.getSeq_id());
@@ -375,7 +376,7 @@ public class RakutenDAO {
 	@Transactional
 	public ArrayList<String> executeTranslate(ArrayList<RakutenVO> targetList) {
 		log.info("executeTranslate");
-		log.debug(targetList);
+		log.debug("{}", targetList);
 		
 		ArrayList<String> ret = new ArrayList<>();
 		
@@ -599,7 +600,7 @@ public class RakutenDAO {
 	@Transactional
 	public ArrayList<String> executeFrozenTranslate(ArrayList<RakutenVO> targetList) {
 		log.info("executeFrozenTranslate");
-		log.debug(targetList);
+		log.debug("{}", targetList);
 		
 		ArrayList<String> ret = new ArrayList<>();
 		
