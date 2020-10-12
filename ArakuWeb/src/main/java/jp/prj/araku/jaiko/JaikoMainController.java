@@ -20,5 +20,11 @@ public class JaikoMainController {
 		model.addAttribute("type", type);
 		return "jaiko/login";
 	}
+	
+	@RequestMapping(value = "/prdWareIn", method = RequestMethod.GET)
+	public String jaikoPrdWareHouseIn() {
+		log.debug("jaikoPrdWareHouseIn");
+		return "jaiko/prdWarehouseIn";
+	}
 
 }
