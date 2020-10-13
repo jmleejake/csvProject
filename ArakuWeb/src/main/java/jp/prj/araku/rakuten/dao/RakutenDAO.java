@@ -1093,7 +1093,7 @@ public class RakutenDAO {
 				ArrayList<ExceptionMasterVO> exList = listMapper.getExceptionMaster(null);
 				boolean chkRet = false;
 				for (ExceptionMasterVO exVO : exList) {
-					if (tmp.getResult_text().contains(exVO.getException_data())) {
+					if (tmp.getResult_text().contains(exVO.getException_data()) || tmp.getResult_text().contains("ネコ")) {
 						log.debug(String.format("exception_data: %s - result_txt: %s", exVO.getException_data(), tmp.getResult_text()));
 						chkRet = true;
 //						//注文者とお届け先のお客様が同一の場合、佐川にて発送する。  2020/7/23  金
@@ -1859,7 +1859,9 @@ public class RakutenDAO {
 			ArrayList<ArakuVO> cList = new ArrayList<>();
 
 			for (RakutenVO tmp : list) {
-				if(tmp.getProduct_name().contains("【全国送料無料】")) {
+				/*ネコが含まれている商品名はネコ形式でＤＬする。　2020/10/13  kim　　　*/
+				if(tmp.getProduct_name().contains("ネコ")) {
+				/*if(tmp.getProduct_name().contains("【全国送料無料】")) {*/
 				/*if(tmp.getProduct_name().indexOf("[全国送料無料]") != -1) {*/
 					ClickPostVO cVO = new ClickPostVO();
 					cVO.setPost_no(tmp.getDelivery_post_no1().replace("\"", "") + "-" +  tmp.getDelivery_post_no2().replace("\"", ""));
@@ -1923,7 +1925,9 @@ public class RakutenDAO {
 		ArrayList<ArakuVO> cList = new ArrayList<>();
 		
 		for (RakutenVO tmp : list) {
-			if(tmp.getProduct_name().contains("【全国送料無料】")) {
+			/*ネコが含まれている商品名はネコ形式でＤＬする。　2020/10/13  kim　　　*/
+			if(tmp.getProduct_name().contains("ネコ")) {
+			/*if(tmp.getProduct_name().contains("【全国送料無料】")) {*/
 			/*if(tmp.getProduct_name().indexOf("[全国送料無料]") != -1) {*/
 				ClickPostVO cVO = new ClickPostVO();
 				cVO.setPost_no(tmp.getDelivery_post_no1().replace("\"", "") + "-" +  tmp.getDelivery_post_no2().replace("\"", ""));
@@ -2018,6 +2022,7 @@ public class RakutenDAO {
 
 	            beanToCsv.write(cList);
 			}
+
 			ret = "CLICKPOST DOWNLOAD SUCCESS<br>[FILE PATH]: "+cpDownPath+"CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0) + ".csv";
 		}
 		
@@ -2150,7 +2155,8 @@ public class RakutenDAO {
 				for (ExceptionMasterVO exVO : exList) {
 					String str= tmp.getResult_text();
 					// 例外テーブルに含んている場合、ファイル作成するように変更する。　2020/06/01
-					if(str.contains(exVO.getException_data()) && isEx != Boolean.TRUE) {
+					// 商品名に”ネコ”が含まれると対象外にする。　2020/10/１３
+					if(str.contains(exVO.getException_data()) && isEx != Boolean.TRUE && !str.contains("ネコ")) {
 						
 						
 						if(str.length() > 10) {
