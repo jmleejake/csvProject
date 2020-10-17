@@ -13,7 +13,8 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 <div class="container-fluid">
 <!-- 거래처정보설정 S -->
 <div class="well container-fluid">
-	<button id="btn_sel_partner" type="button" class="btn btn-default" data-toggle="modal" data-target="#partnerModal" style="width: 150px; margin-bottom: 10px;">取引先情報設定</button>
+	<div class="col-sm-8">
+	<button id="btn_sel_partner" type="button" class="btn btn-primary" data-toggle="modal" data-target="#partnerModal" style="width: 150px; margin-bottom: 10px;">取引先情報設定</button>
 	<table class="table table-bordered">
 		<thead>
 		  <tr>
@@ -28,11 +29,27 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 		  </tr>
 		</tbody>
 	</table>
+	</div>
+	<div class="col-sm-4">
+	<div class="col-sm-6">
+	<label>出庫日</label>
+	<!-- datepicker -->
+	<input type="text" id="delivery_dt" name="delivery_dt" class="form-control" style="width: 100px;">
+	</div>
+	<div class="col-sm-6">
+	<div class="btn-group-vertical">
+	<button id="btn_delivery" type="button" class="btn btn-default" style="width: 80px; margin-bottom: 10px;">納品書</button>
+	<button id="btn_bill" type="button" class="btn btn-default" style="width: 80px; margin-bottom: 10px;">請求書</button>
+	<button id="btn_receipt" type="button" class="btn btn-default" style="width: 80px; margin-bottom: 10px;">領収書</button>
+	</div>
+	</div>
+	</div>
 </div>
 <!-- 거래처정보설정 E -->
 
 <!-- 바코드 읽기 S -->
 <div class="well container-fluid">
+	<div class="col-sm-6">
 	<table class="table table-bordered">
 		<thead>
 		  <tr>
@@ -47,13 +64,32 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 		  </tr>
 		</tbody>
 	</table>
+	</div>
+	<div class="col-sm-6">
+	<table class="table">
+		<thead>
+		  <tr>
+		    <th>
+		    <button id="btn_pay" type="button" class="btn btn-default" style="width: 100px;">現金支払い</button>
+		    </th>
+		  </tr>
+		</thead>
+		<tbody>
+		  <tr>
+		    <td>
+		    <input type="text" id="pay_price" class="form-control" placeholder="支払い金額表示">
+		    </td>
+		  </tr>
+		</tbody>
+	</table>
+	</div>
 </div>
 <!-- 바코드 읽기 E -->
 
 <!-- table S -->
 <div class="well container-fluid">
 <button id="btn_commit" type="button" class="btn btn-success" style="width: 120px; margin-bottom: 10px;">登録</button>
-<div id="prdWareInGrid" style="width:auto; height: 300px;" class="ag-theme-balham"></div>
+<div id="prdWareOutGrid" style="width:auto; height: 300px;" class="ag-theme-balham"></div>
 </div>
 <!-- table E -->
 
@@ -90,12 +126,17 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 </div>
 <!-- Modal E -->
 </div>
-<script src="<%=svrInfo %>/resources/jaiko/prdWarehouseIn.js"></script>
+<script src="<%=svrInfo %>/resources/jaiko/prdWarehouseOut.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
-	$("#prdWareIn").addClass("active");
+	$("#prdWareOut").addClass("active");
 	$("#area_feedback").css("display", "none");
 	$("#jan_cd").focus();
+
+	$("#delivery_dt").datepicker({
+		language: "ja"
+		, autoclose: true
+	});
 });
 </script>
 </body>

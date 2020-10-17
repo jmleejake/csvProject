@@ -67,7 +67,12 @@ set
   , now_prd_cnt = #{now_prd_cnt}
   </if>
 where
+  <if test="seq_id != null and seq_id != ''">
   seq_id = #{seq_id}
+  </if>
+  <if test="jan_cd != null and jan_cd != '' and (search_type == 'wareIn' or search_type == 'wareOut')">
+  jan_cd = #{jan_cd}
+  </if>
 </update>
 
 <delete id="deleteJaikoPrdInventory" parameterType="java.lang.String">

@@ -62,7 +62,7 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 			</ul>
 			<ul class="nav navbar-nav">
 				<li id="prdWareOut" class="nav-item">
-				<a class="nav-link" href="#href">出庫</a>
+				<a class="nav-link" href="/jaiko/prdWareOut">出庫</a>
 				</li>
 			</ul>
 		</div>

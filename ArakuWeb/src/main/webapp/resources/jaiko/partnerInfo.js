@@ -29,7 +29,7 @@ var columnDefs = [
 var rowData = [];
 
 // 수정데이터 배열
-var modifiedData = [];
+var partnerModified = [];
 var prevPartId, afterPartId;
 var prevPartNm, afterPartNm;
 
@@ -73,7 +73,7 @@ var partnerGridOptions = {
         if (!(prevPartId == afterPartId) ||
         	!(prevPartNm == afterPartNm)) {
         	console.log("modified!");
-        	modifiedData.push({
+        	partnerModified.push({
         		seq_id:afterData.seq_id
 				, partner_id:afterPartId
 				, partner_nm:afterPartNm
@@ -122,7 +122,7 @@ function setPartnerRow(result) {
 	partnerGridOptions.api.setRowData(rowData);
 				
 	// 초기화
-	modifiedData = []; // 수정데이터
+	partnerModified = []; // 수정데이터
 	$("#keyword").val("");
 	$("#area_feedback").css("display", "none");
 	$("#ret_msg").val('');
@@ -130,7 +130,7 @@ function setPartnerRow(result) {
 
 $("#btn_part_add").on("click", function() {
 	console.log("列追加");
-	modifiedData.push({
+	partnerModified.push({
 		partner_id: "取引先No."
 		, partner_nm: "取引先名"
 	});
@@ -139,14 +139,14 @@ $("#btn_part_add").on("click", function() {
 		, type:"post"
 		, dataType: "json"
 		, contentType: 'application/json'
-		, data:JSON.stringify(modifiedData)
+		, data:JSON.stringify(partnerModified)
 		, success: setPartnerRow
 	});
 });
 
 $("#btn_part_commit").on("click", function() {
 	console.log("登録");
-	if (modifiedData.length == 0) {
+	if (partnerModified.length == 0) {
 		$("#area_feedback").css("display", "block");
 		$("#ret_msg").val('情報を修正してください。');
 		return;
@@ -157,7 +157,7 @@ $("#btn_part_commit").on("click", function() {
 		, type:"post"
 		, dataType: "json"
 		, contentType: 'application/json'
-		, data:JSON.stringify(modifiedData)
+		, data:JSON.stringify(partnerModified)
 		, success: setPartnerRow
 	});
 });
@@ -207,7 +207,7 @@ $("#btn_part_select").on("click", function() {
     
     if(selectedRows.length == 0) {
     	$("#area_feedback").css("display", "block");
-		$("#ret_msg").val('情報を選択してください。');
+		$("#ret_msg").val('取引先を選択してください。');
         return;
     }
     

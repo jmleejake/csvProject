@@ -26,5 +26,11 @@ public class JaikoMainController {
 		log.debug("jaikoPrdWareHouseIn");
 		return "jaiko/prdWarehouseIn";
 	}
+	
+	@RequestMapping(value = "/prdWareOut", method = RequestMethod.GET)
+	public String jaikoPrdWareHouseOut() {
+		log.debug("jaikoPrdWareHouseOut");
+		return "jaiko/prdWarehouseOut";
+	}
 
 }

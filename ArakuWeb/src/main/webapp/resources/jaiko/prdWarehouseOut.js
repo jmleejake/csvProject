@@ -58,7 +58,7 @@ var prevTaxIncld, afterTaxIncld;
 var prevTaxRt, afterTaxRt;
 
 // let the grid know which columns and what data to use
-var prdWareInGridOptions = {
+var prdWareOutGridOptions = {
 	// checkbox on first column
 	defaultColDef: {
 		width: 100,
@@ -106,7 +106,7 @@ var prdWareInGridOptions = {
 				, prd_cnt:afterPrdCnt
 				, partner_id:$("#partner_id").text()
 				, partner_nm:$("#partner_nm").text()
-				, search_type:'wareIn'
+				, search_type:'wareOut'
         	});
         }else if(!(prevPrdUnitPrc == afterPrdUnitPrc)) {
         	modifiedData.push({
@@ -115,7 +115,7 @@ var prdWareInGridOptions = {
 				, prd_unit_prc:afterPrdUnitPrc
 				, partner_id:$("#partner_id").text()
 				, partner_nm:$("#partner_nm").text()
-				, search_type:'wareIn'
+				, search_type:'wareOut'
         	});
         }else if(!(prevTaxIncld == afterTaxIncld)) {
         	modifiedData.push({
@@ -124,7 +124,7 @@ var prdWareInGridOptions = {
 				, tax_incld:afterTaxIncld
 				, partner_id:$("#partner_id").text()
 				, partner_nm:$("#partner_nm").text()
-				, search_type:'wareIn'
+				, search_type:'wareOut'
         	});
         }else if(!(prevTaxRt == afterTaxRt)) {
         	modifiedData.push({
@@ -133,17 +133,17 @@ var prdWareInGridOptions = {
 				, tax_rt:afterTaxRt
 				, partner_id:$("#partner_id").text()
 				, partner_nm:$("#partner_nm").text()
-				, search_type:'wareIn'
+				, search_type:'wareOut'
         	});
         }
     }
 };
 
 // lookup the container we want the Grid to use
-var prdWareInGridDiv = document.querySelector('#prdWareInGrid');
+var prdWareOutGridDiv = document.querySelector('#prdWareOutGrid');
 
 // create the grid passing in the div to use together with the columns & data we want to use
-new agGrid.Grid(prdWareInGridDiv, prdWareInGridOptions);
+new agGrid.Grid(prdWareOutGridDiv, prdWareOutGridOptions);
 
 function isFirstColumn(params) {
 	var displayedColumns = params.columnApi.getAllDisplayedColumns();
@@ -188,7 +188,7 @@ function setRowData(result) {
 		};
 		rowData.push(row);
 	}
-	prdWareInGridOptions.api.setRowData(rowData);
+	prdWareOutGridOptions.api.setRowData(rowData);
 				
 	// 초기화
 	modifiedData = []; // 수정데이터
