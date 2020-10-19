@@ -7,9 +7,6 @@ $("#btn_cancel").on("click", function() {
 });
 
 function showNotify(type) {
-	if(type == 0) {
-		pleaseSelectNotify("テストする。");
-	}
 	if(type == 1) {
 		pleaseSelectNotify("IDを確認してください。");
 		$("#user_id").parent("div").addClass("has-error has-feedback");

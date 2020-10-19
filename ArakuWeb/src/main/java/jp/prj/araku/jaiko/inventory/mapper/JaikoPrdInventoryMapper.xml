@@ -47,6 +47,13 @@ insert into jaiko_inventory_info (prd_cd, brand_nm, prd_nm, jan_cd, now_prd_cnt)
 values (#{prd_cd}, #{brand_nm}, #{prd_nm}, #{jan_cd}, #{now_prd_cnt})
 </insert>
 
+<insert id="insertJaikoPrdInventoryForWareIn" parameterType="JaikoPrdInventory" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
+insert into jaiko_inventory_info (prd_cd, brand_nm, prd_nm, jan_cd, now_prd_cnt)
+select prd_cd, brand_nm, prd_nm, jan_cd, prd_cnt
+from jaiko_prd_info
+where jan_cd = #{jan_cd}
+</insert>
+
 <update id="updateJaikoPrdInventory" parameterType="JaikoPrdInventory">
 update jaiko_inventory_info
 set

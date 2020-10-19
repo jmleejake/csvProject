@@ -35,6 +35,12 @@ public class JaikoPrdInfoDAO {
 			//int iTaxIncld = Integer.parseInt(null != vo.getTax_incld() ? vo.getTax_incld() : "0");
 			//int iTaxRt = Integer.parseInt(null != vo.getTax_rt() ? vo.getTax_rt() : "0");
 			
+			if(vo.getSeq_id() != null) {
+				mapper.updateJaikoPrdInfo(vo);
+			}else {
+				mapper.insertJaikoPrdInfo(vo);
+			}
+			
 			if(null != vo.getSearch_type() && "wareIn".equals(vo.getSearch_type())) {
 				// 入庫
 				search_type = vo.getSearch_type();
@@ -60,10 +66,15 @@ public class JaikoPrdInfoDAO {
 					JaikoPrdInventoryVO invenVO = new JaikoPrdInventoryVO();
 					invenVO.setJan_cd(vo.getJan_cd());
 					invenVO.setSearch_type("srch");
-					JaikoPrdInventoryVO invenRet = invenMapper.getJaikoPrdInventory(invenVO).get(0);
-					invenVO.setSearch_type(vo.getSearch_type());
-					invenVO.setNow_prd_cnt(String.valueOf(Integer.parseInt(invenRet.getNow_prd_cnt()) + iPrdCnt));
-					invenMapper.updateJaikoPrdInventory(invenVO);
+					ArrayList<JaikoPrdInventoryVO> invenRetList = invenMapper.getJaikoPrdInventory(invenVO);
+					if(invenRetList.size() > 0) {
+						JaikoPrdInventoryVO invenRet = invenRetList.get(0);
+						invenVO.setSearch_type(vo.getSearch_type());
+						invenVO.setNow_prd_cnt(String.valueOf(Integer.parseInt(invenRet.getNow_prd_cnt()) + iPrdCnt));
+						invenMapper.updateJaikoPrdInventory(invenVO);
+					}else {
+						invenMapper.insertJaikoPrdInventoryForWareIn(invenVO);
+					}
 				}else {
 					wareHouseMapper.insertJaikoWareHouse(wareHouseVO);
 				}
@@ -99,11 +110,6 @@ public class JaikoPrdInfoDAO {
 				}else {
 					wareHouseMapper.insertJaikoWareHouse(wareHouseVO);
 				}
-			}
-			if(vo.getSeq_id() != null) {
-				mapper.updateJaikoPrdInfo(vo);
-			}else {
-				mapper.insertJaikoPrdInfo(vo);
 			}
 		}
 		JaikoPrdInfoVO forSearch = new JaikoPrdInfoVO();

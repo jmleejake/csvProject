@@ -196,13 +196,13 @@ function setRowData(result) {
 
 $("#btn_commit").on("click", function() {
 	console.log("登録");
-	if(modifiedData.length == 0) {
-		pleaseSelectNotify('情報を修正してください。');
+	if($("#partner_id").text() === "") {
+		pleaseSelectNotify('取引先を選択してください。');
 		return;
 	}
 	
-	if($("#partner_id").text() === "") {
-		pleaseSelectNotify('取引先を選択してください。');
+	if(modifiedData.length == 0) {
+		pleaseSelectNotify('情報を修正してください。');
 		return;
 	}
 	

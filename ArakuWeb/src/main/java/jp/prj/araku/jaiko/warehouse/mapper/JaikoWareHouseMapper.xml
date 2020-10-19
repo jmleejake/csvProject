@@ -25,13 +25,15 @@ select
   , date_format(reg_dt, '%Y/%m/%d') reg_dt
   , date_format(upd_dt, '%Y/%m/%d') upd_dt	
 from jaiko_warehouse_info
-where
+<where>
 	<if test="jan_cd != null and jan_cd != ''">
 	jan_cd = #{jan_cd}
 	</if>
 	<if test="from_dt != null and from_dt != '' and to_dt != null and to_dt != ''">
-	warehouse_dt between date_format (#{from_dt}, '%Y%m%d%H%i%s') and date_format (#{to_dt}, '%Y%m%d%H%i%s')
-	</if> 
+	delivery_dt between date_format (#{from_dt}, '%Y%m%d%H%i%s') and date_format (#{to_dt}, '%Y%m%d%H%i%s')
+	</if>
+</where>
+order by upd_dt desc, seq_id desc
 </select>
 
 <insert id="insertJaikoWareHouse" parameterType="JaikoWareHouse" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">

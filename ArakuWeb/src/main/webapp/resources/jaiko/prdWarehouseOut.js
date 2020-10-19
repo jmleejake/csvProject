@@ -194,15 +194,40 @@ function setRowData(result) {
 	modifiedData = []; // 수정데이터
 }
 
+function setRowData2(result) {
+	rowData = [];
+	
+	for (var i=0; i<result.length; i++) {
+		var row = {
+			seq_id: result[i].seq_id
+			, prd_cd:result[i].prd_cd
+			, brand_nm:result[i].brand_nm
+			, prd_nm:result[i].prd_nm
+			, jan_cd:result[i].jan_cd
+			, prd_cnt:result[i].prd_cnt
+			, prd_unit_prc:result[i].prd_unit_prc
+			, tax_incld:result[i].tax_incld
+			, tax_rt:result[i].tax_rt
+			, register_date:result[i].reg_dt
+			, update_date:result[i].upd_dt
+		};
+		rowData.push(row);
+	}
+	prdWareOutGridOptions.api.setRowData(rowData);
+				
+	// 초기화
+	modifiedData = []; // 수정데이터
+}
+
 $("#btn_commit").on("click", function() {
 	console.log("登録");
-	if(modifiedData.length == 0) {
-		pleaseSelectNotify('情報を修正してください。');
+	if($("#partner_id").text() === "") {
+		pleaseSelectNotify('取引先を選択してください。');
 		return;
 	}
 	
-	if($("#partner_id").text() === "") {
-		pleaseSelectNotify('取引先を選択してください。');
+	if(modifiedData.length == 0) {
+		pleaseSelectNotify('情報を修正してください。');
 		return;
 	}
 	
@@ -213,6 +238,18 @@ $("#btn_commit").on("click", function() {
 		, contentType: 'application/json'
 		, data:JSON.stringify(modifiedData)
 		, success: setRowData
+	});
+});
+
+$("#btn_search").on("click", function() {
+	$.ajax({
+	    url: "/jaiko/warehouse/getList"
+	    , dataType: "json"  
+	    , contentType : "application/json"
+	    , data: {
+	    	delivery_dt: $("#delivery_dt").val()
+	    }
+	    , success: setRowData2
 	});
 });
 
@@ -231,15 +268,15 @@ button action E
 
 function search() {
     $.ajax({
-    url: "/jaiko/prdInfo/getPrdInfo"
-    , dataType: "json"  
-    , contentType : "application/json"
-    , data: {
-    jan_cd: $("#jan_cd").val()
-    , search_type: 'srch'
-    }
-    , success: setRowData
-});
+	    url: "/jaiko/prdInfo/getPrdInfo"
+	    , dataType: "json"  
+	    , contentType : "application/json"
+	    , data: {
+	    jan_cd: $("#jan_cd").val()
+	    , search_type: 'srch'
+	    }
+	    , success: setRowData
+	});
 }
 
 $("#jan_cd").on("change paste", function() {

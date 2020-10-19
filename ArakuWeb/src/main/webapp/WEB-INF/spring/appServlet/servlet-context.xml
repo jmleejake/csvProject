@@ -25,6 +25,14 @@
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
 	
+	<beans:bean id="loginInterceptor" class="jp.prj.araku.jaiko.interceptor.JaikoLoginInterceptor"></beans:bean>
+	<interceptors>
+		<interceptor>
+			<mvc:mapping path="/jaiko/*"/>
+			<beans:ref bean="loginInterceptor"/>
+		</interceptor>
+	</interceptors>
+	
 	<context:component-scan base-package="jp.prj.araku" />
 	
 </beans:beans>

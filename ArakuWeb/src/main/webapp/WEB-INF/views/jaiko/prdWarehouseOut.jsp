@@ -34,7 +34,8 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 	<div class="col-sm-6">
 	<label>出庫日</label>
 	<!-- datepicker -->
-	<input type="text" id="delivery_dt" name="delivery_dt" class="form-control" style="width: 100px;">
+	<input type="text" id="delivery_dt" class="form-control" style="width: 100px;">
+	<button id="btn_search" type="button" class="btn btn-default" style="width: 80px; margin-bottom: 10px;">検索</button>
 	</div>
 	<div class="col-sm-6">
 	<div class="btn-group-vertical">
