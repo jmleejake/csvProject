@@ -1,18 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%
+String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
+%>
 <!DOCTYPE html>
 <html>
 <head>
-<script src="./../resources/jquery/jquery.min.js"></script>
-<script>
-$(document).ready(function() {
-	$("#order").addClass("active");
-	
-	$("#sa_chk").val("");
-	$("#ya_chk").val("");
-	getData();
-});
-</script>
 </head>
 <body>
 <jsp:include page="../amazonTop.jsp"></jsp:include>
@@ -36,7 +29,7 @@ $(document).ready(function() {
 <div id="resultGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
 </div>
 </div>
-<script src="./../resources/amazon/transResult.js"></script>
+<script src="<%=svrInfo %>/resources/amazon/transResult.js"></script>
 <form id="frm_down5" action="globalSaDown" method="post">
 <input type="hidden" id="id_lst" name="id_lst" value="${idList }">
 </form>
@@ -58,4 +51,13 @@ $(document).ready(function() {
 <input type="hidden" id="ya_chk" name="isChecked">
 </form>
 </body>
+<script>
+$(document).ready(function() {
+	$("#order").addClass("active");
+	
+	$("#sa_chk").val("");
+	$("#ya_chk").val("");
+	getData();
+});
+</script>
 </html>

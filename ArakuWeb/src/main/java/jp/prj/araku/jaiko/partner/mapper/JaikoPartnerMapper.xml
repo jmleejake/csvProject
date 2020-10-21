@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.prj.araku.jaiko.partner.mapper.IJaikoPartnerMapper">
+
+<select id="getPartner" parameterType="JaikoPartner" resultType="JaikoPartner">
+select
+  seq_id
+  , partner_id
+  , partner_nm
+  , date_format(reg_dt, '%Y/%m/%d') reg_dt
+  , date_format(upd_dt, '%Y/%m/%d') upd_dt
+from jaiko_partner_info
+<where>
+	<if test="keyword != null and keyword != ''">
+	partner_id like '%${keyword}%' or
+	partner_nm like '%${keyword}%'
+	</if>
+</where>
+order by upd_dt desc, seq_id desc
+</select>
+
+<insert id="insertPartner" parameterType="JaikoPartner" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
+insert into jaiko_partner_info (partner_id, partner_nm)
+values (#{partner_id}, #{partner_nm})
+</insert>
+
+<update id="updatePartner" parameterType="JaikoPartner">
+update jaiko_partner_info
+set
+  upd_dt = now()
+  <if test="partner_id != null and partner_id != ''">
+  , partner_id = #{partner_id}
+  </if>
+  <if test="partner_nm != null and partner_nm != ''">
+  , partner_nm = #{partner_nm}
+  </if>
+where
+  seq_id = #{seq_id}
+</update>
+
+<delete id="deletePartner" parameterType="java.lang.String">
+delete from jaiko_partner_info
+where seq_id = #{seq_id}
+</delete>
+
+</mapper>

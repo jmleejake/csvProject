@@ -5,7 +5,8 @@ import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -33,10 +34,10 @@ import jp.prj.araku.util.CommonUtil;
 import jp.prj.araku.yahoo.dao.YahooDAO;
 import jp.prj.araku.yahoo.vo.YahooVO;
 
-@RequestMapping(value="yahoo")
+@RequestMapping(value="/araku/yahoo")
 @Controller
 public class YahooController {
-	private static final Logger log = Logger.getLogger("jp.prj.araku.yahoo");
+	private Logger log = LoggerFactory.getLogger("arakuLog");
 	
 	@Value("${FILE_ENCODING}")
 	private String fileEncoding;
@@ -55,33 +56,33 @@ public class YahooController {
 	
 	@RequestMapping(value = "/fileView")
 	public String fileView() {
-		log.info("Welcome to yahoo file upload view");
+		log.debug("Welcome to yahoo file upload view");
 		return "yahoo/fileView";
 	}
 	
 	@RequestMapping(value = "/orderView")
 	public String orderView() {
-		log.info("Welcome to yahoo orderView");
+		log.debug("Welcome to yahoo orderView");
 		return "yahoo/orderInfo";
 	}
 	
 	@RequestMapping(value="/translationView")
 	public String translationView(Model model) {
-		log.info("Welcome to yahoo translation view");
+		log.debug("Welcome to yahoo translation view");
 		model.addAttribute("type", CommonUtil.TRANS_TARGET_Y);
 		return "menu/translation";
 	}
 	
 	@RequestMapping(value = "/regionView")
 	public String regionView(Model model) {
-		log.info("Welcome to yahoo region master view");
+		log.debug("Welcome to yahoo region master view");
 		model.addAttribute("type", CommonUtil.TRANS_TARGET_Y);
 		return "menu/regionMaster";
 	}
 	
 	@RequestMapping(value = "/resultView", method=RequestMethod.POST)
 	public String resultView(String[] list, Model model ) {
-		log.info("Welcome to yahoo translation result view");
+		log.debug("Welcome to yahoo translation result view");
 		ArrayList<String> idList = new ArrayList<>();
 		for (String str : list) {
 			log.debug(str);
@@ -106,20 +107,20 @@ public class YahooController {
 	@ResponseBody
 	@RequestMapping(value="/getTrans")
 	public ArrayList<TranslationVO> getTransInfo(TranslationVO transVO) {
-		log.info("getTransInfo");
+		log.debug("getTransInfo");
 		return listDao.getTransInfo(transVO);
 	}
 	
 	@ResponseBody
 	@RequestMapping(value="/modTrans")
 	public ArrayList<TranslationVO> modTransInfo(@RequestBody ArrayList<TranslationVO> transVO) {
-		log.info("modTransInfo");
+		log.debug("modTransInfo");
 		return listDao.registerTransInfo(transVO);
 	}
 	
 	@RequestMapping(value="/delTrans")
 	public String delTransInfo(@RequestBody ArrayList<TranslationVO> transVO) {
-		log.info("delTransInfo");
+		log.debug("delTransInfo");
 		for (TranslationVO vo : transVO) {
 			listDao.delTransInfo(vo.getSeq_id());
 		}
@@ -129,27 +130,27 @@ public class YahooController {
 	@ResponseBody
 	@RequestMapping(value="/showRegionMaster")
 	public ArrayList<RegionMasterVO> showRegionMaster(RegionMasterVO vo) {
-		log.info("showRegionMaster");
+		log.debug("showRegionMaster");
 		return listDao.showRegionMaster(vo);
 	}
 	
 	@ResponseBody
 	@RequestMapping(value="/modRegionMaster")
 	public ArrayList<RegionMasterVO> modRegionMaster(@RequestBody ArrayList<RegionMasterVO> list) {
-		log.info("modRegionMaster");
+		log.debug("modRegionMaster");
 		return listDao.modRegionMaster(list);
 	}
 	
 	@ResponseBody
 	@RequestMapping(value="/showYList")
 	public ArrayList<YahooVO> getYahooList(YahooVO searchVO) {
-		log.info("showYList");
+		log.debug("showYList");
 		return dao.getYahooInfo(searchVO);
 	}
 	
 	@RequestMapping(value="/delYahoo")
 	public String deleteYahooInfo(@RequestBody ArrayList<YahooVO> vo) {
-		log.info("deleteYahooInfo");
+		log.debug("deleteYahooInfo");
 		dao.deleteYahooInfo(vo);
 		return "redirect:showYList";
 	}
@@ -157,41 +158,41 @@ public class YahooController {
 	@ResponseBody
 	@RequestMapping(value="/executeTrans")
 	public ArrayList<String> executeTranslate(@RequestBody ArrayList<YahooVO> targetList) {
-		log.info("executeTranslate");
+		log.debug("executeTranslate");
 		return dao.executeTranslate(targetList);
 	}
 	
 	@ResponseBody
 	@RequestMapping(value="/getTransResult")
 	public ArrayList<YahooVO> getTransResult(@RequestParam(value="id_lst") String id_lst) {
-		log.info("getTransResult");
+		log.debug("getTransResult");
 		return dao.getTransResult(id_lst);
 	}
 	
 	@RequestMapping(value="/modTransResult")
 	public void modTransResult(TranslationResultVO vo) {
-		log.info("modTransResult");
+		log.debug("modTransResult");
 		listDao.modTransResult(vo);
 	}
 	
 	@ResponseBody
 	@RequestMapping(value="/showExceptionMaster")
 	public ArrayList<ExceptionMasterVO> showExceptionMaster(ExceptionMasterVO vo) {
-		log.info("showExceptionMaster");
+		log.debug("showExceptionMaster");
 		return listDao.getExceptionMaster(vo);
 	}
 	
 	@ResponseBody
 	@RequestMapping(value="/modExceptionMaster")
 	public ArrayList<ExceptionMasterVO> processExceptionMaster(@RequestBody ArrayList<ExceptionMasterVO> list) {
-		log.info("processExceptionMaster");
+		log.debug("processExceptionMaster");
 		return listDao.registerExceptionMaster(list);
 	}
 	
 	@ResponseBody
 	@RequestMapping(value="/delExceptionMaster")
 	public ArrayList<ExceptionMasterVO> deleteExceptionMaster(@RequestBody ArrayList<ExceptionMasterVO> list) {
-		log.info("deleteExceptionMaster");
+		log.debug("deleteExceptionMaster");
 		return listDao.deleteExceptionMaster(list);
 	}
 	
@@ -200,7 +201,7 @@ public class YahooController {
 			HttpServletResponse response
 			, @RequestParam(value="id_lst") String id_lst
 			, @RequestParam(value="company") String delivery_company) {
-		log.info("processYamatoDownload");
+		log.debug("processYamatoDownload");
 		
 		log.debug("id list : " + id_lst);
 		log.debug("delivery company : " + delivery_company);
@@ -224,7 +225,7 @@ public class YahooController {
 			HttpServletResponse response
 			, @RequestParam(value="id_lst") String id_lst
 			, @RequestParam(value="company") String delivery_company) {
-		log.info("processSagawaDownload");
+		log.debug("processSagawaDownload");
 		
 		log.debug("id list : " + id_lst);
 		log.debug("delivery company : " + delivery_company);
@@ -247,7 +248,7 @@ public class YahooController {
 	@ResponseBody
 	public String processClickPostDownload(
 			@RequestParam(value="id_lst") String id_lst) {
-		log.info("processClickPostDownload");
+		log.debug("processClickPostDownload");
 		log.debug("id list : " + id_lst);
 		String ret = "";
 		
@@ -269,21 +270,21 @@ public class YahooController {
 	@RequestMapping(value="/showPrdMaster", method=RequestMethod.GET)
 	@ResponseBody
 	public ArrayList<TabletPrdVO> getPrdInfo(TabletPrdVO vo) {
-		log.info("getPrdInfo");
+		log.debug("getPrdInfo");
 		return tabletPrdDao.getPrdInfo(vo);
 	}
 	
 	@RequestMapping(value="/maniPrdMaster", method=RequestMethod.POST)
 	@ResponseBody
 	public ArrayList<TabletPrdVO> manipulatePrdInfo(@RequestBody ArrayList<TabletPrdVO> list) {
-		log.info("manipulatePrdInfo");
+		log.debug("manipulatePrdInfo");
 		return tabletPrdDao.manipulatePrdInfo(list);
 	}
 	
 	@RequestMapping(value="/delPrdMaster", method=RequestMethod.POST)
 	@ResponseBody
 	public ArrayList<TabletPrdVO> deletePrdInfo(@RequestBody ArrayList<TabletPrdVO> list) {
-		log.info("manipulatePrdInfo");
+		log.debug("manipulatePrdInfo");
 		return tabletPrdDao.deletePrdInfo(list);
 	}
 	
@@ -308,21 +309,21 @@ public class YahooController {
 	@ResponseBody
 	@RequestMapping(value="/showExceptionRegionMaster")
 	public ArrayList<ExceptionRegionMasterVO> showExceptionRegionMaster(ExceptionRegionMasterVO vo) {
-		log.info("showExceptionRegionMaster");
+		log.debug("showExceptionRegionMaster");
 		return listDao.getExceptionRegionMaster(vo);
 	}
 	
 	@ResponseBody
 	@RequestMapping(value="/modExceptionRegionMaster")
 	public ArrayList<ExceptionRegionMasterVO> manipulateExceptionRegionMaster(@RequestBody ArrayList<ExceptionRegionMasterVO> list) {
-		log.info("manipulateExceptionRegionMaster");
+		log.debug("manipulateExceptionRegionMaster");
 		return listDao.manipulateExceptionRegionMaster(list);
 	}
 	
 	@ResponseBody
 	@RequestMapping(value="/delExceptionRegionMaster")
 	public ArrayList<ExceptionRegionMasterVO> deleteExceptionRegionMaster(@RequestBody ArrayList<ExceptionRegionMasterVO> list) {
-		log.info("deleteExceptionRegionMaster");
+		log.debug("deleteExceptionRegionMaster");
 		return listDao.deleteExceptionRegionMaster(list);
 	}
 	

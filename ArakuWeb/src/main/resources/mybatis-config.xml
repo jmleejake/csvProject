@@ -24,6 +24,11 @@
 		<typeAlias type="jp.prj.araku.tanpin.vo.TanpinVO" alias="Tanpin" />
 		<typeAlias type="jp.prj.araku.product.vo.ProductAnalysisVO" alias="PrdAnalysis" />
 		<typeAlias type="jp.prj.araku.list.vo.PrdCdMasterVO" alias="PrdCdMaster"/>
+		<typeAlias type="jp.prj.araku.jaiko.user.vo.JaikoUserVO" alias="JaikoUser"/>
+		<typeAlias type="jp.prj.araku.jaiko.product.vo.JaikoPrdInfoVO" alias="JaikoPrdInfo"/>
+		<typeAlias type="jp.prj.araku.jaiko.inventory.vo.JaikoPrdInventoryVO" alias="JaikoPrdInventory"/>
+		<typeAlias type="jp.prj.araku.jaiko.partner.vo.JaikoPartnerVO" alias="JaikoPartner"/>
+		<typeAlias type="jp.prj.araku.jaiko.warehouse.vo.JaikoWareHouseVO" alias="JaikoWareHouse"/>
 	</typeAliases>
 	<mappers>
 		<mapper resource="jp/prj/araku/list/mapper/ListMapper.xml" />
@@ -35,5 +40,10 @@
 		<mapper resource="jp/prj/araku/tablet/mapper/TabletPrdMapper.xml" />
 		<mapper resource="jp/prj/araku/tanpin/mapper/TanpinMapper.xml" />
 		<mapper resource="jp/prj/araku/product/mapper/ProductAnalysisMapper.xml" />
+		<mapper resource="jp/prj/araku/jaiko/user/mapper/JaikoUserMapper.xml" />
+		<mapper resource="jp/prj/araku/jaiko/product/mapper/JaikoPrdInfoMapper.xml" />
+		<mapper resource="jp/prj/araku/jaiko/inventory/mapper/JaikoPrdInventoryMapper.xml" />
+		<mapper resource="jp/prj/araku/jaiko/partner/mapper/JaikoPartnerMapper.xml" />
+		<mapper resource="jp/prj/araku/jaiko/warehouse/mapper/JaikoWareHouseMapper.xml" />
 	</mappers>
 </configuration>

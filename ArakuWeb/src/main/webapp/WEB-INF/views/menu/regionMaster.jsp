@@ -1,42 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%
+String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
+%>
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="./../resources/menu/regionMaster.css">
-<script src="./../resources/jquery/jquery.min.js"></script>
-<script>
-$(document).ready(function() {
-	$("#region").addClass("active");
-	showRegionMaster();
-	showExceptionMaster();
-	showPrdMaster();
-	showDealerMaster();
-	showExceptionRegionMaster();
-	
-	/*
-	 * [마스터화면] 일주일 이상의 라쿠텐, 아마존, 큐텐, 야후 데이터 삭제
-	 * */
-	$("#btn_weekDataDel").on("click", function() {
-		var tag = "<tr>";
-		$.ajax({
-		    url: "delWeekData"
-		    , contentType: "application/json; charset=utf-8"
-		    , success: function(res) {
-		    	res.forEach(function(data) {
-		    		tag+="<td style='padding:3px;'>";
-		    		tag+=data;
-		    		tag+="</td>";
-		    	});
-		    	tag += "</tr>";
-		    	tag += "<tr><td colspan='4' style='text-align:center;'>削除完了</td></tr>";
-		    	$("#t_result").append(tag);
-		    }
-		});
-	});
-});
-</script>
+<link rel="stylesheet" href="<%=svrInfo %>/resources/menu/regionMaster.css">
 </head>
 <body>
 <c:if test="${'R' == type }">
@@ -102,7 +73,7 @@ $(document).ready(function() {
 <div id="prdGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
 </div>
 </div>
-<script src="./../resources/menu/prdMaster.js"></script>
+<script src="<%=svrInfo %>/resources/menu/prdMaster.js"></script>
 </div>
 <!-- E상품관리마스터 -->
 
@@ -128,7 +99,7 @@ $(document).ready(function() {
 <div id="dealerGrid" style="width:auto; height: 600px;" class="ag-theme-balham"></div>
 </div>
 </div>
-<script src="./../resources/menu/dealerMaster.js"></script>
+<script src="<%=svrInfo %>/resources/menu/dealerMaster.js"></script>
 </div>
 <!-- E거래처마스터 -->
 
@@ -159,7 +130,7 @@ $(document).ready(function() {
 <div id="regionGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
 </div>
 </div>
-<script src="./../resources/menu/regionMaster.js"></script>
+<script src="<%=svrInfo %>/resources/menu/regionMaster.js"></script>
 </div>
 <!-- E지역마스터 -->
 
@@ -201,7 +172,7 @@ $(document).ready(function() {
 <div id="exceptionGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
 </div>
 </div>
-<script src="./../resources/menu/exceptionMaster.js"></script>
+<script src="<%=svrInfo %>/resources/menu/exceptionMaster.js"></script>
 </div>
 <!-- E예외데이터 마스터 -->
 
@@ -236,12 +207,42 @@ $(document).ready(function() {
 <div id="exceptionRegionGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
 </div>
 </div>
-<script src="./../resources/menu/exceptionRegionMaster.js"></script>
+<script src="<%=svrInfo %>/resources/menu/exceptionRegionMaster.js"></script>
 </div>
 <!-- E지역예외데이터 마스터 -->
 
 </div>
 <!-- E예외데이터, 지역예외데이터 마스터 -->
-
+<script type="text/javascript">
+$(document).ready(function() {
+	$("#region").addClass("active");
+	showRegionMaster();
+	showExceptionMaster();
+	showPrdMaster();
+	showDealerMaster();
+	showExceptionRegionMaster();
+	
+	/*
+	 * [마스터화면] 일주일 이상의 라쿠텐, 아마존, 큐텐, 야후 데이터 삭제
+	 * */
+	$("#btn_weekDataDel").on("click", function() {
+		var tag = "<tr>";
+		$.ajax({
+		    url: "delWeekData"
+		    , contentType: "application/json; charset=utf-8"
+		    , success: function(res) {
+		    	res.forEach(function(data) {
+		    		tag+="<td style='padding:3px;'>";
+		    		tag+=data;
+		    		tag+="</td>";
+		    	});
+		    	tag += "</tr>";
+		    	tag += "<tr><td colspan='4' style='text-align:center;'>削除完了</td></tr>";
+		    	$("#t_result").append(tag);
+		    }
+		});
+	});
+});
+</script>
 </body>
 </html>

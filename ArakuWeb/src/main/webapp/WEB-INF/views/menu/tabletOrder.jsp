@@ -4,8 +4,32 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="./../resources/jquery/jquery.min.js"></script>
-<script>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+<body>
+<c:if test="${'R' == type }">
+<jsp:include page="../top.jsp"></jsp:include>
+</c:if>
+<c:if test="${'A' == type }">
+<jsp:include page="../amazonTop.jsp"></jsp:include>
+</c:if>
+<div class="container-fluid">
+<div class="well container-fluid">
+<h3>タブレット注文画面</h3>
+
+<div class="well container-fluid">
+	<div class="col-sm-4">
+	<!-- oninput="javascript:goUrl();" onpaste="javascript:isValid=true;"  -->
+	<input type="text" id="baggage_id" class="form-control" style="width: 300px;" placeholder="問い合わせ番号">
+	</div>
+	<div class="col-sm-4">
+	<button type="button" id="btn_srch" class="btn btn-default" style="width: 120px;">検索</button>
+	</div>
+</div>
+</div>
+</div>
+</body>
+<script type="text/javascript">
 $(document).ready(function() {
 	$("#tabChumon").addClass("active");
 	$('#baggage_id').focus();
@@ -79,28 +103,4 @@ function goUrl() {
 	}
 }
 </script>
-</head>
-<body>
-<c:if test="${'R' == type }">
-<jsp:include page="../top.jsp"></jsp:include>
-</c:if>
-<c:if test="${'A' == type }">
-<jsp:include page="../amazonTop.jsp"></jsp:include>
-</c:if>
-<div class="container-fluid">
-<div class="well container-fluid">
-<h3>タブレット注文画面</h3>
-
-<div class="well container-fluid">
-	<div class="col-sm-4">
-	<!-- oninput="javascript:goUrl();" onpaste="javascript:isValid=true;"  -->
-	<input type="text" id="baggage_id" class="form-control" style="width: 300px;" placeholder="問い合わせ番号">
-	</div>
-	<div class="col-sm-4">
-	<button type="button" id="btn_srch" class="btn btn-default" style="width: 120px;">検索</button>
-	</div>
-</div>
-</div>
-</div>
-</body>
 </html>

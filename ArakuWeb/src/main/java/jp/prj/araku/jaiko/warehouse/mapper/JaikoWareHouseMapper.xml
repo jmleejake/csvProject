@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.prj.araku.jaiko.warehouse.mapper.IJaikoWareHouseMapper">
+
+<select id="getJaikoWareHouse" parameterType="JaikoWareHouse" resultType="JaikoWareHouse">
+select
+   seq_id
+  , partner_id
+  , partner_nm
+  , prd_cd
+  , brand_nm
+  , prd_nm
+  , jan_cd
+  , prd_cnt
+  , prd_unit_prc
+  , dsku
+  , dasin
+  , tax_incld
+  , tax_rt
+  , date_format(warehouse_dt, '%Y/%m/%d %H:%i:%s') warehouse_dt
+  , date_format(delivery_dt, '%Y/%m/%d %H:%i:%s') delivery_dt
+  , date_format(reg_dt, '%Y/%m/%d') reg_dt
+  , date_format(upd_dt, '%Y/%m/%d') upd_dt	
+from jaiko_warehouse_info
+<where>
+	<if test="jan_cd != null and jan_cd != ''">
+	jan_cd = #{jan_cd}
+	</if>
+	<if test="from_dt != null and from_dt != '' and to_dt != null and to_dt != ''">
+	delivery_dt between date_format (#{from_dt}, '%Y%m%d%H%i%s') and date_format (#{to_dt}, '%Y%m%d%H%i%s')
+	</if>
+</where>
+order by upd_dt desc, seq_id desc
+</select>
+
+<insert id="insertJaikoWareHouse" parameterType="JaikoWareHouse" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
+insert into jaiko_warehouse_info (
+	partner_id, partner_nm, prd_cd, brand_nm, prd_nm
+	, jan_cd, prd_cnt, prd_unit_prc
+	, dsku, dasin, tax_incld, tax_rt
+	<if test="search_type == 'wareIn'">
+	, warehouse_dt
+	</if>
+	<if test="search_type == 'wareOut'">
+	, delivery_dt
+	</if>
+) select 
+	partner_id, partner_nm, prd_cd, brand_nm, prd_nm
+	, jan_cd, prd_cnt, prd_unit_prc
+	, dsku, dasin, tax_incld, tax_rt
+	<if test="search_type == 'wareIn'">
+	, now()
+	</if>
+	<if test="search_type == 'wareOut'">
+	, now()
+	</if>
+from jaiko_prd_info
+where
+	<if test="jan_cd != null and jan_cd != ''">
+	jan_cd = #{jan_cd}
+	</if>
+	<if test="seq_id != null and seq_id != ''">
+	seq_id = #{seq_id}
+	</if>
+</insert>
+
+<update id="updateJaikoWareHouse" parameterType="JaikoWareHouse">
+update jaiko_warehouse_info
+set
+  upd_dt = now()
+  <if test="search_type == 'wareIn'">
+  , warehouse_dt = now()
+  </if>
+  <if test="search_type == 'wareOut'">
+  , delivery_dt = now()
+  </if>
+where
+  <if test="jan_cd != null and jan_cd != ''">
+  jan_cd = #{jan_cd}
+  </if>
+  <if test="seq_id != null and seq_id != ''">
+  seq_id = #{seq_id}
+  </if>
+</update>
+
+</mapper>

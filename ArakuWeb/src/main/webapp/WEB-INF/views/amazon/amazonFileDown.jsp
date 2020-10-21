@@ -1,20 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%
+String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
+%>
 <!DOCTYPE html>
 <html>
 <head>
-<script src="./../resources/jquery/jquery.min.js"></script>
-<script>
-$(document).ready(function() {
-	$("#aFile").addClass("active");
-	
-	$("#register_date").datepicker({
-		language: "ja"
-		, autoclose: true
-	});
-});
-</script>
-
 </head>
 <body>
 <jsp:include page="../amazonTop.jsp"></jsp:include>
@@ -50,10 +41,20 @@ $(document).ready(function() {
 <div id="aFileDownGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
 </div>
 </div>
-<script src="./../resources/amazon/aFileDown.js"></script>
+<script src="<%=svrInfo %>/resources/amazon/aFileDown.js"></script>
 
 <form id="frm_aFileDown" action="aFileDown" method="post">
 <input type="hidden" id="seq_id_list" name="id_lst">
 </form>
 </body>
+<script>
+$(document).ready(function() {
+	$("#aFile").addClass("active");
+	
+	$("#register_date").datepicker({
+		language: "ja"
+		, autoclose: true
+	});
+});
+</script>
 </html>

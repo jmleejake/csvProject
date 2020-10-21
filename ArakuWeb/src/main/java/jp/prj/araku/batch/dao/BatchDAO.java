@@ -11,7 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.ibatis.session.SqlSession;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,10 +35,10 @@ public class BatchDAO {
 	@Autowired
 	SqlSession sqlSession;
 	
-	private static final Logger log = Logger.getLogger("jp.prj.araku.batch");
+	private Logger log = LoggerFactory.getLogger("arakuLog");
 	
 	public void insertItemsInfo(MultipartFile itemsUpload, String fileEncoding, HttpServletRequest req) throws IOException {
-		log.info("insertItemsInfo");
+		log.debug("insertItemsInfo");
 		
 		IBatchItemsMapper mapper = sqlSession.getMapper(IBatchItemsMapper.class);
 		
@@ -81,7 +82,7 @@ public class BatchDAO {
 	}
 	
 	public ArrayList<ItemOutputVO> getItemsInfo(ItemOutputVO vo) {
-		log.info("getItemsInfo");
+		log.debug("getItemsInfo");
 		log.debug(vo.toString());
 		IBatchItemsMapper mapper = sqlSession.getMapper(IBatchItemsMapper.class);
 		return mapper.getItemsInfo(vo);
@@ -95,7 +96,7 @@ public class BatchDAO {
 			throws IOException
 			, CsvDataTypeMismatchException
 			, CsvRequiredFieldEmptyException {
-		log.info("itemsCsvDownload");
+		log.debug("itemsCsvDownload");
 		
 		log.debug(vo.toString());
 		log.debug(String.format("file encoding : %s", fileEncoding));
@@ -291,7 +292,7 @@ public class BatchDAO {
 	}
 	
 	public ArrayList<ItemOutputVO> updateItems(ArrayList<ItemOutputVO> list) {
-		log.info("updateItems");
+		log.debug("updateItems");
 		
 		log.debug(list.toString());
 		

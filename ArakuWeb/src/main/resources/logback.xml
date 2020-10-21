@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <Pattern>%d{HH:mm:ss} %-5level %logger{36} - %msg%n</Pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${catalina.home}/araku/access.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${catalina.home}/araku/access-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <Pattern>%d{HH:mm:ss} %-5level %logger{36} - %msg%n</Pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org.springframework" level="info"/>
+    <logger name="java.sql" level="debug"/>
+    <logger name="jp.prj.araku" slevel="debug"/>
+
+    <root level="debug">
+        <appender-ref ref="CONSOLE"/>
+<!--         <appender-ref ref="FILE"/> -->
+    </root>
+</configuration>

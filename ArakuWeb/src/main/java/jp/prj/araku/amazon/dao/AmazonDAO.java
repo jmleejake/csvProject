@@ -15,7 +15,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.ibatis.session.SqlSession;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,10 +58,10 @@ public class AmazonDAO {
 	@Autowired
 	SqlSession sqlSession;
 	
-	private static final Logger log = Logger.getLogger("jp.prj.araku.amazon");
+	private Logger log = LoggerFactory.getLogger("arakuLog");
 	
 	public void insertAmazonInfo(MultipartFile amaUpload, String fileEncoding, String type) throws IOException {
-		log.info("insertAmazonInfo");
+		log.debug("insertAmazonInfo");
 		
 		IAmazonMapper mapper = sqlSession.getMapper(IAmazonMapper.class);
 		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
@@ -161,20 +162,20 @@ public class AmazonDAO {
 	}
 	
 	public ArrayList<AmazonVO> getAmazonInfo(AmazonVO vo) {
-		log.info("getAmazonInfo");
+		log.debug("getAmazonInfo");
 		// 초기상태일때 2틀간의 데이터를 얻을수있게 처리 (*srch는 검색할때 넘기는 값)
 		if (!CommonUtil.SEARCH_TYPE_SRCH.equals(vo.getSearch_type())) {
 			vo.setStart_date(CommonUtil.getStartDate());
 		}
-		log.debug(vo);
+		log.debug("{}", vo);
 		IAmazonMapper mapper = sqlSession.getMapper(IAmazonMapper.class);
 		return mapper.getAmazonInfo(vo);
 	}
 	
 	@Transactional
 	public ArrayList<String> executeTranslate(ArrayList<AmazonVO> targetList) {
-		log.info("executeTranslate");
-		log.debug(targetList);
+		log.debug("executeTranslate");
+		log.debug("{}", targetList);
 		
 		ArrayList<String> ret = new ArrayList<>();
 		
@@ -256,7 +257,7 @@ public class AmazonDAO {
 	}
 	
 	public ArrayList<AmazonVO> getTransResult(String id_lst) {
-		log.info("getTransResult");
+		log.debug("getTransResult");
 		id_lst = id_lst.replace("[", "");
 		id_lst = id_lst.replace("]", "");
 		String[] strArr = id_lst.split(",");
@@ -273,8 +274,8 @@ public class AmazonDAO {
 	}
 	
 	public void deleteAmazonInfo(ArrayList<AmazonVO> list) {
-		log.info("deleteAmazonInfo");
-		log.debug(list);
+		log.debug("deleteAmazonInfo");
+		log.debug("{}", list);
 		
 		IAmazonMapper mapper = sqlSession.getMapper(IAmazonMapper.class);
 		for (AmazonVO vo : list) {
@@ -291,7 +292,7 @@ public class AmazonDAO {
 			throws IOException
 			, CsvDataTypeMismatchException
 			, CsvRequiredFieldEmptyException {
-		log.info("yamatoFormatDownload");
+		log.debug("yamatoFormatDownload");
 		
 		log.debug("encoding : " + fileEncoding);
 		
@@ -493,7 +494,7 @@ public class AmazonDAO {
 			throws IOException
 			, CsvDataTypeMismatchException
 			, CsvRequiredFieldEmptyException {
-		log.info("sagawaFormatDownload");
+		log.debug("sagawaFormatDownload");
 		
 		log.debug("encoding : " + fileEncoding);
 		
@@ -654,7 +655,7 @@ public class AmazonDAO {
 			throws IOException
 			, CsvDataTypeMismatchException
 			, CsvRequiredFieldEmptyException {
-		log.info("clickPostFormatDownload");
+		log.debug("clickPostFormatDownload");
 		
 		log.debug("encoding : " + fileEncoding);
 		
@@ -863,7 +864,7 @@ public class AmazonDAO {
 	}
 	
 	public void amazonYamatoUpdate(MultipartFile yamaUpload, String fileEncoding) throws IOException {
-		log.info("amazonYamatoUpdate");
+		log.debug("amazonYamatoUpdate");
 		log.debug("encoding : " + fileEncoding);
 		log.debug("contentType: " + yamaUpload.getContentType());
 		log.debug("name: " + yamaUpload.getName());
@@ -1014,7 +1015,7 @@ public class AmazonDAO {
 			throws IOException
 			, CsvDataTypeMismatchException
 			, CsvRequiredFieldEmptyException {
-		log.info("downloadGlobalSagawa");
+		log.debug("downloadGlobalSagawa");
 		
 		log.debug("encoding : " + fileEncoding);
 		
@@ -1166,7 +1167,7 @@ public class AmazonDAO {
 			throws IOException
 			, CsvDataTypeMismatchException
 			, CsvRequiredFieldEmptyException {
-		log.info("uriageDownload");
+		log.debug("uriageDownload");
 		
 		log.debug("encoding : " + fileEncoding);
 		

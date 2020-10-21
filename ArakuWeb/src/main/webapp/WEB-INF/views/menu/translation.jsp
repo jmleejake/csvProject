@@ -1,15 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%
+String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
+%>
 <!DOCTYPE html>
 <html>
 <head>
-<script src="./../resources/jquery/jquery.min.js"></script>
-<script>
-$(document).ready(function() {
-	$("#trans").addClass("active");
-});
-</script>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 </head>
 <body>
 <c:if test="${'R' == type }">
@@ -50,6 +48,11 @@ $(document).ready(function() {
 <div id="translateGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
 </div>
 </div>
-<script src="./../resources/menu/translation.js"></script>
+<script src="<%=svrInfo %>/resources/menu/translation.js"></script>
 </body>
+<script>
+$(document).ready(function() {
+	$("#trans").addClass("active");
+});
+</script>
 </html>

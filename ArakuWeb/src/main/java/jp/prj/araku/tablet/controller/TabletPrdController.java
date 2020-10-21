@@ -29,7 +29,7 @@ import jp.prj.araku.tablet.vo.StockVO;
 import jp.prj.araku.tablet.vo.TabletPrdVO;
 import jp.prj.araku.util.CommonUtil;
 
-@RequestMapping(value="tablet")
+@RequestMapping(value="/araku/tablet")
 @Controller
 public class TabletPrdController {
 	@Value("${FILE_ENCODING}")

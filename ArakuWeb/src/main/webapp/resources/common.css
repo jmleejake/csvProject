@@ -1,4 +1,4 @@
-@CHARSET "UTF-8";
+@charset "UTF-8";
 
 .loader {
 	position: fixed;
@@ -22,13 +22,13 @@
 }
 
 .ag-theme-balham .trans-created {
-	background-color: #ff8533; !important;
+	background-color: #ff8533 !important;
 }
 
 .ag-theme-balham .trans-modified {
-	background-color: #99ccff; !important;
+	background-color: #99ccff !important;
 }
 
 .ag-theme-balham .trans-error {
-	background-color: #ff6666; !important;
+	background-color: #ff6666 !important;
 }

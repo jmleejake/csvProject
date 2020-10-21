@@ -1,15 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%
+String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
+%>
 <!DOCTYPE html>
 <html>
 <head>
-<script src="./../resources/jquery/jquery.min.js"></script>
-<script>
-$(document).ready(function() {
-	$("#order").addClass("active");
-	getData();
-});
-</script>
 </head>
 <body>
 <jsp:include page="../yahooTop.jsp"></jsp:include>
@@ -27,7 +23,7 @@ $(document).ready(function() {
 <div id="resultGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
 </div>
 </div>
-<script src="./../resources/yahoo/transResult.js"></script>
+<script src="<%=svrInfo %>/resources/yahoo/transResult.js"></script>
 <form id="frm_down4" action="cpDown" method="post">
 <input type="hidden" id="id_lst" name="id_lst" value="${idList }">
 </form>
@@ -44,4 +40,10 @@ $(document).ready(function() {
 <input type="hidden" id="ya_code" name="company">
 </form>
 </body>
+<script>
+$(document).ready(function() {
+	$("#order").addClass("active");
+	getData();
+});
+</script>
 </html>

@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -32,16 +33,15 @@ import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
 import jp.prj.araku.rakuten.dao.RakutenDAO;
 import jp.prj.araku.rakuten.vo.RakutenVO;
-import jp.prj.araku.rakuten.vo.RakutenVOForUriage;
 import jp.prj.araku.tablet.dao.TabletPrdDAO;
 import jp.prj.araku.tablet.vo.DealerVO;
 import jp.prj.araku.tablet.vo.TabletPrdVO;
 import jp.prj.araku.util.CommonUtil;
 
-@RequestMapping(value="rakuten")
+@RequestMapping(value="/araku/rakuten")
 @Controller
 public class RakutenController {
-	private static final Logger log = Logger.getLogger("jp.prj.araku.rakuten");
+	private Logger log = LoggerFactory.getLogger("arakuLog");
 	
 	@Value("${FILE_ENCODING}")
 	private String fileEncoding;

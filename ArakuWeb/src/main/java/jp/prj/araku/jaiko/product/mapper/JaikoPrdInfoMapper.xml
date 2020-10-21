@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.prj.araku.jaiko.product.mapper.IJaikoPrdInfoMapper">
+
+<select id="getJaikoPrdInfo" parameterType="JaikoPrdInfo" resultType="JaikoPrdInfo">
+select
+  seq_id
+  , prd_cd
+  , brand_nm
+  , prd_nm
+  , jan_cd
+  , prd_cnt
+  , prd_unit_prc
+  , tax_incld
+  , tax_rt
+  , date_format(reg_dt, '%Y/%m/%d') reg_dt
+  , date_format(upd_dt, '%Y/%m/%d') upd_dt
+from jaiko_prd_info
+<where>
+	<choose>
+	<when test="search_type == 'srch'">
+	<if test="seq_id != null and seq_id != ''">
+	seq_id = #{seq_id}
+	</if>
+	<trim prefixOverrides="and|or">
+	<if test="prd_cd != null and prd_cd != ''">
+	and prd_cd like '%${prd_cd}%'
+	</if>
+	<if test="prd_nm != null and prd_nm != ''">
+	and prd_nm like '%${prd_nm}%'
+	</if>
+	<if test="jan_cd != null and jan_cd != ''">
+	and jan_cd like '%${jan_cd}%'
+	</if>
+	</trim>
+	</when>
+	<otherwise>
+	upd_dt between date_add(now(), interval -1 day) and now()
+	</otherwise>
+	</choose>
+</where>
+order by upd_dt desc, seq_id desc
+</select>
+
+<insert id="insertJaikoPrdInfo" parameterType="JaikoPrdInfo" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
+insert into jaiko_prd_info (prd_cd, brand_nm, prd_nm, jan_cd, prd_cnt, prd_unit_prc, tax_incld, tax_rt)
+values (#{prd_cd}, #{brand_nm}, #{prd_nm}, #{jan_cd}, #{prd_cnt}, #{prd_unit_prc}, #{tax_incld}, #{tax_rt})
+</insert>
+
+<update id="updateJaikoPrdInfo" parameterType="JaikoPrdInfo">
+update jaiko_prd_info
+set
+  upd_dt = now()
+  <if test="partner_id != null and partner_id != ''">
+  , partner_id = #{partner_id}
+  </if>
+  <if test="partner_nm != null and partner_nm != ''">
+  , partner_nm = #{partner_nm}
+  </if>
+  <if test="prd_cd != null and prd_cd != ''">
+  , prd_cd = #{prd_cd}
+  </if>
+  <if test="brand_nm != null and brand_nm != ''">
+  , brand_nm = #{brand_nm}
+  </if>
+  <if test="prd_nm != null and prd_nm != ''">
+  , prd_nm = #{prd_nm}
+  </if>
+  <if test="jan_cd != null and jan_cd != ''">
+  , jan_cd = #{jan_cd}
+  </if>
+  <if test="prd_cnt != null and prd_cnt != ''">
+  , prd_cnt = #{prd_cnt}
+  </if>
+  <if test="prd_unit_prc != null and prd_unit_prc != ''">
+  , prd_unit_prc = #{prd_unit_prc}
+  </if>
+  <if test="dsku != null and dsku != ''">
+  , dsku = #{dsku}
+  </if>
+  <if test="dasin != null and dasin != ''">
+  , dasin = #{dasin}
+  </if>
+  <if test="tax_incld != null and tax_incld != ''">
+  , tax_incld = #{tax_incld}
+  </if>
+  <if test="tax_rt != null and tax_rt != ''">
+  , tax_rt = #{tax_rt}
+  </if>
+where
+  seq_id = #{seq_id}
+</update>
+
+<delete id="deleteJaikoPrdInfo" parameterType="java.lang.String">
+delete from jaiko_prd_info
+where seq_id = #{seq_id}
+</delete>
+
+</mapper>

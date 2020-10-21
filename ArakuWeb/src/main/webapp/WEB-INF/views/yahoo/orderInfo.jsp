@@ -1,20 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%
+String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
+%>
 <!DOCTYPE html>
 <html>
 <head>
-<script src="./../resources/jquery/jquery.min.js"></script>
-<script>
-$(document).ready(function() {
-	$("#order").addClass("active");
-	
-	$("#register_date").datepicker({
-		language: "ja"
-		, autoclose: true
-	});
-});
-</script>
-
 </head>
 <body>
 <jsp:include page="../yahooTop.jsp"></jsp:include>
@@ -46,10 +37,20 @@ $(document).ready(function() {
 <div id="orderGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
 </div>
 </div>
-<script src="./../resources/yahoo/orderInfo.js"></script>
+<script src="<%=svrInfo %>/resources/yahoo/orderInfo.js"></script>
 <form action="resultView" id="order_frm" method="post">
 <input type="hidden" id="hid_data" name="list" >
 </form>
 <form action="errListDown" id="edown_frm" method="post"></form>
 </body>
+<script>
+$(document).ready(function() {
+	$("#order").addClass("active");
+	
+	$("#register_date").datepicker({
+		language: "ja"
+		, autoclose: true
+	});
+});
+</script>
 </html>
