@@ -873,10 +873,9 @@ public class RakutenDAO {
 					zenkoku.put(orderNo, zenkokuCnt);
 				}
 			}
-			
-			
 		}
-		
+
+		//一般と冷凍とネコポスにてバグ対応する。　2020/10/30 kim
 		for(String key : orderNoLst) {
 			ArrayList<Integer> iZen = zenkoku.get(key);
 			ArrayList<Integer> iFro = frozen.get(key);
@@ -890,7 +889,14 @@ public class RakutenDAO {
 						realRet.add(ret.get(val));
 					}
 				}
-			}else if(null != iFro && iFro.size() > 1) {
+			}else {
+				if(null != iZen) {
+					int val = iZen.get(0);
+					realRet.add(ret.get(val));
+				}
+			}
+			
+			if(null != iFro && iFro.size() > 1) {   
 				for(int j=0; j<iFro.size(); j++) {
 					int val = iFro.get(j);
 					if(j==0) {
@@ -898,7 +904,14 @@ public class RakutenDAO {
 						realRet.add(ret.get(val));
 					}
 				}
-			}else if(null != iFri && iFri.size() > 1) {
+			}else {
+				if(null != iFro) {
+					int val = iFro.get(0);
+					realRet.add(ret.get(val));
+				}
+			}
+			
+			if(null != iFri && iFri.size() > 1) {
 				for(int j=0; j<iFri.size(); j++) {
 					int val = iFri.get(j);
 					if(j==0) {
@@ -907,14 +920,14 @@ public class RakutenDAO {
 					}
 				}
 			}else {
-				if(null != iZen) {
-					int val = iZen.get(0);
-					realRet.add(ret.get(val));
-				}
-				if(null != iFro) {
-					int val = iFro.get(0);
-					realRet.add(ret.get(val));
-				}
+//				if(null != iZen) {
+//					int val = iZen.get(0);
+//					realRet.add(ret.get(val));
+//				}
+//				if(null != iFro) {
+//					int val = iFro.get(0);
+//					realRet.add(ret.get(val));
+//				}
 				if(null != iFri) {
 					int val = iFri.get(0);
 					realRet.add(ret.get(val));
@@ -1047,7 +1060,14 @@ public class RakutenDAO {
 							realRet.add(list.get(val));
 						}
 					}
-				}else if(null != iFro && iFro.size() > 1) {
+				}else {
+					if(null != iZen) {
+						int val = iZen.get(0);
+						realRet.add(list.get(val));
+					}
+				}
+				
+				if(null != iFro && iFro.size() > 1) {
 					for(int j=0; j<iFro.size(); j++) {
 						int val = iFro.get(j);
 						if(j==0) {
@@ -1055,7 +1075,14 @@ public class RakutenDAO {
 							realRet.add(list.get(val));
 						}
 					}
-				}else if(null != iFri && iFri.size() > 1) {
+				}else {
+					if(null != iFro) {
+						int val = iFro.get(0);
+						realRet.add(list.get(val));
+					}
+				} 
+				
+				if(null != iFri && iFri.size() > 1) {
 					for(int j=0; j<iFri.size(); j++) {
 						int val = iFri.get(j);
 						if(j==0) {
@@ -1064,14 +1091,14 @@ public class RakutenDAO {
 						}
 					}
 				}else {
-					if(null != iZen) {
-						int val = iZen.get(0);
-						realRet.add(list.get(val));
-					}
-					if(null != iFro) {
-						int val = iFro.get(0);
-						realRet.add(list.get(val));
-					}
+//					if(null != iZen) {
+//						int val = iZen.get(0);
+//						realRet.add(list.get(val));
+//					}
+//					if(null != iFro) {
+//						int val = iFro.get(0);
+//						realRet.add(list.get(val));
+//					}
 					if(null != iFri) {
 						int val = iFri.get(0);
 						realRet.add(list.get(val));
