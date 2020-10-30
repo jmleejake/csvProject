@@ -382,7 +382,8 @@ public class AmazonDAO {
 	
 				YamatoVO yVO = new YamatoVO();
 				// 2019/12/24  キム 클리크포스트를 야마토 ネコポス로 설정함. 　⇒　ＳＴＡＲＴ
-				if (tmp.getResult_text().contains("全無")) {
+				// 2020/10/30  キム クリックポストが1件以上の場合、一般にする対応。　
+				if (tmp.getResult_text().contains("全無")&& tmp.getQuantity_purchased().equals("1") && !(tmp.getResult_text().equals("."))) {
 					yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_7);
 				}	else {
 					yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_0);
