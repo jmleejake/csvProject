@@ -10,11 +10,11 @@ var columnDefs3 = [
 		, cellRenderer: function(params) {
 	    	var img;
 	    	if("R" === params.value) {
-	    		img = "./../resources/img/rakuten.png";
+	    		img = document.location.origin+"/resources/img/rakuten.png";
 	    	}else if("A" === params.value) {
-	    		img = "./../resources/img/amazon.png";
+	    		img = document.location.origin+"/resources/img/amazon.png";
 	    	}else if("Q" === params.value) {
-	    		img = "./../resources/img/qoo10.png";
+	    		img = document.location.origin+"/resources/img/qoo10.png";
 	    	}
 	    	return "<img src='"+img+"' style='width:130px; height:43px; padding-bottom:10px;'/>";
 	    }

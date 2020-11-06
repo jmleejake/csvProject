@@ -15,7 +15,7 @@ var columnDefs = [
 	, {headerName: "配送サービスレベル", field: "ship_service_level", width: 100
 		, cellRenderer: function(params) {
 			if (params.value == 'NextDay') {
-				return '<img src="./../resources/img/fastDelivery.png" alt="logo" style="width:40px; margin-left:10px;">';
+				return '<img src="'+document.location.origin+'/resources/img/fastDelivery.png" alt="logo" style="width:40px; margin-left:10px;">';
 			}
 		}
 	}

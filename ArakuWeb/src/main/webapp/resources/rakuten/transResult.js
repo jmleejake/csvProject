@@ -44,7 +44,7 @@ var columnDefs = [
 		, cellRenderer: function(params) {
 			if (params.value == 1) {
 				console.log("true in");
-				return '<img src="./../resources/img/fastDelivery.png" alt="logo" style="width:40px; margin-left:10px;">';
+				return '<img src="'+document.location.origin+'/resources/img/fastDelivery.png" alt="logo" style="width:40px; margin-left:10px;">';
 			}
 		}
 	}
@@ -145,10 +145,19 @@ $("#btn_yu_down").on("click", function() {
 });
 
 //야마토 CSV파일 다운로드
-$("#btn_ya_down").on("click", function() {
+$("#btn_ya_down_one").on("click", function() {
 	console.log("yamato download button clicked");
 	$("#ya_code").val("1001");
 	console.log("code : " + $("#ya_code").val());
+	$("#downType").val("one");
+	$("#frm_down1").submit();
+});
+
+$("#btn_ya_down_multi").on("click", function() {
+	console.log("yamato download button clicked");
+	$("#ya_code").val("1001");
+	console.log("code : " + $("#ya_code").val());
+	$("#downType").val("multi");
 	$("#frm_down1").submit();
 });
 
