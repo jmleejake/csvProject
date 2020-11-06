@@ -945,7 +945,8 @@ public class RakutenDAO {
 			, String[] id_lst
 			, String fileEncoding
 			, String delivery_company
-			, String isChecked) 
+			, String isChecked
+			, String downType) 
 			throws IOException
 			, CsvDataTypeMismatchException
 			, CsvRequiredFieldEmptyException {
@@ -960,7 +961,7 @@ public class RakutenDAO {
 		CSVWriter csvWriter = null;
 		
 		try {
-			String csvFileName = "YAM" + CommonUtil.getDate("YYYYMMdd", 0) + ".csv";
+			String csvFileName = "YAM" + CommonUtil.getDate("YYYYMMdd", 0) +"-"+downType+".csv";
 
 			response.setContentType("text/csv");
 
@@ -1109,6 +1110,21 @@ public class RakutenDAO {
 			RakutenVO.sortListVO(realRet, "getOrder_datetime", "DESC");
 			
 			for (RakutenVO tmp : realRet) {
+				// 201107: 야마토 단품, 복수주문건을 나누어 다운로드
+				RakutenVO srchVO = new RakutenVO();
+				srchVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+				srchVO.setOrder_no(tmp.getOrder_no());
+				ArrayList<RakutenVO> multiList = mapper.getRakutenFrozenInfo(srchVO);
+				if("one".equals(downType)) {
+					if(multiList.size() > 0) {
+						continue;
+					}
+				}else if("multi".equals(downType)) {
+					if(multiList.size() < 1) {
+						continue;
+					}
+				}
+				
 				// 빠른배송을 옵션으로 둔 항목에 대하여 체크가 되어있으면 제외
 				if ("1".equals(isChecked)) {
 					if ("1".equals(tmp.getTomorrow_hope())) {
@@ -1147,9 +1163,7 @@ public class RakutenDAO {
 				 * やまとにてDLする処理する。
 				 * */
 				boolean isExY = false;
-				for(
-						
-						ExceptionRegionMasterVO region : exRegionList) {
+				for(ExceptionRegionMasterVO region : exRegionList) {
 					if(tmp.getDelivery_add1().contains(region.getException_data())) {
 						isExY = true;
 					}
