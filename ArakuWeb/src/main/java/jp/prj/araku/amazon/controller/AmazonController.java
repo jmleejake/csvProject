@@ -424,6 +424,12 @@ public class AmazonController {
 		return listDao.manipulatePrdCdMaster(list);
 	}
 	
+	@ResponseBody
+	@RequestMapping(value = "delPrdCdMaster", method = RequestMethod.POST)
+	public ArrayList<PrdCdMasterVO> deletePrdCdMaster(@RequestBody ArrayList<PrdCdMasterVO> list) {
+		return listDao.deletePrdCdMaster(list);
+	}
+	
 	@RequestMapping(value="uriageDown", method = RequestMethod.POST)
 	public void uriageDownload(HttpServletResponse response) {
 		try {

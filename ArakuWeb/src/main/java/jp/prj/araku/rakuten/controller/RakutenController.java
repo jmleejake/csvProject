@@ -563,6 +563,12 @@ public class RakutenController {
 	}
 	
 	@ResponseBody
+	@RequestMapping(value = "delPrdCdMaster", method = RequestMethod.POST)
+	public ArrayList<PrdCdMasterVO> deletePrdCdMaster(@RequestBody ArrayList<PrdCdMasterVO> list) {
+		return listDao.deletePrdCdMaster(list);
+	}
+	
+	@ResponseBody
 	@RequestMapping(value = "showAllRList")
 	public ArrayList<RakutenVO> getAllRakutenInfo() {
 		return dao.getAllData();

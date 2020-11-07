@@ -6,6 +6,7 @@ var columnDefs3 = [
 	{headerName: "商品ID", field: "prd_cd", width: 200
 		, editable: true
 	},
+	{headerName: "商品名", field: "prd_nm", width: 300},
 	{headerName: "区分", field: "target_type", width: 200
 		, cellRenderer: function(params) {
 	    	var img;
@@ -93,6 +94,7 @@ function setRowData3(result) {
 		var row = {
 				seq_id: result[i].seq_id
 				, prd_cd: result[i].prd_cd
+				, prd_nm: result[i].prd_nm
 				, target_type: result[i].target_type
 		}
 		
@@ -172,7 +174,7 @@ $("#btn_prd_delete").on("click", function() {
 	alertify.confirm("本当に削除しますか？", function (e) {
 		if (e) {
 			$.ajax({
-			    url: "delPrdMaster"
+			    url: "delPrdCdMaster"
 		    	, type:"post"
 			    , dataType: "json"  
 			    , contentType : "application/json"
