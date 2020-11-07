@@ -9,6 +9,7 @@ public class PrdCdMasterVO {
 	private String update_date;
 	private String prd_cd;
 	private String target_type;
+	private String prd_nm;
 	
 	public String getSeq_id() {
 		return seq_id;
@@ -39,5 +40,11 @@ public class PrdCdMasterVO {
 	}
 	public void setTarget_type(String target_type) {
 		this.target_type = target_type;
+	}
+	public String getPrd_nm() {
+		return prd_nm;
+	}
+	public void setPrd_nm(String prd_nm) {
+		this.prd_nm = prd_nm;
 	}
 }

@@ -222,12 +222,31 @@ where seq_id = #{seq_id}
 
 <select id="getPrdCdMaster" parameterType="PrdCdMaster" resultType="PrdCdMaster">
 select
-  seq_id
-  , prd_cd
-  , target_type
-  , register_date
-  , update_date
-from prdcd_master
+  pdm.seq_id
+  , pdm.prd_cd
+  , pdm.target_type
+  , pdm.register_date
+  , pdm.update_date
+  <if test='target_type == "R"'>
+  , ifnull(ri.product_name, rfi.product_name) prd_nm
+  </if>
+  <if test='target_type == "A"'>
+  , ai.product_name prd_nm
+  </if>
+  <if test='target_type == "Q"'>
+  , qi.product_name prd_nm
+  </if>
+from prdcd_master pdm
+<if test='target_type == "R"'>
+left outer join rakuten_info ri on pdm.prd_cd = ri.product_id
+left outer join rakuten_frozen_info rfi on pdm.prd_cd = rfi.product_id
+</if>
+<if test='target_type == "A"'>
+left outer join amazon_info ai on pdm.prd_cd = ai.order_item_id
+</if>
+<if test='target_type == "Q"'>
+left outer join q10_info qi on pdm.prd_cd = qi.item_no
+</if>
 <where>
   <if test="target_type != null">
   target_type = #{target_type}
@@ -236,6 +255,14 @@ from prdcd_master
   and prd_cd like '%${prd_cd}%'
   </if>
 </where>
+</select>
+
+<select id="prdCdMasterExistChk" parameterType="PrdCdMaster" resultType="PrdCdMaster">
+select
+  prd_cd
+  , target_type
+from prdcd_master
+where prd_cd = #{prd_cd}
 </select>
 
 <insert id="insertPrdCdMaster" parameterType="PrdCdMaster" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">

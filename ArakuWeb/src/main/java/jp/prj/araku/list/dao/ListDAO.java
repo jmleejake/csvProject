@@ -350,24 +350,38 @@ public class ListDAO {
 		log.debug("manipulatePrdCdMaster");
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
 		String gbn = "";
+		PrdCdMasterVO srchVO = new PrdCdMasterVO();
 		for(PrdCdMasterVO vo : list) {
-			if (vo.getSeq_id() != null) {
+			gbn = vo.getTarget_type();
+			srchVO.setPrd_cd(vo.getPrd_cd());
+			ArrayList<PrdCdMasterVO> srchRet = mapper.prdCdMasterExistChk(srchVO);
+			if(vo.getSeq_id() != null) {
+				if(srchRet.size() > 0) {
+					continue;
+				}
 				mapper.updatePrdCdMaster(vo);
 				log.debug("updated!! "+vo.getSeq_id());
 			}else {
 				mapper.insertPrdCdMaster(vo);
 				log.debug("inserted!! "+vo.getSeq_id());
 			}
+		}
+		
+		srchVO = new PrdCdMasterVO();
+		srchVO.setTarget_type(gbn);
+		return mapper.getPrdCdMaster(srchVO);
+	}
+	
+	public ArrayList<PrdCdMasterVO> deletePrdCdMaster(ArrayList<PrdCdMasterVO> list) {
+		log.debug("deletePrdCdMaster");
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		String gbn = "";
+		for(PrdCdMasterVO vo : list) {
+			mapper.deletePrdCdMaster(vo.getSeq_id());
 			gbn = vo.getTarget_type();
 		}
 		PrdCdMasterVO srchVO = new PrdCdMasterVO();
 		srchVO.setTarget_type(gbn);
 		return mapper.getPrdCdMaster(srchVO);
-	}
-	
-	public int deletePrdCdMaster(String seq_id) {
-		log.debug("deletePrdCdMaster");
-		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
-		return mapper.deletePrdCdMaster(seq_id);
 	}
 }

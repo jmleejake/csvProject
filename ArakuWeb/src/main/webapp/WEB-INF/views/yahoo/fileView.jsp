@@ -6,7 +6,7 @@
 <head>
 </head>
 <body>
-<jsp:include page="../q10Top.jsp"></jsp:include>
+<jsp:include page="../yahooTop.jsp"></jsp:include>
 
 <div class="container-fluid">
 

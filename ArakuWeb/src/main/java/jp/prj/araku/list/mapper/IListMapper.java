@@ -46,6 +46,7 @@ public interface IListMapper {
 	 * 商品管理番号マスタ
 	 * */
 	public ArrayList<PrdCdMasterVO> getPrdCdMaster(PrdCdMasterVO vo);
+	public ArrayList<PrdCdMasterVO> prdCdMasterExistChk(PrdCdMasterVO vo);
 	public int insertPrdCdMaster(PrdCdMasterVO vo);
 	public int updatePrdCdMaster(PrdCdMasterVO vo);
 	public int deletePrdCdMaster(String seq_id);
