@@ -222,6 +222,7 @@ where seq_id = #{seq_id}
 
 <select id="getPrdCdMaster" parameterType="PrdCdMaster" resultType="PrdCdMaster">
 select
+  distinct
   pdm.seq_id
   , pdm.prd_cd
   , pdm.target_type
@@ -255,6 +256,7 @@ left outer join q10_info qi on pdm.prd_cd = qi.item_no
   and prd_cd like '%${prd_cd}%'
   </if>
 </where>
+order by pdm.seq_id desc
 </select>
 
 <select id="prdCdMasterExistChk" parameterType="PrdCdMaster" resultType="PrdCdMaster">
