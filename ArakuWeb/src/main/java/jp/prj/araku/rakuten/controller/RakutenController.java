@@ -412,20 +412,19 @@ public class RakutenController {
 	}
 	
 	@RequestMapping(value="/cpDown", method=RequestMethod.POST)
-	@ResponseBody
-	public String processClickPostDownload(
-			@RequestParam(value="id_lst") String id_lst) {
+	public void processClickPostDownload(
+			HttpServletResponse response
+			, @RequestParam(value="id_lst") String id_lst) {
 		log.info("processClickPostDownload");
 		log.debug("id list : " + id_lst);
-		String ret = "";
 		
 		id_lst = id_lst.replace("[", "");
 		id_lst = id_lst.replace("]", "");
 		String[] seq_id_list = id_lst.split(",");
 		try {
-			// dao.clickPostFormatDownload(response, seq_id_list, fileEncoding);
 			// 2019-10-03: 크리쿠포스트 csv다운로드시 목록에 40개 제한이 있어 잘라서 다운로드처리
-			ret = dao.createClickpostCsvFile(fileEncoding, cpDownPath, seq_id_list);
+			//ret = dao.createClickpostCsvFile(fileEncoding, cpDownPath, seq_id_list);
+			dao.downloadClickpostCsvFile(response, fileEncoding, seq_id_list);
 		} catch (IOException e) {
 			log.error(e.toString());
 		} catch (CsvDataTypeMismatchException e) {
@@ -433,7 +432,6 @@ public class RakutenController {
 		} catch (CsvRequiredFieldEmptyException e) {
 			log.error(e.toString());
 		}
-		return ret;
 	}
 	
 	@RequestMapping(value="/showPrdMaster", method=RequestMethod.GET)

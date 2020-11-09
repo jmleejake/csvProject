@@ -13,11 +13,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.ibatis.session.SqlSession;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -808,5 +813,173 @@ public class YahooDAO {
 		}
 		
 		return ret;
+	}
+	
+	public void downloadClickpostCsvFile(
+			HttpServletResponse response
+			, String fileEncoding, String[] id_lst) 
+			throws IOException
+			, CsvDataTypeMismatchException
+			, CsvRequiredFieldEmptyException {
+		IYahooMapper mapper = sqlSession.getMapper(IYahooMapper.class);
+		
+		ArrayList<String> seq_id_list = new ArrayList<>();
+		for (String seq_id : id_lst) {
+			seq_id_list.add(seq_id);
+		}
+		
+		TranslationResultVO vo = new TranslationResultVO();
+		vo.setSeq_id_list(seq_id_list);
+		
+		ArrayList<YahooVO> list = mapper.getTransResult(vo);
+		ArrayList<ArakuVO> cList = new ArrayList<>();
+		ArrayList<ClickPostVO> cList2 = new ArrayList<>();
+		
+		for (YahooVO tmp : list) {
+			if(tmp.getTitle().contains("【全国送料無料】")) {
+			/*if(tmp.getProduct_name().indexOf("[全国送料無料]") != -1) {*/
+				ClickPostVO cVO = new ClickPostVO();
+				cVO.setPost_no(tmp.getShip_post_no());
+				cVO.setDelivery_name(tmp.getShip_nm());
+				cVO.setDelivery_add1(tmp.getShip_pre());
+				cVO.setDelivery_add2(tmp.getShip_city());
+				// 2019-09-28 크리쿠포스트 주소 컬럼에 대하여 전각 20자 이상이면 안되는 사항이 있어 수정.
+				String add2 = tmp.getShip_add2() != null ? tmp.getShip_add2().replaceAll("\"", "") : "";
+				String addStr = tmp.getShip_add1().replace("\"", "") + "" + add2;
+				if(addStr.length() > 20) {
+					cVO.setDelivery_add3(addStr.substring(0, 20));
+					cVO.setDelivery_add4(addStr.substring(20, addStr.length()));
+				}else {
+					cVO.setDelivery_add3(addStr);
+				}
+				
+				String product_name = tmp.getResult_text().replace("\"", "");
+        		// 반각문자를 전각문자로 치환 (https://kurochan-note.hatenablog.jp/entry/2014/02/04/213737)
+        		product_name = Normalizer.normalize(product_name, Normalizer.Form.NFKC);
+        		// clickpost 정책에 따라  内容品의 문자가 전각15바이트가 넘어가면 잘라내고 집어 넣을수있게 처리
+        		if (product_name.length() > 15) {
+        			product_name = product_name.substring(0, 15);
+        		}
+				cVO.setDelivery_contents(product_name);
+				
+				// csv작성을 위한 리스트작성
+        		cList.add(cVO);
+        		cList2.add(cVO);
+			}
+		}
+		
+		if(cList.size() > 40) {
+			int i = cList2.size()/40;
+			int[] arr = new int[i+1];
+			
+			List<List<ClickPostVO>> subList = new ArrayList<>();
+			
+			for(int j=0; j<arr.length; j++) {
+				arr[j] = (j+1)*40;
+			}
+			
+			for(int k=0; k<arr.length; k++) {
+				if(k==0) {
+					subList.add(cList2.subList(0, arr[k]));
+					continue;
+				}
+				
+				if(arr[k] > cList2.size()) {
+					subList.add(cList2.subList(k*arr[k-1], cList2.size()));
+				}else {
+					subList.add(cList2.subList(k*arr[k-1], arr[k]));
+				}
+			}
+			
+			try {
+				XSSFWorkbook workbook = new XSSFWorkbook();
+				XSSFSheet sheet = null;
+				XSSFRow row = null;
+				XSSFCell cell = null;
+				Map<Integer,String> headerList = new HashMap<Integer,String>();
+				headerList.put(0, "お届け先郵便番号");
+				headerList.put(1, "お届け先氏名");
+				headerList.put(2, "お届け先敬称");
+				headerList.put(3, "お届け先住所1行目");
+				headerList.put(4, "お届け先住所2行目");
+				headerList.put(5, "お届け先住所3行目");
+				headerList.put(6, "お届け先住所4行目");
+				headerList.put(7, "内容品");
+				
+				for(int i1=0; i1<subList.size(); i1++) {
+					List<ClickPostVO> ll = subList.get(i1);
+					sheet = workbook.createSheet("CLICKPOST-DATA"+(i1+1));
+					// 데이터의 크기만큼 row생성
+					for(int i2=0; i2<ll.size()+1; i2++) {
+						row = sheet.createRow((short)i2);
+						// headerList의 크기만큼
+						for(int i3=0; i3<headerList.size(); i3++) {
+							cell = row.createCell(i3);
+							// 맨 윗줄은 헤더
+							if(i2==0) {
+								cell.setCellValue(headerList.get(i3));
+							}else {
+								// 헤더 아래부터는 데이터세팅
+								Map<Integer,String> dataList = new HashMap<Integer,String>();
+								ClickPostVO cData = ll.get(i2-1);
+								dataList.put(0, cData.getPost_no());
+								dataList.put(1, cData.getDelivery_name());
+								dataList.put(2, cData.getDelivery_name_title());
+								dataList.put(3, cData.getDelivery_add1());
+								dataList.put(4, cData.getDelivery_add2());
+								dataList.put(5, cData.getDelivery_add3());
+								dataList.put(6, cData.getDelivery_add4());
+								dataList.put(7, cData.getDelivery_contents());
+								cell.setCellValue(dataList.get(i3));
+							}
+						}
+					}
+				}
+				String headerKey = "Content-Disposition";
+				String headerValue = String.format("attachment;filename=\"%s\"",
+						"CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0)+".xlsx");
+				response.setCharacterEncoding(fileEncoding);
+				response.setHeader(headerKey, headerValue);
+				workbook.write(response.getOutputStream());
+				workbook.close();
+			}finally {
+				
+			}
+		}else {
+			BufferedWriter writer = null;
+			CSVWriter csvWriter = null;
+			try {
+				String csvFileName = "CLICKPOST" + CommonUtil.getDate("YYYYMMdd", 0)+".csv";
+
+				response.setContentType("text/csv");
+
+				// creates mock data
+				String headerKey = "Content-Disposition";
+				String headerValue = String.format("attachment; filename=\"%s\"",
+						csvFileName);
+				response.setHeader(headerKey, headerValue);
+				response.setCharacterEncoding(fileEncoding);
+				
+				writer = new BufferedWriter(response.getWriter());
+				
+				csvWriter = new CSVWriter(writer
+						, CSVWriter.DEFAULT_SEPARATOR
+						, CSVWriter.NO_QUOTE_CHARACTER
+						, CSVWriter.DEFAULT_ESCAPE_CHARACTER
+						, CSVWriter.DEFAULT_LINE_END);
+				
+				String[] header = CommonUtil.deliveryCompanyHeader("CLICK");
+				
+				CommonUtil.executeCSVDownload(csvWriter, writer, header, cList);
+			}finally {
+				if (csvWriter != null) {
+					csvWriter.close();
+				}
+				
+				if (writer != null) {
+					writer.close();
+				}
+			}
+		}
 	}
 }
