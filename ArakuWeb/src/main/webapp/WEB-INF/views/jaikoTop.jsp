@@ -26,6 +26,9 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 <script src="<%=svrInfo %>/resources/bootstrap-datepicker-1.6.4/bootstrap-datepicker.min.js"></script>
 <script src="<%=svrInfo %>/resources/bootstrap-datepicker-1.6.4/bootstrap-datepicker.ja.min.js"></script>
 
+<link rel="stylesheet" href="<%=svrInfo %>/resources/fileView.css">
+<script src="<%=svrInfo %>/resources/fileView.js"></script>
+
 <script src="<%=svrInfo %>/resources/common.js"></script>
 <link rel="stylesheet" href="<%=svrInfo %>/resources/common.css">
 

@@ -35,6 +35,8 @@ public class JaikoPrdInfoVO {
 	private String upd_user_id;
 	/**更新日付*/
 	private String upd_dt;
+	/**規格*/
+	private String std_info;
 	
 	private String search_type;
 	
@@ -141,6 +143,12 @@ public class JaikoPrdInfoVO {
 		this.upd_dt = upd_dt;
 	}
 	
+	public String getStd_info() {
+		return std_info;
+	}
+	public void setStd_info(String std_info) {
+		this.std_info = std_info;
+	}
 	public String getSearch_type() {
 		return search_type;
 	}
@@ -151,9 +159,9 @@ public class JaikoPrdInfoVO {
 	@Override
 	public String toString() {
 		return String.format(
-				"JaikoPrdInfoVO [seq_id=%s, partner_id=%s, partner_nm=%s, prd_cd=%s, brand_nm=%s, prd_nm=%s, jan_cd=%s, prd_cnt=%s, prd_unit_prc=%s, dsku=%s, dasin=%s, tax_incld=%s, tax_rt=%s, reg_user_id=%s, reg_dt=%s, upd_user_id=%s, upd_dt=%s, search_type=%s]",
+				"JaikoPrdInfoVO [seq_id=%s, partner_id=%s, partner_nm=%s, prd_cd=%s, brand_nm=%s, prd_nm=%s, jan_cd=%s, prd_cnt=%s, prd_unit_prc=%s, dsku=%s, dasin=%s, tax_incld=%s, tax_rt=%s, reg_user_id=%s, reg_dt=%s, upd_user_id=%s, upd_dt=%s, std_info=%s, search_type=%s]",
 				seq_id, partner_id, partner_nm, prd_cd, brand_nm, prd_nm, jan_cd, prd_cnt, prd_unit_prc, dsku, dasin,
-				tax_incld, tax_rt, reg_user_id, reg_dt, upd_user_id, upd_dt, search_type);
+				tax_incld, tax_rt, reg_user_id, reg_dt, upd_user_id, upd_dt, std_info, search_type);
 	}
 	
 }

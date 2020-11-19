@@ -21,8 +21,24 @@ public class JaikoPrdInventoryVO {
 	private String upd_user_id;
 	/**更新日付*/
 	private String upd_dt;
+	/**入数*/
+	private String prd_qty;
+	/**ケース数*/
+	private String prd_case;
+	/**バラ数*/
+	private String prd_bara;
+	/**賞味期限*/
+	private String exp_dt;
+	/**本体売価*/
+	private String sell_prc;
 	
 	private String search_type;
+	
+	// for download
+	/**規格*/
+	private String std_info;
+	/**商品単価*/
+	private String prd_unit_prc;
 
 	public String getSeq_id() {
 		return seq_id;
@@ -112,12 +128,68 @@ public class JaikoPrdInventoryVO {
 		this.search_type = search_type;
 	}
 
+	public String getPrd_qty() {
+		return prd_qty;
+	}
+
+	public void setPrd_qty(String prd_qty) {
+		this.prd_qty = prd_qty;
+	}
+
+	public String getPrd_case() {
+		return prd_case;
+	}
+
+	public void setPrd_case(String prd_case) {
+		this.prd_case = prd_case;
+	}
+
+	public String getPrd_bara() {
+		return prd_bara;
+	}
+
+	public void setPrd_bara(String prd_bara) {
+		this.prd_bara = prd_bara;
+	}
+
+	public String getExp_dt() {
+		return exp_dt;
+	}
+
+	public void setExp_dt(String exp_dt) {
+		this.exp_dt = exp_dt;
+	}
+
+	public String getSell_prc() {
+		return sell_prc;
+	}
+
+	public void setSell_prc(String sell_prc) {
+		this.sell_prc = sell_prc;
+	}
+
+	public String getStd_info() {
+		return std_info;
+	}
+
+	public void setStd_info(String std_info) {
+		this.std_info = std_info;
+	}
+
+	public String getPrd_unit_prc() {
+		return prd_unit_prc;
+	}
+
+	public void setPrd_unit_prc(String prd_unit_prc) {
+		this.prd_unit_prc = prd_unit_prc;
+	}
+
 	@Override
 	public String toString() {
 		return String.format(
-				"JaikoPrdInventoryVO [seq_id=%s, prd_cd=%s, brand_nm=%s, prd_nm=%s, jan_cd=%s, now_prd_cnt=%s, reg_user_id=%s, reg_dt=%s, upd_user_id=%s, upd_dt=%s, search_type=%s]",
+				"JaikoPrdInventoryVO [seq_id=%s, prd_cd=%s, brand_nm=%s, prd_nm=%s, jan_cd=%s, now_prd_cnt=%s, reg_user_id=%s, reg_dt=%s, upd_user_id=%s, upd_dt=%s, prd_qty=%s, prd_case=%s, prd_bara=%s, exp_dt=%s, sell_prc=%s, search_type=%s]",
 				seq_id, prd_cd, brand_nm, prd_nm, jan_cd, now_prd_cnt, reg_user_id, reg_dt, upd_user_id, upd_dt,
-				search_type);
+				prd_qty, prd_case, prd_bara, exp_dt, sell_prc, search_type);
 	}
 
 }

@@ -31,6 +31,27 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 </div>
 <!-- search E -->
 
+<!-- upload download S -->
+<div class="well container-fluid" style="background-color: #ffffff;">
+<div class="col-sm-9" style="background-color: #f2e6ff;height:60px;padding-top:10px;">
+<form id="rak-frm" action="/jaiko/prdInven/csvUpload" method="post" enctype="multipart/form-data" onsubmit="return preCheck('rak');" >
+<div id="rak-csv" class="file-up col-sm-8">
+<input type="file" id="rak-upload" name="upload" style="display:none">
+<button class="original_btn">棚卸入力表</button>
+<span class="icon">未選択</span>
+</div>
+<div class="col-sm-4">
+<input type="submit" class="original_btn" value="アップロード">
+</div>
+</form>
+</div>
+<div class="col-sm-3" style="background-color: #ccffdd;height:60px;padding-top:10px;">
+<button id="btn_down" type="button" class="original_btn">棚卸表DL</button>
+<form id="frm_down" action="/jaiko/prdInven/csvDown" method="post"></form>
+</div>
+</div>
+<!-- upload download E -->
+
 <!-- table S -->
 <div class="well container-fluid">
 <button id="btn_add" type="button" class="btn btn-primary" style="width: 120px; margin-bottom: 10px;">列追加</button>
@@ -44,6 +65,25 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 <script type="text/javascript">
 $(document).ready(function() {
 	$("#prdInven").addClass("active");
+
+	// 棚卸入力表
+	$('#rak-csv').on('click', 'button', function () {
+        $('#rak-upload').click();
+        return false;
+    });
+	
+	$('#rak-upload').on('change', function() {
+	    //選択したファイル情報を取得し変数に格納
+	    var file = $(this).prop('files')[0];
+	    //アイコンを選択中に変更
+	    $('#rak-csv').find('.icon').addClass('select').html('選択中');
+	    //未選択→選択の場合（.filenameが存在しない場合）はファイル名表示用の<div>タグを追加
+	    if(!($('.rak-filename').length)){
+	        $('#rak-csv').append('<div class="rak-filename"></div>');
+	    };
+	    //ファイル名を表示
+	    $('.rak-filename').html('ファイル名：' + file.name);
+	});
 });
 </script>
 </body>

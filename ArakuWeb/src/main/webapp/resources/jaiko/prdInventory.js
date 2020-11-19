@@ -32,7 +32,7 @@ var columnDefs = [
             rows: '6'
         }
 	}
-	, {headerName: "現在商品数", field: "now_prd_cnt", width: 80
+	, {headerName: "現在商品数", field: "now_prd_cnt", width: 170
 		, editable: true
     	, cellEditor: 'agLargeTextCellEditor'
     	, cellEditorParams: {
@@ -252,6 +252,10 @@ $("#btn_search").on("click", function() {
 		, contentType: 'application/json'
 		, success: setRowData
 	});
+});
+
+$("#btn_down").on("click", function() {
+	$("#frm_down").submit();
 });
 
 

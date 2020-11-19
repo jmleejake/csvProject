@@ -16,6 +16,7 @@ select
   , prd_unit_prc
   , tax_incld
   , tax_rt
+  , std_info
   , date_format(reg_dt, '%Y/%m/%d') reg_dt
   , date_format(upd_dt, '%Y/%m/%d') upd_dt
 from jaiko_prd_info
@@ -46,8 +47,10 @@ order by upd_dt desc, seq_id desc
 </select>
 
 <insert id="insertJaikoPrdInfo" parameterType="JaikoPrdInfo" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
-insert into jaiko_prd_info (prd_cd, brand_nm, prd_nm, jan_cd, prd_cnt, prd_unit_prc, tax_incld, tax_rt)
-values (#{prd_cd}, #{brand_nm}, #{prd_nm}, #{jan_cd}, #{prd_cnt}, #{prd_unit_prc}, #{tax_incld}, #{tax_rt})
+insert into jaiko_prd_info (prd_cd, brand_nm, prd_nm, jan_cd, prd_cnt
+, prd_unit_prc, tax_incld, tax_rt, std_info)
+values (#{prd_cd}, #{brand_nm}, #{prd_nm}, #{jan_cd}, #{prd_cnt}
+, #{prd_unit_prc}, #{tax_incld}, #{tax_rt}, #{std_info})
 </insert>
 
 <update id="updateJaikoPrdInfo" parameterType="JaikoPrdInfo">
@@ -89,6 +92,9 @@ set
   </if>
   <if test="tax_rt != null and tax_rt != ''">
   , tax_rt = #{tax_rt}
+  </if>
+  <if test="std_info != null and std_info != ''">
+  , std_info = #{std_info}
   </if>
 where
   seq_id = #{seq_id}

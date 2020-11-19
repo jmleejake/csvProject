@@ -13,6 +13,11 @@ select
   , prd_nm
   , jan_cd
   , now_prd_cnt
+  , prd_qty
+  , prd_case
+  , prd_bara
+  , sell_prc
+  , date_format(exp_dt, '%Y/%m/%d') exp_dt
   , date_format(reg_dt, '%Y/%m/%d') reg_dt
   , date_format(upd_dt, '%Y/%m/%d') upd_dt
 from jaiko_inventory_info
@@ -43,8 +48,10 @@ order by upd_dt desc, seq_id desc
 </select>
 
 <insert id="insertJaikoPrdInventory" parameterType="JaikoPrdInventory" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
-insert into jaiko_inventory_info (prd_cd, brand_nm, prd_nm, jan_cd, now_prd_cnt)
-values (#{prd_cd}, #{brand_nm}, #{prd_nm}, #{jan_cd}, #{now_prd_cnt})
+insert into jaiko_inventory_info (prd_cd, brand_nm, prd_nm, jan_cd, now_prd_cnt
+, prd_qty, prd_case, prd_bara, exp_dt, sell_prc)
+values (#{prd_cd}, #{brand_nm}, #{prd_nm}, #{jan_cd}, #{now_prd_cnt}
+, #{prd_qty}, #{prd_case}, #{prd_bara}, STR_TO_DATE(#{exp_dt},'%Y/%m/%d'), #{sell_prc})
 </insert>
 
 <insert id="insertJaikoPrdInventoryForWareIn" parameterType="JaikoPrdInventory" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
@@ -73,6 +80,21 @@ set
   <if test="now_prd_cnt != null and now_prd_cnt != ''">
   , now_prd_cnt = #{now_prd_cnt}
   </if>
+  <if test="prd_qty != null and prd_qty != ''">
+  , prd_qty = #{prd_qty}
+  </if>
+  <if test="prd_case != null and prd_case != ''">
+  , prd_case = #{prd_case}
+  </if>
+  <if test="prd_bara != null and prd_bara != ''">
+  , prd_bara = #{prd_bara}
+  </if>
+  <if test="exp_dt != null and exp_dt != ''">
+  , exp_dt = STR_TO_DATE(#{exp_dt},'%Y/%m/%d')
+  </if>
+  <if test="sell_prc != null and sell_prc != ''">
+  , sell_prc = #{sell_prc}
+  </if>
 where
   <if test="seq_id != null and seq_id != ''">
   seq_id = #{seq_id}
@@ -86,5 +108,20 @@ where
 delete from jaiko_inventory_info
 where seq_id = #{seq_id}
 </delete>
+
+<select id="getJaikoInventoryDownList" resultType="JaikoPrdInventory">
+select
+  jpi.jan_cd
+  , jpi.prd_nm
+  , jpi.std_info
+  , jpi.prd_unit_prc
+  , jii.prd_qty
+  , jii.prd_case
+  , jii.prd_bara
+  , date_format(jii.exp_dt, '%Y/%m/%d') exp_dt
+  , jii.sell_prc
+from jaiko_prd_info jpi
+inner join jaiko_inventory_info jii on jii.jan_cd = jpi.jan_cd
+</select>
 
 </mapper>

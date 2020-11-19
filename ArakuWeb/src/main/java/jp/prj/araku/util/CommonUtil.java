@@ -497,6 +497,22 @@ public class CommonUtil {
 		return header;
 	}
 	
+	public static String[] prdInventoryHeader() {
+		String[] header = {
+				"ＪＡＮコード"
+				, "商品名"
+				, "規格"
+				, "入数"
+				, "ケース"
+				, "バラ"
+				, "賞味期限"
+				, "原価"
+				, "売価(本体)"
+				, "備考"	
+		};
+		return header;
+	}
+	
 	public static String toCommaFormat(long pdMoney) {
 		DecimalFormat form = new DecimalFormat("#,###");
 	    form.setDecimalSeparatorAlwaysShown(false);
