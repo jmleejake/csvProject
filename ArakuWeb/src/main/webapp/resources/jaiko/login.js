@@ -1,5 +1,5 @@
 $("#btn_login").on("click", function() {
-	$("#frm_login").submit();
+	loginGo();
 });
 
 $("#btn_cancel").on("click", function() {
@@ -18,4 +18,8 @@ function showNotify(type) {
 		$("#user_pass").val("");
 		$("#user_pass").focus();
 	}
+}
+
+function loginGo() {
+	$("#frm_login").submit();
 }

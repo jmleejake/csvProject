@@ -36,7 +36,8 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 	</div>
 	<div class="input-group">
 		<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-		<input type="password" class="form-control" id="user_pass" name="user_pass" placeholder="パスワード">
+		<input type="password" class="form-control" id="user_pass" name="user_pass" placeholder="パスワード"
+		onkeypress = "if(event.keyCode==13){ loginGo(); event.preventDefault(); }">
 	</div>
 </form>
 <div>

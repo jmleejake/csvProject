@@ -52,13 +52,13 @@ seq_id bigint unsigned primary key auto_increment comment '区分ID'
 , dasin varchar(7) comment 'ＡＳＩＮ'
 , tax_incld varchar(12) comment '商品税(抜、込)'
 , tax_rt varchar(2) comment '商品税率'
+, std_info varchar(30) comment '規格'
 , reg_user_id varchar(20) comment '登録者'
 , reg_dt datetime default now() comment '登録日付'
 , upd_user_id varchar(20) default null comment '更新者'
 , upd_dt datetime default now() comment '更新日付'
 ) default charset = utf8 comment '商品情報';
 
-alter table jaiko_prd_info add column std_info varchar(30) comment '規格';
 
 drop table jaiko_invoice_info;
 create table jaiko_invoice_info (
@@ -119,19 +119,16 @@ seq_id bigint unsigned primary key auto_increment comment '区分ID'
 , prd_nm varchar(1000) comment '商品名'
 , jan_cd varchar(15) comment 'ＪＡＮコード'
 , now_prd_cnt varchar(15) comment '現在商品数'
+, prd_qty varchar(10) comment '入数'
+, prd_case varchar(10) comment 'ケース数'
+, prd_bara varchar(10) comment 'バラ数'
+, exp_dt datetime comment '賞味期限'
+, sell_prc varchar(20) comment '本体売価'
 , reg_user_id varchar(20) comment '登録者'
 , reg_dt datetime default now() comment '登録日付'
 , upd_user_id varchar(20) default null comment '更新者'
 , upd_dt datetime default now() comment '更新日付'
 ) default charset = utf8 comment '商品在庫管理';
-
-alter table jaiko_inventory_info add column prd_qty varchar(10) comment '入数';
-alter table jaiko_inventory_info add column prd_case varchar(10) comment 'ケース数';
-alter table jaiko_inventory_info add column prd_bara varchar(10) comment 'バラ数';
-alter table jaiko_inventory_info add column exp_dt datetime comment '賞味期限';
-alter table jaiko_inventory_info add column sell_prc varchar(20) comment '本体売価';
-
-
 
 
 drop table jaiko_receipt_info;
