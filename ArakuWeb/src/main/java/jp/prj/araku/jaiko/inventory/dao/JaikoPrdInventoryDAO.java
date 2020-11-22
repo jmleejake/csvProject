@@ -1,26 +1,34 @@
 package jp.prj.araku.jaiko.inventory.dao;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.ibatis.session.SqlSession;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.opencsv.CSVWriter;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
-import com.opencsv.bean.StatefulBeanToCsv;
-import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
@@ -132,64 +140,162 @@ public class JaikoPrdInventoryDAO {
 		}
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void prdInventoryDownload(HttpServletResponse response, String fileEncoding)
 	throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
 		log.debug("prdInventoryDownload");
 		log.debug("encoding : " + fileEncoding);
 		IJaikoPrdInventoryMapper mapper = sqlSession.getMapper(IJaikoPrdInventoryMapper.class);
-		BufferedWriter writer = null;
-		CSVWriter csvWriter = null;
-		try {
-			String csvFileName = "JAIKODOWN_" + CommonUtil.getDate("YYYYMMdd", 0) + ".csv";
-
-			response.setContentType("text/csv");
-
-			// creates mock data
-			String headerKey = "Content-Disposition";
-			String headerValue = String.format("attachment; filename=\"%s\"",
-					csvFileName);
-			response.setHeader(headerKey, headerValue);
-			response.setCharacterEncoding(fileEncoding);
 			
-			writer = new BufferedWriter(response.getWriter());
-			
-			csvWriter = new CSVWriter(writer
-					, CSVWriter.DEFAULT_SEPARATOR
-					, CSVWriter.NO_QUOTE_CHARACTER
-					, CSVWriter.DEFAULT_ESCAPE_CHARACTER
-					, CSVWriter.DEFAULT_LINE_END);
-			
-			String[] header = CommonUtil.prdInventoryHeader();
-			
-			ArrayList<JaikoPrdInventoryVO> targetList = mapper.getJaikoInventoryDownList();
-			ArrayList<InventoryDownVO> list = new ArrayList<InventoryDownVO>();
-			for(JaikoPrdInventoryVO vo : targetList) {
-				InventoryDownVO invenDown = new InventoryDownVO();
-				invenDown.setJan_cd(vo.getJan_cd());
-				invenDown.setPrd_nm(vo.getPrd_nm());
-				invenDown.setPrd_bara(vo.getPrd_bara());
-				invenDown.setPrd_case(vo.getPrd_case());
-				invenDown.setPrd_qty(vo.getPrd_qty());
-				invenDown.setPrd_unit_prc(vo.getPrd_unit_prc());
-				invenDown.setSell_prc(vo.getSell_prc());
-				invenDown.setStd_info(vo.getStd_info());
-				invenDown.setExp_dt(vo.getExp_dt());
-				list.add(invenDown);
-			}
-			StatefulBeanToCsv<InventoryDownVO> beanToCSV = new StatefulBeanToCsvBuilder(writer)
-		            .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
-		            .build();
-			csvWriter.writeNext(header);
-			beanToCSV.write(list);
-		}finally {
-			if (csvWriter != null) {
-				csvWriter.close();
+		ArrayList<JaikoPrdInventoryVO> targetList = mapper.getJaikoInventoryDownList();
+		ArrayList<InventoryDownVO> list = new ArrayList<InventoryDownVO>();
+		for(JaikoPrdInventoryVO vo : targetList) {
+			InventoryDownVO invenDown = new InventoryDownVO();
+			invenDown.setJan_cd(vo.getJan_cd());
+			invenDown.setPrd_nm(vo.getPrd_nm());
+			invenDown.setPrd_bara(vo.getPrd_bara());
+			invenDown.setPrd_case(vo.getPrd_case());
+			invenDown.setPrd_qty(vo.getPrd_qty());
+			invenDown.setPrd_unit_prc(vo.getPrd_unit_prc());
+			invenDown.setSell_prc(vo.getSell_prc());
+			invenDown.setStd_info(vo.getStd_info());
+			invenDown.setExp_dt(vo.getExp_dt());
+			list.add(invenDown);
+		}
+		
+		int i = list.size() / 30;
+		int[] arr = new int[i+1];
+		List<List<InventoryDownVO>> subList = new ArrayList<>();
+		
+		for(int j=0; j<arr.length; j++) {
+			arr[j] = (j+1)*30;
+		}
+		
+		for(int k=0; k<arr.length; k++) {
+			if(k==0) {
+				subList.add(list.subList(0, arr[k]));
+				continue;
 			}
 			
-			if (writer != null) {
-				writer.close();
+			if(arr[k] > list.size()) {
+				subList.add(list.subList(k*arr[k-1], list.size()));
+			}else {
+				subList.add(list.subList(k*arr[k-1], arr[k]));
 			}
 		}
+		
+		try {
+			XSSFWorkbook workbook = new XSSFWorkbook();
+			XSSFSheet sheet = null;
+			XSSFRow row = null;
+			XSSFCell cell = null;
+			Map<Integer,String> headerList = new HashMap<Integer,String>();
+			headerList.put(0, "SNO.");
+			headerList.put(1, "ＪＡＮコード");
+			headerList.put(2, "商品名");
+			headerList.put(3, "規格");
+			headerList.put(4, "入数");
+			headerList.put(5, "ケース");
+			headerList.put(6, "バラ");
+			headerList.put(7, "賞味期限");
+			headerList.put(8, "原価");
+			headerList.put(9, "売価(本体)");
+			headerList.put(10, "備考");
+			
+			for(int i1=0; i1<subList.size(); i1++) {
+				CellStyle s = null;
+				sheet = workbook.createSheet("JAIKOINVENTORY-DATA"+(i1+1));
+				s = sheet.getWorkbook().createCellStyle();
+				row = sheet.createRow(0);
+				sheet.addMergedRegion(new CellRangeAddress(0, 0, 2, 9));
+				row.createCell(0).setCellValue("");
+				row.createCell(1).setCellValue("");
+				Cell cl = row.createCell(2);
+				cl.setCellStyle(s);
+				s.setVerticalAlignment(VerticalAlignment.CENTER);
+				s.setAlignment(HorizontalAlignment.CENTER);
+				cl.setCellValue("棚　　卸　　表");
+				row.createCell(10).setCellStyle(s);
+				row.createCell(10).setCellValue("株式会社XXX");
+				
+				row = sheet.createRow(1);
+				sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 1));
+				sheet.addMergedRegion(new CellRangeAddress(1, 1, 4, 5));
+				sheet.addMergedRegion(new CellRangeAddress(1, 1, 7, 10));
+				row.createCell(0).setCellValue("棚卸担当者");
+				row.createCell(2).setCellValue("");
+				row.createCell(3).setCellValue("調査場所");
+				row.createCell(4).setCellValue("");
+				row.createCell(6).setCellValue("実施日");
+				row.createCell(7).setCellValue("");
+				
+				List<InventoryDownVO> ll = subList.get(i1);
+				// 데이터의 크기만큼 row생성
+				for(int i2=2; i2<33; i2++) {
+					row = sheet.createRow((short)i2);
+					// headerList의 크기만큼
+					for(int i3=0; i3<headerList.size(); i3++) {
+						cell = row.createCell(i3);
+						// 맨 윗줄은 헤더
+						if(i2==2) {
+							cell.setCellValue(headerList.get(i3));
+						}else {
+							// 헤더 아래부터는 데이터세팅
+							Map<Integer,String> dataList = new HashMap<Integer,String>();
+							dataList.put(0, String.valueOf(i2-2));
+							if(ll.size() >= (i2-2)) {
+								InventoryDownVO data = ll.get(i2-3);
+								dataList.put(1, data.getJan_cd());
+								dataList.put(2, data.getPrd_nm());
+								dataList.put(3, data.getStd_info());
+								dataList.put(4, data.getPrd_qty());
+								dataList.put(5, data.getPrd_case());
+								dataList.put(6, data.getPrd_bara());
+								dataList.put(7, data.getExp_dt());
+								dataList.put(8, data.getPrd_unit_prc());
+								dataList.put(9, data.getSell_prc());
+								dataList.put(10, data.getEtc_note());
+							}else {
+								dataList.put(1, "");
+								dataList.put(2, "");
+								dataList.put(3, "");
+								dataList.put(4, "");
+								dataList.put(5, "");
+								dataList.put(6, "");
+								dataList.put(7, "");
+								dataList.put(8, "");
+								dataList.put(9, "");
+								dataList.put(10, "");
+							}
+							cell.setCellValue(dataList.get(i3));
+						}
+					}
+				}
+				row = sheet.createRow(33);
+				sheet.addMergedRegion(new CellRangeAddress(33, 35, 0, 10));
+				row.createCell(0).setCellValue("メモ");
+				row = sheet.createRow(36);
+				row.createCell(0).setCellValue("");
+				row.createCell(1).setCellValue("");
+				row.createCell(2).setCellValue("");
+				row.createCell(3).setCellValue("");
+				row.createCell(4).setCellValue("");
+				row.createCell(5).setCellValue("");
+				row.createCell(6).setCellValue("");
+				row.createCell(7).setCellValue("");
+				row.createCell(8).setCellValue("");
+				row.createCell(9).setCellValue("");
+				row.createCell(10).setCellValue("P. "+(i1+1)+"／"+subList.size());
+			}
+			String headerKey = "Content-Disposition";
+			String headerValue = String.format("attachment;filename=\"%s\"",
+					"JAIKOINVENTORY_" + CommonUtil.getDate("YYYYMMdd", 0)+".xlsx");
+			response.setCharacterEncoding(fileEncoding);
+			response.setHeader(headerKey, headerValue);
+			workbook.write(response.getOutputStream());
+			workbook.close();
+		}finally {
+			
+		}
+			
 	}
 }

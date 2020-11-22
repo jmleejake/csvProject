@@ -5,15 +5,8 @@ grid setting S
 */
 
 var columnDefs = [
-	{headerName: "商品コード", field: "prd_cd", width: 200
-		, editable: true
-    	, cellEditor: 'agLargeTextCellEditor'
-    	, cellEditorParams: {
-            maxLength: '500',
-            cols: '50',
-            rows: '6'
-        }
-	}
+	{headerName: "商品コード", field: "prd_cd", width: 200}
+	, {headerName: "ＪＡＮコード", field: "jan_cd", width: 200}
 	, {headerName: "ブランド", field: "brand_nm", width: 200
 		, editable: true
     	, cellEditor: 'agLargeTextCellEditor'
@@ -32,7 +25,7 @@ var columnDefs = [
             rows: '6'
         }
 	}
-	, {headerName: "現在商品数", field: "now_prd_cnt", width: 170
+	, {headerName: "入数", field: "prd_qty", width: 200
 		, editable: true
     	, cellEditor: 'agLargeTextCellEditor'
     	, cellEditorParams: {
@@ -41,7 +34,27 @@ var columnDefs = [
             rows: '6'
         }
 	}
-	, {headerName: "ＪＡＮコード", field: "jan_cd", width: 200
+	, {headerName: "ケース数", field: "prd_case", width: 250
+		, editable: true
+    	, cellEditor: 'agLargeTextCellEditor'
+    	, cellEditorParams: {
+            maxLength: '500',
+            cols: '50',
+            rows: '6'
+        }
+	}
+	, {headerName: "バラ数", field: "prd_bara", width: 250
+		, editable: true
+    	, cellEditor: 'agLargeTextCellEditor'
+    	, cellEditorParams: {
+            maxLength: '500',
+            cols: '50',
+            rows: '6'
+        }
+	}
+	, {headerName: "現在商品数", field: "now_prd_cnt", width: 250}
+	, {headerName: "賞味期限", field: "exp_dt", width: 250, editable: true, cellEditor: 'datePicker'}
+	, {headerName: "本体売価", field: "sell_prc", width: 250
 		, editable: true
     	, cellEditor: 'agLargeTextCellEditor'
     	, cellEditorParams: {
@@ -57,11 +70,13 @@ var rowData = [];
 
 // 수정데이터 배열
 var modifiedData = [];
-var prevPrdCd, afterPrdCd;
 var prevBrandNm, afterBrandNm;
 var prevPrdNm, afterPrdNm;
-var prevJanCd, afterJanCd;
-var prevNowPrdCnt, afterNowPrdCnt;
+var prevPrdQty, afterPrdQty;
+var prevPrdCase, afterPrdCase;
+var prevPrdBara, afterPrdBara;
+var prevExpDt, afterExpDt;
+var prevSellPrc, afterSellPrc;
 
 // let the grid know which columns and what data to use
 var prdInvenGridOptions = {
@@ -90,35 +105,46 @@ var prdInvenGridOptions = {
     		return target === 'ERR';
     	}
     },
+    components: {
+    	datePicker: getDatePicker(),
+    },
     onCellEditingStarted: function(event) {
         var previousData = event.node.data;
-        prevPrdCd = previousData.prd_cd;
         prevBrandNm = previousData.brand_nm;
         prevPrdNm = previousData.prd_nm;
-        prevJanCd = previousData.jan_cd;
-        prevNowPrdCnt = previousData.now_prd_cnt;
+        prevPrdQty = previousData.prd_qty;
+        prevPrdCase = previousData.prd_case;
+        prevPrdBara = previousData.prd_bara;
+        prevExpDt = previousData.exp_dt;
+        prevSellPrc = previousData.sell_prc;
     },
     onCellEditingStopped: function(event) {
         var afterData = event.node.data;
-        afterPrdCd = afterData.prd_cd;
         afterBrandNm = afterData.brand_nm;
         afterPrdNm = afterData.prd_nm;
-        afterJanCd = afterData.jan_cd;
-        afterNowPrdCnt = afterData.now_prd_cnt;
+        afterPrdQty = afterData.prd_qty;
+        afterPrdCase = afterData.prd_case;
+        afterPrdBara = afterData.prd_bara;
+        afterExpDt = afterData.exp_dt;
+        afterSellPrc = afterData.sell_prc;
         
-        if (!(prevPrdCd == afterPrdCd) || 
-        	!(prevBrandNm == afterBrandNm) ||
+        if (!(prevBrandNm == afterBrandNm) ||
         	!(prevPrdNm == afterPrdNm) ||
-        	!(prevJanCd == afterJanCd) ||
-        	!(prevNowPrdCnt == afterNowPrdCnt)) {
+        	!(prevPrdQty == afterPrdQty) ||
+        	!(prevPrdCase == afterPrdCase) ||
+        	!(prevPrdBara == afterPrdBara) ||
+        	!(prevExpDt == afterExpDt) ||
+        	!(prevSellPrc == afterSellPrc)) {
         	console.log("modified!");
         	modifiedData.push({
         		seq_id:afterData.seq_id
-				, prd_cd:afterPrdCd
 				, brand_nm:afterBrandNm
 				, prd_nm:afterPrdNm
-				, jan_cd:afterJanCd
-				, now_prd_cnt:afterNowPrdCnt
+				, prd_qty:afterPrdQty
+				, prd_case:afterPrdCase
+				, prd_bara:afterPrdBara
+				, exp_dt:afterExpDt
+				, sell_prc:afterSellPrc
         	});
         }
     }
@@ -143,6 +169,56 @@ $.ajax({
     , success: setRowData
 });
 
+function getDatePicker() {
+	// function to act as a class
+	function Datepicker() {}
+	
+	// gets called once before the renderer is used
+	Datepicker.prototype.init = function (params) {
+		// create the cell
+	    this.eInput = document.createElement('input');
+	    this.eInput.value = params.value;
+	    this.eInput.classList.add('ag-input');
+	    this.eInput.style.height = '100%';
+	
+	    // https://jqueryui.com/datepicker/
+	    $(this.eInput).datepicker({
+		      language: "ja"
+			, autoclose: true
+	    });
+	};
+	
+	// gets called once when grid ready to insert the element
+	Datepicker.prototype.getGui = function () {
+	    return this.eInput;
+	};
+	
+	// focus and select can be done after the gui is attached
+	Datepicker.prototype.afterGuiAttached = function () {
+	    this.eInput.focus();
+	    this.eInput.select();
+	};
+	
+	// returns the new value after editing
+	Datepicker.prototype.getValue = function () {
+	    return this.eInput.value;
+	};
+	
+	// any cleanup we need to be done here
+	Datepicker.prototype.destroy = function () {
+	    // but this example is simple, no cleanup, we could
+	    // even leave this method out as it's optional
+	};
+	
+	// if true, then this editor will appear in a popup
+	Datepicker.prototype.isPopup = function () {
+	    // and we could leave this method out also, false is the default
+	    return false;
+	};
+	
+	return Datepicker;
+}
+
 /*
 ------------------
 grid setting E
@@ -166,6 +242,11 @@ function setRowData(result) {
 			, prd_nm:result[i].prd_nm
 			, jan_cd:result[i].jan_cd
 			, now_prd_cnt:result[i].now_prd_cnt
+			, prd_qty:result[i].prd_qty
+			, prd_case:result[i].prd_case
+			, prd_bara:result[i].prd_bara
+			, exp_dt:result[i].exp_dt
+			, sell_prc:result[i].sell_prc
 			, register_date:result[i].reg_dt
 			, update_date:result[i].upd_dt
 		};
@@ -182,12 +263,22 @@ function setRowData(result) {
 
 $("#btn_add").on("click", function() {
 	console.log("列追加");
+	var today = new Date();
+	var dd = String(today.getDate()).padStart(2, '0');
+	var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+	var yyyy = today.getFullYear();
+	
 	modifiedData.push({
 		prd_cd: "商品コード"
-			, brand_nm: "ブランド"
-			, prd_nm: "商品名"
-			, jan_cd: "ＪＡＮコード"
-			, now_prd_cnt: "0"
+		, brand_nm: "ブランド"
+		, prd_nm: "商品名"
+		, jan_cd: "ＪＡＮコード"
+		, now_prd_cnt: "0"
+		, prd_qty: "0"
+		, prd_case: "0"
+		, prd_bara: "0"
+		, exp_dt: yyyy+"/"+mm+"/"+dd
+		, sell_prc: "0"
 	});
 	$.ajax({
 		url: "/jaiko/prdInven/manipulate"

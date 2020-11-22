@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import jp.prj.araku.jaiko.warehouse.dao.JaikoWareHouseDAO;
@@ -20,6 +22,12 @@ public class JaikoWareHouseController {
 	@ResponseBody
 	public ArrayList<JaikoWareHouseVO> getJaikoWareHouse(JaikoWareHouseVO vo) {
 		return dao.getJaikoWareHouse(vo);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/manipulate", method = RequestMethod.POST)
+	public ArrayList<JaikoWareHouseVO> manipulateJaikoPrdInfo(@RequestBody ArrayList<JaikoWareHouseVO> list) {
+		return dao.manipulateJaikoWareHouse(list);
 	}
 
 }

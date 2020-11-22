@@ -47,6 +47,18 @@ public class JaikoWareHouseVO {
 	private String upd_user_id;
 	/**更新日付*/
 	private String upd_dt;
+	/**入数*/
+	private String prd_qty;
+	/**ケース数*/
+	private String prd_case;
+	/**バラ数*/
+	private String prd_bara;
+	/**賞味期限*/
+	private String exp_dt;
+	/**本体売価*/
+	private String sell_prc;
+	/**現在商品数*/
+	private String now_prd_cnt;
 	
 	private String search_type;
 	private String from_dt;
@@ -195,6 +207,43 @@ public class JaikoWareHouseVO {
 	}
 	public void setSearch_type(String search_type) {
 		this.search_type = search_type;
+	}
+	
+	public String getPrd_qty() {
+		return prd_qty;
+	}
+	public void setPrd_qty(String prd_qty) {
+		this.prd_qty = prd_qty;
+	}
+	public String getPrd_case() {
+		return prd_case;
+	}
+	public void setPrd_case(String prd_case) {
+		this.prd_case = prd_case;
+	}
+	public String getPrd_bara() {
+		return prd_bara;
+	}
+	public void setPrd_bara(String prd_bara) {
+		this.prd_bara = prd_bara;
+	}
+	public String getExp_dt() {
+		return exp_dt;
+	}
+	public void setExp_dt(String exp_dt) {
+		this.exp_dt = exp_dt;
+	}
+	public String getSell_prc() {
+		return sell_prc;
+	}
+	public void setSell_prc(String sell_prc) {
+		this.sell_prc = sell_prc;
+	}
+	public String getNow_prd_cnt() {
+		return now_prd_cnt;
+	}
+	public void setNow_prd_cnt(String now_prd_cnt) {
+		this.now_prd_cnt = now_prd_cnt;
 	}
 	
 	public String getFrom_dt() {
