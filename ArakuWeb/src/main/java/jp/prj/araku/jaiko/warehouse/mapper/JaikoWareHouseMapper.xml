@@ -7,33 +7,42 @@
 
 <select id="getJaikoWareHouse" parameterType="JaikoWareHouse" resultType="JaikoWareHouse">
 select
-   seq_id
-  , partner_id
-  , partner_nm
-  , prd_cd
-  , brand_nm
-  , prd_nm
-  , jan_cd
-  , prd_cnt
-  , prd_unit_prc
-  , dsku
-  , dasin
-  , tax_incld
-  , tax_rt
-  , date_format(warehouse_dt, '%Y/%m/%d %H:%i:%s') warehouse_dt
-  , date_format(delivery_dt, '%Y/%m/%d %H:%i:%s') delivery_dt
-  , date_format(reg_dt, '%Y/%m/%d') reg_dt
-  , date_format(upd_dt, '%Y/%m/%d') upd_dt	
-from jaiko_warehouse_info
+  jwi.seq_id
+  , jpi.prd_cd
+  , jpi.jan_cd
+  , jpi.prd_nm
+  , jpi.std_info
+  , jpi.prd_unit_prc
+  , jii.now_prd_cnt
+  , jii.prd_qty
+  , jii.prd_case
+  , jii.prd_bara
+  , date_format(jii.exp_dt, '%Y/%m/%d') exp_dt
+  , jii.sell_prc
+  , jpi.partner_id
+  , jpi.partner_nm
+  , jpi.brand_nm
+  , jpi.prd_cnt
+  , jpi.dsku
+  , jpi.dasin
+  , jpi.tax_incld
+  , jpi.tax_rt
+  , date_format(jwi.warehouse_dt, '%Y/%m/%d %H:%i:%s') warehouse_dt
+  , date_format(jwi.delivery_dt, '%Y/%m/%d %H:%i:%s') delivery_dt
+  , date_format(jii.reg_dt, '%Y/%m/%d') reg_dt
+  , date_format(jii.upd_dt, '%Y/%m/%d') upd_dt
+from jaiko_prd_info jpi
+inner join jaiko_inventory_info jii on jii.jan_cd = jpi.jan_cd
+left outer join jaiko_warehouse_info jwi on jwi.jan_cd = jpi.jan_cd
 <where>
 	<if test="jan_cd != null and jan_cd != ''">
-	jan_cd = #{jan_cd}
+	jpi.jan_cd = #{jan_cd}
 	</if>
 	<if test="from_dt != null and from_dt != '' and to_dt != null and to_dt != ''">
-	delivery_dt between date_format (#{from_dt}, '%Y%m%d%H%i%s') and date_format (#{to_dt}, '%Y%m%d%H%i%s')
+	jwi.delivery_dt between date_format (#{from_dt}, '%Y%m%d%H%i%s') and date_format (#{to_dt}, '%Y%m%d%H%i%s')
 	</if>
 </where>
-order by upd_dt desc, seq_id desc
+order by jii.upd_dt desc, jwi.seq_id desc
 </select>
 
 <insert id="insertJaikoWareHouse" parameterType="JaikoWareHouse" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
