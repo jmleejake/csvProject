@@ -12,11 +12,14 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.ibatis.session.SqlSession;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.RegionUtil;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -206,20 +209,28 @@ public class JaikoPrdInventoryDAO {
 			headerList.put(10, "備考");
 			
 			for(int i1=0; i1<subList.size(); i1++) {
-				CellStyle s = null;
 				sheet = workbook.createSheet("JAIKOINVENTORY-DATA"+(i1+1));
-				s = sheet.getWorkbook().createCellStyle();
 				row = sheet.createRow(0);
 				sheet.addMergedRegion(new CellRangeAddress(0, 0, 2, 9));
 				row.createCell(0).setCellValue("");
 				row.createCell(1).setCellValue("");
+				CellStyle ss = workbook.createCellStyle();
+				Font ff = workbook.createFont();
+				ff.setFontHeightInPoints((short)20);
+				ss.setFont(ff);
+				ss.setAlignment(HorizontalAlignment.CENTER);
+				ss.setVerticalAlignment(VerticalAlignment.CENTER);
 				Cell cl = row.createCell(2);
-				cl.setCellStyle(s);
-				s.setVerticalAlignment(VerticalAlignment.CENTER);
-				s.setAlignment(HorizontalAlignment.CENTER);
 				cl.setCellValue("棚　　卸　　表");
-				row.createCell(10).setCellStyle(s);
-				row.createCell(10).setCellValue("株式会社XXX");
+				cl.setCellStyle(ss);
+				
+				CellStyle ss3 = workbook.createCellStyle();
+				ss3.setAlignment(HorizontalAlignment.RIGHT);
+				ss3.setVerticalAlignment(VerticalAlignment.CENTER);
+				Cell cl3 = row.createCell(10);
+				cl3.setCellValue("株式会社XXX");
+				cl3.setCellStyle(ss3);
+				row.setHeight((short)1000);
 				
 				row = sheet.createRow(1);
 				sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 1));
@@ -231,6 +242,7 @@ public class JaikoPrdInventoryDAO {
 				row.createCell(4).setCellValue("");
 				row.createCell(6).setCellValue("実施日");
 				row.createCell(7).setCellValue("");
+				row.setHeight((short)600);
 				
 				List<InventoryDownVO> ll = subList.get(i1);
 				// 데이터의 크기만큼 row생성
@@ -238,10 +250,13 @@ public class JaikoPrdInventoryDAO {
 					row = sheet.createRow((short)i2);
 					// headerList의 크기만큼
 					for(int i3=0; i3<headerList.size(); i3++) {
+						CellStyle ss5 = workbook.createCellStyle();
+						ss5.setBorderBottom(BorderStyle.THICK);
 						cell = row.createCell(i3);
 						// 맨 윗줄은 헤더
 						if(i2==2) {
 							cell.setCellValue(headerList.get(i3));
+							cell.setCellStyle(ss5);
 						}else {
 							// 헤더 아래부터는 데이터세팅
 							Map<Integer,String> dataList = new HashMap<Integer,String>();
@@ -272,11 +287,25 @@ public class JaikoPrdInventoryDAO {
 							}
 							cell.setCellValue(dataList.get(i3));
 						}
+						sheet.autoSizeColumn(0);
+						sheet.autoSizeColumn(1);
+						sheet.autoSizeColumn(2);
+						sheet.setColumnWidth(7, 12*256);
+						sheet.setColumnWidth(10, 15*256);
 					}
+					row.setHeight((short)400);
 				}
 				row = sheet.createRow(33);
-				sheet.addMergedRegion(new CellRangeAddress(33, 35, 0, 10));
-				row.createCell(0).setCellValue("メモ");
+				CellRangeAddress merged = new CellRangeAddress(33, 35, 0, 10);
+				sheet.addMergedRegion(merged);
+				RegionUtil.setBorderTop(BorderStyle.THICK, merged, sheet);
+				CellStyle ss2 = workbook.createCellStyle();
+				ss2.setVerticalAlignment(VerticalAlignment.TOP);
+				ss2.setBorderTop(BorderStyle.THICK);
+				Cell cl2 = row.createCell(0);
+				cl2.setCellValue("メモ");
+				cl2.setCellStyle(ss2);
+				row.setHeight((short)800);
 				row = sheet.createRow(36);
 				row.createCell(0).setCellValue("");
 				row.createCell(1).setCellValue("");
@@ -288,7 +317,13 @@ public class JaikoPrdInventoryDAO {
 				row.createCell(7).setCellValue("");
 				row.createCell(8).setCellValue("");
 				row.createCell(9).setCellValue("");
-				row.createCell(10).setCellValue("P. "+(i1+1)+"／"+subList.size());
+				CellStyle ss4 = workbook.createCellStyle();
+				ss4.setAlignment(HorizontalAlignment.RIGHT);
+				ss4.setVerticalAlignment(VerticalAlignment.BOTTOM);
+				Cell cl4 = row.createCell(10);
+				cl4.setCellValue("P. "+(i1+1)+"／"+subList.size());
+				cl4.setCellStyle(ss4);
+				row.setHeight((short)400);
 			}
 			String headerKey = "Content-Disposition";
 			String headerValue = String.format("attachment;filename=\"%s\"",
