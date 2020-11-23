@@ -162,25 +162,29 @@ public class JaikoPrdInventoryDAO {
 			list.add(invenDown);
 		}
 		
-		int i = list.size() / 30;
-		int[] arr = new int[i+1];
 		List<List<InventoryDownVO>> subList = new ArrayList<>();
-		
-		for(int j=0; j<arr.length; j++) {
-			arr[j] = (j+1)*30;
-		}
-		
-		for(int k=0; k<arr.length; k++) {
-			if(k==0) {
-				subList.add(list.subList(0, arr[k]));
-				continue;
+		if(list.size() > 30) {
+			int i = list.size() / 30;
+			int[] arr = new int[i+1];
+			
+			for(int j=0; j<arr.length; j++) {
+				arr[j] = (j+1)*30;
 			}
 			
-			if(arr[k] > list.size()) {
-				subList.add(list.subList(k*arr[k-1], list.size()));
-			}else {
-				subList.add(list.subList(k*arr[k-1], arr[k]));
+			for(int k=0; k<arr.length; k++) {
+				if(k==0) {
+					subList.add(list.subList(0, arr[k]));
+					continue;
+				}
+				
+				if(arr[k] > list.size()) {
+					subList.add(list.subList(k*arr[k-1], list.size()));
+				}else {
+					subList.add(list.subList(k*arr[k-1], arr[k]));
+				}
 			}
+		}else {
+			subList.add(list);
 		}
 		
 		try {
