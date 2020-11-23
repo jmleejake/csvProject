@@ -252,6 +252,8 @@ public class JaikoPrdInventoryDAO {
 					for(int i3=0; i3<headerList.size(); i3++) {
 						CellStyle ss5 = workbook.createCellStyle();
 						ss5.setBorderBottom(BorderStyle.THICK);
+						ss5.setAlignment(HorizontalAlignment.CENTER);
+						ss5.setVerticalAlignment(VerticalAlignment.CENTER);
 						cell = row.createCell(i3);
 						// 맨 윗줄은 헤더
 						if(i2==2) {
@@ -293,7 +295,7 @@ public class JaikoPrdInventoryDAO {
 						sheet.setColumnWidth(7, 12*256);
 						sheet.setColumnWidth(10, 15*256);
 					}
-					row.setHeight((short)400);
+					row.setHeight((short)600);
 				}
 				row = sheet.createRow(33);
 				CellRangeAddress merged = new CellRangeAddress(33, 35, 0, 10);
