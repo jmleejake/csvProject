@@ -23,6 +23,7 @@ import jp.prj.araku.list.mapper.IListMapper;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
 import jp.prj.araku.list.vo.PrdCdMasterVO;
+import jp.prj.araku.list.vo.PrdTransVO;
 import jp.prj.araku.list.vo.RakutenSearchVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.SagawaUpdateVO;
@@ -384,4 +385,45 @@ public class ListDAO {
 		srchVO.setTarget_type(gbn);
 		return mapper.getPrdCdMaster(srchVO);
 	}
+	
+	/**
+	 * 商品中間マスタ
+	 * */
+	public ArrayList<PrdTransVO> getPrdTransInfo(PrdTransVO vo) {
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		// 초기상태일때 2틀간의 데이터를 얻을수있게 처리 (*srch는 검색할때 넘기는 값)
+		if (!(CommonUtil.SEARCH_TYPE_SRCH.equals(vo.getSearch_type()) && 
+				CommonUtil.SEARCH_TYPE_SCREEN.equals(vo.getSearch_type()))) {
+			vo.setStart_date(CommonUtil.getStartDate());
+		}
+		return mapper.getPrdTrans(vo);
+	}
+	
+	public ArrayList<PrdTransVO> manipulatePrdTrans(ArrayList<PrdTransVO> list) {
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		ArrayList<String> seq_id_list = new ArrayList<>();
+		
+		for(PrdTransVO vo : list) {
+			if(null != vo.getSeq_id()) {
+				mapper.updatePrdTrans(vo);
+				seq_id_list.add(vo.getSeq_id());
+			}else {
+				mapper.insertPrdTrans(vo);
+				seq_id_list.add(vo.getSeq_id());
+			}
+		}
+		PrdTransVO vo = new PrdTransVO();
+		vo.setSeq_id_list(seq_id_list);
+		return getPrdTransInfo(vo);
+		
+	}
+	
+	public ArrayList<PrdTransVO> deletePrdTrans(ArrayList<PrdTransVO> list) {
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		for(PrdTransVO vo : list) {
+			mapper.deletePrdTrans(vo.getSeq_id());
+		}
+		return getPrdTransInfo(new PrdTransVO());
+	}
+	
 }

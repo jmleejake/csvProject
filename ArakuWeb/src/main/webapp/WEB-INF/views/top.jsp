@@ -70,6 +70,9 @@ $(document).ready(function() {
 				<li id="trans" class="nav-item">
 				<a class="nav-link" href="translationView">商品名置換</a>
 				</li>
+				<li id="prdTrans" class="nav-item">
+				<a class="nav-link" href="prdTransView">商品中間マスタ</a>
+				</li>
 				<li id="region" class="nav-item">
 				<a class="nav-link" href="regionView">マスタ管理</a>
 				</li>
