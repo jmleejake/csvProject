@@ -28,6 +28,7 @@ import jp.prj.araku.list.dao.ListDAO;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
 import jp.prj.araku.list.vo.PrdCdMasterVO;
+import jp.prj.araku.list.vo.PrdTransVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
@@ -583,5 +584,30 @@ public class RakutenController {
 		} catch (CsvRequiredFieldEmptyException e) {
 			log.error(e.toString());
 		}
+	}
+	
+	@RequestMapping(value = "/prdTransView")
+	public String showPrdTransView(Model model) {
+		model.addAttribute("type", CommonUtil.TRANS_TARGET_R);
+		return "menu/prdTrans";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/getPrdTrans")
+	public ArrayList<PrdTransVO> getPrdTransInfo(PrdTransVO vo) {
+		return listDao.getPrdTransInfo(vo);
+	}
+	
+	
+	@ResponseBody
+	@RequestMapping(value = "/modPrdTrans")
+	public ArrayList<PrdTransVO> manipulatePrdTransInfo(@RequestBody ArrayList<PrdTransVO> list) {
+		return listDao.manipulatePrdTrans(list);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/delPrdTrans")
+	public ArrayList<PrdTransVO> deletePrdTransInfo(@RequestBody ArrayList<PrdTransVO> list) {
+		return listDao.deletePrdTrans(list);
 	}
 }

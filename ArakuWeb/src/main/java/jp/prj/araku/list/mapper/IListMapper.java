@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
 import jp.prj.araku.list.vo.PrdCdMasterVO;
+import jp.prj.araku.list.vo.PrdTransVO;
 import jp.prj.araku.list.vo.RakutenSearchVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.TranslationErrorVO;
@@ -50,4 +51,12 @@ public interface IListMapper {
 	public int insertPrdCdMaster(PrdCdMasterVO vo);
 	public int updatePrdCdMaster(PrdCdMasterVO vo);
 	public int deletePrdCdMaster(String seq_id);
+	
+	/**
+	 * 商品中間マスタ
+	 * */
+	public ArrayList<PrdTransVO> getPrdTrans(PrdTransVO vo);
+	public int insertPrdTrans(PrdTransVO vo);
+	public int updatePrdTrans(PrdTransVO vo);
+	public int deletePrdTrans(String seq_id);
 }

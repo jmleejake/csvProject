@@ -291,4 +291,89 @@ where
   seq_id = #{seq_id}
 </delete>
 
+<select id="getPrdTrans" resultType="PrdTrans" parameterType="PrdTrans">
+select 
+	seq_id
+	, order_no
+	, jan_cd
+	, order_gbn
+	, prd_master_hanei_gbn
+	, prd_cnt
+	, before_trans
+	, after_trans
+	, date_format(register_date, '%Y/%m/%d') register_date
+	, date_format(update_date, '%Y/%m/%d') update_date
+from
+	prd_trans_info
+<where>
+	<choose>
+		<when test="search_type =='srch'">
+		<trim prefixOverrides="AND |OR ">
+		<if test="keyword != null and keyword != ''"> 
+		and (before_trans like '${keyword}' or after_trans like '${keyword}')
+		</if>
+		<if test="seq_id_list != null">
+			and seq_id in
+			<foreach item="item" index="index" collection="seq_id_list"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		</trim>
+		</when>
+		<when test="search_type =='screen'">
+		<if test="keyword != null and keyword != ''"> 
+		(before_trans like '%${keyword}%' or after_trans like '%${keyword}%')
+		</if>
+		</when>
+		<otherwise>
+		register_date between str_to_date(#{start_date}, '%Y/%m/%d %H:%i:%s') and now()
+		</otherwise>
+	</choose>
+</where>	
+order by seq_id desc, update_date desc
+</select>
+
+<insert id="insertPrdTrans" parameterType="PrdTrans" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
+insert into prd_trans_info (order_no, jan_cd, before_trans, after_trans, order_gbn, prd_master_hanei_gbn, prd_cnt)
+values (#{order_no}, #{jan_cd}, #{before_trans}, #{after_trans}, #{order_gbn}, #{prd_master_hanei_gbn}, #{prd_cnt})
+</insert>
+
+<update id="updatePrdTrans" parameterType="PrdTrans">
+update 
+	prd_trans_info
+set 
+	update_date = now()
+<if test="order_no != null and order_no != ''">
+	, order_no = #{order_no}
+</if>
+<if test="jan_cd != null and jan_cd != ''">
+	, jan_cd = #{jan_cd}
+</if>
+<if test="order_gbn != null and order_gbn != ''">
+	, order_gbn = #{order_gbn}
+</if>
+<if test="before_trans != null and before_trans != ''">
+	, before_trans = #{before_trans}
+</if>
+<if test="after_trans != null and after_trans != ''">
+	, after_trans = #{after_trans}
+</if>
+<if test="prd_master_hanei_gbn != null and prd_master_hanei_gbn != ''">
+	, prd_master_hanei_gbn = #{prd_master_hanei_gbn}
+</if>
+<if test="prd_cnt != null and prd_cnt != ''">
+	, prd_cnt = #{prd_cnt}
+</if>
+where
+	seq_id = #{seq_id}
+</update>
+
+<delete id="deletePrdTrans" parameterType="String">
+delete from
+	prd_trans_info
+where
+	seq_id = #{seq_id}
+</delete>
+
 </mapper>

@@ -743,3 +743,18 @@ CREATE TABLE yahoo_info (
 	ship_ivc_no1 VARCHAR(10),
 	ship_ivc_no2 VARCHAR(10)
 ) default charset = utf8 comment 'ヤフー情報';
+
+
+DROP TABLE prd_trans_info;
+CREATE TABLE prd_trans_info (
+	seq_id bigint unsigned primary key auto_increment comment '区分ID'
+	, register_date datetime default now() comment '登録日付'
+	, update_date DATETIME comment '修正日付'
+	, order_no VARCHAR(25) comment '注文番号'
+	, jan_cd varchar(15) comment 'ＪＡＮコード'
+	, before_trans VARCHAR(3000) comment '置換前'
+	, after_trans VARCHAR(50) comment '置換後'
+	, order_gbn varchar(3) comment '区分'
+	, prd_master_hanei_gbn varchar(2) comment '商品マスタ反映有無フラグ：0（未）、1（済）'
+	, prd_cnt varchar(4) comment '商品数'
+) default charset = utf8 comment '商品中間マスタ';
