@@ -55,6 +55,7 @@ import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
 import jp.prj.araku.list.vo.GlobalSagawaDownVO;
 import jp.prj.araku.list.vo.PrdCdMasterVO;
+import jp.prj.araku.list.vo.PrdTransVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.TranslationErrorVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
@@ -532,6 +533,26 @@ public class RakutenDAO {
 					buf = new StringBuffer(transedName + "×" + su);
 				}
 				
+				/**
+				 * 2021.01.09 치환시 주문정보를 商品中間マスタ로 insert처리
+				 * */
+				PrdTransVO prdTransVO = new PrdTransVO();
+				prdTransVO.setOrder_no(vo.getOrder_no());
+				prdTransVO.setOrder_gbn("1");
+				prdTransVO.setBefore_trans(vo.getProduct_name());
+				prdTransVO.setAfter_trans(transedName);
+				prdTransVO.setPrd_cnt(unitNo+"");
+				prdTransVO.setPrd_master_hanei_gbn("0");
+				prdTransVO.setSearch_type("translate");
+				ArrayList<PrdTransVO> prdTransRet = listMapper.getPrdTrans(prdTransVO);
+				if(prdTransRet.size() > 0) {
+					prdTransVO.setSeq_id(prdTransRet.get(0).getSeq_id());
+					listMapper.updatePrdTrans(prdTransVO);
+				}else {
+					listMapper.insertPrdTrans(prdTransVO);
+				}
+				
+				int i = 1;
 				for (String optionName : optionNames) {
 					// 옵션개수, 상품개수를 곱하여 치환결과에 반영
 //					buf.append(optionName + "*" + (map.get(optionName)*productSetNo*unitNo)); // [MOD-0819]
@@ -546,12 +567,57 @@ public class RakutenDAO {
 					if (optionNames.size() > 1) {
 						buf.append(";");
 					}
+					
+					/**
+					 * 2021.01.09 치환시 주문정보를 商品中間マスタ로 insert처리
+					 * */
+					PrdTransVO prdTransVO2 = new PrdTransVO();
+					prdTransVO2.setOrder_no(vo.getOrder_no());
+					prdTransVO2.setOrder_gbn(i+"");
+					prdTransVO2.setAfter_trans(optionName);
+					
+					transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+					transVO.setKeyword(optionName.trim());
+					searchRet = listMapper.getTransInfo(transVO);
+					prdTransVO2.setBefore_trans(searchRet.get(0).getBefore_trans());
+					
+					prdTransVO2.setPrd_cnt(unitsu1+"");
+					prdTransVO2.setPrd_master_hanei_gbn("0");
+					prdTransVO2.setSearch_type("translate");
+					ArrayList<PrdTransVO> prdTransRet2 = listMapper.getPrdTrans(prdTransVO2);
+					if(prdTransRet2.size() > 0) {
+						prdTransVO2.setSeq_id(prdTransRet2.get(0).getSeq_id());
+						listMapper.updatePrdTrans(prdTransVO2);
+					}else {
+						listMapper.insertPrdTrans(prdTransVO2);
+					}
+					
+					i++;
 				}
 			} else {
 				// 옵션이 없는 경우, 상품세트수와 상품개수를 곱하여 치환결과에 반영
 //				buf = new StringBuffer(arr[0] + "*" + (productSetNo*unitNo)); // [MOD-0819]
 //				buf = new StringBuffer(transedName + "*" + unitNo); // [MOD-1011] 
 				buf = new StringBuffer(transedName + "×" + su);
+				
+				/**
+				 * 2021.01.09 치환시 주문정보를 商品中間マスタ로 insert처리
+				 * */
+				PrdTransVO prdTransVO = new PrdTransVO();
+				prdTransVO.setOrder_no(vo.getOrder_no());
+				prdTransVO.setOrder_gbn("1");
+				prdTransVO.setBefore_trans(vo.getProduct_name());
+				prdTransVO.setAfter_trans(transedName);
+				prdTransVO.setPrd_cnt(unitNo+"");
+				prdTransVO.setPrd_master_hanei_gbn("0");
+				prdTransVO.setSearch_type("translate");
+				ArrayList<PrdTransVO> prdTransRet = listMapper.getPrdTrans(prdTransVO);
+				if(prdTransRet.size() > 0) {
+					prdTransVO.setSeq_id(prdTransRet.get(0).getSeq_id());
+					listMapper.updatePrdTrans(prdTransVO);
+				}else {
+					listMapper.insertPrdTrans(prdTransVO);
+				}
 			}
 			
 			String last = buf.toString();
@@ -742,6 +808,26 @@ public class RakutenDAO {
 					buf = new StringBuffer(transedName + "×" + su);
 				}
 				
+				/**
+				 * 2021.01.09 치환시 주문정보를 商品中間マスタ로 insert처리
+				 * */
+				PrdTransVO prdTransVO = new PrdTransVO();
+				prdTransVO.setOrder_no(vo.getOrder_no());
+				prdTransVO.setOrder_gbn("1");
+				prdTransVO.setBefore_trans(vo.getProduct_name());
+				prdTransVO.setAfter_trans(transedName);
+				prdTransVO.setPrd_cnt(unitNo+"");
+				prdTransVO.setPrd_master_hanei_gbn("0");
+				prdTransVO.setSearch_type("translate");
+				ArrayList<PrdTransVO> prdTransRet = listMapper.getPrdTrans(prdTransVO);
+				if(prdTransRet.size() > 0) {
+					prdTransVO.setSeq_id(prdTransRet.get(0).getSeq_id());
+					listMapper.updatePrdTrans(prdTransVO);
+				}else {
+					listMapper.insertPrdTrans(prdTransVO);
+				}
+				
+				int i = 1;
 				for (String optionName : optionNames) {
 					// 옵션개수, 상품개수를 곱하여 치환결과에 반영
 //					buf.append(optionName + "*" + (map.get(optionName)*productSetNo*unitNo)); // [MOD-0819]
@@ -756,12 +842,57 @@ public class RakutenDAO {
 					if (optionNames.size() > 1) {
 						buf.append(";");
 					}
+					
+					/**
+					 * 2021.01.09 치환시 주문정보를 商品中間マスタ로 insert처리
+					 * */
+					PrdTransVO prdTransVO2 = new PrdTransVO();
+					prdTransVO2.setOrder_no(vo.getOrder_no());
+					prdTransVO2.setOrder_gbn(i+"");
+					prdTransVO2.setAfter_trans(optionName);
+					
+					transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+					transVO.setKeyword(optionName.trim());
+					searchRet = listMapper.getTransInfo(transVO);
+					prdTransVO2.setBefore_trans(searchRet.get(0).getBefore_trans());
+					
+					prdTransVO2.setPrd_cnt(unitsu1+"");
+					prdTransVO2.setPrd_master_hanei_gbn("0");
+					prdTransVO2.setSearch_type("translate");
+					ArrayList<PrdTransVO> prdTransRet2 = listMapper.getPrdTrans(prdTransVO2);
+					if(prdTransRet2.size() > 0) {
+						prdTransVO2.setSeq_id(prdTransRet2.get(0).getSeq_id());
+						listMapper.updatePrdTrans(prdTransVO2);
+					}else {
+						listMapper.insertPrdTrans(prdTransVO2);
+					}
+					
+					i++;
 				}
 			} else {
 				// 옵션이 없는 경우, 상품세트수와 상품개수를 곱하여 치환결과에 반영
 //				buf = new StringBuffer(arr[0] + "*" + (productSetNo*unitNo)); // [MOD-0819]
 //				buf = new StringBuffer(transedName + "*" + unitNo); // [MOD-1011] 
 				buf = new StringBuffer(transedName + "×" + su);
+				
+				/**
+				 * 2021.01.09 치환시 주문정보를 商品中間マスタ로 insert처리
+				 * */
+				PrdTransVO prdTransVO = new PrdTransVO();
+				prdTransVO.setOrder_no(vo.getOrder_no());
+				prdTransVO.setOrder_gbn("1");
+				prdTransVO.setBefore_trans(vo.getProduct_name());
+				prdTransVO.setAfter_trans(transedName);
+				prdTransVO.setPrd_cnt(unitNo+"");
+				prdTransVO.setPrd_master_hanei_gbn("0");
+				prdTransVO.setSearch_type("translate");
+				ArrayList<PrdTransVO> prdTransRet = listMapper.getPrdTrans(prdTransVO);
+				if(prdTransRet.size() > 0) {
+					prdTransVO.setSeq_id(prdTransRet.get(0).getSeq_id());
+					listMapper.updatePrdTrans(prdTransVO);
+				}else {
+					listMapper.insertPrdTrans(prdTransVO);
+				}
 			}
 			
 			String last = buf.toString();

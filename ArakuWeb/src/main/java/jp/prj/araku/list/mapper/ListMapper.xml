@@ -326,6 +326,10 @@ from
 		(before_trans like '%${keyword}%' or after_trans like '%${keyword}%')
 		</if>
 		</when>
+		<when test="search_type == 'translate'">
+		order_no = #{order_no}
+		and after_trans = #{after_trans}
+		</when>
 		<otherwise>
 		register_date between str_to_date(#{start_date}, '%Y/%m/%d %H:%i:%s') and now()
 		</otherwise>

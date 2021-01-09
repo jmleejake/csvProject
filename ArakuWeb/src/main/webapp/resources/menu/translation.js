@@ -138,8 +138,16 @@ $('#btn_srch').on('click', function() {
 
 $("#btn_create").on("click", function() {
 	console.log("create");
-	var rowData = {beforeTrans: "置換前", afterTrans: "置換後"};
-	transGridOptions.api.updateRowData({add:[rowData], addIndex:0});
+	var rowData = {before_trans: "置換前", after_trans: "置換後"};
+	modifiedData.push(rowData);
+	$.ajax({
+		url: "modTrans"
+		, type:"post"
+		, dataType: "json"
+		, contentType: 'application/json'
+		, data:JSON.stringify(modifiedData)
+		, success: setRowData
+	});
 });
 
 $("#btn_commit").on("click", function() {
@@ -154,22 +162,7 @@ $("#btn_commit").on("click", function() {
 		, dataType: "json"
 		, contentType: 'application/json'
 		, data:JSON.stringify(modifiedData)
-		, success: function(result){
-			var rowData = [];
-			for (var i=0; i<result.length; i++) {
-				rowData.push({
-					seq_id: result[i].seq_id
-					, beforeTrans:result[i].before_trans
-					, afterTrans:result[i].after_trans
-					, register_date:result[i].register_date
-					, update_date:result[i].update_date});
-			}
-			
-			transGridOptions.api.setRowData(rowData);
-				
-			// 수정데이터 초기화
-			modifiedData = [];
-    	}
+		, success: setRowData
 	});
 });
 

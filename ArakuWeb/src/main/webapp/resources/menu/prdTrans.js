@@ -190,7 +190,7 @@ $('#btn_srch').on('click', function() {
 
 $("#btn_create").on("click", function() {
 	console.log("create");
-	var rowData = {order_no:"99", jan_cd:"999", order_gbn:"0", beforeTrans: "置換前", afterTrans: "置換後", prd_master_hanei_gbn:"0", prd_cnt:"1"};
+	var rowData = {order_no:"99", jan_cd:"999", order_gbn:"0", before_trans: "置換前", after_trans: "置換後", prd_master_hanei_gbn:"0", prd_cnt:"1"};
 	modifiedData.push(rowData);
 	$.ajax({
 		url: "modPrdTrans"
