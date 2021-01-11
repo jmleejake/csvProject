@@ -758,3 +758,7 @@ CREATE TABLE prd_trans_info (
 	, prd_master_hanei_gbn varchar(2) comment '商品マスタ反映有無フラグ：0（未）、1（済）'
 	, prd_cnt varchar(4) comment '商品数'
 ) default charset = utf8 comment '商品中間マスタ';
+
+alter table translation_info add column prd_cnt varchar(4) comment '商品数';
+
+alter table translation_info add column etc_cntnt varchar(30) comment 'その他';

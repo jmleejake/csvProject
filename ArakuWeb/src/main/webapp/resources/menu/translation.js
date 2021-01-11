@@ -24,13 +24,25 @@ var columnDefs = [
             rows: '6'
         }
     }
+    , {headerName: "商品数", field: "prd_cnt", width: 120
+    	, editable: true
+    	, cellEditor: 'agPopupTextCellEditor'
+    }
+    , {headerName: "その他", field: "etc_cntnt", width: 250
+    	, editable: true
+    	, cellEditor: 'agPopupTextCellEditor'
+    }
 ];
 
 // rowData 초기화
 var rowData = [];
 
 // 수정 전후를 파악할 변수 선언 / 선택된 데이터 변수
-var selectedData, startBeforeTrans, stopBeforeTrans, startAfterTrans, stopAfterTrans;
+var selectedData
+, startBeforeTrans, stopBeforeTrans
+, startAfterTrans, stopAfterTrans
+, startPrdCnt, stopPrdCnt
+, startEtcCntnt, stopEtcCntnt;
 
 //수정데이터 배열
 var modifiedData = [];
@@ -60,21 +72,33 @@ var transGridOptions = {
     },
     onCellEditingStarted: function(event) {
         var previousData = event.node.data;
+        /*
+        , startPrdCnt, stopPrdCnt
+		, startEtcCntnt, stopEtcCntnt;
+        */
         startBeforeTrans = previousData.beforeTrans;
         startAfterTrans = previousData.afterTrans;
+        startPrdCnt = previousData.prd_cnt;
+        startEtcCntnt = previousData.etc_cntnt;
     },
     onCellEditingStopped: function(event) {
         var afterData = event.node.data;
         stopBeforeTrans = afterData.beforeTrans;
         stopAfterTrans = afterData.afterTrans;
+        stopPrdCnt = afterData.prd_cnt;
+        stopEtcCntnt = afterData.etc_cntnt;
         
         if (!(startBeforeTrans == stopBeforeTrans) || 
-        		!(startAfterTrans == stopAfterTrans)) {
+        		!(startAfterTrans == stopAfterTrans) ||
+        		!(startPrdCnt == stopPrdCnt) ||
+        		!(startEtcCntnt == stopEtcCntnt)) {
         	console.log("modified!");
         	modifiedData.push({
         		seq_id:afterData.seq_id
 				, before_trans:afterData.beforeTrans
 				, after_trans:afterData.afterTrans
+				, prd_cnt:afterData.prd_cnt
+				, etc_cntnt:afterData.etc_cntnt
         	});
         }
     }
@@ -111,6 +135,8 @@ function setRowData(result) {
 				seq_id: result[i].seq_id
 				, beforeTrans:result[i].before_trans
 				, afterTrans:result[i].after_trans
+				, prd_cnt:result[i].prd_cnt
+				, etc_cntnt:result[i].etc_cntnt
 				, register_date:result[i].register_date
 				, update_date:result[i].update_date
 		}

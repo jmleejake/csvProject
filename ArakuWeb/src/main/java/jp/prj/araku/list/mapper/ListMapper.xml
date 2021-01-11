@@ -10,6 +10,8 @@ select
 	seq_id
 	, before_trans
 	, after_trans
+	, prd_cnt
+	, etc_cntnt
 	, date_format(register_date, '%Y/%m/%d') register_date
 	, date_format(update_date, '%Y/%m/%d') update_date
 from
@@ -44,17 +46,27 @@ order by register_date desc, update_date desc
 </select>
 
 <insert id="addTransInfo" parameterType="Trans" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
-insert into translation_info (before_trans, after_trans)
-values (#{before_trans}, #{after_trans})
+insert into translation_info (before_trans, after_trans, prd_cnt, etc_cntnt)
+values (#{before_trans}, #{after_trans}, #{prd_cnt}, #{etc_cntnt})
 </insert>
 
 <update id="modTransInfo" parameterType="Trans">
 update 
 	translation_info
 set
-	before_trans = #{before_trans}
+	update_date = now()
+	<if test="prd_cnt != null">
+	, prd_cnt = #{prd_cnt}
+	</if>
+	<if test="etc_cntnt != null">
+	, etc_cntnt = #{etc_cntnt}
+	</if>
+	<if test="before_trans != null">
+	, before_trans = #{before_trans}
+	</if>
+	<if test="after_trans != null">
 	, after_trans = #{after_trans}
-	, update_date = now()
+	</if>
 where
 	seq_id = #{seq_id}
 </update>

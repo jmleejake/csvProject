@@ -13,6 +13,10 @@ public class TranslationVO {
 	private String after_trans;
 	/**データ修正日*/
 	private String update_date;
+	/**商品数*/
+	private String prd_cnt;
+	/**その他*/
+	private String etc_cntnt;
 	
 	/**検索用*/
 	private String start_date;
@@ -79,13 +83,17 @@ public class TranslationVO {
 		this.seq_id_list = seq_id_list;
 	}
 	
-	@Override
-	public String toString() {
-		return "TranslationVO [seq_id=" + seq_id + ", register_date=" + register_date + ", before_trans=" + before_trans
-				+ ", after_trans=" + after_trans + ", update_date=" + update_date + ", start_date=" + start_date
-				+ ", keyword=" + keyword + ", search_type=" + search_type + ", seq_id_list=" + seq_id_list + "]";
+	public String getPrd_cnt() {
+		return prd_cnt;
 	}
-	
-	
+	public void setPrd_cnt(String prd_cnt) {
+		this.prd_cnt = prd_cnt;
+	}
+	public String getEtc_cntnt() {
+		return etc_cntnt;
+	}
+	public void setEtc_cntnt(String etc_cntnt) {
+		this.etc_cntnt = etc_cntnt;
+	}
 	
 }
