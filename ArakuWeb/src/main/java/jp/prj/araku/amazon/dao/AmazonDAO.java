@@ -196,7 +196,7 @@ public class AmazonDAO {
 			TranslationErrorVO errVO = new TranslationErrorVO();
 			errVO.setTrans_target_id(vo.getSeq_id());
 			errVO.setTrans_target_type(CommonUtil.TRANS_TARGET_A);
-			String err_seq_id = listMapper.getTranslationErr(errVO);
+			String err_seq_id = listMapper.getTranslationErr(errVO);  
 			if (err_seq_id != null && err_seq_id != "") {
 				errVO.setSeq_id(err_seq_id);
 				listMapper.deleteTranslationErr(errVO);
@@ -209,6 +209,7 @@ public class AmazonDAO {
 			if(searchRet.size() > 0) {
 				// 치환후 상품명
 				transedName = searchRet.get(0).getAfter_trans();
+				log.debug("치환후 상품명" + transedName);
 				// 치환한 결과가 없을 경우 에러처리
 				if (transedName == null) {
 					errVO.setErr_text(CommonUtil.TRANS_ERR);
@@ -218,6 +219,7 @@ public class AmazonDAO {
 				errVO.setErr_text(CommonUtil.TRANS_ERR);
 				listMapper.insertTranslationErr(errVO);
 				transedName = "";
+				log.debug("치환후 상품명" + transedName);
 			}
 			
 			// 지역별 배송코드 세팅 (csv다운로드 기능)
