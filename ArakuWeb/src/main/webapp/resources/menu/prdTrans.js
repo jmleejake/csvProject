@@ -6,10 +6,10 @@ var columnDefs = [
     	, editable: true
     	, cellEditor: 'agPopupTextCellEditor'
 	}
-    , {headerName: "ＪＡＮコード", field: "jan_cd", width: 100
+    /*, {headerName: "ＪＡＮコード", field: "jan_cd", width: 100
     	, editable: true
     	, cellEditor: 'agPopupTextCellEditor'
-    }
+    }*/
     , {headerName: "区分", field: "order_gbn", width: 80
     	, editable: true
     	, cellEditor: 'agPopupTextCellEditor'
@@ -36,10 +36,10 @@ var columnDefs = [
             rows: '6'
         }
     }
-    , {headerName: "商品マスタ反映有無", field: "prd_master_hanei_gbn", width: 80
+    /*, {headerName: "商品マスタ反映有無", field: "prd_master_hanei_gbn", width: 80
     	, editable: true
     	, cellEditor: 'agPopupTextCellEditor'
-    }
+    }*/
     , {headerName: "商品数", field: "prd_cnt", width: 80
     	, editable: true
     	, cellEditor: 'agPopupTextCellEditor'

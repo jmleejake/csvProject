@@ -762,3 +762,5 @@ CREATE TABLE prd_trans_info (
 alter table translation_info add column prd_cnt varchar(4) comment '商品数';
 
 alter table translation_info add column etc_cntnt varchar(30) comment 'その他';
+
+alter table translation_info add column jan_cd varchar(15) comment 'ＪＡＮコード';

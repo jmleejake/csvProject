@@ -12,6 +12,7 @@ select
 	, after_trans
 	, prd_cnt
 	, etc_cntnt
+	, jan_cd
 	, date_format(register_date, '%Y/%m/%d') register_date
 	, date_format(update_date, '%Y/%m/%d') update_date
 from
@@ -66,6 +67,9 @@ set
 	</if>
 	<if test="after_trans != null">
 	, after_trans = #{after_trans}
+	</if>
+	<if test="jan_cd != null">
+	, jan_cd = #{jan_cd}
 	</if>
 where
 	seq_id = #{seq_id}
