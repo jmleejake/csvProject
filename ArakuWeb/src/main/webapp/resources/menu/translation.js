@@ -2,7 +2,11 @@
  * javascript for 商品名置換
  */
 var columnDefs = [
-    {headerName: "商品名・項目・選択肢 置換前", field: "beforeTrans", width: 300
+    {headerName: "ＪＡＮコード", field: "jan_cd", width: 100
+    	, editable: true
+    	, cellEditor: 'agPopupTextCellEditor'
+    }
+    , {headerName: "商品名・項目・選択肢 置換前", field: "beforeTrans", width: 300
     	, editable: true
     	, cellEditor: 'agLargeTextCellEditor'
     	, cellEditorParams: {
@@ -42,7 +46,8 @@ var selectedData
 , startBeforeTrans, stopBeforeTrans
 , startAfterTrans, stopAfterTrans
 , startPrdCnt, stopPrdCnt
-, startEtcCntnt, stopEtcCntnt;
+, startEtcCntnt, stopEtcCntnt
+, startJanCd, stopJanCd;
 
 //수정데이터 배열
 var modifiedData = [];
@@ -72,14 +77,11 @@ var transGridOptions = {
     },
     onCellEditingStarted: function(event) {
         var previousData = event.node.data;
-        /*
-        , startPrdCnt, stopPrdCnt
-		, startEtcCntnt, stopEtcCntnt;
-        */
         startBeforeTrans = previousData.beforeTrans;
         startAfterTrans = previousData.afterTrans;
         startPrdCnt = previousData.prd_cnt;
         startEtcCntnt = previousData.etc_cntnt;
+        startJanCd = previousData.jan_cd;
     },
     onCellEditingStopped: function(event) {
         var afterData = event.node.data;
@@ -87,11 +89,13 @@ var transGridOptions = {
         stopAfterTrans = afterData.afterTrans;
         stopPrdCnt = afterData.prd_cnt;
         stopEtcCntnt = afterData.etc_cntnt;
+        stopJanCd = afterData.jan_cd;
         
         if (!(startBeforeTrans == stopBeforeTrans) || 
         		!(startAfterTrans == stopAfterTrans) ||
         		!(startPrdCnt == stopPrdCnt) ||
-        		!(startEtcCntnt == stopEtcCntnt)) {
+        		!(startEtcCntnt == stopEtcCntnt) ||
+        		!(startJanCd == stopJanCd)) {
         	console.log("modified!");
         	modifiedData.push({
         		seq_id:afterData.seq_id
@@ -99,6 +103,7 @@ var transGridOptions = {
 				, after_trans:afterData.afterTrans
 				, prd_cnt:afterData.prd_cnt
 				, etc_cntnt:afterData.etc_cntnt
+				, jan_cd:afterData.jan_cd
         	});
         }
     }
@@ -137,12 +142,16 @@ function setRowData(result) {
 				, afterTrans:result[i].after_trans
 				, prd_cnt:result[i].prd_cnt
 				, etc_cntnt:result[i].etc_cntnt
+				, jan_cd:result[i].jan_cd 
 				, register_date:result[i].register_date
 				, update_date:result[i].update_date
 		}
 		rowData.push(row);
 	}
 	transGridOptions.api.setRowData(rowData);
+	
+	// 수정데이터 초기화
+	modifiedData = [];
 }
 
 var search = function() {

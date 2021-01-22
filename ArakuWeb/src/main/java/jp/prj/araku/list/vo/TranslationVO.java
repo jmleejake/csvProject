@@ -17,6 +17,8 @@ public class TranslationVO {
 	private String prd_cnt;
 	/**その他*/
 	private String etc_cntnt;
+	/**ＪＡＮコード*/
+	private String jan_cd;
 	
 	/**検索用*/
 	private String start_date;
@@ -94,6 +96,12 @@ public class TranslationVO {
 	}
 	public void setEtc_cntnt(String etc_cntnt) {
 		this.etc_cntnt = etc_cntnt;
+	}
+	public String getJan_cd() {
+		return jan_cd;
+	}
+	public void setJan_cd(String jan_cd) {
+		this.jan_cd = jan_cd;
 	}
 	
 }
