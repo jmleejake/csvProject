@@ -536,21 +536,21 @@ public class RakutenDAO {
 				/**
 				 * 2021.01.09 치환시 주문정보를 商品中間マスタ로 insert처리
 				 * */
-				PrdTransVO prdTransVO = new PrdTransVO();
-				prdTransVO.setOrder_no(vo.getOrder_no());
-				prdTransVO.setOrder_gbn("1");
-				prdTransVO.setBefore_trans(vo.getProduct_name());
-				prdTransVO.setAfter_trans(transedName);
-				prdTransVO.setPrd_cnt(unitNo+"");
-				prdTransVO.setPrd_master_hanei_gbn("0");
-				prdTransVO.setSearch_type("translate");
-				ArrayList<PrdTransVO> prdTransRet = listMapper.getPrdTrans(prdTransVO);
-				if(prdTransRet.size() > 0) {
-					prdTransVO.setSeq_id(prdTransRet.get(0).getSeq_id());
-					listMapper.updatePrdTrans(prdTransVO);
-				}else {
-					listMapper.insertPrdTrans(prdTransVO);
-				}
+//				PrdTransVO prdTransVO = new PrdTransVO();
+//				prdTransVO.setOrder_no(vo.getOrder_no());
+//				prdTransVO.setOrder_gbn("1");
+//				prdTransVO.setBefore_trans(vo.getProduct_name());
+//				prdTransVO.setAfter_trans(transedName);
+//				prdTransVO.setPrd_cnt(unitNo+"");
+//				prdTransVO.setPrd_master_hanei_gbn("0");
+//				prdTransVO.setSearch_type("translate");
+//				ArrayList<PrdTransVO> prdTransRet = listMapper.getPrdTrans(prdTransVO);
+//				if(prdTransRet.size() > 0) {
+//					prdTransVO.setSeq_id(prdTransRet.get(0).getSeq_id());
+//					listMapper.updatePrdTrans(prdTransVO);
+//				}else {
+//					listMapper.insertPrdTrans(prdTransVO);
+//				}
 				
 				int i = 1;
 				for (String optionName : optionNames) {
@@ -571,26 +571,26 @@ public class RakutenDAO {
 					/**
 					 * 2021.01.09 치환시 주문정보를 商品中間マスタ로 insert처리
 					 * */
-					PrdTransVO prdTransVO2 = new PrdTransVO();
-					prdTransVO2.setOrder_no(vo.getOrder_no());
-					prdTransVO2.setOrder_gbn(i+"");
-					prdTransVO2.setAfter_trans(optionName);
-					
-					transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
-					transVO.setKeyword(optionName.trim());
-					searchRet = listMapper.getTransInfo(transVO);
-					prdTransVO2.setBefore_trans(searchRet.get(0).getBefore_trans());
-					
-					prdTransVO2.setPrd_cnt(unitsu1+"");
-					prdTransVO2.setPrd_master_hanei_gbn("0");
-					prdTransVO2.setSearch_type("translate");
-					ArrayList<PrdTransVO> prdTransRet2 = listMapper.getPrdTrans(prdTransVO2);
-					if(prdTransRet2.size() > 0) {
-						prdTransVO2.setSeq_id(prdTransRet2.get(0).getSeq_id());
-						listMapper.updatePrdTrans(prdTransVO2);
-					}else {
-						listMapper.insertPrdTrans(prdTransVO2);
-					}
+//					PrdTransVO prdTransVO2 = new PrdTransVO();
+//					prdTransVO2.setOrder_no(vo.getOrder_no());
+//					prdTransVO2.setOrder_gbn(i+"");
+//					prdTransVO2.setAfter_trans(optionName);
+//					
+//					transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+//					transVO.setKeyword(optionName.trim());
+//					searchRet = listMapper.getTransInfo(transVO);
+//					prdTransVO2.setBefore_trans(searchRet.get(0).getBefore_trans());
+//					
+//					prdTransVO2.setPrd_cnt(unitsu1+"");
+//					prdTransVO2.setPrd_master_hanei_gbn("0");
+//					prdTransVO2.setSearch_type("translate");
+//					ArrayList<PrdTransVO> prdTransRet2 = listMapper.getPrdTrans(prdTransVO2);
+//					if(prdTransRet2.size() > 0) {
+//						prdTransVO2.setSeq_id(prdTransRet2.get(0).getSeq_id());
+//						listMapper.updatePrdTrans(prdTransVO2);
+//					}else {
+//						listMapper.insertPrdTrans(prdTransVO2);
+//					}
 					
 					i++;
 				}
@@ -603,21 +603,21 @@ public class RakutenDAO {
 				/**
 				 * 2021.01.09 치환시 주문정보를 商品中間マスタ로 insert처리
 				 * */
-				PrdTransVO prdTransVO = new PrdTransVO();
-				prdTransVO.setOrder_no(vo.getOrder_no());
-				prdTransVO.setOrder_gbn("1");
-				prdTransVO.setBefore_trans(vo.getProduct_name());
-				prdTransVO.setAfter_trans(transedName);
-				prdTransVO.setPrd_cnt(unitNo+"");
-				prdTransVO.setPrd_master_hanei_gbn("0");
-				prdTransVO.setSearch_type("translate");
-				ArrayList<PrdTransVO> prdTransRet = listMapper.getPrdTrans(prdTransVO);
-				if(prdTransRet.size() > 0) {
-					prdTransVO.setSeq_id(prdTransRet.get(0).getSeq_id());
-					listMapper.updatePrdTrans(prdTransVO);
-				}else {
-					listMapper.insertPrdTrans(prdTransVO);
-				}
+//				PrdTransVO prdTransVO = new PrdTransVO();
+//				prdTransVO.setOrder_no(vo.getOrder_no());
+//				prdTransVO.setOrder_gbn("1");
+//				prdTransVO.setBefore_trans(vo.getProduct_name());
+//				prdTransVO.setAfter_trans(transedName);
+//				prdTransVO.setPrd_cnt(unitNo+"");
+//				prdTransVO.setPrd_master_hanei_gbn("0");
+//				prdTransVO.setSearch_type("translate");
+//				ArrayList<PrdTransVO> prdTransRet = listMapper.getPrdTrans(prdTransVO);
+//				if(prdTransRet.size() > 0) {
+//					prdTransVO.setSeq_id(prdTransRet.get(0).getSeq_id());
+//					listMapper.updatePrdTrans(prdTransVO);
+//				}else {
+//					listMapper.insertPrdTrans(prdTransVO);
+//				}
 			}
 			
 			String last = buf.toString();
@@ -811,22 +811,22 @@ public class RakutenDAO {
 				/**
 				 * 2021.01.09 치환시 주문정보를 商品中間マスタ로 insert처리
 				 * */
-				PrdTransVO prdTransVO = new PrdTransVO();
-				prdTransVO.setOrder_no(vo.getOrder_no());
-				prdTransVO.setOrder_gbn("1");
-				prdTransVO.setBefore_trans(vo.getProduct_name());
-				prdTransVO.setAfter_trans(transedName);
-				prdTransVO.setPrd_cnt(unitNo+"");
-				prdTransVO.setPrd_master_hanei_gbn("0");
-				prdTransVO.setSearch_type("translate");
-				ArrayList<PrdTransVO> prdTransRet = listMapper.getPrdTrans(prdTransVO);
-				if(prdTransRet.size() > 0) {
-					prdTransVO.setSeq_id(prdTransRet.get(0).getSeq_id());
-					listMapper.updatePrdTrans(prdTransVO);
-				}else {
-					listMapper.insertPrdTrans(prdTransVO);
-				}
-				
+//				PrdTransVO prdTransVO = new PrdTransVO();
+//				prdTransVO.setOrder_no(vo.getOrder_no());
+//				prdTransVO.setOrder_gbn("1");
+//				prdTransVO.setBefore_trans(vo.getProduct_name());
+//				prdTransVO.setAfter_trans(transedName);
+//				prdTransVO.setPrd_cnt(unitNo+"");
+//				prdTransVO.setPrd_master_hanei_gbn("0");
+//				prdTransVO.setSearch_type("translate");
+//				ArrayList<PrdTransVO> prdTransRet = listMapper.getPrdTrans(prdTransVO);
+//				if(prdTransRet.size() > 0) {
+//					prdTransVO.setSeq_id(prdTransRet.get(0).getSeq_id());
+//					listMapper.updatePrdTrans(prdTransVO);
+//				}else {
+//					listMapper.insertPrdTrans(prdTransVO);
+//				}
+//				
 				int i = 1;
 				for (String optionName : optionNames) {
 					// 옵션개수, 상품개수를 곱하여 치환결과에 반영
@@ -846,26 +846,26 @@ public class RakutenDAO {
 					/**
 					 * 2021.01.09 치환시 주문정보를 商品中間マスタ로 insert처리
 					 * */
-					PrdTransVO prdTransVO2 = new PrdTransVO();
-					prdTransVO2.setOrder_no(vo.getOrder_no());
-					prdTransVO2.setOrder_gbn(i+"");
-					prdTransVO2.setAfter_trans(optionName);
-					
-					transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
-					transVO.setKeyword(optionName.trim());
-					searchRet = listMapper.getTransInfo(transVO);
-					prdTransVO2.setBefore_trans(searchRet.get(0).getBefore_trans());
-					
-					prdTransVO2.setPrd_cnt(unitsu1+"");
-					prdTransVO2.setPrd_master_hanei_gbn("0");
-					prdTransVO2.setSearch_type("translate");
-					ArrayList<PrdTransVO> prdTransRet2 = listMapper.getPrdTrans(prdTransVO2);
-					if(prdTransRet2.size() > 0) {
-						prdTransVO2.setSeq_id(prdTransRet2.get(0).getSeq_id());
-						listMapper.updatePrdTrans(prdTransVO2);
-					}else {
-						listMapper.insertPrdTrans(prdTransVO2);
-					}
+//					PrdTransVO prdTransVO2 = new PrdTransVO();
+//					prdTransVO2.setOrder_no(vo.getOrder_no());
+//					prdTransVO2.setOrder_gbn(i+"");
+//					prdTransVO2.setAfter_trans(optionName);
+//					
+//					transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+//					transVO.setKeyword(optionName.trim());
+//					searchRet = listMapper.getTransInfo(transVO);
+//					prdTransVO2.setBefore_trans(searchRet.get(0).getBefore_trans());
+//					
+//					prdTransVO2.setPrd_cnt(unitsu1+"");
+//					prdTransVO2.setPrd_master_hanei_gbn("0");
+//					prdTransVO2.setSearch_type("translate");
+//					ArrayList<PrdTransVO> prdTransRet2 = listMapper.getPrdTrans(prdTransVO2);
+//					if(prdTransRet2.size() > 0) {
+//						prdTransVO2.setSeq_id(prdTransRet2.get(0).getSeq_id());
+//						listMapper.updatePrdTrans(prdTransVO2);
+//					}else {
+//						listMapper.insertPrdTrans(prdTransVO2);
+//					}
 					
 					i++;
 				}
@@ -878,21 +878,21 @@ public class RakutenDAO {
 				/**
 				 * 2021.01.09 치환시 주문정보를 商品中間マスタ로 insert처리
 				 * */
-				PrdTransVO prdTransVO = new PrdTransVO();
-				prdTransVO.setOrder_no(vo.getOrder_no());
-				prdTransVO.setOrder_gbn("1");
-				prdTransVO.setBefore_trans(vo.getProduct_name());
-				prdTransVO.setAfter_trans(transedName);
-				prdTransVO.setPrd_cnt(unitNo+"");
-				prdTransVO.setPrd_master_hanei_gbn("0");
-				prdTransVO.setSearch_type("translate");
-				ArrayList<PrdTransVO> prdTransRet = listMapper.getPrdTrans(prdTransVO);
-				if(prdTransRet.size() > 0) {
-					prdTransVO.setSeq_id(prdTransRet.get(0).getSeq_id());
-					listMapper.updatePrdTrans(prdTransVO);
-				}else {
-					listMapper.insertPrdTrans(prdTransVO);
-				}
+//				PrdTransVO prdTransVO = new PrdTransVO();
+//				prdTransVO.setOrder_no(vo.getOrder_no());
+//				prdTransVO.setOrder_gbn("1");
+//				prdTransVO.setBefore_trans(vo.getProduct_name());
+//				prdTransVO.setAfter_trans(transedName);
+//				prdTransVO.setPrd_cnt(unitNo+"");
+//				prdTransVO.setPrd_master_hanei_gbn("0");
+//				prdTransVO.setSearch_type("translate");
+//				ArrayList<PrdTransVO> prdTransRet = listMapper.getPrdTrans(prdTransVO);
+//				if(prdTransRet.size() > 0) {
+//					prdTransVO.setSeq_id(prdTransRet.get(0).getSeq_id());
+//					listMapper.updatePrdTrans(prdTransVO);
+//				}else {
+//					listMapper.insertPrdTrans(prdTransVO);
+//				}
 			}
 			
 			String last = buf.toString();
@@ -916,6 +916,7 @@ public class RakutenDAO {
 			TranslationResultVO resultVO = new TranslationResultVO();
 			resultVO.setTrans_target_id(vo.getSeq_id());
 			resultVO.setTrans_target_type(CommonUtil.TRANS_TARGET_RF);
+			
 			
 			//20200116 kim　変換後が空白の場合、”.”を設定する。
 			if (vo.getProduct_name().contains("別紙")) {
@@ -984,6 +985,7 @@ public class RakutenDAO {
 					frozenCnt.add(i);
 					frozen.put(orderNo, frozenCnt);
 				}else if (rVO.getProduct_name().contains("冷蔵")) {
+					
 					fridgeCnt.add(i);
 					fridge.put(orderNo, fridgeCnt);
 				}else {
@@ -1360,11 +1362,16 @@ public class RakutenDAO {
 				}
 				
 				String strXsplit ;
-				if(strComment.contains("-")) {
-					strXsplit = strComment.substring(0,4) + "/" + strComment.substring(5,7) +  "/" +strComment.substring(8,10);
-					yVO.setEstimate_delivery_date(strXsplit);
-				} 
 				
+				// 20210117 kim お届け予定日の日付のチェック
+				log.debug(String.format("Comment: %s",strComment.matches(".*[0-9]{4}-[0-9]{2}-[0-9]{2}.*")));
+				if(strComment.matches(".*[0-9]{4}-[0-9]{2}-[0-9]{2}.*")) {
+					if(strComment.contains("-")) {
+						log.debug(String.format("Comment0-4: %s - Comment5-7: %s-Comment8-10: %s", strComment.substring(0,4),strComment.substring(5,7),strComment.substring(8,10)));
+						strXsplit = strComment.substring(0,4) + "/" + strComment.substring(5,7) +  "/" +strComment.substring(8,10);
+						yVO.setEstimate_delivery_date(strXsplit);
+					} 
+				}
 				// 20200116 kim 記事(メモ)欄に領収書や連絡などの文字以外はすべて削除する。
 				//if  (strComment.contains("領収書") || strComment.contains("連絡")) {
 				//	yVO.setComment(strComment);
