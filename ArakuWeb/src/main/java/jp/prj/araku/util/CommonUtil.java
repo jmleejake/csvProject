@@ -24,6 +24,7 @@ public class CommonUtil {
 	public static final String SEARCH_TYPE_SAGAWA = "saga";
 	public static final String SEARCH_TYPE_WEEKDATA = "weekData";
 	public static final String SEARCH_TYPE_SCREEN = "screen";
+	public static final String SEARCH_TYPE_SUM = "sum";
 	
 	public static final String UPDATE_TYPE_TWOMORE="twomore";
 	

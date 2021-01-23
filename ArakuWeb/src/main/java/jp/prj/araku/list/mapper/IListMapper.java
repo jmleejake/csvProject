@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
+import jp.prj.araku.list.vo.OrderSumVO;
 import jp.prj.araku.list.vo.PrdCdMasterVO;
 import jp.prj.araku.list.vo.PrdTransVO;
 import jp.prj.araku.list.vo.RakutenSearchVO;
@@ -59,4 +60,12 @@ public interface IListMapper {
 	public int insertPrdTrans(PrdTransVO vo);
 	public int updatePrdTrans(PrdTransVO vo);
 	public int deletePrdTrans(String seq_id);
+	
+	/**
+	 * 総商品数
+	 * */
+	public ArrayList<OrderSumVO> getOrderSum(OrderSumVO vo);
+	public int insertOrderSum(OrderSumVO vo);
+	public int updateOrderSum(OrderSumVO vo);
+	public int deleteOrderSum(String seq_id);
 }

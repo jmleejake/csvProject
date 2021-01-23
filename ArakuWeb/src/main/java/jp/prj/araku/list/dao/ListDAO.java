@@ -22,6 +22,7 @@ import jp.prj.araku.amazon.vo.AmazonVO;
 import jp.prj.araku.list.mapper.IListMapper;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
+import jp.prj.araku.list.vo.OrderSumVO;
 import jp.prj.araku.list.vo.PrdCdMasterVO;
 import jp.prj.araku.list.vo.PrdTransVO;
 import jp.prj.araku.list.vo.RakutenSearchVO;
@@ -401,29 +402,52 @@ public class ListDAO {
 	
 	public ArrayList<PrdTransVO> manipulatePrdTrans(ArrayList<PrdTransVO> list) {
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
-		ArrayList<String> seq_id_list = new ArrayList<>();
 		
+		String target = "";
 		for(PrdTransVO vo : list) {
 			if(null != vo.getSeq_id()) {
 				mapper.updatePrdTrans(vo);
-				seq_id_list.add(vo.getSeq_id());
+				target = vo.getTrans_target_type();
 			}else {
 				mapper.insertPrdTrans(vo);
-				seq_id_list.add(vo.getSeq_id());
+				target = vo.getTrans_target_type();
 			}
 		}
 		PrdTransVO vo = new PrdTransVO();
-		vo.setSeq_id_list(seq_id_list);
+		vo.setTrans_target_type(target);
 		return getPrdTransInfo(vo);
 		
 	}
 	
 	public ArrayList<PrdTransVO> deletePrdTrans(ArrayList<PrdTransVO> list) {
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		String target = "";
 		for(PrdTransVO vo : list) {
+			target = vo.getTrans_target_type();
 			mapper.deletePrdTrans(vo.getSeq_id());
 		}
-		return getPrdTransInfo(new PrdTransVO());
+		PrdTransVO vo  = new PrdTransVO();
+		vo.setTrans_target_type(target);
+		return getPrdTransInfo(vo);
 	}
 	
+	/**
+	 * 総商品数
+	 * */
+	public ArrayList<OrderSumVO> getOrderSum(OrderSumVO vo) {
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		return mapper.getOrderSum(vo);
+	}
+	
+	public ArrayList<OrderSumVO> deleteOrderSum(ArrayList<OrderSumVO> list) {
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		String target = "";
+		for(OrderSumVO vo : list) {
+			target = vo.getTarget_type();
+			mapper.deleteOrderSum(vo.getSeq_id());
+		}
+		OrderSumVO vo = new OrderSumVO();
+		vo.setTarget_type(target);
+		return getOrderSum(vo);
+	}
 }

@@ -38,14 +38,30 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 <div class="well container-fluid">
 <div class="row">
 	<div class="col-sm-6" style="margin-top: 7px;">
+	<input type="hidden" id="transTarget" value="${type}">
 	<button id="btn_create" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">列追加</button>
 	<button id="btn_commit" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">登録</button>
+	<button id="btn_sum" type="button" class="btn btn-primary" style="width: 120px; margin-bottom: 10px;">総商品数</button>
 	</div>
 	<div class="col-sm-6" style="margin-top: 7px;">
 	<button id="btn_delete" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">削除</button>
 	</div>
 </div>
-<div id="translateGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
+<div id="translateGrid" style="width:auto; height: 350px;" class="ag-theme-balham"></div>
+</div>
+
+<div class="well container-fluid">
+<div class="row">
+	<div class="col-sm-6" style="margin-top: 7px;">
+<!-- 	<button id="btn_create" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">列追加</button> -->
+<!-- 	<button id="btn_commit" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">登録</button> -->
+<!-- 	<button id="btn_sum" type="button" class="btn btn-primary" style="width: 120px; margin-bottom: 10px;">総商品数</button> -->
+	</div>
+	<div class="col-sm-6" style="margin-top: 7px;">
+	<button id="btn_order_sum_del" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">削除</button>
+	</div>
+</div>
+<div id="orderSumGrid" style="width:auto; height: 350px;" class="ag-theme-balham"></div>
 </div>
 </div>
 <script src="<%=svrInfo %>/resources/menu/prdTrans.js"></script>
