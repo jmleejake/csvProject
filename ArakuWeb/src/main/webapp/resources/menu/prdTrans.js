@@ -367,3 +367,7 @@ $('#btn_order_sum_del').on('click', function() {
 		}
 	});
 });
+
+$("#btn_down").on("click", function() {
+	$("#frm").submit();
+});

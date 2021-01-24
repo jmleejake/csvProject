@@ -1,10 +1,13 @@
 package jp.prj.araku.list.dao;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
@@ -14,8 +17,13 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.opencsv.CSVWriter;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 import jp.prj.araku.amazon.mapper.IAmazonMapper;
 import jp.prj.araku.amazon.vo.AmazonVO;
@@ -449,5 +457,60 @@ public class ListDAO {
 		OrderSumVO vo = new OrderSumVO();
 		vo.setTarget_type(target);
 		return getOrderSum(vo);
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void sumDownload(
+			HttpServletResponse response
+			, String fileEncoding
+			, String targetType) 
+			throws IOException
+			, CsvDataTypeMismatchException
+			, CsvRequiredFieldEmptyException {
+		log.debug("sumDownload");
+		log.debug("encoding : " + fileEncoding);
+		
+		BufferedWriter writer = null;
+		CSVWriter csvWriter = null;
+		
+		try {
+			String csvFileName = "["+targetType+"]ORDERSUM" + CommonUtil.getDate("YYYYMMdd", 0) + ".csv";
+			response.setContentType("text/csv");
+			// creates mock data
+			String headerKey = "Content-Disposition";
+			String headerValue = String.format("attachment; filename=\"%s\"",
+					csvFileName);
+			response.setHeader(headerKey, headerValue);
+			response.setCharacterEncoding(fileEncoding);
+			
+			writer = new BufferedWriter(response.getWriter());
+			
+			csvWriter = new CSVWriter(writer
+					, CSVWriter.DEFAULT_SEPARATOR
+					, CSVWriter.NO_QUOTE_CHARACTER
+					, CSVWriter.DEFAULT_ESCAPE_CHARACTER
+					, CSVWriter.DEFAULT_LINE_END);
+			
+			String[] header = CommonUtil.orderSumHeader();
+			IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
+			OrderSumVO vo = new OrderSumVO();
+			vo.setTarget_type(targetType);
+			ArrayList<OrderSumVO> list = listMapper.getOrderSum(vo);
+			StatefulBeanToCsv<OrderSumVO> beanToCSV = new StatefulBeanToCsvBuilder(writer)
+		            .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
+		            .build();
+			
+			csvWriter.writeNext(header);
+			
+			beanToCSV.write(list);
+		}finally {
+			if (csvWriter != null) {
+				csvWriter.close();
+			}
+			
+			if (writer != null) {
+				writer.close();
+			}
+		}
 	}
 }

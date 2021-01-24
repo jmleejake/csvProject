@@ -632,4 +632,17 @@ public class RakutenController {
 		vo.setTarget_type(CommonUtil.TRANS_TARGET_R);
 		return listDao.getOrderSum(vo);
 	}
+	
+	@RequestMapping(value="sumDown", method = RequestMethod.POST)
+	public void orderSumDownload(HttpServletResponse response) {
+		try {
+			listDao.sumDownload(response, fileEncoding, CommonUtil.TRANS_TARGET_R);
+		} catch (IOException e) {
+			log.error(e.toString());
+		} catch (CsvDataTypeMismatchException e) {
+			log.error(e.toString());
+		} catch (CsvRequiredFieldEmptyException e) {
+			log.error(e.toString());
+		}
+	}
 }
