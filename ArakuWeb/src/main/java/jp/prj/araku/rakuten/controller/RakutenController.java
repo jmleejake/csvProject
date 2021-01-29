@@ -27,6 +27,7 @@ import jp.prj.araku.batch.vo.ItemOutputVO;
 import jp.prj.araku.list.dao.ListDAO;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
+import jp.prj.araku.list.vo.OrderSumVO;
 import jp.prj.araku.list.vo.PrdCdMasterVO;
 import jp.prj.araku.list.vo.PrdTransVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
@@ -595,6 +596,7 @@ public class RakutenController {
 	@ResponseBody
 	@RequestMapping(value="/getPrdTrans")
 	public ArrayList<PrdTransVO> getPrdTransInfo(PrdTransVO vo) {
+		vo.setTrans_target_type(CommonUtil.TRANS_TARGET_R);
 		return listDao.getPrdTransInfo(vo);
 	}
 	
@@ -609,5 +611,38 @@ public class RakutenController {
 	@RequestMapping(value = "/delPrdTrans")
 	public ArrayList<PrdTransVO> deletePrdTransInfo(@RequestBody ArrayList<PrdTransVO> list) {
 		return listDao.deletePrdTrans(list);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/executeOrderSum", method = RequestMethod.POST)
+	public ArrayList<OrderSumVO> executeOrderSum() {
+		return dao.executeOrderSum();
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/delOrderSum", method = RequestMethod.POST)
+	public ArrayList<OrderSumVO> deleteOrderSum(@RequestBody ArrayList<OrderSumVO> list) {
+		return listDao.deleteOrderSum(list);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/getOrderSum")
+	public ArrayList<OrderSumVO> getOrderSum() {
+		OrderSumVO vo = new OrderSumVO();
+		vo.setTarget_type(CommonUtil.TRANS_TARGET_R);
+		return listDao.getOrderSum(vo);
+	}
+	
+	@RequestMapping(value="sumDown", method = RequestMethod.POST)
+	public void orderSumDownload(HttpServletResponse response) {
+		try {
+			listDao.sumDownload(response, fileEncoding, CommonUtil.TRANS_TARGET_R);
+		} catch (IOException e) {
+			log.error(e.toString());
+		} catch (CsvDataTypeMismatchException e) {
+			log.error(e.toString());
+		} catch (CsvRequiredFieldEmptyException e) {
+			log.error(e.toString());
+		}
 	}
 }

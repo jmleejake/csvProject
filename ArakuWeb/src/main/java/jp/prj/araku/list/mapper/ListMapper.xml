@@ -317,6 +317,7 @@ select
 	, prd_cnt
 	, before_trans
 	, after_trans
+	, trans_target_type
 	, date_format(register_date, '%Y/%m/%d') register_date
 	, date_format(update_date, '%Y/%m/%d') update_date
 from
@@ -335,6 +336,7 @@ from
 				#{item}
 			</foreach>
 		</if>
+		and trans_target_type = #{trans_target_type}
 		</trim>
 		</when>
 		<when test="search_type =='screen'">
@@ -346,8 +348,13 @@ from
 		order_no = #{order_no}
 		and after_trans = #{after_trans}
 		</when>
+		<when test="search_type == 'sum'">
+		after_trans = #{after_trans}
+		and trans_target_type = #{trans_target_type}
+		</when>
 		<otherwise>
 		register_date between str_to_date(#{start_date}, '%Y/%m/%d %H:%i:%s') and now()
+		and trans_target_type = #{trans_target_type}
 		</otherwise>
 	</choose>
 </where>	
@@ -355,8 +362,8 @@ order by seq_id desc, update_date desc
 </select>
 
 <insert id="insertPrdTrans" parameterType="PrdTrans" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
-insert into prd_trans_info (order_no, jan_cd, before_trans, after_trans, order_gbn, prd_master_hanei_gbn, prd_cnt)
-values (#{order_no}, #{jan_cd}, #{before_trans}, #{after_trans}, #{order_gbn}, #{prd_master_hanei_gbn}, #{prd_cnt})
+insert into prd_trans_info (order_no, jan_cd, before_trans, after_trans, order_gbn, prd_master_hanei_gbn, prd_cnt, trans_target_type)
+values (#{order_no}, #{jan_cd}, #{before_trans}, #{after_trans}, #{order_gbn}, #{prd_master_hanei_gbn}, #{prd_cnt}, #{trans_target_type})
 </insert>
 
 <update id="updatePrdTrans" parameterType="PrdTrans">
@@ -396,4 +403,60 @@ where
 	seq_id = #{seq_id}
 </delete>
 
+<select id="getOrderSum" parameterType="OrderSum" resultType="OrderSum">
+select 
+	seq_id
+	, jan_cd
+	, prd_master_hanei_gbn
+	, prd_sum
+	, after_trans
+	, target_type
+	, date_format(register_date, '%Y/%m/%d') register_date
+	, date_format(update_date, '%Y/%m/%d') update_date
+from
+	order_sum_info
+<where>
+<trim prefixOverrides="AND |OR ">
+<if test="after_trans != null and after_trans != ''">
+and after_trans = #{after_trans}
+</if>
+<if test="target_type != null and target_type != ''">
+and target_type = #{target_type}
+</if>
+</trim>
+</where>
+</select>
+
+<insert id="insertOrderSum" parameterType="OrderSum" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
+insert into order_sum_info (jan_cd, after_trans, prd_sum, prd_master_hanei_gbn, target_type)
+values (#{jan_cd}, #{after_trans}, #{prd_sum}, #{prd_master_hanei_gbn}, #{target_type})
+</insert>
+
+<update id="updateOrderSum" parameterType="OrderSum">
+update
+  order_sum_info
+set
+  update_date = now()
+<if test="jan_cd != null and jan_cd != ''">
+  , jan_cd = #{jan_cd}
+</if>
+<if test="after_trans != null and after_trans != ''">
+  , after_trans = #{after_trans}
+</if>
+<if test="prd_master_hanei_gbn != null and prd_master_hanei_gbn != ''">
+  , prd_master_hanei_gbn = #{prd_master_hanei_gbn}
+</if>
+<if test="prd_sum != null and prd_sum != ''">
+  , prd_sum = #{prd_sum}
+</if>
+where
+  seq_id = #{seq_id}
+</update>
+
+<delete id="deleteOrderSum" parameterType="String">
+delete from
+  order_sum_info
+where
+  seq_id = #{seq_id}
+</delete>
 </mapper>

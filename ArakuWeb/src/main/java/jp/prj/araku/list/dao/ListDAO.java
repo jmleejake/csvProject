@@ -1,10 +1,13 @@
 package jp.prj.araku.list.dao;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
@@ -14,14 +17,20 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.opencsv.CSVWriter;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 import jp.prj.araku.amazon.mapper.IAmazonMapper;
 import jp.prj.araku.amazon.vo.AmazonVO;
 import jp.prj.araku.list.mapper.IListMapper;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
+import jp.prj.araku.list.vo.OrderSumVO;
 import jp.prj.araku.list.vo.PrdCdMasterVO;
 import jp.prj.araku.list.vo.PrdTransVO;
 import jp.prj.araku.list.vo.RakutenSearchVO;
@@ -401,29 +410,107 @@ public class ListDAO {
 	
 	public ArrayList<PrdTransVO> manipulatePrdTrans(ArrayList<PrdTransVO> list) {
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
-		ArrayList<String> seq_id_list = new ArrayList<>();
 		
+		String target = "";
 		for(PrdTransVO vo : list) {
 			if(null != vo.getSeq_id()) {
 				mapper.updatePrdTrans(vo);
-				seq_id_list.add(vo.getSeq_id());
+				target = vo.getTrans_target_type();
 			}else {
 				mapper.insertPrdTrans(vo);
-				seq_id_list.add(vo.getSeq_id());
+				target = vo.getTrans_target_type();
 			}
 		}
 		PrdTransVO vo = new PrdTransVO();
-		vo.setSeq_id_list(seq_id_list);
+		vo.setTrans_target_type(target);
 		return getPrdTransInfo(vo);
 		
 	}
 	
 	public ArrayList<PrdTransVO> deletePrdTrans(ArrayList<PrdTransVO> list) {
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		String target = "";
 		for(PrdTransVO vo : list) {
+			target = vo.getTrans_target_type();
 			mapper.deletePrdTrans(vo.getSeq_id());
 		}
-		return getPrdTransInfo(new PrdTransVO());
+		PrdTransVO vo  = new PrdTransVO();
+		vo.setTrans_target_type(target);
+		return getPrdTransInfo(vo);
 	}
 	
+	/**
+	 * 総商品数
+	 * */
+	public ArrayList<OrderSumVO> getOrderSum(OrderSumVO vo) {
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		return mapper.getOrderSum(vo);
+	}
+	
+	public ArrayList<OrderSumVO> deleteOrderSum(ArrayList<OrderSumVO> list) {
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		String target = "";
+		for(OrderSumVO vo : list) {
+			target = vo.getTarget_type();
+			mapper.deleteOrderSum(vo.getSeq_id());
+		}
+		OrderSumVO vo = new OrderSumVO();
+		vo.setTarget_type(target);
+		return getOrderSum(vo);
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void sumDownload(
+			HttpServletResponse response
+			, String fileEncoding
+			, String targetType) 
+			throws IOException
+			, CsvDataTypeMismatchException
+			, CsvRequiredFieldEmptyException {
+		log.debug("sumDownload");
+		log.debug("encoding : " + fileEncoding);
+		
+		BufferedWriter writer = null;
+		CSVWriter csvWriter = null;
+		
+		try {
+			String csvFileName = "["+targetType+"]ORDERSUM" + CommonUtil.getDate("YYYYMMdd", 0) + ".csv";
+			response.setContentType("text/csv");
+			// creates mock data
+			String headerKey = "Content-Disposition";
+			String headerValue = String.format("attachment; filename=\"%s\"",
+					csvFileName);
+			response.setHeader(headerKey, headerValue);
+			response.setCharacterEncoding(fileEncoding);
+			
+			writer = new BufferedWriter(response.getWriter());
+			
+			csvWriter = new CSVWriter(writer
+					, CSVWriter.DEFAULT_SEPARATOR
+					, CSVWriter.NO_QUOTE_CHARACTER
+					, CSVWriter.DEFAULT_ESCAPE_CHARACTER
+					, CSVWriter.DEFAULT_LINE_END);
+			
+			String[] header = CommonUtil.orderSumHeader();
+			IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
+			OrderSumVO vo = new OrderSumVO();
+			vo.setTarget_type(targetType);
+			ArrayList<OrderSumVO> list = listMapper.getOrderSum(vo);
+			StatefulBeanToCsv<OrderSumVO> beanToCSV = new StatefulBeanToCsvBuilder(writer)
+		            .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
+		            .build();
+			
+			csvWriter.writeNext(header);
+			
+			beanToCSV.write(list);
+		}finally {
+			if (csvWriter != null) {
+				csvWriter.close();
+			}
+			
+			if (writer != null) {
+				writer.close();
+			}
+		}
+	}
 }

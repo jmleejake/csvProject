@@ -757,6 +757,7 @@ CREATE TABLE prd_trans_info (
 	, order_gbn varchar(3) comment '区分'
 	, prd_master_hanei_gbn varchar(2) comment '商品マスタ反映有無フラグ：0（未）、1（済）'
 	, prd_cnt varchar(4) comment '商品数'
+  	, trans_target_type varchar(3) comment 'メニュー区分'
 ) default charset = utf8 comment '商品中間マスタ';
 
 alter table translation_info add column prd_cnt varchar(4) comment '商品数';
@@ -764,3 +765,15 @@ alter table translation_info add column prd_cnt varchar(4) comment '商品数';
 alter table translation_info add column etc_cntnt varchar(30) comment 'その他';
 
 alter table translation_info add column jan_cd varchar(15) comment 'ＪＡＮコード';
+
+DROP TABLE order_sum_info;
+CREATE TABLE order_sum_info (
+	seq_id bigint unsigned primary key auto_increment comment '区分ID'
+	, register_date datetime default now() comment '登録日付'
+	, update_date DATETIME comment '修正日付'
+	, jan_cd varchar(15) comment 'ＪＡＮコード'
+	, after_trans VARCHAR(50) comment '置換後'
+	, prd_sum varchar(10) comment '総商品数'
+	, prd_master_hanei_gbn varchar(2) comment '商品マスタ反映有無フラグ：0（未）、1（済）'
+	, target_type varchar(3) comment 'メニュー区分'
+) default charset = utf8 comment '総商品数';

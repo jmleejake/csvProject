@@ -23,6 +23,8 @@ public class PrdTransVO {
 	private String prd_master_hanei_gbn;
 	/**商品数*/
 	private String prd_cnt;
+	/**メニュー区分*/
+	private String trans_target_type;
 	
 	/**検索用*/
 	private String start_date;
@@ -143,6 +145,14 @@ public class PrdTransVO {
 
 	public void setSeq_id_list(ArrayList<String> seq_id_list) {
 		this.seq_id_list = seq_id_list;
+	}
+
+	public String getTrans_target_type() {
+		return trans_target_type;
+	}
+
+	public void setTrans_target_type(String trans_target_type) {
+		this.trans_target_type = trans_target_type;
 	}
 
 }

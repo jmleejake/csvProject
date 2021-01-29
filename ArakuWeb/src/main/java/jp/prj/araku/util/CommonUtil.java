@@ -24,6 +24,7 @@ public class CommonUtil {
 	public static final String SEARCH_TYPE_SAGAWA = "saga";
 	public static final String SEARCH_TYPE_WEEKDATA = "weekData";
 	public static final String SEARCH_TYPE_SCREEN = "screen";
+	public static final String SEARCH_TYPE_SUM = "sum";
 	
 	public static final String UPDATE_TYPE_TWOMORE="twomore";
 	
@@ -515,6 +516,16 @@ public class CommonUtil {
 				, "原価"
 				, "売価(本体)"
 				, "備考"	
+		};
+		return header;
+	}
+	
+	public static String[] orderSumHeader() {
+		String[] header = {
+				"ＪＡＮコード"
+				, "置換後名"
+				, "総商品数"
+				, "商品マスタ反映有無"
 		};
 		return header;
 	}
