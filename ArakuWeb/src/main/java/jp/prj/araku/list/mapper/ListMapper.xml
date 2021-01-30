@@ -459,4 +459,57 @@ delete from
 where
   seq_id = #{seq_id}
 </delete>
+
+<select id="getEtc" parameterType="EtcMaster" resultType="EtcMaster">
+select 
+	seq_id
+	, jan_cd
+	, prd_cnt
+	, prd_nm
+	, target_type
+	, date_format(register_date, '%Y/%m/%d') register_date
+	, date_format(update_date, '%Y/%m/%d') update_date
+from
+	etc_master_info
+<where>
+<trim prefixOverrides="AND |OR ">
+<if test="prd_nm != null and prd_nm != ''">
+and prd_nm like '%${prd_nm}%'
+</if>
+<if test="target_type != null and target_type != ''">
+and target_type = #{target_type}
+</if>
+</trim>
+</where>
+</select>
+
+<insert id="insertEtc" parameterType="EtcMaster" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
+insert into etc_master_info (jan_cd, prd_cnt, prd_nm, target_type)
+values (#{jan_cd}, #{prd_cnt}, #{prd_nm}, #{target_type})
+</insert>
+
+<update id="updateEtc" parameterType="EtcMaster">
+update
+  etc_master_info
+set
+  update_date = now()
+<if test="jan_cd != null and jan_cd != ''">
+  , jan_cd = #{jan_cd}
+</if>
+<if test="prd_cnt != null and prd_cnt != ''">
+  , prd_cnt = #{prd_cnt}
+</if>
+<if test="prd_nm != null and prd_nm != ''">
+  , prd_nm = #{prd_nm}
+</if>
+where
+  seq_id = #{seq_id}
+</update>
+
+<delete id="deleteEtc" parameterType="String">
+delete from
+  etc_master_info
+where
+  seq_id = #{seq_id}
+</delete>
 </mapper>

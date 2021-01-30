@@ -28,6 +28,7 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import jp.prj.araku.amazon.mapper.IAmazonMapper;
 import jp.prj.araku.amazon.vo.AmazonVO;
 import jp.prj.araku.list.mapper.IListMapper;
+import jp.prj.araku.list.vo.EtcMasterVO;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
 import jp.prj.araku.list.vo.OrderSumVO;
@@ -512,5 +513,44 @@ public class ListDAO {
 				writer.close();
 			}
 		}
+	}
+	
+	/**
+	 * その他マスタ
+	 * */
+	public ArrayList<EtcMasterVO> getEtc(EtcMasterVO vo) {
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		return mapper.getEtc(vo);
+	}
+	
+	public ArrayList<EtcMasterVO> manipulateEtc(ArrayList<EtcMasterVO> list) {
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		
+		String target = "";
+		for(EtcMasterVO vo : list) {
+			if(null != vo.getSeq_id()) {
+				mapper.updateEtc(vo);
+				target = vo.getTarget_type();
+			}else {
+				mapper.insertEtc(vo);
+				target = vo.getTarget_type();
+			}
+		}
+		EtcMasterVO vo = new EtcMasterVO();
+		vo.setTarget_type(target);
+		return getEtc(vo);
+		
+	}
+	
+	public ArrayList<EtcMasterVO> deleteEtc(ArrayList<EtcMasterVO> list) {
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		String target = "";
+		for(EtcMasterVO vo : list) {
+			target = vo.getTarget_type();
+			mapper.deleteEtc(vo.getSeq_id());
+		}
+		EtcMasterVO vo = new EtcMasterVO();
+		vo.setTarget_type(target);
+		return getEtc(vo);
 	}
 }
