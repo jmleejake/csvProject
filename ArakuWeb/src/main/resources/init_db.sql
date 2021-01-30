@@ -777,3 +777,16 @@ CREATE TABLE order_sum_info (
 	, prd_master_hanei_gbn varchar(2) comment '商品マスタ反映有無フラグ：0（未）、1（済）'
 	, target_type varchar(3) comment 'メニュー区分'
 ) default charset = utf8 comment '総商品数';
+
+
+
+DROP TABLE etc_master_info;
+CREATE TABLE etc_master_info (
+	seq_id bigint unsigned primary key auto_increment comment '区分ID'
+	, register_date datetime default now() comment '登録日付'
+	, update_date DATETIME comment '修正日付'
+	, jan_cd varchar(15) comment 'ＪＡＮコード'
+	, prd_cnt varchar(4) comment '商品数'
+	, prd_nm VARCHAR(3000) comment '商品名'
+	, target_type varchar(3) comment 'メニュー区分'
+) default charset = utf8 comment 'その他マスタ';

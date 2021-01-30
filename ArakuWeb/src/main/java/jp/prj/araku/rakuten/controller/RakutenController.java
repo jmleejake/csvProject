@@ -25,6 +25,7 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import jp.prj.araku.batch.dao.BatchDAO;
 import jp.prj.araku.batch.vo.ItemOutputVO;
 import jp.prj.araku.list.dao.ListDAO;
+import jp.prj.araku.list.vo.EtcMasterVO;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
 import jp.prj.araku.list.vo.OrderSumVO;
@@ -600,7 +601,6 @@ public class RakutenController {
 		return listDao.getPrdTransInfo(vo);
 	}
 	
-	
 	@ResponseBody
 	@RequestMapping(value = "/modPrdTrans")
 	public ArrayList<PrdTransVO> manipulatePrdTransInfo(@RequestBody ArrayList<PrdTransVO> list) {
@@ -644,5 +644,27 @@ public class RakutenController {
 		} catch (CsvRequiredFieldEmptyException e) {
 			log.error(e.toString());
 		}
+	}
+	
+	/**
+	 * その他マスタ
+	 * */
+	@ResponseBody
+	@RequestMapping(value = "/getEtc")
+	public ArrayList<EtcMasterVO> getEtc(EtcMasterVO vo) {
+		vo.setTarget_type(CommonUtil.TRANS_TARGET_R);
+		return listDao.getEtc(vo);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/modEtc")
+	public ArrayList<EtcMasterVO> manipulateEtc(@RequestBody ArrayList<EtcMasterVO> list) {
+		return listDao.manipulateEtc(list);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/delEtc")
+	public ArrayList<EtcMasterVO> deleteEtc(@RequestBody ArrayList<EtcMasterVO> list) {
+		return listDao.deleteEtc(list);
 	}
 }

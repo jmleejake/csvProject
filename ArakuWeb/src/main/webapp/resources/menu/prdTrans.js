@@ -2,7 +2,7 @@
  * javascript for 商品中間マスタ
  */
 var columnDefs = [
-    {headerName: "注文番号", field: "order_no", width: 100
+    {headerName: "注文番号", field: "order_no", width: 160
     	, editable: true
     	, cellEditor: 'agPopupTextCellEditor'
 	}
@@ -40,7 +40,7 @@ var columnDefs = [
     	, editable: true
     	, cellEditor: 'agPopupTextCellEditor'
     }*/
-    , {headerName: "商品数", field: "prd_cnt", width: 80
+    , {headerName: "商品数", field: "prd_cnt", width: 160
     	, editable: true
     	, cellEditor: 'agPopupTextCellEditor'
     }

@@ -2,6 +2,7 @@ package jp.prj.araku.list.mapper;
 
 import java.util.ArrayList;
 
+import jp.prj.araku.list.vo.EtcMasterVO;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
 import jp.prj.araku.list.vo.OrderSumVO;
@@ -68,4 +69,12 @@ public interface IListMapper {
 	public int insertOrderSum(OrderSumVO vo);
 	public int updateOrderSum(OrderSumVO vo);
 	public int deleteOrderSum(String seq_id);
+	
+	/**
+	 * その他マスタ
+	 * */
+	public ArrayList<EtcMasterVO> getEtc(EtcMasterVO vo);
+	public int insertEtc(EtcMasterVO vo);
+	public int updateEtc(EtcMasterVO vo);
+	public int deleteEtc(String seq_id);
 }
