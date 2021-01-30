@@ -49,6 +49,7 @@ import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
 import jp.prj.araku.list.vo.GlobalSagawaDownVO;
 import jp.prj.araku.list.vo.PrdCdMasterVO;
+import jp.prj.araku.list.vo.PrdTransVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.TranslationErrorVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
@@ -220,6 +221,26 @@ public class AmazonDAO {
 				listMapper.insertTranslationErr(errVO);
 				transedName = "";
 				log.debug("치환후 상품명" + transedName);
+			}
+			
+			/**
+			 * 2021.01.09 치환시 주문정보를 商品中間マスタ로 insert처리
+			 * */
+			PrdTransVO prdTransVO = new PrdTransVO();
+			prdTransVO.setOrder_no(vo.getOrder_id());
+			prdTransVO.setOrder_gbn("1");
+			prdTransVO.setBefore_trans(vo.getProduct_name());
+			prdTransVO.setAfter_trans(transedName);
+			prdTransVO.setPrd_cnt(vo.getQuantity_to_ship());
+			prdTransVO.setPrd_master_hanei_gbn("0");
+			prdTransVO.setSearch_type("translate");
+			prdTransVO.setTrans_target_type(CommonUtil.TRANS_TARGET_A);
+			ArrayList<PrdTransVO> prdTransRet = listMapper.getPrdTrans(prdTransVO);
+			if(prdTransRet.size() > 0) {
+				prdTransVO.setSeq_id(prdTransRet.get(0).getSeq_id());
+				listMapper.updatePrdTrans(prdTransVO);
+			}else {
+				listMapper.insertPrdTrans(prdTransVO);
 			}
 			
 			// 지역별 배송코드 세팅 (csv다운로드 기능)

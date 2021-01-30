@@ -588,6 +588,9 @@ public class RakutenController {
 		}
 	}
 	
+	/**
+	 * 商品中間マスタ
+	 * */
 	@RequestMapping(value = "/prdTransView")
 	public String showPrdTransView(Model model) {
 		model.addAttribute("type", CommonUtil.TRANS_TARGET_R);
@@ -613,10 +616,13 @@ public class RakutenController {
 		return listDao.deletePrdTrans(list);
 	}
 	
+	/**
+	 * 総商品数
+	 * */
 	@ResponseBody
 	@RequestMapping(value = "/executeOrderSum", method = RequestMethod.POST)
 	public ArrayList<OrderSumVO> executeOrderSum() {
-		return dao.executeOrderSum();
+		return listDao.executeOrderSum(CommonUtil.TRANS_TARGET_R);
 	}
 	
 	@ResponseBody
