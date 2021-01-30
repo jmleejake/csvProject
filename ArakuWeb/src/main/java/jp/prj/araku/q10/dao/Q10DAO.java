@@ -45,6 +45,7 @@ import jp.prj.araku.file.vo.YamatoVO;
 import jp.prj.araku.list.mapper.IListMapper;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.PrdCdMasterVO;
+import jp.prj.araku.list.vo.PrdTransVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.TranslationErrorVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
@@ -221,6 +222,26 @@ public class Q10DAO {
 				transedName = "";
 			}
 			
+			/**
+			 * 2021.01.09 치환시 주문정보를 商品中間マスタ로 insert처리
+			 * */
+			PrdTransVO prdTransVO = new PrdTransVO();
+			prdTransVO.setOrder_no(vo.getOrder_no());
+			prdTransVO.setOrder_gbn("1");
+			prdTransVO.setBefore_trans(vo.getProduct_name());
+			prdTransVO.setAfter_trans(transedName);
+			prdTransVO.setPrd_cnt(vo.getQty());
+			prdTransVO.setPrd_master_hanei_gbn("0");
+			prdTransVO.setSearch_type("translate");
+			prdTransVO.setTrans_target_type(CommonUtil.TRANS_TARGET_Q);
+			ArrayList<PrdTransVO> prdTransRet = listMapper.getPrdTrans(prdTransVO);
+			if(prdTransRet.size() > 0) {
+				prdTransVO.setSeq_id(prdTransRet.get(0).getSeq_id());
+				listMapper.updatePrdTrans(prdTransVO);
+			}else {
+				listMapper.insertPrdTrans(prdTransVO);
+			}
+			
 			// 지역별 배송코드 세팅 (csv다운로드 기능)
 			RegionMasterVO rmVO = new RegionMasterVO();
 			// 県 府 都 道
@@ -310,6 +331,8 @@ public class Q10DAO {
 					buf = new StringBuffer("o ");
 				}; 
 				buf.append(" ");
+				
+				int i = 1;
 				for (String optionName : optionNames) {
 					Integer unitsu = map.get(optionName)*unitNo; 
 					// [MOD-1011] 
@@ -320,6 +343,32 @@ public class Q10DAO {
 					if (optionNames.size() > 1) {
 						buf.append(";");
 					}
+					
+					/**
+					 * 2021.01.09 치환시 주문정보를 商品中間マスタ로 insert처리
+					 * */
+					PrdTransVO prdTransVO2 = new PrdTransVO();
+					prdTransVO2.setOrder_no(vo.getOrder_no());
+					prdTransVO2.setOrder_gbn(i+"");
+					prdTransVO2.setAfter_trans(optionName);
+					
+					transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+					transVO.setKeyword(optionName.trim());
+					searchRet = listMapper.getTransInfo(transVO);
+					prdTransVO2.setBefore_trans(searchRet.get(0).getBefore_trans());
+					
+					prdTransVO2.setPrd_cnt(unitsu1+"");
+					prdTransVO2.setPrd_master_hanei_gbn("0");
+					prdTransVO2.setSearch_type("translate");
+					prdTransVO2.setTrans_target_type(CommonUtil.TRANS_TARGET_Q);
+					ArrayList<PrdTransVO> prdTransRet2 = listMapper.getPrdTrans(prdTransVO2);
+					if(prdTransRet2.size() > 0) {
+						prdTransVO2.setSeq_id(prdTransRet2.get(0).getSeq_id());
+						listMapper.updatePrdTrans(prdTransVO2);
+					}else {
+						listMapper.insertPrdTrans(prdTransVO2);
+					}
+					i++;
 				}
 			} else {
 				buf = new StringBuffer(transedName + "×" + su);

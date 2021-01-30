@@ -22,9 +22,12 @@ import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 import jp.prj.araku.list.dao.ListDAO;
+import jp.prj.araku.list.vo.EtcMasterVO;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
+import jp.prj.araku.list.vo.OrderSumVO;
 import jp.prj.araku.list.vo.PrdCdMasterVO;
+import jp.prj.araku.list.vo.PrdTransVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
@@ -374,6 +377,92 @@ public class Q10Controller {
 		} catch (CsvRequiredFieldEmptyException e) {
 			log.error(e.toString());
 		}
+	}
+	
+	/**
+	 * 商品中間マスタ
+	 * */
+	@RequestMapping(value = "/prdTransView")
+	public String showPrdTransView(Model model) {
+		model.addAttribute("type", CommonUtil.TRANS_TARGET_Q);
+		return "menu/prdTrans";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/getPrdTrans")
+	public ArrayList<PrdTransVO> getPrdTransInfo(PrdTransVO vo) {
+		vo.setTrans_target_type(CommonUtil.TRANS_TARGET_Q);
+		return listDao.getPrdTransInfo(vo);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/modPrdTrans")
+	public ArrayList<PrdTransVO> manipulatePrdTransInfo(@RequestBody ArrayList<PrdTransVO> list) {
+		return listDao.manipulatePrdTrans(list);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/delPrdTrans")
+	public ArrayList<PrdTransVO> deletePrdTransInfo(@RequestBody ArrayList<PrdTransVO> list) {
+		return listDao.deletePrdTrans(list);
+	}
+	
+	/**
+	 * 総商品数
+	 * */
+	@ResponseBody
+	@RequestMapping(value = "/executeOrderSum", method = RequestMethod.POST)
+	public ArrayList<OrderSumVO> executeOrderSum() {
+		return listDao.executeOrderSum(CommonUtil.TRANS_TARGET_Q);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/delOrderSum", method = RequestMethod.POST)
+	public ArrayList<OrderSumVO> deleteOrderSum(@RequestBody ArrayList<OrderSumVO> list) {
+		return listDao.deleteOrderSum(list);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/getOrderSum")
+	public ArrayList<OrderSumVO> getOrderSum() {
+		OrderSumVO vo = new OrderSumVO();
+		vo.setTarget_type(CommonUtil.TRANS_TARGET_Q);
+		return listDao.getOrderSum(vo);
+	}
+	
+	@RequestMapping(value="sumDown", method = RequestMethod.POST)
+	public void orderSumDownload(HttpServletResponse response) {
+		try {
+			listDao.sumDownload(response, downFileEncoding, CommonUtil.TRANS_TARGET_Q);
+		} catch (IOException e) {
+			log.error(e.toString());
+		} catch (CsvDataTypeMismatchException e) {
+			log.error(e.toString());
+		} catch (CsvRequiredFieldEmptyException e) {
+			log.error(e.toString());
+		}
+	}
+	
+	/**
+	 * その他マスタ
+	 * */
+	@ResponseBody
+	@RequestMapping(value = "/getEtc")
+	public ArrayList<EtcMasterVO> getEtc(EtcMasterVO vo) {
+		vo.setTarget_type(CommonUtil.TRANS_TARGET_Q);
+		return listDao.getEtc(vo);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/modEtc")
+	public ArrayList<EtcMasterVO> manipulateEtc(@RequestBody ArrayList<EtcMasterVO> list) {
+		return listDao.manipulateEtc(list);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/delEtc")
+	public ArrayList<EtcMasterVO> deleteEtc(@RequestBody ArrayList<EtcMasterVO> list) {
+		return listDao.deleteEtc(list);
 	}
 	
 }

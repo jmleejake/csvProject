@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import javax.servlet.http.HttpServletResponse;
@@ -458,6 +459,43 @@ public class ListDAO {
 		OrderSumVO vo = new OrderSumVO();
 		vo.setTarget_type(target);
 		return getOrderSum(vo);
+	}
+	
+	public ArrayList<OrderSumVO> executeOrderSum(String target_type) {
+		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
+		PrdTransVO vo1 = new PrdTransVO();
+		vo1.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+		vo1.setTrans_target_type(target_type);
+		ArrayList<PrdTransVO> list = listMapper.getPrdTrans(vo1);
+		HashSet<String> afterTransCntnt = new HashSet<>();
+		for(PrdTransVO trans : list) {
+			afterTransCntnt.add(trans.getAfter_trans());
+		}
+		
+		for(String str : afterTransCntnt) {
+			vo1.setSearch_type(CommonUtil.SEARCH_TYPE_SUM);
+			vo1.setAfter_trans(str);
+			list = listMapper.getPrdTrans(vo1);
+			int sum = 0;
+			for(PrdTransVO trans : list) {
+				sum += Integer.parseInt(trans.getPrd_cnt());
+			}
+			TranslationVO transVO = new TranslationVO();
+			transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+			transVO.setKeyword(str);
+			ArrayList<TranslationVO> transRet = listMapper.getTransInfo(transVO);
+			if(transRet.size() > 0) {
+				OrderSumVO sumVO = new OrderSumVO();
+				sumVO.setAfter_trans(str);
+				sumVO.setPrd_sum(sum+"");
+				sumVO.setJan_cd(transRet.get(0).getJan_cd());
+				sumVO.setTarget_type(target_type);
+				listMapper.insertOrderSum(sumVO);
+			}
+		}
+		OrderSumVO sumVO = new OrderSumVO();
+		sumVO.setTarget_type(target_type);
+		return listMapper.getOrderSum(sumVO);
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
