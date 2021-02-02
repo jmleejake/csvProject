@@ -466,6 +466,7 @@ select
 	, jan_cd
 	, prd_cnt
 	, prd_nm
+	, etc_key
 	, target_type
 	, date_format(register_date, '%Y/%m/%d') register_date
 	, date_format(update_date, '%Y/%m/%d') update_date
@@ -473,6 +474,9 @@ from
 	etc_master_info
 <where>
 <trim prefixOverrides="AND |OR ">
+<if test="etc_key != null and etc_key != ''">
+and etc_key like '%${etc_key}%'
+</if>
 <if test="prd_nm != null and prd_nm != ''">
 and prd_nm like '%${prd_nm}%'
 </if>
@@ -484,8 +488,8 @@ and target_type = #{target_type}
 </select>
 
 <insert id="insertEtc" parameterType="EtcMaster" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
-insert into etc_master_info (jan_cd, prd_cnt, prd_nm, target_type)
-values (#{jan_cd}, #{prd_cnt}, #{prd_nm}, #{target_type})
+insert into etc_master_info (etc_key, jan_cd, prd_cnt, prd_nm, target_type)
+values (#{etc_key}, #{jan_cd}, #{prd_cnt}, #{prd_nm}, #{target_type})
 </insert>
 
 <update id="updateEtc" parameterType="EtcMaster">
@@ -501,6 +505,9 @@ set
 </if>
 <if test="prd_nm != null and prd_nm != ''">
   , prd_nm = #{prd_nm}
+</if>
+<if test="etc_key != null and etc_key != ''">
+  , etc_key = #{etc_key}
 </if>
 where
   seq_id = #{seq_id}
