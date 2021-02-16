@@ -15,6 +15,8 @@ public class EtcMasterVO {
 	private String prd_nm;
 	/**メニュー区分*/
 	private String target_type;
+	/**その他キー*/
+	private String etc_key;
 	
 	public String getSeq_id() {
 		return seq_id;
@@ -57,6 +59,12 @@ public class EtcMasterVO {
 	}
 	public void setTarget_type(String target_type) {
 		this.target_type = target_type;
+	}
+	public String getEtc_key() {
+		return etc_key;
+	}
+	public void setEtc_key(String etc_key) {
+		this.etc_key = etc_key;
 	}
 
 }

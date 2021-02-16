@@ -232,7 +232,7 @@ $("#btn_delete").on("click", function() {
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 var etcColumnDefs = [
-    {headerName: "ＪＡＮコード", field: "jan_cd", width: 180
+    {headerName: "その他キー", field: "etc_key", width: 180
     	, editable: true
     	, cellEditor: 'agPopupTextCellEditor'
     }
@@ -253,6 +253,10 @@ var etcColumnDefs = [
     	, editable: true
     	, cellEditor: 'agPopupTextCellEditor'
     }
+    , {headerName: "ＪＡＮコード", field: "jan_cd", width: 180
+    	, editable: true
+    	, cellEditor: 'agPopupTextCellEditor'
+    }
 ];
 
 // rowData 초기화
@@ -262,7 +266,8 @@ var etcRowData = [];
 var selectedEtcData
 , startPrdCnt2, stopPrdCnt2
 , startPrdNm2, stopPrdNm2
-, startJanCd2, stopJanCd2;
+, startJanCd2, stopJanCd2
+, startEtcKey, stopEtcKey;
 
 //수정데이터 배열
 var modifiedEtcData = [];
@@ -295,22 +300,26 @@ var etcGridOptions = {
         startPrdCnt2 = previousData.prd_cnt;
         startPrdNm2 = previousData.prd_nm;
         startJanCd2 = previousData.jan_cd;
+        startEtcKey = previousData.etc_key;
     },
     onCellEditingStopped: function(event) {
         var afterData = event.node.data;
         stopPrdCnt2 = afterData.prd_cnt;
         stopPrdNm2 = afterData.prd_nm;
         stopJanCd2 = afterData.jan_cd;
+        stopEtcKey = afterData.etc_key;
         
         if (!(startPrdCnt2 == stopPrdCnt2) ||
         		!(startPrdNm2 == stopPrdNm2) ||
-        		!(startJanCd2 == stopJanCd2)) {
+        		!(startJanCd2 == stopJanCd2) ||
+        		!(startEtcKey == stopEtcKey)) {
         	console.log("modified!");
         	modifiedEtcData.push({
         		seq_id:afterData.seq_id
 				, prd_cnt:afterData.prd_cnt
 				, prd_nm:afterData.prd_nm
 				, jan_cd:afterData.jan_cd
+				, etc_key:afterData.etc_key
         	});
         }
     }
@@ -347,7 +356,8 @@ function setEtcRowData(result) {
 				seq_id: result[i].seq_id
 				, prd_cnt:result[i].prd_cnt
 				, prd_nm:result[i].prd_nm
-				, jan_cd:result[i].jan_cd 
+				, jan_cd:result[i].jan_cd
+				, etc_key:result[i].etc_key
 				, register_date:result[i].register_date
 				, update_date:result[i].update_date
 		}
@@ -377,7 +387,7 @@ $('#btn_etc_srch').on('click', function() {
 
 $("#btn_etc_create").on("click", function() {
 	var type = $("#btn_etc_create").attr("data-type");
-	var rowData = {jan_cd: "ＪＡＮコード", prd_nm: "商品名", prd_cnt:"商品数", target_type:type};
+	var rowData = {etc_key: "その他キー", prd_nm: "商品名", prd_cnt:"商品数",jan_cd: "ＪＡＮコード", target_type:type};
 	modifiedEtcData.push(rowData);
 	$.ajax({
 		url: "modEtc"
