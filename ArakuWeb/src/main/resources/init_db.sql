@@ -118,7 +118,7 @@ CREATE TABLE exception_region_master (
 	seq_id bigint unsigned primary key auto_increment comment '区分ID',
 	register_date datetime default now() comment '登録日付',
 	update_date DATETIME comment '修正日付',
-	exception_data VARCHAR(20) '例外地域'
+	exception_data VARCHAR(20) comment '例外地域'
 ) default charset = utf8 comment '例外地域マスタ';
 
 drop table region_master;
@@ -634,18 +634,6 @@ CREATE INDEX idx_raku_name ON rakuten_info (delivery_name_kana ASC);
 
 CREATE INDEX idx_raku_name ON rakuten_info (delivery_name ASC);
 
-
-DROP TABLE region_master;
-CREATE TABLE region_master (
-	seq_id INT NOT NULL,
-	register_date datetime default now() comment '登録日付',
-	p_id INT,
-	region_name VARCHAR(8),
-	region_name_en VARCHAR(15),
-	delivery_company VARCHAR(4) comment '配送会社'
-) default charset = utf8 comment '地域情報';
-
-
 DROP TABLE stock_info;
 CREATE TABLE stock_info (
 	seq_id bigint unsigned primary key auto_increment comment '区分ID',
@@ -785,6 +773,7 @@ CREATE TABLE etc_master_info (
 	seq_id bigint unsigned primary key auto_increment comment '区分ID'
 	, register_date datetime default now() comment '登録日付'
 	, update_date DATETIME comment '修正日付'
+	, etc_key varchar(100) comment 'その他キー'
 	, jan_cd varchar(15) comment 'ＪＡＮコード'
 	, prd_cnt varchar(4) comment '商品数'
 	, prd_nm VARCHAR(3000) comment '商品名'
