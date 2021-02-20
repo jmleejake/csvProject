@@ -374,9 +374,12 @@ public class RakutenDAO {
 		log.info("deleteRakutenInfo");
 		log.debug("{}", list);
 		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
+		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
 		for (RakutenVO vo : list) {
 			mapper.deleteRakutenInfo(vo.getSeq_id());
 		}
+		// 商品中間マスタ 날려버리기
+		listMapper.deletePrdTrans(null);
 	}
 	
 	@Transactional
@@ -534,7 +537,7 @@ public class RakutenDAO {
 				}
 				
 				/**
-				 * 2021.01.09 치환시 주문정보를 商品中間マスタ로 insert처리
+				 * 2021.02.22 kim 치환시 주문정보를 商品中間マスタ로 insert처리
 				 * */
 				PrdTransVO prdTransVO = new PrdTransVO();
 				prdTransVO.setOrder_no(vo.getOrder_no());

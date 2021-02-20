@@ -43,7 +43,9 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 	</div>
 	<div class="col-sm-6" style="margin-top: 7px;">
 	<button id="btn_delete" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">削除</button>
+	<!-- いらない
 	<button id="btn_etc" type="button" class="btn btn-primary" data-toggle="modal" data-target="#etcModal" style="width: 120px; margin-bottom: 10px;">その他</button>
+	 -->
 	</div>
 </div>
 <div id="translateGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>

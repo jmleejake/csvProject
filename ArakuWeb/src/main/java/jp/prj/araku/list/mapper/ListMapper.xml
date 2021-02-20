@@ -399,8 +399,10 @@ where
 <delete id="deletePrdTrans" parameterType="String">
 delete from
 	prd_trans_info
+<if test="value != null and value != ''">
 where
-	seq_id = #{seq_id}
+	seq_id = #{value}
+</if>
 </delete>
 
 <select id="getOrderSum" parameterType="OrderSum" resultType="OrderSum">
