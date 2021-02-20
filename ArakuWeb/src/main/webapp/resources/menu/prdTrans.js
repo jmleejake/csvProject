@@ -6,10 +6,10 @@ var columnDefs = [
     	, editable: true
     	, cellEditor: 'agPopupTextCellEditor'
 	}
-    /*, {headerName: "ＪＡＮコード", field: "jan_cd", width: 100
+    , {headerName: "ＪＡＮコード", field: "jan_cd", width: 170
     	, editable: true
     	, cellEditor: 'agPopupTextCellEditor'
-    }*/
+    }
     , {headerName: "区分", field: "order_gbn", width: 80
     	, editable: true
     	, cellEditor: 'agPopupTextCellEditor'
