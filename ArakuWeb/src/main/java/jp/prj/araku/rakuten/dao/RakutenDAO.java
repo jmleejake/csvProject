@@ -539,6 +539,7 @@ public class RakutenDAO {
 				/**
 				 * 2021.02.22 kim 치환시 주문정보를 商品中間マスタ로 insert처리
 				 * */
+				/*
 				PrdTransVO prdTransVO = new PrdTransVO();
 				prdTransVO.setOrder_no(vo.getOrder_no());
 				prdTransVO.setOrder_gbn("1");
@@ -555,6 +556,7 @@ public class RakutenDAO {
 				}else {
 					listMapper.insertPrdTrans(prdTransVO);
 				}
+				*/
 				
 				int i = 1;
 				for (String optionName : optionNames) {
