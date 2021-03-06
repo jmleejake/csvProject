@@ -40,6 +40,7 @@ import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 import jp.prj.araku.file.vo.ClickPostVO;
+import jp.prj.araku.file.vo.NewYamatoVO;
 import jp.prj.araku.file.vo.SagawaVO;
 import jp.prj.araku.file.vo.YamatoVO;
 import jp.prj.araku.list.mapper.IListMapper;
@@ -52,6 +53,7 @@ import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
 import jp.prj.araku.q10.mapper.IQ10Mapper;
 import jp.prj.araku.q10.vo.Q10VO;
+import jp.prj.araku.q10.vo.Q10YamatoVO;
 import jp.prj.araku.util.ArakuVO;
 import jp.prj.araku.util.CommonUtil;
 
@@ -1108,6 +1110,134 @@ public class Q10DAO {
 			beanToCSV.write(list);
 			
 		} finally {
+			if (csvWriter != null) {
+				csvWriter.close();
+			}
+			
+			if (writer != null) {
+				writer.close();
+			}
+		}
+	}
+	
+	public void q10YamatoUpdate(MultipartFile yamaUpload, String fileEncoding) throws IOException {
+		log.debug("q10YamatoUpdate");
+		log.debug("encoding : " + fileEncoding);
+		log.debug("contentType: " + yamaUpload.getContentType());
+		log.debug("name: " + yamaUpload.getName());
+		log.debug("original name: " + yamaUpload.getOriginalFilename());
+		log.debug("size: " + yamaUpload.getSize());
+		
+		IQ10Mapper mapper = sqlSession.getMapper(IQ10Mapper.class);
+		
+		BufferedReader reader = null;
+		try  {
+			reader = new BufferedReader(
+					new InputStreamReader(yamaUpload.getInputStream(), fileEncoding));
+			
+			CsvToBean<NewYamatoVO> csvToBean = new CsvToBeanBuilder<NewYamatoVO>(reader)
+                    .withType(NewYamatoVO.class)
+                    .withSkipLines(1)
+                    .withIgnoreLeadingWhiteSpace(true)
+                    .build();
+
+            Iterator<NewYamatoVO> iterator = csvToBean.iterator();
+
+            while (iterator.hasNext()) {
+            	NewYamatoVO vo = iterator.next();
+            	
+            	// 데이터가 있는지 체크
+            	Q10VO searchVO = new Q10VO();
+            	searchVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+            	searchVO.setOrder_no(vo.getCustomer_no());
+            	
+            	/*
+            	 * お客様管理番号(customer_no) 값을 키로 해서
+            	 * 伝票番号(slip_no) 값을 갱신
+            	 * */
+            	ArrayList<Q10VO> searchRetList = mapper.getQ10Info(searchVO);
+            	
+            	if (searchRetList.size() > 0) {
+            		Q10VO searchRet = searchRetList.get(0);
+            		
+            		searchVO.setSeq_id(searchRet.getSeq_id());
+                	searchVO.setInvoice_no(vo.getSlip_no());
+                	searchVO.setDelivery_company("1001");
+                	
+                	// お荷物伝票番号값 update
+                	mapper.updateQ10Info(searchVO);
+            	}
+            }
+            
+		} finally {
+			if (reader != null) {
+				reader.close();
+			}
+		}
+	}
+	
+	public void downloadQ10File(
+			HttpServletResponse response
+			, String[] id_lst
+			, String fileEncoding) 
+					throws IOException
+					, CsvDataTypeMismatchException
+					, CsvRequiredFieldEmptyException  {
+		
+		IQ10Mapper mapper = sqlSession.getMapper(IQ10Mapper.class);
+		
+		ArrayList<String> seq_id_list = new ArrayList<>();
+		for(String seq_id : id_lst) {
+			seq_id_list.add(seq_id);
+		}
+		Q10VO vo = new Q10VO();
+		vo.setSeq_id_list(seq_id_list);
+		ArrayList<Q10VO> list = mapper.getQ10Info(vo);
+		ArrayList<ArakuVO> downList = new ArrayList<ArakuVO>();
+		for(Q10VO vo2 : list) {
+			Q10YamatoVO vo3 = new Q10YamatoVO();
+			vo3.setDelivery_sts(vo2.getDelivery_sts());
+			vo3.setOrder_no(vo2.getOrder_no());
+			vo3.setCart_no(vo2.getCart_no());
+			vo3.setDelivery_company_q10(vo2.getDelivery_company_q10());
+			vo3.setInvoice_no(vo2.getInvoice_no());
+			vo3.setShip_date(vo2.getShip_date());
+			vo3.setShip_eta(vo2.getShip_eta());
+			vo3.setProduct_name(vo2.getProduct_name());
+			vo3.setQty(vo2.getQty());
+			vo3.setOption_info(vo2.getOption_info());
+			vo3.setOption_cd(vo2.getOption_cd());
+			vo3.setRecpt_name(vo2.getRecpt_name());
+			vo3.setProduct_cd(vo2.getProduct_cd());
+			vo3.setAds_no_site(vo2.getAds_no_site());
+			vo3.setPay_site(vo2.getPay_site());
+			downList.add(vo3);
+		}
+		
+		BufferedWriter writer = null;
+		CSVWriter csvWriter = null;
+		try {
+			String csvFileName = "Q10YAMA" + CommonUtil.getDate("YYYYMMdd", 0)+".csv";
+
+			response.setContentType("text/csv");
+
+			// creates mock data
+			String headerKey = "Content-Disposition";
+			String headerValue = String.format("attachment; filename=\"%s\"",
+					csvFileName);
+			response.setHeader(headerKey, headerValue);
+			response.setCharacterEncoding(fileEncoding);
+			
+			writer = new BufferedWriter(response.getWriter());
+			
+			csvWriter = new CSVWriter(writer
+					, CSVWriter.DEFAULT_SEPARATOR
+					, CSVWriter.NO_QUOTE_CHARACTER
+					, CSVWriter.DEFAULT_ESCAPE_CHARACTER
+					, CSVWriter.DEFAULT_LINE_END);
+			
+			CommonUtil.executeCSVDownload(csvWriter, writer, CommonUtil.q10YamatoHeader(), downList);
+		}finally {
 			if (csvWriter != null) {
 				csvWriter.close();
 			}

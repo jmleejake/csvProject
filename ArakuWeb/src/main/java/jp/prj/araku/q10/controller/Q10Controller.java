@@ -465,4 +465,38 @@ public class Q10Controller {
 		return listDao.deleteEtc(list);
 	}
 	
+	
+	/**
+	 * Q10更新ファイル
+	 * */
+	@RequestMapping(value="/yamaUpload", method=RequestMethod.POST)
+	public String processYamatoUpload(MultipartFile yamaUpload) throws IOException {
+		dao.q10YamatoUpdate(yamaUpload, upFileEncoding);
+		return "redirect:qFileDownView";
+	}
+	
+	@RequestMapping(value = "/qFileDownView")
+	public String showQFileDownView() {
+		return "/q10/q10FileDown";
+	}
+	
+	
+	@RequestMapping(value = "/qFileDown")
+	public void downloadQ10File(
+			HttpServletResponse response,
+			@RequestParam(value="id_lst") String id_lst) {
+		
+		id_lst = id_lst.replace("[", "");
+		id_lst = id_lst.replace("]", "");
+		String[] seq_id_list = id_lst.split(",");
+		try {
+			dao.downloadQ10File(response, seq_id_list, downFileEncoding);
+		} catch (IOException e) {
+			log.error(e.toString());
+		} catch (CsvDataTypeMismatchException e) {
+			log.error(e.toString());
+		} catch (CsvRequiredFieldEmptyException e) {
+			log.error(e.toString());
+		}
+	}
 }

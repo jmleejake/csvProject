@@ -530,6 +530,28 @@ public class CommonUtil {
 		return header;
 	}
 	
+	public static String[] q10YamatoHeader() {
+		String[] header = 
+			{
+				"配送状態"
+				, "注文番号"
+				, "カート番号"
+				, "配送会社"
+				, "送り状番号"
+				, "発送日"
+				, "発送予定日"
+				, "商品名"
+				, "数量"
+				, "オプション情報"
+				, "オプションコード"
+				, "受取人名"
+				, "販売者商品コード"
+				, "外部広告"
+				, "決済サイト"
+			};
+		return header;
+	}
+	
 	public static String toCommaFormat(long pdMoney) {
 		DecimalFormat form = new DecimalFormat("#,###");
 	    form.setDecimalSeparatorAlwaysShown(false);

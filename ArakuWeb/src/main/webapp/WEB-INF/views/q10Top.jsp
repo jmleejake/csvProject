@@ -70,6 +70,9 @@ $(document).ready(function() {
 				<li id="prdTrans" class="nav-item">
 				<a class="nav-link" href="prdTransView">商品中間マスタ</a>
 				</li>
+				<li id="qFile" class="nav-item">
+				<a class="nav-link" href="qFileDownView">Q10更新ファイル</a>
+				</li>
 				<li id="region" class="nav-item">
 				<a class="nav-link" href="regionView">マスタ管理</a>
 				</li>
