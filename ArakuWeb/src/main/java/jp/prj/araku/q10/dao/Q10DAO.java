@@ -1195,23 +1195,25 @@ public class Q10DAO {
 		ArrayList<Q10VO> list = mapper.getQ10Info(vo);
 		ArrayList<ArakuVO> downList = new ArrayList<ArakuVO>();
 		for(Q10VO vo2 : list) {
-			Q10YamatoVO vo3 = new Q10YamatoVO();
-			vo3.setDelivery_sts(vo2.getDelivery_sts());
-			vo3.setOrder_no(vo2.getOrder_no());
-			vo3.setCart_no(vo2.getCart_no());
-			vo3.setDelivery_company_q10(vo2.getDelivery_company_q10());
-			vo3.setInvoice_no(vo2.getInvoice_no());
-			vo3.setShip_date(vo2.getShip_date());
-			vo3.setShip_eta(vo2.getShip_eta());
-			vo3.setProduct_name(vo2.getProduct_name());
-			vo3.setQty(vo2.getQty());
-			vo3.setOption_info(vo2.getOption_info());
-			vo3.setOption_cd(vo2.getOption_cd());
-			vo3.setRecpt_name(vo2.getRecpt_name());
-			vo3.setProduct_cd(vo2.getProduct_cd());
-			vo3.setAds_no_site(vo2.getAds_no_site());
-			vo3.setPay_site(vo2.getPay_site());
-			downList.add(vo3);
+			if(null != vo2.getInvoice_no()) {
+				Q10YamatoVO vo3 = new Q10YamatoVO();
+				vo3.setDelivery_sts(vo2.getDelivery_sts());
+				vo3.setOrder_no(vo2.getOrder_no());
+				vo3.setCart_no(vo2.getCart_no());
+				vo3.setDelivery_company_q10(vo2.getDelivery_company_q10());
+				vo3.setInvoice_no(vo2.getInvoice_no());
+				vo3.setShip_date(vo2.getShip_date());
+				vo3.setShip_eta(vo2.getShip_eta());
+				vo3.setProduct_name(vo2.getProduct_name());
+				vo3.setQty(vo2.getQty());
+				vo3.setOption_info(vo2.getOption_info());
+				vo3.setOption_cd(vo2.getOption_cd());
+				vo3.setRecpt_name(vo2.getRecpt_name());
+				vo3.setProduct_cd(vo2.getProduct_cd());
+				vo3.setAds_no_site(vo2.getAds_no_site());
+				vo3.setPay_site(vo2.getPay_site());
+				downList.add(vo3);
+			}
 		}
 		
 		BufferedWriter writer = null;
