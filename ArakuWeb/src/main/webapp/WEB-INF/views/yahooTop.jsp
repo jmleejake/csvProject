@@ -40,6 +40,7 @@ $(document).ready(function() {
 
 <!-- for loading image -->
 <div class="loader"></div>
+<div id="loadingImg"></div>
 
 <nav class="navbar navbar-default">
 	<div class="container-fluid">

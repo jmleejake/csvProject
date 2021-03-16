@@ -132,6 +132,7 @@ $("#btn_trans").on("click", function() {
         return;
     }
     
+    loadMask('/resources/img/page-loader.gif');
     $.ajax({
 		url: "executeTrans"
 		, type:"post"
@@ -139,7 +140,7 @@ $("#btn_trans").on("click", function() {
 		, contentType: 'application/json'
 		, data:JSON.stringify(selectedRows)
 		, success: function(params){
-			console.log(params);
+			closeMask();
 			$("#hid_data").val(params);
 			$("#order_frm").submit();
     	}
