@@ -49,21 +49,18 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 	
 		<div class="navbar-collapse collapse" id="navbarColor03">
 			<ul class="nav navbar-nav">
+				<li id="fileView" class="nav-item">
+				<a class="nav-link" href="/jaiko/fileView">情報取り込み</a>
+				</li>
 				<li id="prdInfo" class="nav-item">
 				<a class="nav-link" href="/jaiko/prdInfo">商品情報</a>
 				</li>
-			</ul>
-			<ul class="nav navbar-nav">
 				<li id="prdInven" class="nav-item">
 				<a class="nav-link" href="/jaiko/prdInven">商品在庫</a>
 				</li>
-			</ul>
-			<ul class="nav navbar-nav">
 				<li id="prdWareIn" class="nav-item">
 				<a class="nav-link" href="/jaiko/prdWareIn">入庫</a>
 				</li>
-			</ul>
-			<ul class="nav navbar-nav">
 				<li id="prdWareOut" class="nav-item">
 				<a class="nav-link" href="/jaiko/prdWareOut">出庫</a>
 				</li>

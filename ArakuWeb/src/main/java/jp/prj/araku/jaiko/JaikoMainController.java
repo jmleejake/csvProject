@@ -1,5 +1,8 @@
 package jp.prj.araku.jaiko;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -14,9 +17,15 @@ public class JaikoMainController {
 	private Logger log = LoggerFactory.getLogger("jaikoLog");
 	
 	@RequestMapping(value = "", method = RequestMethod.GET)
-	public String jaikoLogin(ModelMap model
+	public String jaikoLogin(HttpServletRequest request, ModelMap model
 			, @RequestParam(value = "type", defaultValue = "0") int type) {
 		log.debug("jaiko login");
+		HttpSession session = request.getSession();
+		Object obj = session.getAttribute("login");
+		log.debug("after login object: {}", obj);
+		if(null != obj) {
+			return "jaiko/fileView";
+		}
 		model.addAttribute("type", type);
 		return "jaiko/login";
 	}
@@ -31,6 +40,12 @@ public class JaikoMainController {
 	public String jaikoPrdWareHouseOut() {
 		log.debug("jaikoPrdWareHouseOut");
 		return "jaiko/prdWarehouseOut";
+	}
+	
+	@RequestMapping(value = "/fileView", method = RequestMethod.GET)
+	public String jaikoFileView() {
+		log.debug("jaikoFileView");
+		return "jaiko/fileView";
 	}
 
 }

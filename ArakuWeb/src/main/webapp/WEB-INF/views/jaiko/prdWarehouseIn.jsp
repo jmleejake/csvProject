@@ -11,9 +11,11 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 <body>
 <jsp:include page="../jaikoTop.jsp"></jsp:include>
 <div class="container-fluid">
+<div class="col-sm-12">
+<div class="container-fluid col-sm-6">
 <!-- 거래처정보설정 S -->
 <div class="well container-fluid">
-	<button id="btn_sel_partner" type="button" class="btn btn-default" data-toggle="modal" data-target="#partnerModal" style="width: 150px; margin-bottom: 10px;">取引先情報設定</button>
+	<button id="btn_sel_partner" type="button" class="btn btn-primary" data-toggle="modal" data-target="#partnerModal" style="width: 150px; margin-bottom: 10px;">取引先情報設定</button>
 	<table class="table table-bordered">
 		<thead>
 		  <tr>
@@ -30,7 +32,8 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 	</table>
 </div>
 <!-- 거래처정보설정 E -->
-
+</div>
+<div class="container-fluid col-sm-6">
 <!-- 바코드 읽기 S -->
 <div class="well container-fluid">
 	<table class="table table-bordered">
@@ -49,11 +52,14 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 	</table>
 </div>
 <!-- 바코드 읽기 E -->
+</div>
+</div>
+
 
 <!-- table S -->
 <div class="well container-fluid">
 <button id="btn_commit" type="button" class="btn btn-success" style="width: 120px; margin-bottom: 10px;">登録</button>
-<div id="prdWareInGrid" style="width:auto; height: 300px;" class="ag-theme-balham"></div>
+<div id="prdWareInGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
 </div>
 <!-- table E -->
 

@@ -11,33 +11,42 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 <body>
 <jsp:include page="../jaikoTop.jsp"></jsp:include>
 <div class="container-fluid">
+<div class="col-sm-12">
+
+<div class="container-fluid col-sm-6">
 <!-- 거래처정보설정 S -->
 <div class="well container-fluid">
-	<div class="col-sm-8">
+	<div class="col-sm-4">
 	<button id="btn_sel_partner" type="button" class="btn btn-primary" data-toggle="modal" data-target="#partnerModal" style="width: 150px; margin-bottom: 10px;">取引先情報設定</button>
 	<table class="table table-bordered">
 		<thead>
 		  <tr>
-		    <th>取引先No.</th>
+<!-- 		    <th>取引先No.</th> -->
 		    <th>取引先名</th>
 		  </tr>
 		</thead>
 		<tbody>
 		  <tr>
-		    <td id="partner_id"></td>
+<!-- 		    <td id="partner_id"></td> -->
 		    <td id="partner_nm"></td>
 		  </tr>
 		</tbody>
 	</table>
 	</div>
-	<div class="col-sm-4">
-	<div class="col-sm-6">
+	<div class="col-sm-8">
+	<div class="col-sm-9">
 	<label>出庫日</label>
+	<div class="col-sm-12">
+	<div class="col-sm-6">
 	<!-- datepicker -->
-	<input type="text" id="delivery_dt" class="form-control" style="width: 100px;">
-	<button id="btn_search" type="button" class="btn btn-default" style="width: 80px; margin-bottom: 10px;">検索</button>
+	<input type="text" id="delivery_dt" class="form-control" style="width: 120px;">
 	</div>
 	<div class="col-sm-6">
+	<button id="btn_search" type="button" class="btn btn-default" style="width: 80px; margin-bottom: 10px;">検索</button>
+	</div>
+	</div>
+	</div>
+	<div class="col-sm-3">
 	<div class="btn-group-vertical">
 	<button id="btn_delivery" type="button" class="btn btn-default" style="width: 80px; margin-bottom: 10px;">納品書</button>
 	<button id="btn_bill" type="button" class="btn btn-default" style="width: 80px; margin-bottom: 10px;">請求書</button>
@@ -47,7 +56,9 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 	</div>
 </div>
 <!-- 거래처정보설정 E -->
+</div>
 
+<div class="container-fluid col-sm-6">
 <!-- 바코드 읽기 S -->
 <div class="well container-fluid">
 	<div class="col-sm-6">
@@ -86,11 +97,15 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 	</div>
 </div>
 <!-- 바코드 읽기 E -->
+</div>
+
+</div>
+
 
 <!-- table S -->
 <div class="well container-fluid">
 <button id="btn_commit" type="button" class="btn btn-success" style="width: 120px; margin-bottom: 10px;">登録</button>
-<div id="prdWareOutGrid" style="width:auto; height: 300px;" class="ag-theme-balham"></div>
+<div id="prdWareOutGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
 </div>
 <!-- table E -->
 

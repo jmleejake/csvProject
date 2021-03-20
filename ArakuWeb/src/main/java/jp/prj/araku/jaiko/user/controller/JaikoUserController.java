@@ -29,11 +29,12 @@ public class JaikoUserController {
 		log.debug("id: {} pass: {}",user_id,user_pass);
 		String ret = "";
 		int procRet = dao.processLogin(session, user_id, user_pass);
+		log.debug("jaiko login {}",procRet);
 		if(procRet == 1 || procRet == 2) {
 			model.addAttribute("type", procRet);
 			ret = "redirect:/jaiko";
 		}else if(procRet == 3) {
-			ret = "jaiko/prdInfo";
+			ret = "jaiko/fileView";
 		}
 		return ret;
 	}
