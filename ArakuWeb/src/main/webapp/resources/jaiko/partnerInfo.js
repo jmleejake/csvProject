@@ -23,6 +23,14 @@ var columnDefs = [
             rows: '3'
         }
 	}
+	/*
+	郵便番号
+	住所
+	電話番号
+	FAX番号
+	担当者名
+	*/
+	, {headerName: "詳細情報", width: 250, cellRenderer: 'btnRenderer'}
 ];
 
 // specify the data
@@ -46,6 +54,16 @@ var partnerGridOptions = {
 	rowSelection: 'multiple',
 	columnDefs: columnDefs,
 	rowData: rowData,
+	components: {
+		btnRenderer: function(param) {
+			var html = "<div>";
+			html += "<span>";
+			html += "<button type='button' class='btn btn-default' data-toggle='modal' data-target='#partnerDetail' onclick='javascript:showDetail("+param.data.seq_id+");' style='height:25px; margin-bottom:5px;'>詳細</button>";
+			html += "</span>";
+			html += "</div>"
+			return html;
+		}
+	},
 	rowClassRules: {
     	'trans-created': function(params) {
     		var target = params.data.register_date;
@@ -226,5 +244,78 @@ $("#btn_part_select").on("click", function() {
 /*
 ------------------
 button action E
+------------------
+*/
+
+
+/*
+------------------
+상세화면S
+------------------
+*/
+function showDetail(data) {
+	$.ajax({
+		url: "/jaiko/partner/getInfo"
+		, type:"get"
+		, data: {
+			seq_id: data
+		}
+		, dataType: "json"
+		, contentType: 'application/json'
+		, success: function(res) {
+			if(res.length > 0) {
+				var data = res[0];
+				$("#part_seq_id").val(data.seq_id);
+				$("#part_id").val(data.partner_id);
+				$("#part_nm").val(data.partner_nm);
+				$("#part_post").val(data.partner_post);
+				$("#part_add").val(data.partner_add);
+				$("#part_tel").val(data.partner_tel);
+				$("#part_fax").val(data.partner_fax);
+				$("#part_tan").val(data.tantou_nm);
+			}else {
+				alert("情報がありません。");
+			}
+		}
+	});
+}
+
+function detailCommit() {
+	partnerModified.push({
+		seq_id: $("#part_seq_id").val()
+		, partner_post: $("#part_post").val()
+		, partner_add: $("#part_add").val()
+		, partner_tel: $("#part_tel").val()
+		, partner_fax: $("#part_fax").val()
+		, tantou_nm: $("#part_tan").val()
+	});
+	
+	$.ajax({
+		url: "/jaiko/partner/manipulate"
+		, type:"post"
+		, dataType: "json"
+		, contentType: 'application/json'
+		, data:JSON.stringify(partnerModified)
+		, success: function(res) {
+			if(res.length > 0) {
+				var data = res[0];
+				$("#part_seq_id").val(data.seq_id);
+				$("#part_id").val(data.partner_id);
+				$("#part_nm").val(data.partner_nm);
+				$("#part_post").val(data.partner_post);
+				$("#part_add").val(data.partner_add);
+				$("#part_tel").val(data.partner_tel);
+				$("#part_fax").val(data.partner_fax);
+				$("#part_tan").val(data.tantou_nm);
+				partnerModified = []; // 수정데이터
+			}else {
+				alert("情報がありません。");
+			}
+		}
+	});
+}
+/*
+------------------
+상세화면E
 ------------------
 */

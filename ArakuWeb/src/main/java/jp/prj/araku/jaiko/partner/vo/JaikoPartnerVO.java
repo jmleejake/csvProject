@@ -18,6 +18,17 @@ public class JaikoPartnerVO {
 	
 	private String keyword;
 	
+	/**郵便番号*/
+	private String partner_post;
+	/**住所*/
+	private String partner_add;
+	/**電話番号*/
+	private String partner_tel;
+	/**FAX番号*/
+	private String partner_fax;
+	/**担当者名*/
+	private String tantou_nm;
+	
 	public String getSeq_id() {
 		return seq_id;
 	}
@@ -66,12 +77,35 @@ public class JaikoPartnerVO {
 	public void setKeyword(String keyword) {
 		this.keyword = keyword;
 	}
-	
-	@Override
-	public String toString() {
-		return String.format(
-				"JaikoPartnerVO [seq_id=%s, partner_id=%s, partner_nm=%s, reg_user_id=%s, reg_dt=%s, upd_user_id=%s, upd_dt=%s, keyword=%s]",
-				seq_id, partner_id, partner_nm, reg_user_id, reg_dt, upd_user_id, upd_dt, keyword);
+	public String getPartner_post() {
+		return partner_post;
+	}
+	public void setPartner_post(String partner_post) {
+		this.partner_post = partner_post;
+	}
+	public String getPartner_add() {
+		return partner_add;
+	}
+	public void setPartner_add(String partner_add) {
+		this.partner_add = partner_add;
+	}
+	public String getPartner_tel() {
+		return partner_tel;
+	}
+	public void setPartner_tel(String partner_tel) {
+		this.partner_tel = partner_tel;
+	}
+	public String getPartner_fax() {
+		return partner_fax;
+	}
+	public void setPartner_fax(String partner_fax) {
+		this.partner_fax = partner_fax;
+	}
+	public String getTantou_nm() {
+		return tantou_nm;
+	}
+	public void setTantou_nm(String tantou_nm) {
+		this.tantou_nm = tantou_nm;
 	}
 
 }

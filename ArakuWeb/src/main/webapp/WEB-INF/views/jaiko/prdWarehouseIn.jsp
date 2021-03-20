@@ -95,6 +95,56 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 	</div>
 </div>
 <!-- Modal E -->
+
+<!-- Modal S -->
+<div class="modal fade" id="partnerDetail" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-body">
+			<div>
+			<button type="button" onclick="javascript:detailCommit();" class="btn btn-success" style="width: 120px; margin-bottom: 10px;">更新</button>
+			</div>
+			<input type="hidden" id="part_seq_id">
+			<table class="table table-bordered">
+			<tbody>
+			<tr>
+			<td>取引先No.</td>
+			<td><input type="text" class="form-control" id="part_id" disabled="disabled"></td>
+			</tr>
+			<tr>
+			<td>取引先名</td>
+			<td><input type="text" class="form-control" id="part_nm" disabled="disabled"></td>
+			</tr>
+			<tr>
+			<td>郵便番号</td>
+			<td><input type="text" class="form-control" id="part_post"></td>
+			</tr>
+			<tr>
+			<td>住所</td>
+			<td><input type="text" class="form-control" id="part_add"></td>
+			</tr>
+			<tr>
+			<td>電話番号</td>
+			<td><input type="text" class="form-control" id="part_tel"></td>
+			</tr>
+			<tr>
+			<td>FAX番号</td>
+			<td><input type="text" class="form-control" id="part_fax"></td>
+			</tr>
+			<tr>
+			<td>担当者名</td>
+			<td><input type="text" class="form-control" id="part_tan"></td>
+			</tr>
+			</tbody>
+			</table>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">閉じる</button>
+			</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Modal E -->
 </div>
 <script src="<%=svrInfo %>/resources/jaiko/prdWarehouseIn.js"></script>
 <script type="text/javascript">

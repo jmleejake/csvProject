@@ -5,8 +5,10 @@ grid setting S
 */
 
 var columnDefs = [
-	{headerName: "商品コード", field: "prd_cd", width: 200}
-	, {headerName: "ＪＡＮコード", field: "jan_cd", width: 200}
+	{headerName: "商品コード", field: "prd_cd", width: 200, editable: true
+		, cellEditor: 'agPopupTextCellEditor'}
+	, {headerName: "ＪＡＮコード", field: "jan_cd", width: 200, editable: true
+		, cellEditor: 'agPopupTextCellEditor'}
 	, {headerName: "ブランド", field: "brand_nm", width: 200
 		, editable: true
     	, cellEditor: 'agLargeTextCellEditor'
@@ -25,34 +27,14 @@ var columnDefs = [
             rows: '6'
         }
 	}
-	, {headerName: "入数", field: "prd_qty", width: 200
-		, editable: true
-    	, cellEditor: 'agLargeTextCellEditor'
-    	, cellEditorParams: {
-            maxLength: '500',
-            cols: '50',
-            rows: '6'
-        }
-	}
-	, {headerName: "ケース数", field: "prd_case", width: 250
-		, editable: true
-    	, cellEditor: 'agLargeTextCellEditor'
-    	, cellEditorParams: {
-            maxLength: '500',
-            cols: '50',
-            rows: '6'
-        }
-	}
-	, {headerName: "バラ数", field: "prd_bara", width: 250
-		, editable: true
-    	, cellEditor: 'agLargeTextCellEditor'
-    	, cellEditorParams: {
-            maxLength: '500',
-            cols: '50',
-            rows: '6'
-        }
-	}
-	, {headerName: "現在商品数", field: "now_prd_cnt", width: 250}
+	, {headerName: "入数", field: "prd_qty", width: 200, editable: true
+		, cellEditor: 'agPopupTextCellEditor'}
+	, {headerName: "ケース数", field: "prd_case", width: 250, editable: true
+		, cellEditor: 'agPopupTextCellEditor'}
+	, {headerName: "バラ数", field: "prd_bara", width: 250, editable: true
+		, cellEditor: 'agPopupTextCellEditor'}
+	, {headerName: "現在商品数", field: "now_prd_cnt", width: 250, editable: true
+		, cellEditor: 'agPopupTextCellEditor'}
 	, {headerName: "賞味期限", field: "exp_dt", width: 250, editable: true, cellEditor: 'datePicker'}
 	, {headerName: "本体売価", field: "sell_prc", width: 250
 		, editable: true
@@ -70,11 +52,14 @@ var rowData = [];
 
 // 수정데이터 배열
 var modifiedData = [];
+var prevPrdCd, afterPrdCd;
+var prevJanCd, afterJanCd;
 var prevBrandNm, afterBrandNm;
 var prevPrdNm, afterPrdNm;
 var prevPrdQty, afterPrdQty;
 var prevPrdCase, afterPrdCase;
 var prevPrdBara, afterPrdBara;
+var prevNowPrdCnt, afterNowPrdCnt;
 var prevExpDt, afterExpDt;
 var prevSellPrc, afterSellPrc;
 
@@ -110,6 +95,8 @@ var prdInvenGridOptions = {
     },
     onCellEditingStarted: function(event) {
         var previousData = event.node.data;
+        prevJanCd = previousData.jan_cd;
+        prevPrdCd = previousData.prd_cd;
         prevBrandNm = previousData.brand_nm;
         prevPrdNm = previousData.prd_nm;
         prevPrdQty = previousData.prd_qty;
@@ -117,9 +104,12 @@ var prdInvenGridOptions = {
         prevPrdBara = previousData.prd_bara;
         prevExpDt = previousData.exp_dt;
         prevSellPrc = previousData.sell_prc;
+        prevNowPrdCnt = previousData.now_prd_cnt; 
     },
     onCellEditingStopped: function(event) {
         var afterData = event.node.data;
+        afterJanCd = afterData.jan_cd;
+        afterPrdCd = afterData.prd_cd;
         afterBrandNm = afterData.brand_nm;
         afterPrdNm = afterData.prd_nm;
         afterPrdQty = afterData.prd_qty;
@@ -127,9 +117,13 @@ var prdInvenGridOptions = {
         afterPrdBara = afterData.prd_bara;
         afterExpDt = afterData.exp_dt;
         afterSellPrc = afterData.sell_prc;
+        afterNowPrdCnt = afterData.now_prd_cnt;
         
         if (!(prevBrandNm == afterBrandNm) ||
         	!(prevPrdNm == afterPrdNm) ||
+        	!(prevJanCd == afterJanCd) ||
+        	!(prevPrdCd == afterPrdCd) ||
+        	!(prevNowPrdCnt == afterNowPrdCnt) ||
         	!(prevPrdQty == afterPrdQty) ||
         	!(prevPrdCase == afterPrdCase) ||
         	!(prevPrdBara == afterPrdBara) ||
@@ -140,6 +134,9 @@ var prdInvenGridOptions = {
         		seq_id:afterData.seq_id
 				, brand_nm:afterBrandNm
 				, prd_nm:afterPrdNm
+				, jan_cd:afterJanCd
+				, prd_cd:afterPrdCd
+				, now_prd_cnt:afterNowPrdCnt
 				, prd_qty:afterPrdQty
 				, prd_case:afterPrdCase
 				, prd_bara:afterPrdBara

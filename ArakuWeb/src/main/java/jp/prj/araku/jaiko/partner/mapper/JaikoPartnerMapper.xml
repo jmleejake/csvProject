@@ -10,6 +10,11 @@ select
   seq_id
   , partner_id
   , partner_nm
+  , partner_post
+  , partner_add
+  , partner_tel
+  , partner_fax
+  , tantou_nm
   , date_format(reg_dt, '%Y/%m/%d') reg_dt
   , date_format(upd_dt, '%Y/%m/%d') upd_dt
 from jaiko_partner_info
@@ -17,6 +22,9 @@ from jaiko_partner_info
 	<if test="keyword != null and keyword != ''">
 	partner_id like '%${keyword}%' or
 	partner_nm like '%${keyword}%'
+	</if>
+	<if test="seq_id != null and seq_id != ''">
+	seq_id = #{seq_id}
 	</if>
 </where>
 order by upd_dt desc, seq_id desc
@@ -36,6 +44,21 @@ set
   </if>
   <if test="partner_nm != null and partner_nm != ''">
   , partner_nm = #{partner_nm}
+  </if>
+  <if test="partner_post != null and partner_post != ''">
+  , partner_post = #{partner_post}
+  </if>
+  <if test="partner_add != null and partner_add != ''">
+  , partner_add = #{partner_add}
+  </if>
+  <if test="partner_tel != null and partner_tel != ''">
+  , partner_tel = #{partner_tel}
+  </if>
+  <if test="partner_fax != null and partner_fax != ''">
+  , partner_fax = #{partner_fax}
+  </if>
+  <if test="tantou_nm != null and tantou_nm != ''">
+  , tantou_nm = #{tantou_nm}
   </if>
 where
   seq_id = #{seq_id}
