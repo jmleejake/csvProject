@@ -181,9 +181,9 @@ public class JaikoPrdInventoryDAO {
 				}
 				
 				if(arr[k] > list.size()) {
-					subList.add(list.subList(k*arr[k-1], list.size()));
+					subList.add(list.subList(arr[k-1], list.size()));
 				}else {
-					subList.add(list.subList(k*arr[k-1], arr[k]));
+					subList.add(list.subList(k*arr[0], arr[k]));
 				}
 			}
 		}else {
@@ -209,7 +209,7 @@ public class JaikoPrdInventoryDAO {
 			headerList.put(10, "備考");
 			
 			for(int i1=0; i1<subList.size(); i1++) {
-				sheet = workbook.createSheet("JAIKOINVENTORY-DATA"+(i1+1));
+				sheet = workbook.createSheet("ページ"+(i1+1));
 				row = sheet.createRow(0);
 				sheet.addMergedRegion(new CellRangeAddress(0, 0, 2, 9));
 				row.createCell(0).setCellValue("");
