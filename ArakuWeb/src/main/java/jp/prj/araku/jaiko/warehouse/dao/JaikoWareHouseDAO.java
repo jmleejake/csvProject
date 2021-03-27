@@ -76,34 +76,67 @@ public class JaikoWareHouseDAO {
 			if(!"".equals(target.getPartner_nm())) {
 				vo.setPartner_nm(target.getPartner_nm());
 			}
-		}
-		
-		JaikoPrdInventoryVO invenVO = new JaikoPrdInventoryVO();
-		invenVO.setJan_cd(vo.getJan_cd());
-		invenVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
-		ArrayList<JaikoPrdInventoryVO> invenRetList = invenMapper.getJaikoPrdInventory(invenVO);
 			
-		int iPrdQty = Integer.parseInt(null != vo.getPrd_qty() ? vo.getPrd_qty() : invenRetList.size() > 0 ? invenRetList.get(0).getPrd_qty() : "0");
-		int iPrdCase = Integer.parseInt(null != vo.getPrd_case() ? vo.getPrd_case() : "0");
-		int iPrdBara = Integer.parseInt(null != vo.getPrd_bara() ? vo.getPrd_bara() : "0");
-		if(null != vo.getSearch_type() && "wareIn".equals(vo.getSearch_type())) {
-			// 入庫
-			JaikoPrdInfoVO prdVO = new JaikoPrdInfoVO();
-			prdVO.setSearch_type(vo.getSearch_type());
-			prdVO.setJan_cd(vo.getJan_cd());
-			prdVO.setBrand_nm(vo.getBrand_nm());
-			prdVO.setPrd_nm(vo.getPrd_nm());
-			prdVO.setPartner_id(vo.getPartner_id());
-			prdVO.setPartner_nm(vo.getPartner_nm());
-			prdMapper.updateJaikoPrdInfo(prdVO);
-			
-			JaikoWareHouseVO wareHouseVO = new JaikoWareHouseVO();
-			wareHouseVO.setJan_cd(vo.getJan_cd());
-			ArrayList<JaikoWareHouseVO> wareRet = wareHouseMapper.getJaikoWareHouse(wareHouseVO);
-			if(wareRet.size() > 0) {
-				wareHouseVO.setSearch_type(vo.getSearch_type());
-				wareHouseMapper.updateJaikoWareHouse(wareHouseVO);
-				if(invenRetList.size() > 0) {
+			JaikoPrdInventoryVO invenVO = new JaikoPrdInventoryVO();
+			invenVO.setJan_cd(vo.getJan_cd());
+			invenVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+			ArrayList<JaikoPrdInventoryVO> invenRetList = invenMapper.getJaikoPrdInventory(invenVO);
+				
+			int iPrdQty = Integer.parseInt(null != vo.getPrd_qty() ? vo.getPrd_qty() : invenRetList.size() > 0 ? invenRetList.get(0).getPrd_qty() : "0");
+			int iPrdCase = Integer.parseInt(null != vo.getPrd_case() ? vo.getPrd_case() : "0");
+			int iPrdBara = Integer.parseInt(null != vo.getPrd_bara() ? vo.getPrd_bara() : "0");
+			if(null != vo.getSearch_type() && "wareIn".equals(vo.getSearch_type())) {
+				// 入庫
+				JaikoPrdInfoVO prdVO = new JaikoPrdInfoVO();
+				prdVO.setSearch_type(vo.getSearch_type());
+				prdVO.setJan_cd(vo.getJan_cd());
+				prdVO.setBrand_nm(vo.getBrand_nm());
+				prdVO.setPrd_nm(vo.getPrd_nm());
+				prdVO.setPartner_id(vo.getPartner_id());
+				prdVO.setPartner_nm(vo.getPartner_nm());
+				prdMapper.updateJaikoPrdInfo(prdVO);
+				
+				JaikoWareHouseVO wareHouseVO = new JaikoWareHouseVO();
+				wareHouseVO.setJan_cd(vo.getJan_cd());
+				ArrayList<JaikoWareHouseVO> wareRet = wareHouseMapper.getJaikoWareHouse(wareHouseVO);
+				if(wareRet.size() > 0) {
+					wareHouseVO.setSearch_type(vo.getSearch_type());
+					wareHouseMapper.updateJaikoWareHouse(wareHouseVO);
+					if(invenRetList.size() > 0) {
+						JaikoPrdInventoryVO invenRet = invenRetList.get(0);
+						invenVO.setSearch_type(vo.getSearch_type());
+						invenVO.setBrand_nm(vo.getBrand_nm());
+						invenVO.setPrd_nm(vo.getPrd_nm());
+						invenVO.setPrd_qty(vo.getPrd_qty());
+						invenVO.setPrd_case(vo.getPrd_case());
+						invenVO.setPrd_bara(vo.getPrd_bara());
+						invenVO.setExp_dt(vo.getExp_dt());
+						invenVO.setSell_prc(vo.getSell_prc());
+						invenVO.setNow_prd_cnt(String.valueOf(Integer.parseInt(invenRet.getNow_prd_cnt()) + (iPrdQty*iPrdCase+iPrdBara)));
+						invenMapper.updateJaikoPrdInventory(invenVO);
+					}else {
+						invenMapper.insertJaikoPrdInventoryForWareIn(invenVO);
+					}
+				}else {
+					wareHouseMapper.insertJaikoWareHouse(wareHouseVO);
+				}
+			}else if(null != vo.getSearch_type() && "wareOut".equals(vo.getSearch_type())) {
+				// 出庫
+				JaikoPrdInfoVO prdVO = new JaikoPrdInfoVO();
+				prdVO.setSearch_type(vo.getSearch_type());
+				prdVO.setJan_cd(vo.getJan_cd());
+				prdVO.setBrand_nm(vo.getBrand_nm());
+				prdVO.setPrd_nm(vo.getPrd_nm());
+				prdVO.setPartner_id(vo.getPartner_id());
+				prdVO.setPartner_nm(vo.getPartner_nm());
+				prdMapper.updateJaikoPrdInfo(prdVO);
+				
+				JaikoWareHouseVO wareHouseVO = new JaikoWareHouseVO();
+				wareHouseVO.setJan_cd(vo.getJan_cd());
+				ArrayList<JaikoWareHouseVO> wareRet = wareHouseMapper.getJaikoWareHouse(wareHouseVO);
+				if(wareRet.size() > 0) {
+					wareHouseVO.setSearch_type(vo.getSearch_type());
+					wareHouseMapper.updateJaikoWareHouse(wareHouseVO);
 					JaikoPrdInventoryVO invenRet = invenRetList.get(0);
 					invenVO.setSearch_type(vo.getSearch_type());
 					invenVO.setBrand_nm(vo.getBrand_nm());
@@ -113,48 +146,16 @@ public class JaikoWareHouseDAO {
 					invenVO.setPrd_bara(vo.getPrd_bara());
 					invenVO.setExp_dt(vo.getExp_dt());
 					invenVO.setSell_prc(vo.getSell_prc());
-					invenVO.setNow_prd_cnt(String.valueOf(Integer.parseInt(invenRet.getNow_prd_cnt()) + (iPrdQty*iPrdCase+iPrdBara)));
+					invenVO.setNow_prd_cnt(String.valueOf(Integer.parseInt(invenRet.getNow_prd_cnt()) - (iPrdQty*iPrdCase+iPrdBara)));
 					invenMapper.updateJaikoPrdInventory(invenVO);
 				}else {
-					invenMapper.insertJaikoPrdInventoryForWareIn(invenVO);
+					wareHouseMapper.insertJaikoWareHouse(wareHouseVO);
 				}
-			}else {
-				wareHouseMapper.insertJaikoWareHouse(wareHouseVO);
-			}
-		}else if(null != vo.getSearch_type() && "wareOut".equals(vo.getSearch_type())) {
-			// 出庫
-			JaikoPrdInfoVO prdVO = new JaikoPrdInfoVO();
-			prdVO.setSearch_type(vo.getSearch_type());
-			prdVO.setJan_cd(vo.getJan_cd());
-			prdVO.setBrand_nm(vo.getBrand_nm());
-			prdVO.setPrd_nm(vo.getPrd_nm());
-			prdVO.setPartner_id(vo.getPartner_id());
-			prdVO.setPartner_nm(vo.getPartner_nm());
-			prdMapper.updateJaikoPrdInfo(prdVO);
-			
-			JaikoWareHouseVO wareHouseVO = new JaikoWareHouseVO();
-			wareHouseVO.setJan_cd(vo.getJan_cd());
-			ArrayList<JaikoWareHouseVO> wareRet = wareHouseMapper.getJaikoWareHouse(wareHouseVO);
-			if(wareRet.size() > 0) {
-				wareHouseVO.setSearch_type(vo.getSearch_type());
-				wareHouseMapper.updateJaikoWareHouse(wareHouseVO);
-				JaikoPrdInventoryVO invenRet = invenRetList.get(0);
-				invenVO.setSearch_type(vo.getSearch_type());
-				invenVO.setBrand_nm(vo.getBrand_nm());
-				invenVO.setPrd_nm(vo.getPrd_nm());
-				invenVO.setPrd_qty(vo.getPrd_qty());
-				invenVO.setPrd_case(vo.getPrd_case());
-				invenVO.setPrd_bara(vo.getPrd_bara());
-				invenVO.setExp_dt(vo.getExp_dt());
-				invenVO.setSell_prc(vo.getSell_prc());
-				invenVO.setNow_prd_cnt(String.valueOf(Integer.parseInt(invenRet.getNow_prd_cnt()) - (iPrdQty*iPrdCase+iPrdBara)));
-				invenMapper.updateJaikoPrdInventory(invenVO);
-			}else {
-				wareHouseMapper.insertJaikoWareHouse(wareHouseVO);
 			}
 		}
-		
-		return getJaikoWareHouse(new JaikoWareHouseVO());
+		JaikoWareHouseVO retVO = new JaikoWareHouseVO();
+		retVO.setSearch_type("afterCommit");
+		return getJaikoWareHouse(retVO);
 	}
 
 }

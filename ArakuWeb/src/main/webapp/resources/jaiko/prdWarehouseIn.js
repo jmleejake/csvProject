@@ -384,7 +384,7 @@ function setRowData(result) {
 
 $("#btn_commit").on("click", function() {
 	console.log("登録");
-	if($("#partner_id").text() === "") {
+	if($("#partner_id").val() === "") {
 		pleaseSelectNotify('取引先を選択してください。');
 		return;
 	}
@@ -394,8 +394,11 @@ $("#btn_commit").on("click", function() {
 		return;
 	}
 	
-	modifiedData[0].partner_id = $("#partner_id").text();
-	modifiedData[0].partner_nm = $("#partner_nm").text();
+	for(var i=0; i<modifiedData.length; i++) {
+		modifiedData[i].partner_id = $("#partner_id").val();
+		modifiedData[i].partner_nm = $("#partner_nm").text();
+	}
+	
 	
 	$.ajax({
 		url: "/jaiko/warehouse/manipulate"
@@ -405,6 +408,11 @@ $("#btn_commit").on("click", function() {
 		, data:JSON.stringify(modifiedData)
 		, success: setRowData
 	});
+});
+
+$("#btn_delete").on("click", function() {
+	var selectedData = prdWareInGridOptions.api.getSelectedRows();
+	prdWareInGridOptions.api.applyTransaction({ remove: selectedData });
 });
 
 /*
@@ -429,8 +437,30 @@ function search() {
     jan_cd: $("#jan_cd").val()
     , search_type: 'srch'
     }
-    , success: setRowData
-});
+    , success: function(result) {
+    	var row = {
+			seq_id: result[0].seq_id
+			, prd_cd:result[0].prd_cd
+			, brand_nm:result[0].brand_nm
+			, prd_nm:result[0].prd_nm
+			, jan_cd:result[0].jan_cd
+			, prd_cnt:result[0].prd_cnt
+			, prd_unit_prc:result[0].prd_unit_prc
+			, tax_incld:result[0].tax_incld
+			, tax_rt:result[0].tax_rt
+			, now_prd_cnt:result[0].now_prd_cnt
+			, prd_qty:result[0].prd_qty
+			, prd_case:result[0].prd_case
+			, prd_bara:result[0].prd_bara
+			, exp_dt:result[0].exp_dt
+			, sell_prc:result[0].sell_prc
+			, register_date:result[0].reg_dt
+			, update_date:result[0].upd_dt
+		};
+		rowData.push(row);
+		prdWareInGridOptions.api.setRowData(rowData);
+    }
+    });
 }
 
 $("#jan_cd").on("change paste", function() {

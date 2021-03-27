@@ -236,7 +236,7 @@ $("#btn_part_select").on("click", function() {
     }
     
     $("#partnerModal").modal("hide");
-    $("#partner_id").html(selectedRows[0].partner_id);
+    $("#partner_id").val(selectedRows[0].partner_id);
     $("#partner_nm").html(selectedRows[0].partner_nm);
     $("#jan_cd").focus();
 });

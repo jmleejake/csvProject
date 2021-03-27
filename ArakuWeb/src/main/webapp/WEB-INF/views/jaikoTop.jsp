@@ -17,9 +17,9 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 <link rel="stylesheet" href="<%=svrInfo %>/resources/alertfy-js-0.3.11/alertify.default.css">
 <script src="<%=svrInfo %>/resources/alertfy-js-0.3.11/alertify.min.js"></script>
 
-<link rel="stylesheet" href="<%=svrInfo %>/resources/ag-grid/ag-grid.css">
-<link rel="stylesheet" href="<%=svrInfo %>/resources/ag-grid/ag-theme-balham.css">
-<script src="<%=svrInfo %>/resources/ag-grid/ag-grid.min.noStyle.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/ag-grid-community/dist/styles/ag-grid.css">
+<link rel="stylesheet" href="https://unpkg.com/ag-grid-community/dist/styles/ag-theme-balham.css">
+<script src="https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.noStyle.js"></script>
 
 <link rel="stylesheet" href="<%=svrInfo %>/resources/bootstrap-datepicker-1.6.4/bootstrap-datepicker.min.css">
 <link rel="stylesheet" href="<%=svrInfo %>/resources/bootstrap-datepicker-1.6.4/bootstrap-datepicker3.min.css">

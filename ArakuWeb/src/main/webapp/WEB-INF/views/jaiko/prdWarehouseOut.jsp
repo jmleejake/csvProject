@@ -32,6 +32,7 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 		  </tr>
 		</tbody>
 	</table>
+	<input type="hidden" id="partner_id">
 	</div>
 	<div class="col-sm-8">
 	<div class="col-sm-9">
@@ -105,6 +106,7 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 <!-- table S -->
 <div class="well container-fluid">
 <button id="btn_commit" type="button" class="btn btn-success" style="width: 120px; margin-bottom: 10px;">登録</button>
+<button id="btn_delete" type="button" class="btn btn-danger" style="width: 120px; margin-bottom: 10px;">削除</button>
 <div id="prdWareOutGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
 </div>
 <!-- table E -->

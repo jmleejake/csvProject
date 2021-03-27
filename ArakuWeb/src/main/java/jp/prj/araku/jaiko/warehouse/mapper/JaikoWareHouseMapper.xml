@@ -41,6 +41,9 @@ left outer join jaiko_warehouse_info jwi on jwi.jan_cd = jpi.jan_cd
 	<if test="from_dt != null and from_dt != '' and to_dt != null and to_dt != ''">
 	jwi.delivery_dt between date_format (#{from_dt}, '%Y%m%d%H%i%s') and date_format (#{to_dt}, '%Y%m%d%H%i%s')
 	</if>
+	<if test="search_type == 'afterCommit'">
+	jii.upd_dt between date_add(now(), interval -1 hour) and now()
+	</if>
 </where>
 order by jii.upd_dt desc, jwi.seq_id desc
 </select>
