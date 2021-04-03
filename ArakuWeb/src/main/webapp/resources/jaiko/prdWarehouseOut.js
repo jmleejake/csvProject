@@ -25,71 +25,22 @@ var columnDefs = [
             rows: '6'
         }
 	}
-	, {headerName: "入数", field: "prd_qty", width: 100
-		, editable: true
-    	, cellEditor: 'agLargeTextCellEditor'
-    	, cellEditorParams: {
-            maxLength: '500',
-            cols: '50',
-            rows: '6'
-        }
-	}
-	, {headerName: "ケース数", field: "prd_case", width: 250
-		, editable: true
-    	, cellEditor: 'agLargeTextCellEditor'
-    	, cellEditorParams: {
-            maxLength: '500',
-            cols: '50',
-            rows: '6'
-        }
-	}
-	, {headerName: "バラ数", field: "prd_bara", width: 250
-		, editable: true
-    	, cellEditor: 'agLargeTextCellEditor'
-    	, cellEditorParams: {
-            maxLength: '500',
-            cols: '50',
-            rows: '6'
-        }
-	}
+	, {headerName: "入数", field: "prd_qty", width: 100, editable: true
+    	, cellEditor: 'agPopupTextCellEditor'}
+	, {headerName: "ケース数", field: "prd_case", width: 250, editable: true
+    	, cellEditor: 'agPopupTextCellEditor'}
+	, {headerName: "バラ数", field: "prd_bara", width: 250, editable: true
+    	, cellEditor: 'agPopupTextCellEditor'}
 	, {headerName: "現在商品数", field: "now_prd_cnt", width: 250}
 	, {headerName: "賞味期限", field: "exp_dt", width: 250, editable: true, cellEditor: 'datePicker'}
-	, {headerName: "本体売価", field: "sell_prc", width: 250
-		, editable: true
-    	, cellEditor: 'agLargeTextCellEditor'
-    	, cellEditorParams: {
-            maxLength: '500',
-            cols: '50',
-            rows: '6'
-        }
-	}
-	, {headerName: "単価", field: "prd_unit_prc", width: 100
-		, editable: true
-    	, cellEditor: 'agLargeTextCellEditor'
-    	, cellEditorParams: {
-            maxLength: '500',
-            cols: '50',
-            rows: '6'
-        }
-	}
-	, {headerName: "商品税(抜、込)", field: "tax_incld", width: 100
-		, editable: true
-    	, cellEditor: 'agLargeTextCellEditor'
-    	, cellEditorParams: {
-            maxLength: '500',
-            cols: '50',
-            rows: '6'
-        }
-	}
-	, {headerName: "税率", field: "tax_rt", width: 100
-		, editable: true
-    	, cellEditor: 'agLargeTextCellEditor'
-    	, cellEditorParams: {
-            maxLength: '500',
-            cols: '50',
-            rows: '6'
-        }
-	}
+	, {headerName: "本体売価", field: "sell_prc", width: 250, editable: true
+    	, cellEditor: 'agPopupTextCellEditor'}
+	, {headerName: "単価", field: "prd_unit_prc", width: 100, editable: true
+    	, cellEditor: 'agPopupTextCellEditor'}
+	, {headerName: "商品税(抜、込)", field: "tax_incld", width: 100, editable: true
+    	, cellEditor: 'agPopupTextCellEditor'}
+	, {headerName: "税率", field: "tax_rt", width: 100, editable: true
+    	, cellEditor: 'agPopupTextCellEditor'}
 ];
 
 // specify the data
@@ -167,7 +118,60 @@ var prdWareOutGridOptions = {
         afterExpDt = afterData.exp_dt;
         afterSellPrc = afterData.sell_prc;
         
-        console.log("modified!");
+        if(!(prevPrdQty == afterPrdQty)) {
+        	modifiedData.push({
+        		seq_id:afterData.seq_id
+        		, jan_cd:afterData.jan_cd
+    			, prd_cnt:afterPrdCnt
+    			, prd_unit_prc:afterPrdUnitPrc
+    			, tax_incld:afterTaxIncld
+    			, tax_rt:afterTaxRt
+    			, brand_nm:afterBrandNm
+    			, prd_nm:afterPrdNm
+    			, prd_qty:afterPrdQty
+    			, exp_dt:afterExpDt
+    			, sell_prc:afterSellPrc
+    			, partner_id:$("#partner_id").text()
+    			, partner_nm:$("#partner_nm").text()
+    			, search_type:'wareOut'
+        	});
+        }else if(!(prevPrdCase == afterPrdCase)) {
+        	modifiedData.push({
+        		seq_id:afterData.seq_id
+        		, jan_cd:afterData.jan_cd
+    			, prd_cnt:afterPrdCnt
+    			, prd_unit_prc:afterPrdUnitPrc
+    			, tax_incld:afterTaxIncld
+    			, tax_rt:afterTaxRt
+    			, brand_nm:afterBrandNm
+    			, prd_nm:afterPrdNm
+    			, prd_case:afterPrdCase
+    			, exp_dt:afterExpDt
+    			, sell_prc:afterSellPrc
+    			, partner_id:$("#partner_id").text()
+    			, partner_nm:$("#partner_nm").text()
+    			, search_type:'wareOut'
+        	});
+        }else if(!(prevPrdBara == afterPrdBara)) {
+        	modifiedData.push({
+        		seq_id:afterData.seq_id
+        		, jan_cd:afterData.jan_cd
+    			, prd_cnt:afterPrdCnt
+    			, prd_unit_prc:afterPrdUnitPrc
+    			, tax_incld:afterTaxIncld
+    			, tax_rt:afterTaxRt
+    			, brand_nm:afterBrandNm
+    			, prd_nm:afterPrdNm
+    			, prd_bara:afterPrdBara
+    			, exp_dt:afterExpDt
+    			, sell_prc:afterSellPrc
+    			, partner_id:$("#partner_id").text()
+    			, partner_nm:$("#partner_nm").text()
+    			, search_type:'wareOut'
+        	});
+        }
+        
+        /*
         if(!(prevPrdCnt == afterPrdCnt)) {
         	modifiedData.push({
         		seq_id:afterData.seq_id
@@ -268,6 +272,7 @@ var prdWareOutGridOptions = {
 				, search_type:'wareOut'
         	});
         }
+        */
     }
 };
 

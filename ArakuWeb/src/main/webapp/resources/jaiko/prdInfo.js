@@ -5,17 +5,9 @@ grid setting S
 */
 
 var columnDefs = [
-	{headerName: "商品コード", field: "prd_cd", width: 200
-		, editable: true
-    	, cellEditor: 'agLargeTextCellEditor'
-    	, cellEditorParams: {
-            maxLength: '500',
-            cols: '50',
-            rows: '6'
-        }
-	}
-	, {headerName: "ブランド", field: "brand_nm", width: 200
-		, editable: true
+	{headerName: "商品コード", field: "prd_cd", width: 200, editable: true
+    	, cellEditor: 'agPopupTextCellEditor'}
+	, {headerName: "ブランド", field: "brand_nm", width: 200, editable: true
     	, cellEditor: 'agLargeTextCellEditor'
     	, cellEditorParams: {
             maxLength: '500',
@@ -32,51 +24,16 @@ var columnDefs = [
             rows: '6'
         }
 	}
-	, {headerName: "ＪＡＮコード", field: "jan_cd", width: 200
-		, editable: true
-    	, cellEditor: 'agLargeTextCellEditor'
-    	, cellEditorParams: {
-            maxLength: '500',
-            cols: '50',
-            rows: '6'
-        }
-	}
-	, {headerName: "入数", field: "prd_cnt", width: 100
-		, editable: true
-    	, cellEditor: 'agLargeTextCellEditor'
-    	, cellEditorParams: {
-            maxLength: '500',
-            cols: '50',
-            rows: '6'
-        }
-	}
-	, {headerName: "単価", field: "prd_unit_prc", width: 100
-		, editable: true
-    	, cellEditor: 'agLargeTextCellEditor'
-    	, cellEditorParams: {
-            maxLength: '500',
-            cols: '50',
-            rows: '6'
-        }
-	}
-	, {headerName: "商品税(抜、込)", field: "tax_incld", width: 100
-		, editable: true
-    	, cellEditor: 'agLargeTextCellEditor'
-    	, cellEditorParams: {
-            maxLength: '500',
-            cols: '50',
-            rows: '6'
-        }
-	}
-	, {headerName: "税率", field: "tax_rt", width: 100
-		, editable: true
-    	, cellEditor: 'agLargeTextCellEditor'
-    	, cellEditorParams: {
-            maxLength: '500',
-            cols: '50',
-            rows: '6'
-        }
-	}
+	, {headerName: "ＪＡＮコード", field: "jan_cd", width: 200, editable: true
+    	, cellEditor: 'agPopupTextCellEditor'}
+	, {headerName: "入数", field: "prd_cnt", width: 100, editable: true
+    	, cellEditor: 'agPopupTextCellEditor'}
+	, {headerName: "単価", field: "prd_unit_prc", width: 100, editable: true
+    	, cellEditor: 'agPopupTextCellEditor'}
+	, {headerName: "商品税(抜、込)", field: "tax_incld", width: 100, editable: true
+    	, cellEditor: 'agPopupTextCellEditor'}
+	, {headerName: "税率", field: "tax_rt", width: 100, editable: true
+    	, cellEditor: 'agPopupTextCellEditor'}
 ];
 
 // specify the data

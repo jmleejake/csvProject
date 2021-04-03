@@ -36,15 +36,8 @@ var columnDefs = [
 	, {headerName: "現在商品数", field: "now_prd_cnt", width: 250, editable: true
 		, cellEditor: 'agPopupTextCellEditor'}
 	, {headerName: "賞味期限", field: "exp_dt", width: 250, editable: true, cellEditor: 'datePicker'}
-	, {headerName: "本体売価", field: "sell_prc", width: 250
-		, editable: true
-    	, cellEditor: 'agLargeTextCellEditor'
-    	, cellEditorParams: {
-            maxLength: '500',
-            cols: '50',
-            rows: '6'
-        }
-	}
+	, {headerName: "本体売価", field: "sell_prc", width: 250, editable: true
+    	, cellEditor: 'agPopupTextCellEditor'}
 ];
 
 // specify the data

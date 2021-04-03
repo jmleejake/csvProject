@@ -33,7 +33,12 @@ select
   , date_format(jii.upd_dt, '%Y/%m/%d') upd_dt
 from jaiko_prd_info jpi
 inner join jaiko_inventory_info jii on jii.jan_cd = jpi.jan_cd
+<if test="search_type == 'srch'">
 left outer join jaiko_warehouse_info jwi on jwi.jan_cd = jpi.jan_cd
+</if>
+<if test="search_type == 'insertSrch' || search_type == 'afterCommit'">
+inner join jaiko_warehouse_info jwi on jwi.jan_cd = jpi.jan_cd
+</if>
 <where>
 	<if test="jan_cd != null and jan_cd != ''">
 	jpi.jan_cd = #{jan_cd}
