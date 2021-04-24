@@ -170,109 +170,6 @@ var prdWareOutGridOptions = {
     			, search_type:'wareOut'
         	});
         }
-        
-        /*
-        if(!(prevPrdCnt == afterPrdCnt)) {
-        	modifiedData.push({
-        		seq_id:afterData.seq_id
-        		, jan_cd:afterData.jan_cd
-				, prd_cnt:afterPrdCnt
-				, partner_id:$("#partner_id").text()
-				, partner_nm:$("#partner_nm").text()
-				, search_type:'wareOut'
-        	});
-        }else if(!(prevPrdUnitPrc == afterPrdUnitPrc)) {
-        	modifiedData.push({
-        		seq_id:afterData.seq_id
-        		, jan_cd:afterData.jan_cd
-				, prd_unit_prc:afterPrdUnitPrc
-				, partner_id:$("#partner_id").text()
-				, partner_nm:$("#partner_nm").text()
-				, search_type:'wareOut'
-        	});
-        }else if(!(prevTaxIncld == afterTaxIncld)) {
-        	modifiedData.push({
-        		seq_id:afterData.seq_id
-        		, jan_cd:afterData.jan_cd
-				, tax_incld:afterTaxIncld
-				, partner_id:$("#partner_id").text()
-				, partner_nm:$("#partner_nm").text()
-				, search_type:'wareOut'
-        	});
-        }else if(!(prevTaxRt == afterTaxRt)) {
-        	modifiedData.push({
-        		seq_id:afterData.seq_id
-        		, jan_cd:afterData.jan_cd
-				, tax_rt:afterTaxRt
-				, partner_id:$("#partner_id").text()
-				, partner_nm:$("#partner_nm").text()
-				, search_type:'wareOut'
-        	});
-        }else if(!(prevBrandNm == afterBrandNm)) {
-        	modifiedData.push({
-        		seq_id:afterData.seq_id
-        		, jan_cd:afterData.jan_cd
-				, brand_nm:afterBrandNm
-				, partner_id:$("#partner_id").text()
-				, partner_nm:$("#partner_nm").text()
-				, search_type:'wareOut'
-        	});
-        }else if(!(prevPrdNm == afterPrdNm)) {
-        	modifiedData.push({
-        		seq_id:afterData.seq_id
-        		, jan_cd:afterData.jan_cd
-				, prd_nm:afterPrdNm
-				, partner_id:$("#partner_id").text()
-				, partner_nm:$("#partner_nm").text()
-				, search_type:'wareOut'
-        	});
-        }else if(!(prevPrdQty == afterPrdQty)) {
-        	modifiedData.push({
-        		seq_id:afterData.seq_id
-        		, jan_cd:afterData.jan_cd
-				, prd_qty:afterPrdQty
-				, partner_id:$("#partner_id").text()
-				, partner_nm:$("#partner_nm").text()
-				, search_type:'wareOut'
-        	});
-        }else if(!(prevPrdCase == afterPrdCase)) {
-        	modifiedData.push({
-        		seq_id:afterData.seq_id
-        		, jan_cd:afterData.jan_cd
-				, prd_case:afterPrdCase
-				, partner_id:$("#partner_id").text()
-				, partner_nm:$("#partner_nm").text()
-				, search_type:'wareOut'
-        	});
-        }else if(!(prevPrdBara == afterPrdBara)) {
-        	modifiedData.push({
-        		seq_id:afterData.seq_id
-        		, jan_cd:afterData.jan_cd
-				, prd_bara:afterPrdBara
-				, partner_id:$("#partner_id").text()
-				, partner_nm:$("#partner_nm").text()
-				, search_type:'wareOut'
-        	});
-        }else if(!(prevExpDt == afterExpDt)) {
-        	modifiedData.push({
-        		seq_id:afterData.seq_id
-        		, jan_cd:afterData.jan_cd
-				, exp_dt:afterExpDt
-				, partner_id:$("#partner_id").text()
-				, partner_nm:$("#partner_nm").text()
-				, search_type:'wareOut'
-        	});
-        }else if(!(prevSellPrc == afterSellPrc)) {
-        	modifiedData.push({
-        		seq_id:afterData.seq_id
-        		, jan_cd:afterData.jan_cd
-				, sell_prc:afterSellPrc
-				, partner_id:$("#partner_id").text()
-				, partner_nm:$("#partner_nm").text()
-				, search_type:'wareOut'
-        	});
-        }
-        */
     }
 };
 
@@ -451,6 +348,7 @@ $("#btn_search").on("click", function() {
 	    , dataType: "json"  
 	    , contentType : "application/json"
 	    , data: {
+	    	search_type: 'delivery',
 	    	delivery_dt: $("#delivery_dt").val()
 	    }
 	    , success: setRowData2
@@ -458,8 +356,13 @@ $("#btn_search").on("click", function() {
 });
 
 $("#btn_delete").on("click", function() {
-	var selectedData = prdWareOutGridOptions.api.getSelectedRows();
-	prdWareOutGridOptions.api.applyTransaction({ remove: selectedData });
+	var selectedData = prdWareInGridOptions.api.getSelectedRows();
+	prdWareInGridOptions.api.applyTransaction({ remove: selectedData });
+	prdWareInGridOptions.api.selectAll();
+	selectedData = prdWareInGridOptions.api.getSelectedRows();
+	rowData = [];
+	rowData = selectedData;
+	console.table(rowData);
 });
 
 /*

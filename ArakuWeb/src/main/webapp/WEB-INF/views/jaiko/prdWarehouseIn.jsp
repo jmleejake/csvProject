@@ -15,6 +15,7 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 <div class="container-fluid col-sm-6">
 <!-- 거래처정보설정 S -->
 <div class="well container-fluid">
+	<div class="col-sm-6">
 	<button id="btn_sel_partner" type="button" class="btn btn-primary" data-toggle="modal" data-target="#partnerModal" style="width: 150px; margin-bottom: 10px;">取引先情報設定</button>
 	<table class="table table-bordered">
 		<thead>
@@ -31,6 +32,19 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 		</tbody>
 	</table>
 	<input type="hidden" id="partner_id">
+	</div>
+	<div class="col-sm-6">
+	<label>入庫日</label>
+	<div class="col-sm-12">
+	<div class="col-sm-6">
+	<!-- datepicker -->
+	<input type="text" id="warehouse_dt" class="form-control" style="width: 120px;">
+	</div>
+	<div class="col-sm-6">
+	<button id="btn_search" type="button" class="btn btn-default" style="width: 80px; margin-bottom: 10px;">検索</button>
+	</div>
+	</div>
+	</div>
 </div>
 <!-- 거래처정보설정 E -->
 </div>
@@ -154,6 +168,11 @@ $(document).ready(function() {
 	$("#prdWareIn").addClass("active");
 	$("#area_feedback").css("display", "none");
 	$("#jan_cd").focus();
+	
+	$("#warehouse_dt").datepicker({
+		language: "ja"
+		, autoclose: true
+	});
 });
 </script>
 </body>

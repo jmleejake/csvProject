@@ -33,11 +33,15 @@ public class JaikoWareHouseDAO {
 	
 	public ArrayList<JaikoWareHouseVO> getJaikoWareHouse(JaikoWareHouseVO vo) {
 		IJaikoWareHouseMapper mapper = sqlSession.getMapper(IJaikoWareHouseMapper.class);
+		String dt = "";
 		if(null != vo.getDelivery_dt()) {
-			String delivery_dt = vo.getDelivery_dt().replaceAll("/", "");
-			
-			vo.setFrom_dt(delivery_dt+"000000");
-			vo.setTo_dt(delivery_dt+"235959");
+			dt = vo.getDelivery_dt().replaceAll("/", "");
+		}else if(null != vo.getWarehouse_dt()) {
+			dt = vo.getWarehouse_dt().replaceAll("/", "");
+		}
+		if(!"".equals(dt)) {
+			vo.setFrom_dt(dt+"000000");
+			vo.setTo_dt(dt+"235959");
 		}
 		return mapper.getJaikoWareHouse(vo);
 	}

@@ -170,108 +170,6 @@ var prdWareInGridOptions = {
     			, search_type:'wareIn'
         	});
         }
-        /*
-        if(!(prevPrdCnt == afterPrdCnt)) {
-        	modifiedData.push({
-        		seq_id:afterData.seq_id
-        		, jan_cd:afterData.jan_cd
-				, prd_cnt:afterPrdCnt
-				, partner_id:$("#partner_id").text()
-				, partner_nm:$("#partner_nm").text()
-				, search_type:'wareIn'
-        	});
-        }else if(!(prevPrdUnitPrc == afterPrdUnitPrc)) {
-        	modifiedData.push({
-        		seq_id:afterData.seq_id
-        		, jan_cd:afterData.jan_cd
-				, prd_unit_prc:afterPrdUnitPrc
-				, partner_id:$("#partner_id").text()
-				, partner_nm:$("#partner_nm").text()
-				, search_type:'wareIn'
-        	});
-        }else if(!(prevTaxIncld == afterTaxIncld)) {
-        	modifiedData.push({
-        		seq_id:afterData.seq_id
-        		, jan_cd:afterData.jan_cd
-				, tax_incld:afterTaxIncld
-				, partner_id:$("#partner_id").text()
-				, partner_nm:$("#partner_nm").text()
-				, search_type:'wareIn'
-        	});
-        }else if(!(prevTaxRt == afterTaxRt)) {
-        	modifiedData.push({
-        		seq_id:afterData.seq_id
-        		, jan_cd:afterData.jan_cd
-				, tax_rt:afterTaxRt
-				, partner_id:$("#partner_id").text()
-				, partner_nm:$("#partner_nm").text()
-				, search_type:'wareIn'
-        	});
-        }else if(!(prevBrandNm == afterBrandNm)) {
-        	modifiedData.push({
-        		seq_id:afterData.seq_id
-        		, jan_cd:afterData.jan_cd
-				, brand_nm:afterBrandNm
-				, partner_id:$("#partner_id").text()
-				, partner_nm:$("#partner_nm").text()
-				, search_type:'wareIn'
-        	});
-        }else if(!(prevPrdNm == afterPrdNm)) {
-        	modifiedData.push({
-        		seq_id:afterData.seq_id
-        		, jan_cd:afterData.jan_cd
-				, prd_nm:afterPrdNm
-				, partner_id:$("#partner_id").text()
-				, partner_nm:$("#partner_nm").text()
-				, search_type:'wareIn'
-        	});
-        }else if(!(prevPrdQty == afterPrdQty)) {
-        	modifiedData.push({
-        		seq_id:afterData.seq_id
-        		, jan_cd:afterData.jan_cd
-				, prd_qty:afterPrdQty
-				, partner_id:$("#partner_id").text()
-				, partner_nm:$("#partner_nm").text()
-				, search_type:'wareIn'
-        	});
-        }else if(!(prevPrdCase == afterPrdCase)) {
-        	modifiedData.push({
-        		seq_id:afterData.seq_id
-        		, jan_cd:afterData.jan_cd
-				, prd_case:afterPrdCase
-				, partner_id:$("#partner_id").text()
-				, partner_nm:$("#partner_nm").text()
-				, search_type:'wareIn'
-        	});
-        }else if(!(prevPrdBara == afterPrdBara)) {
-        	modifiedData.push({
-        		seq_id:afterData.seq_id
-        		, jan_cd:afterData.jan_cd
-				, prd_bara:afterPrdBara
-				, partner_id:$("#partner_id").text()
-				, partner_nm:$("#partner_nm").text()
-				, search_type:'wareIn'
-        	});
-        }else if(!(prevExpDt == afterExpDt)) {
-        	modifiedData.push({
-        		seq_id:afterData.seq_id
-        		, jan_cd:afterData.jan_cd
-				, exp_dt:afterExpDt
-				, partner_id:$("#partner_id").text()
-				, partner_nm:$("#partner_nm").text()
-				, search_type:'wareIn'
-        	});
-        }else if(!(prevSellPrc == afterSellPrc)) {
-        	modifiedData.push({
-        		seq_id:afterData.seq_id
-        		, jan_cd:afterData.jan_cd
-				, sell_prc:afterSellPrc
-				, partner_id:$("#partner_id").text()
-				, partner_nm:$("#partner_nm").text()
-				, search_type:'wareIn'
-        	});
-        }
-        */
     }
 };
 
@@ -417,7 +315,56 @@ $("#btn_commit").on("click", function() {
 $("#btn_delete").on("click", function() {
 	var selectedData = prdWareInGridOptions.api.getSelectedRows();
 	prdWareInGridOptions.api.applyTransaction({ remove: selectedData });
+	prdWareInGridOptions.api.selectAll();
+	selectedData = prdWareInGridOptions.api.getSelectedRows();
+	rowData = [];
+	rowData = selectedData;
+	console.table(rowData);
 });
+
+$("#btn_search").on("click", function() {
+	$.ajax({
+	    url: "/jaiko/warehouse/getList"
+	    , dataType: "json"  
+	    , contentType : "application/json"
+	    , data: {
+	    	search_type: 'warehouse',
+	    	warehouse_dt: $("#warehouse_dt").val()
+	    }
+	    , success: setRowData2
+	});
+});
+
+function setRowData2(result) {
+	rowData = [];
+	
+	for (var i=0; i<result.length; i++) {
+		var row = {
+			seq_id: result[i].seq_id
+			, prd_cd:result[i].prd_cd
+			, brand_nm:result[i].brand_nm
+			, prd_nm:result[i].prd_nm
+			, jan_cd:result[i].jan_cd
+			, prd_cnt:result[i].prd_cnt
+			, prd_unit_prc:result[i].prd_unit_prc
+			, tax_incld:result[i].tax_incld
+			, tax_rt:result[i].tax_rt
+			, now_prd_cnt:result[i].now_prd_cnt
+			, prd_qty:result[i].prd_qty
+			, prd_case:result[i].prd_case
+			, prd_bara:result[i].prd_bara
+			, exp_dt:result[i].exp_dt
+			, sell_prc:result[i].sell_prc
+			, register_date:result[i].reg_dt
+			, update_date:result[i].upd_dt
+		};
+		rowData.push(row);
+	}
+	prdWareInGridOptions.api.setRowData(rowData);
+				
+	// 초기화
+	modifiedData = []; // 수정데이터
+}
 
 /*
 ------------------
@@ -442,6 +389,8 @@ function search() {
     , search_type: 'srch'
     }
     , success: function(result) {
+    	console.log("after srch")
+    	console.log(rowData);
     	var row = {
 			seq_id: result[0].seq_id
 			, prd_cd:result[0].prd_cd

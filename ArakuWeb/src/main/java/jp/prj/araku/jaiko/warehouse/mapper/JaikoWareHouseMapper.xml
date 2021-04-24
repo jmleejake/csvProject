@@ -33,7 +33,7 @@ select
   , date_format(jii.upd_dt, '%Y/%m/%d') upd_dt
 from jaiko_prd_info jpi
 inner join jaiko_inventory_info jii on jii.jan_cd = jpi.jan_cd
-<if test="search_type == 'srch'">
+<if test="search_type == 'srch' || search_type == 'warehouse' || search_type == 'delivery'">
 left outer join jaiko_warehouse_info jwi on jwi.jan_cd = jpi.jan_cd
 </if>
 <if test="search_type == 'insertSrch' || search_type == 'afterCommit'">
@@ -43,8 +43,11 @@ inner join jaiko_warehouse_info jwi on jwi.jan_cd = jpi.jan_cd
 	<if test="jan_cd != null and jan_cd != ''">
 	jpi.jan_cd = #{jan_cd}
 	</if>
-	<if test="from_dt != null and from_dt != '' and to_dt != null and to_dt != ''">
+	<if test="from_dt != null and from_dt != '' and to_dt != null and to_dt != '' and search_type == 'delivery'">
 	jwi.delivery_dt between date_format (#{from_dt}, '%Y%m%d%H%i%s') and date_format (#{to_dt}, '%Y%m%d%H%i%s')
+	</if>
+	<if test="from_dt != null and from_dt != '' and to_dt != null and to_dt != '' and search_type == 'warehouse'">
+	jwi.warehouse_dt between date_format (#{from_dt}, '%Y%m%d%H%i%s') and date_format (#{to_dt}, '%Y%m%d%H%i%s')
 	</if>
 	<if test="search_type == 'afterCommit'">
 	jii.upd_dt between date_add(now(), interval -1 hour) and now()
