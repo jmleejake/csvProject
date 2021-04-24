@@ -1140,6 +1140,7 @@ public class RakutenDAO {
 			
 			TranslationResultVO vo = new TranslationResultVO();
 			vo.setSeq_id_list(seq_id_list);
+			//地域区分マスタにてヤマトと佐川の区分をチェックする。
 			vo.setDelivery_company(delivery_company);
 			
 			ArrayList<RakutenVO> realRet = new ArrayList<>();
@@ -1540,14 +1541,132 @@ public class RakutenDAO {
 			vo.setSeq_id_list(seq_id_list);
 //			例外マスタの注文情報をＤＬするため、運送会社マスタのチェックを外す。　2020.06.01
 //			vo.setDelivery_company(delivery_company);
-			
+			vo.setDelivery_company(delivery_company);
+
+			ArrayList<RakutenVO> realRet = new ArrayList<>();
 			ArrayList<RakutenVO> list = mapper.getTransResult(vo);
-			ArrayList<ExceptionMasterVO> exList = listMapper.getExceptionMaster(null);
+			ArrayList<ArakuVO> yList = new ArrayList<>();
+			
+			String orderNo;
+			HashMap<String, ArrayList<Integer>> zenkoku = new HashMap<>();
+			HashMap<String, ArrayList<Integer>> frozen = new HashMap<>();
+			HashMap<String, ArrayList<Integer>> fridge = new HashMap<>();
+			
+			ArrayList<Integer> zenkokuCnt = new ArrayList<>();
+			ArrayList<Integer> frozenCnt = new ArrayList<>();
+			ArrayList<Integer> fridgeCnt = new ArrayList<>();
+			
+			HashSet<String> orderNoLst = new HashSet<>();
+			
+			for(int i=0; i<list.size(); i++) {
+				RakutenVO rVO = list.get(i);
+				
+				orderNo = rVO.getOrder_no();
+				
+				if(!orderNoLst.add(orderNo)) {
+					if (rVO.getProduct_name().contains("全国送料無料")) {
+						zenkokuCnt.add(i);
+						zenkoku.put(orderNo, zenkokuCnt);
+					}else if (rVO.getProduct_name().contains("冷凍")) {
+						frozenCnt.add(i);
+						frozen.put(orderNo, frozenCnt);
+					}else if (rVO.getProduct_name().contains("冷蔵")) {
+						fridgeCnt.add(i);
+						fridge.put(orderNo, fridgeCnt);
+					}else {
+						zenkokuCnt.add(i);
+						zenkoku.put(orderNo, zenkokuCnt);
+					}
+				}else {
+					zenkokuCnt = new ArrayList<>();
+					frozenCnt = new ArrayList<>();
+					fridgeCnt = new ArrayList<>();
+					
+					if (rVO.getProduct_name().contains("全国送料無料")) {
+						zenkokuCnt.add(i);
+						zenkoku.put(orderNo, zenkokuCnt);
+					}else if (rVO.getProduct_name().contains("冷凍")) {
+						frozenCnt.add(i);
+						frozen.put(orderNo, frozenCnt);
+					}else if (rVO.getProduct_name().contains("冷蔵")) {
+						fridgeCnt.add(i);
+						fridge.put(orderNo, fridgeCnt);
+					}else {
+						zenkokuCnt.add(i);
+						zenkoku.put(orderNo, zenkokuCnt);
+					}
+				}
+			}
+			
+			for(String key : orderNoLst) {
+				ArrayList<Integer> iZen = zenkoku.get(key);
+				ArrayList<Integer> iFro = frozen.get(key);
+				ArrayList<Integer> iFri = fridge.get(key);
+				
+				if(null != iZen && iZen.size() > 1) {
+					for(int j=0; j<iZen.size(); j++) {
+						int val = iZen.get(j);
+						if(j==0) {
+							list.get(val).setResult_text(".");
+							realRet.add(list.get(val));
+						}
+					}
+				}else {
+					if(null != iZen) {
+						int val = iZen.get(0);
+						realRet.add(list.get(val));
+					}
+				}
+				
+				if(null != iFro && iFro.size() > 1) {
+					for(int j=0; j<iFro.size(); j++) {
+						int val = iFro.get(j);
+						if(j==0) {
+							list.get(val).setResult_text(".");
+							realRet.add(list.get(val));
+						}
+					}
+				}else {
+					if(null != iFro) {
+						int val = iFro.get(0);
+						realRet.add(list.get(val));
+					}
+				} 
+				
+				if(null != iFri && iFri.size() > 1) {
+					for(int j=0; j<iFri.size(); j++) {
+						int val = iFri.get(j);
+						if(j==0) {
+							list.get(val).setResult_text(".");
+							realRet.add(list.get(val));
+						}
+					}
+				}else {
+//					if(null != iZen) {
+//						int val = iZen.get(0);
+//						realRet.add(list.get(val));
+//					}
+//					if(null != iFro) {
+//						int val = iFro.get(0);
+//						realRet.add(list.get(val));
+//					}
+					if(null != iFri) {
+						int val = iFri.get(0);
+						realRet.add(list.get(val));
+					}
+				}
+			}
+			
+			RakutenVO.sortListVO(realRet, "getOrder_datetime", "DESC");
+			
+//			ArrayList<RakutenVO> list = mapper.getTransResult(vo);
+//			ArrayList<ExceptionMasterVO> exList = listMapper.getExceptionMaster(null);
 //			boolean chkRet = false;
 			ArrayList<ArakuVO> sList = new ArrayList<>();
 			ArrayList<ExceptionRegionMasterVO> exRegionList = listMapper.getExceptionRegionMaster(null);
 			
-			for (RakutenVO tmp : list) {
+//			for (RakutenVO tmp : list) {
+			for (RakutenVO tmp : realRet) {
 				/**
 				 * 사가와 대상 목록중 예외지역마스터(例外地域マスタ)에 있는 값인 경우
 				 * 해당 데이터의 배송회사를 야마토로 update치고
@@ -1566,10 +1685,19 @@ public class RakutenDAO {
 				
 				if(isEx) continue;
 				
-				for (ExceptionMasterVO exVO : exList) {
-//						chkRet = false;
-					if (tmp.getResult_text().contains(exVO.getException_data())) {
-//							chkRet = true;
+//				for (ExceptionMasterVO exVO : exList) {   21.4.5  kim
+
+//				if (tmp.getResult_text().contains(exVO.getException_data())) {    21.4.5  kim
+				
+				// 210405: 복수주문자는 야마토에서 다운로드한다.
+//				RakutenVO srchVO = new RakutenVO();
+//				srchVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+//				srchVO.setOrder_no(tmp.getOrder_no());
+//				ArrayList<RakutenVO> multiList = mapper.getRakutenFrozenInfo(srchVO);
+//				if(multiList.size() > 0) {
+//					continue;
+//				}
+				// ---------------------------------------------------------------------------
 						SagawaVO sVO = new SagawaVO();
 						sVO.setDelivery_add1(tmp.getDelivery_add1().replace("\"", ""));
 						sVO.setDelivery_add2(tmp.getDelivery_add2().replace("\"", ""));
@@ -1630,8 +1758,8 @@ public class RakutenDAO {
 						
 						// csv작성을 위한 리스트작성
 						sList.add(sVO);
-					}
-				}
+//					}  21.4.5  kim
+//				}   21.4.5  kim
 //					if (chkRet) {
 //						continue;
 //					}

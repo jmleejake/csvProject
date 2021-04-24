@@ -531,7 +531,22 @@ public class Q10DAO {
 				yVO.setClient_tel("048-242-3801");
 				
 				yVO.setDelivery_post_no(tmp.getPost_no().replace("\"", "").replace("-", "").replace("'", ""));
-				yVO.setDelivery_add(tmp.getAddress().replace("\"", ""));
+				// 2021/4/14  キム ヤマト 주소 컬럼에 대하여 16자 이상이면 次のカラムに設定する. 　⇒　ＳＴＡＲＴ
+				//yVO.setDelivery_add(tmp.getAddress().replace("\"", ""));
+				String addStr = tmp.getAddress().replace("\"", "");
+				if(addStr.length() > 16) {
+					yVO.setDelivery_add(addStr.substring(0, 16));
+			
+					if(addStr.length() > 32) {
+						yVO.setDelivery_building(addStr.substring(16, 32));
+						yVO.setDelivery_company1(addStr.substring(32, addStr.length()));
+					}else {
+						yVO.setDelivery_building(addStr.substring(16, addStr.length()));
+					}
+				}else {
+					yVO.setDelivery_add(addStr);
+				}
+				// 2021/4/14  キム ヤマト 주소 컬럼에 대하여 16자 이상이면 次のカラムに設定する. 　⇒　END
 				yVO.setDelivery_name(tmp.getRecpt_name().replace("\"", ""));
 				yVO.setDelivery_name_title(CommonUtil.TITLE_SAMA);
 				String phone_no = tmp.getRecpt_mobile_no();
