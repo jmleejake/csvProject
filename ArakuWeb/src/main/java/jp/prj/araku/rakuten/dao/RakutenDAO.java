@@ -644,7 +644,6 @@ public class RakutenDAO {
 			
 			vo.setDelivery_company(regionM.get(0).getDelivery_company());
 			log.debug("Update Rakuten info : " + vo);
-			rMapper.updateRakutenInfo(vo);
 			
 			TranslationResultVO resultVO = new TranslationResultVO();
 			resultVO.setTrans_target_id(vo.getSeq_id());
@@ -655,7 +654,12 @@ public class RakutenDAO {
 				resultVO.setResult_text(".");
 			}else {
 				resultVO.setResult_text(finalStr);
+				// 20210424 jmlee 치환후 상품명에 전무 포함시 야마토로 배송코드 처리
+				if (transedName.contains("全無")) {
+					vo.setDelivery_company("1001");
+				}
 			}
+			rMapper.updateRakutenInfo(vo);
 			
 			// 이미 치환된 결과가 있는 trans_target_id이면 update, 아니면 insert
 			ArrayList<RakutenVO> transResult = rMapper.getTransResult(resultVO);
@@ -922,7 +926,6 @@ public class RakutenDAO {
 			
 			vo.setDelivery_company(regionM.get(0).getDelivery_company());
 			log.debug("Update Rakuten Frozen info : " + vo);
-			rMapper.updateRakutenFrozenInfo(vo);
 			
 			TranslationResultVO resultVO = new TranslationResultVO();
 			resultVO.setTrans_target_id(vo.getSeq_id());
@@ -934,7 +937,12 @@ public class RakutenDAO {
 				resultVO.setResult_text(".");
 			}else {
 				resultVO.setResult_text(finalStr);
+				// 20210424 jmlee 치환후 상품명에 전무 포함시 야마토로 배송코드 처리
+				if (transedName.contains("全無")) {
+					vo.setDelivery_company("1001");
+				}
 			}
+			rMapper.updateRakutenFrozenInfo(vo);
 			
 			// 이미 치환된 결과가 있는 trans_target_id이면 update, 아니면 insert
 			ArrayList<RakutenVO> transResult = rMapper.getTransResult(resultVO);
