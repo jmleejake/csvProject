@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import jp.prj.araku.jaiko.product.dao.JaikoPrdInfoDAO;
+import jp.prj.araku.jaiko.product.vo.JaikoPrdInfoVO;
 import jp.prj.araku.jaiko.warehouse.dao.JaikoWareHouseDAO;
 import jp.prj.araku.jaiko.warehouse.vo.JaikoWareHouseVO;
 
@@ -17,6 +19,14 @@ import jp.prj.araku.jaiko.warehouse.vo.JaikoWareHouseVO;
 public class JaikoWareHouseController {
 	@Autowired
 	JaikoWareHouseDAO dao;
+	@Autowired
+	JaikoPrdInfoDAO prdDao;
+	
+	@RequestMapping(value = "/getPrd")		
+	@ResponseBody
+	public ArrayList<JaikoPrdInfoVO> getJaikoPrdInfo(JaikoPrdInfoVO vo) {
+		return prdDao.getJaikoPrdInfo(vo);
+	}
 	
 	@RequestMapping(value = "/getList")
 	@ResponseBody

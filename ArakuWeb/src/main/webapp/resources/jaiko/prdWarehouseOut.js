@@ -356,13 +356,12 @@ $("#btn_search").on("click", function() {
 });
 
 $("#btn_delete").on("click", function() {
-	var selectedData = prdWareInGridOptions.api.getSelectedRows();
-	prdWareInGridOptions.api.applyTransaction({ remove: selectedData });
-	prdWareInGridOptions.api.selectAll();
-	selectedData = prdWareInGridOptions.api.getSelectedRows();
+	var selectedData = prdWareOutGridOptions.api.getSelectedRows();
+	prdWareOutGridOptions.api.applyTransaction({ remove: selectedData });
+	prdWareOutGridOptions.api.selectAll();
+	selectedData = prdWareOutGridOptions.api.getSelectedRows();
 	rowData = [];
 	rowData = selectedData;
-	console.table(rowData);
 });
 
 /*
@@ -380,7 +379,7 @@ button action E
 
 function search() {
     $.ajax({
-	    url: "/jaiko/warehouse/getList"
+	    url: "/jaiko/warehouse/getPrd"
 	    , dataType: "json"  
 	    , contentType : "application/json"
 	    , data: {
@@ -388,6 +387,10 @@ function search() {
 	    , search_type: 'srch'
 	    }
 	    , success: function(result) {
+	    	if(result.length < 1) {
+				alert(janCd + "\n登録されていないコードです。");
+				return false;
+			}
 	    	var row = {
     			seq_id: result[0].seq_id
     			, prd_cd:result[0].prd_cd
@@ -398,12 +401,12 @@ function search() {
     			, prd_unit_prc:result[0].prd_unit_prc
     			, tax_incld:result[0].tax_incld
     			, tax_rt:result[0].tax_rt
-    			, now_prd_cnt:result[0].now_prd_cnt
-    			, prd_qty:result[0].prd_qty
-    			, prd_case:result[0].prd_case
-    			, prd_bara:result[0].prd_bara
-    			, exp_dt:result[0].exp_dt
-    			, sell_prc:result[0].sell_prc
+    			, now_prd_cnt:'0'
+    			, prd_qty:'0'
+    			, prd_case:'0'
+    			, prd_bara:'0'
+    			, exp_dt:'9999/12/31'
+    			, sell_prc:'0'
     			, register_date:result[0].reg_dt
     			, update_date:result[0].upd_dt
     		};
@@ -415,9 +418,11 @@ function search() {
 
 $("#jan_cd").on("change paste", function() {
 	janCd =  $("#jan_cd").val();
-	search();
-	$("#jan_cd").val("");
-	$("#jan_cd").focus();
+	if("" != janCd) {
+		search();
+		$("#jan_cd").val("");
+		$("#jan_cd").focus();
+	}
 });
 
 /*

@@ -97,19 +97,13 @@ public class JaikoWareHouseDAO {
 			int iBara = janObj.getInt("bara");
 			String type = janObj.getString("type");
 			
-			JaikoPrdInfoVO prdVO = new JaikoPrdInfoVO();
-			prdVO.setSearch_type(type);
-			prdVO.setJan_cd(janCd);
-			prdVO.setBrand_nm(janObj.getString("brandNm"));
-			prdVO.setPrd_nm(janObj.getString("prdNm"));
-			prdVO.setPartner_id(janObj.getString("partId"));
-			prdVO.setPartner_nm(janObj.getString("partNm"));
-			prdMapper.updateJaikoPrdInfo(prdVO);
-			
 			JaikoPrdInventoryVO invenVO = new JaikoPrdInventoryVO();
 			invenVO.setJan_cd(janCd);
 			invenVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
 			ArrayList<JaikoPrdInventoryVO> invenRetList = invenMapper.getJaikoPrdInventory(invenVO);
+			if(invenRetList.size() < 1) {
+				invenMapper.insertJaikoPrdInventoryForWareIn(invenVO);
+			}
 			
 			JaikoWareHouseVO wareHouseVO = new JaikoWareHouseVO();
 			wareHouseVO.setJan_cd(janCd);
@@ -126,15 +120,20 @@ public class JaikoWareHouseDAO {
 				wareHouseVO.setJan_cd(janCd);
 				wareHouseVO.setSearch_type(type);
 				wareHouseMapper.updateJaikoWareHouse(wareHouseVO);
-				JaikoPrdInventoryVO invenRet = invenRetList.get(0);
+				JaikoPrdInventoryVO invenRet = new JaikoPrdInventoryVO();
+				if(invenRetList.size() > 0) {
+					invenRet = invenRetList.get(0);
+				}else {
+					invenRet.setNow_prd_cnt("0");
+				}
 				invenVO.setSearch_type(type);
 				invenVO.setBrand_nm(janObj.getString("brandNm"));
 				invenVO.setPrd_nm(janObj.getString("prdNm"));
 				invenVO.setPrd_qty("0");
 				invenVO.setPrd_case("0");
 				invenVO.setPrd_bara("0");
-				invenVO.setExp_dt(janObj.getString("expDt"));
-				invenVO.setSell_prc(janObj.getString("sellPrc"));
+				//invenVO.setExp_dt(janObj.getString("expDt"));
+				//invenVO.setSell_prc(janObj.getString("sellPrc"));
 				invenVO.setNow_prd_cnt(String.valueOf(Integer.parseInt(invenRet.getNow_prd_cnt()) + (iQty*iCase+iBara)));
 				invenMapper.updateJaikoPrdInventory(invenVO);
 			}else if(null != type && "wareOut".equals(type)) {
@@ -150,8 +149,8 @@ public class JaikoWareHouseDAO {
 				invenVO.setPrd_qty("0");
 				invenVO.setPrd_case("0");
 				invenVO.setPrd_bara("0");
-				invenVO.setExp_dt(janObj.getString("expDt"));
-				invenVO.setSell_prc(janObj.getString("sellPrc"));
+				//invenVO.setExp_dt(janObj.getString("expDt"));
+				//invenVO.setSell_prc(janObj.getString("sellPrc"));
 				invenVO.setNow_prd_cnt(String.valueOf(Integer.parseInt(invenRet.getNow_prd_cnt()) - (iQty*iCase+iBara)));
 				invenMapper.updateJaikoPrdInventory(invenVO);
 			}
