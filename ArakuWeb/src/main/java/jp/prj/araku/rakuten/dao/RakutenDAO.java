@@ -1553,7 +1553,6 @@ public class RakutenDAO {
 
 			ArrayList<RakutenVO> realRet = new ArrayList<>();
 			ArrayList<RakutenVO> list = mapper.getTransResult(vo);
-			ArrayList<ArakuVO> yList = new ArrayList<>();
 			
 			String orderNo;
 			HashMap<String, ArrayList<Integer>> zenkoku = new HashMap<>();

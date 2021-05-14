@@ -10,8 +10,6 @@ import org.springframework.stereotype.Repository;
 
 import jp.prj.araku.jaiko.inventory.mapper.IJaikoPrdInventoryMapper;
 import jp.prj.araku.jaiko.inventory.vo.JaikoPrdInventoryVO;
-import jp.prj.araku.jaiko.product.mapper.IJaikoPrdInfoMapper;
-import jp.prj.araku.jaiko.product.vo.JaikoPrdInfoVO;
 import jp.prj.araku.jaiko.warehouse.mapper.IJaikoWareHouseMapper;
 import jp.prj.araku.jaiko.warehouse.vo.JaikoWareHouseVO;
 import jp.prj.araku.util.CommonUtil;
@@ -47,7 +45,6 @@ public class JaikoWareHouseDAO {
 	}
 	
 	public ArrayList<JaikoWareHouseVO> manipulateJaikoWareHouse(ArrayList<JaikoWareHouseVO> list) {
-		IJaikoPrdInfoMapper prdMapper = sqlSession.getMapper(IJaikoPrdInfoMapper.class);
 		IJaikoWareHouseMapper wareHouseMapper = sqlSession.getMapper(IJaikoWareHouseMapper.class);
 		IJaikoPrdInventoryMapper invenMapper = sqlSession.getMapper(IJaikoPrdInventoryMapper.class);
 		
