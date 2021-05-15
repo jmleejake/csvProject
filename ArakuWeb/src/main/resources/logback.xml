@@ -22,7 +22,7 @@
     <logger name="java.sql" level="debug"/>
     <logger name="jp.prj.araku" slevel="debug"/>
 
-    <root level="debug">
+    <root level="info">
         <appender-ref ref="CONSOLE"/>
 <!--         <appender-ref ref="FILE"/> -->
     </root>
