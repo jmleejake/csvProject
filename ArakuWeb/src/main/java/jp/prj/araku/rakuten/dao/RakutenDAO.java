@@ -1733,9 +1733,12 @@ public class RakutenDAO {
 						sVO.setDelivery_add3(tmp.getDelivery_add3().replace("\"", ""));
 						sVO.setDelivery_post_no(tmp.getDelivery_post_no1().replace("\"", "") + "-" +  tmp.getDelivery_post_no2().replace("\"", ""));
 						sVO.setDelivery_tel(tmp.getDelivery_tel1().replace("\"", "") + "-" + tmp.getDelivery_tel2().replace("\"", "") + "-" + tmp.getDelivery_tel3().replace("\"", ""));
-						sVO.setDelivery_name1(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
-//							sVO.setDelivery_name2(tmp.getDelivery_name().replace("\"", "") + " " + CommonUtil.TITLE_SAMA); //様는 제거하고 두개로 나누지 않고 1에만 이름을 세팅
-						
+						try {
+							sVO.setDelivery_name1(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
+	//							sVO.setDelivery_name2(tmp.getDelivery_name().replace("\"", "") + " " + CommonUtil.TITLE_SAMA); //様는 제거하고 두개로 나누지 않고 1에만 이름을 세팅
+						}catch(NullPointerException e) {
+							sVO.setDelivery_name1(tmp.getOrder_surname().replace("\"", "") + " " + tmp.getOrder_name().replace("\"", ""));	
+						}
 						sVO.setClient_add1("埼玉県川口市");
 						sVO.setClient_add2("上青木西１丁目19-39エレガンス滝澤ビル1F");
 						sVO.setClient_name1("有限会社");
