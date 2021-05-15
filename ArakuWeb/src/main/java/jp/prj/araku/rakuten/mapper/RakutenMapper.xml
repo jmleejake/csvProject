@@ -952,6 +952,16 @@ where
 	seq_id = #{seq_id}
 </update>
 
+<update id="updateRakutenFrozenInfoForTranslate" parameterType="Rakuten">
+update
+	rakuten_frozen_info
+set
+	update_date = now()
+	, delivery_company = #{delivery_company}
+where
+	order_no = #{order_no}
+</update>
+
 <select id="getRCSVDownList" resultType="RCSVDown">
 select 
 	seq_id

@@ -658,8 +658,23 @@ public class RakutenDAO {
 				if (transedName.contains("全無")) {
 					vo.setDelivery_company("1001");
 				}
+				if (transedName.contains("冷凍")) {
+					vo.setDelivery_company("1001");
+				}
+				if (transedName.contains("冷蔵")) {
+					vo.setDelivery_company("1001");
+				}
 			}
 			rMapper.updateRakutenInfo(vo);
+			
+			// 20210515 jmlee 냉동 마스터 테이블에 같은 주문번호가 존재하는 경우 1001로 전부 update처리
+			RakutenVO frozenVO = new RakutenVO();
+			frozenVO.setOrder_no(vo.getOrder_no());
+			ArrayList<RakutenVO> fronzenList =  rMapper.getRakutenFrozenInfo(frozenVO);
+			if(fronzenList.size() > 0) {
+				frozenVO.setDelivery_company("1001");
+				rMapper.updateRakutenFrozenInfoForTranslate(frozenVO);
+			}
 			
 			// 이미 치환된 결과가 있는 trans_target_id이면 update, 아니면 insert
 			ArrayList<RakutenVO> transResult = rMapper.getTransResult(resultVO);
@@ -931,14 +946,18 @@ public class RakutenDAO {
 			resultVO.setTrans_target_id(vo.getSeq_id());
 			resultVO.setTrans_target_type(CommonUtil.TRANS_TARGET_RF);
 			
-			
-			//20200116 kim　変換後が空白の場合、”.”を設定する。
 			if (vo.getProduct_name().contains("別紙")) {
 				resultVO.setResult_text(".");
 			}else {
 				resultVO.setResult_text(finalStr);
 				// 20210424 jmlee 치환후 상품명에 전무 포함시 야마토로 배송코드 처리
 				if (transedName.contains("全無")) {
+					vo.setDelivery_company("1001");
+				}
+				if (transedName.contains("冷凍")) {
+					vo.setDelivery_company("1001");
+				}
+				if (transedName.contains("冷蔵")) {
 					vo.setDelivery_company("1001");
 				}
 			}
@@ -1043,6 +1062,7 @@ public class RakutenDAO {
 					int val = iZen.get(j);
 					if(j==0) {
 						ret.get(val).setResult_text(".");
+						ret.get(val).setDelivery_company("1001");
 						realRet.add(ret.get(val));
 					}
 				}
@@ -1058,6 +1078,7 @@ public class RakutenDAO {
 					int val = iFro.get(j);
 					if(j==0) {
 						ret.get(val).setResult_text(".");
+						ret.get(val).setDelivery_company("1001");
 						realRet.add(ret.get(val));
 					}
 				}
@@ -1073,6 +1094,7 @@ public class RakutenDAO {
 					int val = iFri.get(j);
 					if(j==0) {
 						ret.get(val).setResult_text(".");
+						ret.get(val).setDelivery_company("1001");
 						realRet.add(ret.get(val));
 					}
 				}
