@@ -16,6 +16,7 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 <button id="btn_ya_down_one" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">YAMATO単品</button>
 <button id="btn_ya_down_multi" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">YAMATO複数</button>
 <button id="btn_sa_down" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">SAGAWA</button>
+<button id="btn_eco_down" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">エコー配便</button>
 <button id="btn_glb_sa_down" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">グローバル<br/>SAGAWA</button>
 <button id="btn_cp_down" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">クリックポスト</button>
 <!-- <button id="btn_yu_down" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">郵便局</button> -->
@@ -31,6 +32,10 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 </div>
 </div>
 <script src="<%=svrInfo %>/resources/rakuten/transResult.js"></script>
+<form id="frm_eco" action="ecoDown" method="post">
+<input type="hidden" id="id_lst" name="id_lst" value="${idList }">
+<input type="hidden" id="eco_cd" name="company">
+</form>
 <form id="frm_down5" action="globalSaDown" method="post">
 <input type="hidden" id="id_lst" name="id_lst" value="${idList }">
 </form>

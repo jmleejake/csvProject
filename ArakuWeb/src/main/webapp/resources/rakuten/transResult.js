@@ -181,6 +181,12 @@ $("#btn_glb_sa_down").on("click", function() {
 	 $("#frm_down5").submit();
 });
 
+// 2021-06-06 에코하이빈
+$("#btn_eco_down").on("click", function() {
+	$("#eco_cd").val("1015");
+	$("#frm_eco").submit();
+});
+
 // あす楽例外 체크박스 클릭시 서버로 보낼 값 세팅
 $("#tomoEx").on("click", function() {
 	$("#sa_chk").val("");
