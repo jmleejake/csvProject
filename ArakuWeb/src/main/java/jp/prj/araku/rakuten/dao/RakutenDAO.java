@@ -45,6 +45,7 @@ import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 import jp.prj.araku.file.vo.ClickPostVO;
+import jp.prj.araku.file.vo.EcoVO;
 import jp.prj.araku.file.vo.NewSagawaVO;
 import jp.prj.araku.file.vo.NewYamatoVO;
 import jp.prj.araku.file.vo.RCSVDownVO;
@@ -2951,6 +2952,89 @@ public class RakutenDAO {
 			csvWriter.writeNext(header);
 			
 			beanToCSV.write(list);
+			
+		} finally {
+			if (csvWriter != null) {
+				csvWriter.close();
+			}
+			
+			if (writer != null) {
+				writer.close();
+			}
+		}
+	}
+	
+	public void ecoFormatDownload(
+			HttpServletResponse response
+			, String[] id_lst
+			, String fileEncoding
+			, String delivery_company) 
+			throws IOException
+			, CsvDataTypeMismatchException
+			, CsvRequiredFieldEmptyException {
+		log.info("ecoFormatDownload");
+		
+		log.debug("encoding : " + fileEncoding);
+		
+		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
+		BufferedWriter writer = null;
+		CSVWriter csvWriter = null;
+		
+		try {
+			String csvFileName = "ECO" + CommonUtil.getDate("YYYYMMdd", 0) + ".csv";
+
+			response.setContentType("text/csv");
+
+			// creates mock data
+			String headerKey = "Content-Disposition";
+			String headerValue = String.format("attachment; filename=\"%s\"",
+					csvFileName);
+			response.setHeader(headerKey, headerValue);
+			response.setCharacterEncoding(fileEncoding);
+			
+			writer = new BufferedWriter(response.getWriter());
+			
+			csvWriter = new CSVWriter(writer
+					, CSVWriter.DEFAULT_SEPARATOR
+					, CSVWriter.NO_QUOTE_CHARACTER
+					, CSVWriter.DEFAULT_ESCAPE_CHARACTER
+					, CSVWriter.DEFAULT_LINE_END);
+			
+			
+			// 사가와 포맷으로 바꾸기 전 치환된 결과와 함께 라쿠텐정보 얻기
+			log.debug("seq_id_list : " + id_lst.toString());
+			ArrayList<String> seq_id_list = new ArrayList<>();
+			for (String seq_id : id_lst) {
+				seq_id_list.add(seq_id);
+			}
+			
+			TranslationResultVO transResult = new TranslationResultVO();
+			transResult.setSeq_id_list(seq_id_list);
+			transResult.setDelivery_company(delivery_company);
+
+			ArrayList<RakutenVO> list = mapper.getTransResult(transResult);
+			ArrayList<ArakuVO> ecoList = new ArrayList<>();
+			
+			for (RakutenVO tmp : list) {
+				EcoVO vo = new EcoVO();
+				vo.setDelivery_phn_no(tmp.getDelivery_tel1()+tmp.getDelivery_tel2()+tmp.getDelivery_tel3());
+				vo.setDelivery_zip_cd(tmp.getDelivery_post_no1()+tmp.getDelivery_post_no2());
+				vo.setDelivery_add1(tmp.getDelivery_add1());
+				vo.setDelivery_add2(tmp.getDelivery_add2());
+				vo.setDelivery_add3(tmp.getDelivery_add3());
+				vo.setDelivery_nm1(tmp.getDelivery_surname()+tmp.getDelivery_name());
+				vo.setDelivery_etc1(tmp.getResult_text());
+				
+				vo.setClient_add1("埼玉県川口市");
+				vo.setClient_add2("上青木西１丁目19-39エレガンス滝澤ビル1F");
+				vo.setClient_nm1("有限会社");
+				vo.setClient_nm2("ItempiaJapan (R)");
+				vo.setClient_phn_no("048-242-3801");
+				
+				ecoList.add(vo);
+			}
+			
+			CommonUtil.executeCSVDownload(csvWriter, writer, CommonUtil.ecoHeader(), ecoList);
 			
 		} finally {
 			if (csvWriter != null) {

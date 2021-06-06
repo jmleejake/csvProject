@@ -673,4 +673,27 @@ public class RakutenController {
 	public ArrayList<EtcMasterVO> deleteEtc(@RequestBody ArrayList<EtcMasterVO> list) {
 		return listDao.deleteEtc(list);
 	}
+	
+	/**
+	 * 
+	 * */
+	@RequestMapping(value="/ecoDown", method=RequestMethod.POST)
+	public void downloadEcoFile(
+			HttpServletResponse response
+			,@RequestParam(value="company") String delivery_company
+			,@RequestParam(value="id_lst") String id_lst) {
+		
+		id_lst = id_lst.replace("[", "");
+		id_lst = id_lst.replace("]", "");
+		String[] seq_id_list = id_lst.split(",");
+		try {
+			dao.ecoFormatDownload(response, seq_id_list, fileEncoding, delivery_company);
+		} catch (IOException e) {
+			log.error(e.toString());
+		} catch (CsvDataTypeMismatchException e) {
+			log.error(e.toString());
+		} catch (CsvRequiredFieldEmptyException e) {
+			log.error(e.toString());
+		}
+	}
 }
