@@ -10,6 +10,7 @@ import jp.prj.araku.list.vo.PrdCdMasterVO;
 import jp.prj.araku.list.vo.PrdTransVO;
 import jp.prj.araku.list.vo.RakutenSearchVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
+import jp.prj.araku.list.vo.SubTranslationVO;
 import jp.prj.araku.list.vo.TranslationErrorVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
@@ -77,4 +78,12 @@ public interface IListMapper {
 	public int insertEtc(EtcMasterVO vo);
 	public int updateEtc(EtcMasterVO vo);
 	public int deleteEtc(String seq_id);
+	
+	/**
+	 * 置換サーブ情報
+	 * */
+	public ArrayList<SubTranslationVO> getSubTransInfo(SubTranslationVO vo);
+	public int insertSubTransInfo(SubTranslationVO vo);
+	public int updateSubTransInfo(SubTranslationVO vo);
+	public int deleteSubTransInfo(String seq_id);
 }

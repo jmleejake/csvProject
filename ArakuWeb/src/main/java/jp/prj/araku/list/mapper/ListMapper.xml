@@ -521,4 +521,65 @@ delete from
 where
   seq_id = #{seq_id}
 </delete>
+
+<!-- 
+置換サーブ情報S
+ -->
+<select id="getSubTransInfo" resultType="SubTrans" parameterType="SubTrans">
+select 
+	subInfo.seq_id
+	, parent_seq_id
+	, parent.after_trans parent_after_trans
+	, subInfo.before_trans
+	, subInfo.after_trans
+	, subInfo.prd_cnt
+	, subInfo.jan_cd
+	, date_format(subInfo.register_date, '%Y/%m/%d') register_date
+	, date_format(subInfo.update_date, '%Y/%m/%d') update_date
+from
+	translation_sub_info subInfo
+inner join translation_info parent on parent.seq_id = subInfo.parent_seq_id
+<where>
+	<if test="parent_seq_id != null">
+	parent_seq_id = #{parent_seq_id}
+	</if>
+</where>
+order by register_date desc, update_date desc
+</select>
+
+<insert id="insertSubTransInfo" parameterType="SubTrans" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
+insert into translation_sub_info (parent_seq_id,before_trans, after_trans)
+values (#{parent_seq_id},#{before_trans}, #{after_trans})
+</insert>
+
+<update id="updateSubTransInfo" parameterType="SubTrans">
+update 
+	translation_sub_info
+set
+	update_date = now()
+	<if test="prd_cnt != null">
+	, prd_cnt = #{prd_cnt}
+	</if>
+	<if test="before_trans != null">
+	, before_trans = #{before_trans}
+	</if>
+	<if test="after_trans != null">
+	, after_trans = #{after_trans}
+	</if>
+	<if test="jan_cd != null">
+	, jan_cd = #{jan_cd}
+	</if>
+where
+	seq_id = #{seq_id}
+</update>
+
+<delete id="deleteSubTransInfo" parameterType="String">
+delete from 
+	translation_sub_info
+where 
+	seq_id = #{seq_id}
+</delete>
+<!-- 
+置換サーブ情報E
+ -->
 </mapper>

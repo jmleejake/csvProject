@@ -779,3 +779,16 @@ CREATE TABLE etc_master_info (
 	, prd_nm VARCHAR(3000) comment '商品名'
 	, target_type varchar(3) comment 'メニュー区分'
 ) default charset = utf8 comment 'その他マスタ';
+
+
+DROP TABLE translation_sub_info;
+CREATE TABLE translation_sub_info (
+	seq_id bigint unsigned primary key auto_increment comment '区分ID'
+	, parent_seq_id bigint unsigned comment '親区分ID'
+	, before_trans VARCHAR(3000) comment '置換前値'
+	, after_trans VARCHAR(50) comment '置換後値'
+	, jan_cd varchar(15) comment 'ＪＡＮコード'
+	, prd_cnt varchar(4) comment '商品数'
+	, register_date datetime default now() comment '登録日付'
+	, update_date DATETIME comment '修正日付'
+) default charset = utf8 comment '置換サーブ情報';
