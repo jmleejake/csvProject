@@ -492,6 +492,22 @@ public class ListDAO {
 				sumVO.setJan_cd(transRet.get(0).getJan_cd());
 				sumVO.setTarget_type(target_type);
 				listMapper.insertOrderSum(sumVO);
+			}else {
+				/**
+				 * 2021.06.11 order sum실행시 translation_info에 값이 없으면
+				 * translation_sub_info에서 search할수있게 처리
+				 * */
+				SubTranslationVO subTrans = new SubTranslationVO();
+				subTrans.setKeyword(str);
+				ArrayList<SubTranslationVO> subTransRet = listMapper.getSubTransInfo(subTrans);
+				if(subTransRet.size() > 0) {
+					OrderSumVO sumVO = new OrderSumVO();
+					sumVO.setAfter_trans(str);
+					sumVO.setPrd_sum(sum+"");
+					sumVO.setJan_cd(subTransRet.get(0).getJan_cd());
+					sumVO.setTarget_type(target_type);
+					listMapper.insertOrderSum(sumVO);
+				}
 			}
 		}
 		OrderSumVO sumVO = new OrderSumVO();

@@ -543,6 +543,11 @@ inner join translation_info parent on parent.seq_id = subInfo.parent_seq_id
 	<if test="parent_seq_id != null">
 	parent_seq_id = #{parent_seq_id}
 	</if>
+	<trim prefixOverrides="AND |OR ">
+	<if test="keyword != null and keyword != ''"> 
+	and (subInfo.before_trans like '${keyword}' or subInfo.after_trans like '${keyword}')
+	</if>
+	</trim>
 </where>
 order by register_date desc, update_date desc
 </select>

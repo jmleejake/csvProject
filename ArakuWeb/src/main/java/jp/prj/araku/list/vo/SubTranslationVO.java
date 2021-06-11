@@ -19,6 +19,20 @@ public class SubTranslationVO {
 	private String register_date;
 	/**データ修正日*/
 	private String update_date;
+	private String keyword;
+	private String search_type;
+	public String getKeyword() {
+		return keyword;
+	}
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
+	}
+	public String getSearch_type() {
+		return search_type;
+	}
+	public void setSearch_type(String search_type) {
+		this.search_type = search_type;
+	}
 	public String getSeq_id() {
 		return seq_id;
 	}
