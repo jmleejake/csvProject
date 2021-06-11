@@ -58,6 +58,7 @@ import jp.prj.araku.list.vo.GlobalSagawaDownVO;
 import jp.prj.araku.list.vo.PrdCdMasterVO;
 import jp.prj.araku.list.vo.PrdTransVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
+import jp.prj.araku.list.vo.SubTranslationVO;
 import jp.prj.araku.list.vo.TranslationErrorVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
@@ -409,6 +410,7 @@ public class RakutenDAO {
 		String transedName;
 //		int productSetNo, unitNo;
 		int unitNo;
+		String trans_seq_id = ""; // 2021.06.11
 		for (RakutenVO vo : targetList) {
 			// 이전에 에러처리 된 데이터가 있을경우 제거
 			TranslationErrorVO errVO = new TranslationErrorVO();
@@ -425,6 +427,7 @@ public class RakutenDAO {
 			ArrayList<TranslationVO> searchRet = listMapper.getTransInfo(transVO);
 			
 			if(searchRet.size() > 0) {
+				trans_seq_id = searchRet.get(0).getSeq_id(); // 2021.06.11
 				// 치환후 상품명
 				transedName = searchRet.get(0).getAfter_trans();
 				// 치환한 결과가 없을 경우 에러처리
@@ -627,6 +630,36 @@ public class RakutenDAO {
 				}else {
 					listMapper.insertPrdTrans(prdTransVO);
 				}
+				
+				/**
+				 * 2021.06.11 その他마스터테이블 (translation_sub_info)를 
+				 * translation_info의 seq_id로 select하여 결과가 있을경우 해당 정보들을 商品中間マスタ로 insert처리
+				 * */
+				if(!"".equals(trans_seq_id)) {
+					SubTranslationVO subTransVO = new SubTranslationVO();
+					subTransVO.setParent_seq_id(trans_seq_id);
+					ArrayList<SubTranslationVO> subTransList = listMapper.getSubTransInfo(subTransVO);
+					if(subTransList.size() > 0) {
+						for(SubTranslationVO subTrans : subTransList) {
+							prdTransVO = new PrdTransVO();
+							prdTransVO.setOrder_no(vo.getOrder_no());
+							prdTransVO.setOrder_gbn("1");
+							prdTransVO.setBefore_trans(subTrans.getBefore_trans());
+							prdTransVO.setAfter_trans(subTrans.getAfter_trans());
+							prdTransVO.setPrd_cnt(subTrans.getPrd_cnt());
+							prdTransVO.setPrd_master_hanei_gbn("0");
+							prdTransVO.setSearch_type("translate");
+							prdTransVO.setTrans_target_type(CommonUtil.TRANS_TARGET_R);
+							prdTransRet = listMapper.getPrdTrans(prdTransVO);
+							if(prdTransRet.size() > 0) {
+								prdTransVO.setSeq_id(prdTransRet.get(0).getSeq_id());
+								listMapper.updatePrdTrans(prdTransVO);
+							}else {
+								listMapper.insertPrdTrans(prdTransVO);
+							}
+						}
+					}
+				}
 			}
 			
 			String last = buf.toString();
@@ -710,6 +743,7 @@ public class RakutenDAO {
 		String transedName;
 //		int productSetNo, unitNo;
 		int unitNo;
+		String trans_seq_id = ""; // 2021.06.11
 		for (RakutenVO vo : targetList) {
 			// 이전에 에러처리 된 데이터가 있을경우 제거
 			TranslationErrorVO errVO = new TranslationErrorVO();
@@ -726,6 +760,7 @@ public class RakutenDAO {
 			ArrayList<TranslationVO> searchRet = listMapper.getTransInfo(transVO);
 			
 			if(searchRet.size() > 0) {
+				trans_seq_id = searchRet.get(0).getSeq_id(); // 2021.06.11
 				// 치환후 상품명
 				transedName = searchRet.get(0).getAfter_trans();
 				// 치환한 결과가 없을 경우 에러처리
@@ -923,6 +958,36 @@ public class RakutenDAO {
 					listMapper.updatePrdTrans(prdTransVO);
 				}else {
 					listMapper.insertPrdTrans(prdTransVO);
+				}
+				
+				/**
+				 * 2021.06.11 その他마스터테이블 (translation_sub_info)를 
+				 * translation_info의 seq_id로 select하여 결과가 있을경우 해당 정보들을 商品中間マスタ로 insert처리
+				 * */
+				if(!"".equals(trans_seq_id)) {
+					SubTranslationVO subTransVO = new SubTranslationVO();
+					subTransVO.setParent_seq_id(trans_seq_id);
+					ArrayList<SubTranslationVO> subTransList = listMapper.getSubTransInfo(subTransVO);
+					if(subTransList.size() > 0) {
+						for(SubTranslationVO subTrans : subTransList) {
+							prdTransVO = new PrdTransVO();
+							prdTransVO.setOrder_no(vo.getOrder_no());
+							prdTransVO.setOrder_gbn("1");
+							prdTransVO.setBefore_trans(subTrans.getBefore_trans());
+							prdTransVO.setAfter_trans(subTrans.getAfter_trans());
+							prdTransVO.setPrd_cnt(subTrans.getPrd_cnt());
+							prdTransVO.setPrd_master_hanei_gbn("0");
+							prdTransVO.setSearch_type("translate");
+							prdTransVO.setTrans_target_type(CommonUtil.TRANS_TARGET_R);
+							prdTransRet = listMapper.getPrdTrans(prdTransVO);
+							if(prdTransRet.size() > 0) {
+								prdTransVO.setSeq_id(prdTransRet.get(0).getSeq_id());
+								listMapper.updatePrdTrans(prdTransVO);
+							}else {
+								listMapper.insertPrdTrans(prdTransVO);
+							}
+						}
+					}
 				}
 			}
 			

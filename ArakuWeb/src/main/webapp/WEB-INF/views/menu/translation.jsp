@@ -43,9 +43,6 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 	</div>
 	<div class="col-sm-6" style="margin-top: 7px;">
 	<button id="btn_delete" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">削除</button>
-	<!-- いらない
-	<button id="btn_etc" type="button" class="btn btn-primary" data-toggle="modal" data-target="#etcModal" style="width: 120px; margin-bottom: 10px;">その他</button>
-	 -->
 	</div>
 </div>
 <div id="translateGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
@@ -61,9 +58,10 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 			</div>
 			<div class="modal-body">
 			<div class="container-fluid">
+			<!-- 
 			<div class="well container-fluid">
 			<form action="getEtc" id="etcFrm">
-			<input type="hidden" name="target_type" value="${type }">
+			<input type="hidden" id="parent_seq">
 			<div class="col-sm-6">
 			<label>商品名</label>
 			<input type="text" name="prd_nm" class="form-control" style="width: 200px;" onkeypress = "if(event.keyCode==13){ srchEtc(); event.preventDefault(); }">
@@ -73,10 +71,11 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 			</div>
 			</form>
 			</div>
+			 -->
 			<div class="well container-fluid">
 			<div class="row">
 				<div class="col-sm-6" style="margin-top: 7px;">
-				<button id="btn_etc_create" type="button" class="btn btn-default" data-type="${type }" style="width: 100px; margin-bottom: 10px;">列追加</button>
+				<button id="btn_etc_create" type="button" class="btn btn-default" style="width: 100px; margin-bottom: 10px;">列追加</button>
 				<button id="btn_etc_commit" type="button" class="btn btn-default" style="width: 100px; margin-bottom: 10px;">登録</button>
 				</div>
 				<div class="col-sm-6" style="margin-top: 7px;">

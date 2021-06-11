@@ -38,6 +38,7 @@ import jp.prj.araku.list.vo.PrdTransVO;
 import jp.prj.araku.list.vo.RakutenSearchVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
 import jp.prj.araku.list.vo.SagawaUpdateVO;
+import jp.prj.araku.list.vo.SubTranslationVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
 import jp.prj.araku.q10.mapper.IQ10Mapper;
@@ -491,6 +492,22 @@ public class ListDAO {
 				sumVO.setJan_cd(transRet.get(0).getJan_cd());
 				sumVO.setTarget_type(target_type);
 				listMapper.insertOrderSum(sumVO);
+			}else {
+				/**
+				 * 2021.06.11 order sum실행시 translation_info에 값이 없으면
+				 * translation_sub_info에서 search할수있게 처리
+				 * */
+				SubTranslationVO subTrans = new SubTranslationVO();
+				subTrans.setKeyword(str);
+				ArrayList<SubTranslationVO> subTransRet = listMapper.getSubTransInfo(subTrans);
+				if(subTransRet.size() > 0) {
+					OrderSumVO sumVO = new OrderSumVO();
+					sumVO.setAfter_trans(str);
+					sumVO.setPrd_sum(sum+"");
+					sumVO.setJan_cd(subTransRet.get(0).getJan_cd());
+					sumVO.setTarget_type(target_type);
+					listMapper.insertOrderSum(sumVO);
+				}
 			}
 		}
 		OrderSumVO sumVO = new OrderSumVO();
@@ -590,5 +607,41 @@ public class ListDAO {
 		EtcMasterVO vo = new EtcMasterVO();
 		vo.setTarget_type(target);
 		return getEtc(vo);
+	}
+	
+	/**
+	 * 置換サーブ情報
+	 * */
+	public ArrayList<SubTranslationVO> getSubTransInfo(SubTranslationVO vo) {
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		return mapper.getSubTransInfo(vo);
+	}
+	
+	public ArrayList<SubTranslationVO> manipulateSubTransInfo(ArrayList<SubTranslationVO> list) {
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		String parent_seq = "";
+		for(SubTranslationVO vo : list) {
+			parent_seq = vo.getParent_seq_id();
+			if(null != vo.getSeq_id()) {
+				mapper.updateSubTransInfo(vo);
+			}else {
+				mapper.insertSubTransInfo(vo);
+			}
+		}
+		SubTranslationVO vo = new SubTranslationVO();
+		vo.setParent_seq_id(parent_seq);
+		return getSubTransInfo(vo);
+	}
+	
+	public ArrayList<SubTranslationVO> deleteSubTransInfo(ArrayList<SubTranslationVO> list) {
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		String parent_seq = "";
+		for(SubTranslationVO vo : list) {
+			parent_seq = vo.getParent_seq_id();
+			mapper.deleteSubTransInfo(vo.getSeq_id());
+		}
+		SubTranslationVO vo = new SubTranslationVO();
+		vo.setParent_seq_id(parent_seq);
+		return getSubTransInfo(vo);
 	}
 }

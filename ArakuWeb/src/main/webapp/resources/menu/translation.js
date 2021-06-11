@@ -32,10 +32,7 @@ var columnDefs = [
     	, editable: true
     	, cellEditor: 'agPopupTextCellEditor'
     }
-    , {headerName: "その他", field: "etc_cntnt", width: 250
-    	, editable: true
-    	, cellEditor: 'agPopupTextCellEditor'
-    }
+    , {headerName: "その他", width: 250, cellRenderer: 'btnRenderer'}
 ];
 
 // rowData 초기화
@@ -106,7 +103,17 @@ var transGridOptions = {
 				, jan_cd:afterData.jan_cd
         	});
         }
-    }
+    },
+    components: {
+		btnRenderer: function(param) {
+			var html = "<div>";
+			html += "<span>";
+			html += "<button type='button' class='btn btn-default' data-toggle='modal' data-target='#etcModal' onclick='javascript:showEtc("+param.data.seq_id+");' style='height:25px; margin-bottom:5px;'>詳細</button>";
+			html += "</span>";
+			html += "</div>"
+			return html;
+		}
+	}
 };
 
 function isFirstColumn(params) {
@@ -231,12 +238,25 @@ $("#btn_delete").on("click", function() {
 /*+++++++++++++++++++++++++その他+++++++++++++++++++++++++*/
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+function showEtc(seq_id) {
+	console.log(seq_id);
+	$("#parent_seq").val(seq_id);
+	$.ajax({
+	    url: "getSubTrans"
+	    , data: {parent_seq_id:seq_id}
+	    , dataType: "json"  
+	    , contentType : "application/json"
+	    , success: setEtcRowData
+	});
+}
+
 var etcColumnDefs = [
-    {headerName: "その他キー", field: "etc_key", width: 180
+	{headerName: "親置換後", field: "parent_after_trans", width: 300}
+	, {headerName: "ＪＡＮコード", field: "jan_cd", width: 180
     	, editable: true
     	, cellEditor: 'agPopupTextCellEditor'
     }
-    , {headerName: "商品名", field: "prd_nm", width: 300
+    , {headerName: "置換前", field: "before_trans", width: 300
     	, editable: true
     	, cellEditor: 'agLargeTextCellEditor'
     	, cellEditorParams: {
@@ -249,11 +269,16 @@ var etcColumnDefs = [
 			return params.value;
 		}
     }
-    , {headerName: "商品数", field: "prd_cnt", width: 120
+    , {headerName: "置換後", field: "after_trans", width: 300
     	, editable: true
-    	, cellEditor: 'agPopupTextCellEditor'
+    	, cellEditor: 'agLargeTextCellEditor'
+    	, cellEditorParams: {
+            maxLength: '500',
+            cols: '50',
+            rows: '6'
+        }
     }
-    , {headerName: "ＪＡＮコード", field: "jan_cd", width: 180
+    , {headerName: "商品数", field: "prd_cnt", width: 120
     	, editable: true
     	, cellEditor: 'agPopupTextCellEditor'
     }
@@ -264,10 +289,10 @@ var etcRowData = [];
 
 // 수정 전후를 파악할 변수 선언 / 선택된 데이터 변수
 var selectedEtcData
-, startPrdCnt2, stopPrdCnt2
-, startPrdNm2, stopPrdNm2
-, startJanCd2, stopJanCd2
-, startEtcKey, stopEtcKey;
+,startBefore,stopBefore
+,startAfter,stopAfter
+,startCnt,stopCnt
+,startJan,stopJan;
 
 //수정데이터 배열
 var modifiedEtcData = [];
@@ -297,29 +322,30 @@ var etcGridOptions = {
     },
     onCellEditingStarted: function(event) {
         var previousData = event.node.data;
-        startPrdCnt2 = previousData.prd_cnt;
-        startPrdNm2 = previousData.prd_nm;
-        startJanCd2 = previousData.jan_cd;
-        startEtcKey = previousData.etc_key;
+        startBefore = previousData.before_trans;
+        startAfter = previousData.after_trans;
+        startCnt = previousData.prd_cnt;
+        startJan = previousData.jan_cd;
     },
     onCellEditingStopped: function(event) {
         var afterData = event.node.data;
-        stopPrdCnt2 = afterData.prd_cnt;
-        stopPrdNm2 = afterData.prd_nm;
-        stopJanCd2 = afterData.jan_cd;
-        stopEtcKey = afterData.etc_key;
+        stopBefore = afterData.before_trans;
+        stopAfter = afterData.after_trans;
+        stopCnt = afterData.prd_cnt;
+        stopJan = afterData.jan_cd;
         
-        if (!(startPrdCnt2 == stopPrdCnt2) ||
-        		!(startPrdNm2 == stopPrdNm2) ||
-        		!(startJanCd2 == stopJanCd2) ||
-        		!(startEtcKey == stopEtcKey)) {
+        if (!(startBefore == stopBefore) ||
+        		!(startAfter == stopAfter) ||
+        		!(startCnt == stopCnt) ||
+        		!(startJan == stopJan)) {
         	console.log("modified!");
         	modifiedEtcData.push({
         		seq_id:afterData.seq_id
-				, prd_cnt:afterData.prd_cnt
-				, prd_nm:afterData.prd_nm
-				, jan_cd:afterData.jan_cd
-				, etc_key:afterData.etc_key
+        		, parent_seq_id:afterData.parent_seq_id
+				, before_trans:stopBefore
+				, after_trans:stopAfter
+				, jan_cd:stopJan
+				, prd_cnt:stopCnt
         	});
         }
     }
@@ -330,13 +356,6 @@ var gridEtcDiv = document.querySelector('#etcGrid');
 
 // create the grid passing in the div to use together with the columns & data we want to use
 new agGrid.Grid(gridEtcDiv, etcGridOptions);
-
-$.ajax({
-    url: "getEtc"
-    , dataType: "json"  
-    , contentType : "application/json"
-    , success: setEtcRowData
-});
 
 function isEtcFirstColumn(params) {
 	var displayedColumns = params.columnApi.getAllDisplayedColumns();
@@ -355,9 +374,11 @@ function setEtcRowData(result) {
 		var row = {
 				seq_id: result[i].seq_id
 				, prd_cnt:result[i].prd_cnt
-				, prd_nm:result[i].prd_nm
 				, jan_cd:result[i].jan_cd
-				, etc_key:result[i].etc_key
+				, before_trans:result[i].before_trans
+				, after_trans:result[i].after_trans
+				, parent_after_trans:result[i].parent_after_trans
+				, parent_seq_id:result[i].parent_seq_id
 				, register_date:result[i].register_date
 				, update_date:result[i].update_date
 		}
@@ -369,28 +390,11 @@ function setEtcRowData(result) {
 	modifiedEtcData = [];
 }
 
-function srchEtc() {
-	var form = $("#etcFrm");
-    var url = form.attr('action');
-    
-    $.ajax({
-        type: "post",
-        url: url,
-        data: form.serialize(), // serializes the form's elements.
-        success: setEtcRowData
-    });
-}
-
-$('#btn_etc_srch').on('click', function() {
-	srchEtc();
-});
-
 $("#btn_etc_create").on("click", function() {
-	var type = $("#btn_etc_create").attr("data-type");
-	var rowData = {etc_key: "その他キー", prd_nm: "商品名", prd_cnt:"商品数",jan_cd: "ＪＡＮコード", target_type:type};
+	var rowData = {parent_seq_id: $("#parent_seq").val(), before_trans: "置換前", after_trans:"置換後"};
 	modifiedEtcData.push(rowData);
 	$.ajax({
-		url: "modEtc"
+		url: "maniSubTrans"
 		, type:"post"
 		, dataType: "json"
 		, contentType: 'application/json'
@@ -406,7 +410,7 @@ $("#btn_etc_commit").on("click", function() {
 	}
 	
 	$.ajax({
-		url: "modEtc"
+		url: "maniSubTrans"
 		, type:"post"
 		, dataType: "json"
 		, contentType: 'application/json'
@@ -427,7 +431,7 @@ $("#btn_etc_delete").on("click", function() {
 	alertify.confirm("本当に削除しますか？", function (e) {
 		if (e) {
 			$.ajax({
-			    url: "delEtc"
+			    url: "delSubTrans"
 		    	, type:"post"
 			    , dataType: "json"  
 			    , contentType : "application/json"

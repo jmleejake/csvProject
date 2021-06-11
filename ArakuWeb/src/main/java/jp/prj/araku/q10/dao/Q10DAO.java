@@ -48,6 +48,7 @@ import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.PrdCdMasterVO;
 import jp.prj.araku.list.vo.PrdTransVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
+import jp.prj.araku.list.vo.SubTranslationVO;
 import jp.prj.araku.list.vo.TranslationErrorVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
@@ -193,6 +194,7 @@ public class Q10DAO {
 		
 		TranslationVO transVO = new TranslationVO();
 		String transedName = "";
+		String trans_seq_id = ""; // 2021.06.11
 		
 		int unitNo = 0;
 		for (Q10VO vo : targetList) {
@@ -211,6 +213,7 @@ public class Q10DAO {
 			ArrayList<TranslationVO> searchRet = listMapper.getTransInfo(transVO);
 			
 			if(searchRet.size() > 0) {
+				trans_seq_id = searchRet.get(0).getSeq_id(); // 2021.06.11
 				// 치환후 상품명
 				transedName = searchRet.get(0).getAfter_trans();
 				// 치환한 결과가 없을 경우 에러처리
@@ -244,26 +247,57 @@ public class Q10DAO {
 				listMapper.insertPrdTrans(prdTransVO);
 			}
 			
+			/**
+			 * 2021.06.11 その他마스터테이블 (translation_sub_info)를 
+			 * translation_info의 seq_id로 select하여 결과가 있을경우 해당 정보들을 商品中間マスタ로 insert처리
+			 * */
+			if(!"".equals(trans_seq_id)) {
+				SubTranslationVO subTransVO = new SubTranslationVO();
+				subTransVO.setParent_seq_id(trans_seq_id);
+				ArrayList<SubTranslationVO> subTransList = listMapper.getSubTransInfo(subTransVO);
+				if(subTransList.size() > 0) {
+					for(SubTranslationVO subTrans : subTransList) {
+						prdTransVO = new PrdTransVO();
+						prdTransVO.setOrder_no(vo.getOrder_no());
+						prdTransVO.setOrder_gbn("1");
+						prdTransVO.setBefore_trans(subTrans.getBefore_trans());
+						prdTransVO.setAfter_trans(subTrans.getAfter_trans());
+						prdTransVO.setPrd_cnt(subTrans.getPrd_cnt());
+						prdTransVO.setPrd_master_hanei_gbn("0");
+						prdTransVO.setSearch_type("translate");
+						prdTransVO.setTrans_target_type(CommonUtil.TRANS_TARGET_Q);
+						prdTransRet = listMapper.getPrdTrans(prdTransVO);
+						if(prdTransRet.size() > 0) {
+							prdTransVO.setSeq_id(prdTransRet.get(0).getSeq_id());
+							listMapper.updatePrdTrans(prdTransVO);
+						}else {
+							listMapper.insertPrdTrans(prdTransVO);
+						}
+					}
+				}
+			}
+			
 			// 지역별 배송코드 세팅 (csv다운로드 기능)
 			RegionMasterVO rmVO = new RegionMasterVO();
 			// 県 府 都 道
 			String state = vo.getAddress();
-			if(state.indexOf("県") > -1) {
-				state = state.substring(0, state.indexOf("県")+1);
-			} else if(state.indexOf("都") > -1) {
-				state = state.substring(0, state.indexOf("都")+1);
-			} else if(state.indexOf("府") > -1) {
-				state = state.substring(0, state.indexOf("府")+1);
-			} else if(state.indexOf("道") > -1) {
-				state = state.substring(0, state.indexOf("道")+1);
+			if(null != state && !"".equals(state)) {
+				if(state.indexOf("県") > -1) {
+					state = state.substring(0, state.indexOf("県")+1);
+				} else if(state.indexOf("都") > -1) {
+					state = state.substring(0, state.indexOf("都")+1);
+				} else if(state.indexOf("府") > -1) {
+					state = state.substring(0, state.indexOf("府")+1);
+				} else if(state.indexOf("道") > -1) {
+					state = state.substring(0, state.indexOf("道")+1);
+				}
+				rmVO.setKeyword(state);
+				ArrayList<RegionMasterVO> regionM = listMapper.getRegionMaster(rmVO);
+				
+				vo.setDelivery_company(regionM.get(0).getDelivery_company());
+				log.debug("Update Q10 info : " + vo);
+				mapper.updateQ10Info(vo);
 			}
-			
-			rmVO.setKeyword(state);
-			ArrayList<RegionMasterVO> regionM = listMapper.getRegionMaster(rmVO);
-			
-			vo.setDelivery_company(regionM.get(0).getDelivery_company());
-			log.debug("Update Q10 info : " + vo);
-			mapper.updateQ10Info(vo);
 			
 			unitNo = Integer.parseInt(vo.getQty());
 			Integer intsu = new Integer (unitNo); 
