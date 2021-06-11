@@ -58,6 +58,7 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 			</div>
 			<div class="modal-body">
 			<div class="container-fluid">
+			<!-- 
 			<div class="well container-fluid">
 			<form action="getEtc" id="etcFrm">
 			<input type="hidden" id="parent_seq">
@@ -70,6 +71,7 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 			</div>
 			</form>
 			</div>
+			 -->
 			<div class="well container-fluid">
 			<div class="row">
 				<div class="col-sm-6" style="margin-top: 7px;">

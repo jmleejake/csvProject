@@ -31,6 +31,7 @@ import jp.prj.araku.list.vo.OrderSumVO;
 import jp.prj.araku.list.vo.PrdCdMasterVO;
 import jp.prj.araku.list.vo.PrdTransVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
+import jp.prj.araku.list.vo.SubTranslationVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
 import jp.prj.araku.tablet.dao.TabletPrdDAO;
@@ -528,6 +529,27 @@ public class AmazonController {
 	@RequestMapping(value = "/delEtc")
 	public ArrayList<EtcMasterVO> deleteEtc(@RequestBody ArrayList<EtcMasterVO> list) {
 		return listDao.deleteEtc(list);
+	}
+	
+	/**
+	 * 置換サーブ情報
+	 * */
+	@ResponseBody
+	@RequestMapping(value = "getSubTrans")
+	public ArrayList<SubTranslationVO> getSubTransInfo(SubTranslationVO vo) {
+		return listDao.getSubTransInfo(vo);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "maniSubTrans", method = RequestMethod.POST)
+	public ArrayList<SubTranslationVO> manipulateSubTransInfo(@RequestBody ArrayList<SubTranslationVO> list) {
+		return listDao.manipulateSubTransInfo(list);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "delSubTrans", method = RequestMethod.POST)
+	public ArrayList<SubTranslationVO> deleteSubTransInfo(@RequestBody ArrayList<SubTranslationVO> list) {
+		return listDao.deleteSubTransInfo(list);
 	}
 	
 }

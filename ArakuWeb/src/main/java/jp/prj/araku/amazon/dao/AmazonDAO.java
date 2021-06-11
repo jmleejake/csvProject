@@ -51,6 +51,7 @@ import jp.prj.araku.list.vo.GlobalSagawaDownVO;
 import jp.prj.araku.list.vo.PrdCdMasterVO;
 import jp.prj.araku.list.vo.PrdTransVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
+import jp.prj.araku.list.vo.SubTranslationVO;
 import jp.prj.araku.list.vo.TranslationErrorVO;
 import jp.prj.araku.list.vo.TranslationResultVO;
 import jp.prj.araku.list.vo.TranslationVO;
@@ -190,7 +191,8 @@ public class AmazonDAO {
 		IAmazonMapper amazonMapper = sqlSession.getMapper(IAmazonMapper.class);
 		
 		TranslationVO transVO = new TranslationVO();
-		String transedName;
+		String transedName; 
+		String trans_seq_id = ""; // 2020.06.11
 		
 		for (AmazonVO vo : targetList) {
 			// 이전에 에러처리 된 데이터가 있을경우 제거
@@ -208,6 +210,7 @@ public class AmazonDAO {
 			ArrayList<TranslationVO> searchRet = listMapper.getTransInfo(transVO);
 			
 			if(searchRet.size() > 0) {
+				trans_seq_id = searchRet.get(0).getSeq_id(); // 2020.06.11
 				// 치환후 상품명
 				transedName = searchRet.get(0).getAfter_trans();
 				log.debug("치환후 상품명" + transedName);
@@ -241,6 +244,36 @@ public class AmazonDAO {
 				listMapper.updatePrdTrans(prdTransVO);
 			}else {
 				listMapper.insertPrdTrans(prdTransVO);
+			}
+			
+			/**
+			 * 2021.06.11 その他마스터테이블 (translation_sub_info)를 
+			 * translation_info의 seq_id로 select하여 결과가 있을경우 해당 정보들을 商品中間マスタ로 insert처리
+			 * */
+			if(!"".equals(trans_seq_id)) {
+				SubTranslationVO subTransVO = new SubTranslationVO();
+				subTransVO.setParent_seq_id(trans_seq_id);
+				ArrayList<SubTranslationVO> subTransList = listMapper.getSubTransInfo(subTransVO);
+				if(subTransList.size() > 0) {
+					for(SubTranslationVO subTrans : subTransList) {
+						prdTransVO = new PrdTransVO();
+						prdTransVO.setOrder_no(vo.getOrder_id());
+						prdTransVO.setOrder_gbn("1");
+						prdTransVO.setBefore_trans(subTrans.getBefore_trans());
+						prdTransVO.setAfter_trans(subTrans.getAfter_trans());
+						prdTransVO.setPrd_cnt(subTrans.getPrd_cnt());
+						prdTransVO.setPrd_master_hanei_gbn("0");
+						prdTransVO.setSearch_type("translate");
+						prdTransVO.setTrans_target_type(CommonUtil.TRANS_TARGET_A);
+						prdTransRet = listMapper.getPrdTrans(prdTransVO);
+						if(prdTransRet.size() > 0) {
+							prdTransVO.setSeq_id(prdTransRet.get(0).getSeq_id());
+							listMapper.updatePrdTrans(prdTransVO);
+						}else {
+							listMapper.insertPrdTrans(prdTransVO);
+						}
+					}
+				}
 			}
 			
 			// 지역별 배송코드 세팅 (csv다운로드 기능)
