@@ -379,6 +379,10 @@ public class RakutenDAO {
 		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
 		for (RakutenVO vo : list) {
 			mapper.deleteRakutenInfo(vo.getSeq_id());
+			// 2021.06.28 rakuten_info삭제시 rakuten_frozen_info도 주문번호를 이용하여 함께 삭제처리
+			RakutenVO vo2 = new RakutenVO();
+			vo2.setOrder_no(vo.getOrder_no());
+			mapper.deleteRakutenFrozenInfo(vo2);
 		}
 		// 商品中間マスタ 날려버리기
 		listMapper.deletePrdTrans(null);
@@ -2849,10 +2853,10 @@ public class RakutenDAO {
 		}
 	}
 	
-	public int deleteRakutenFrozenInfo() {
+	public int deleteRakutenFrozenInfo(RakutenVO vo) {
 		log.info("deleteRakutenFrozenInfo");
 		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
-		return mapper.deleteRakutenFrozenInfo();
+		return mapper.deleteRakutenFrozenInfo(vo);
 	}
 	
 	public ArrayList<RakutenVO> getAllData() {

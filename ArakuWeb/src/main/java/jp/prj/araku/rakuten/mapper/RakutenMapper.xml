@@ -1142,8 +1142,16 @@ from
 </where>
 </select>
 
-<delete id="deleteRakutenFrozenInfo">
+<delete id="deleteRakutenFrozenInfo" parameterType="Rakuten">
 delete from rakuten_frozen_info
+<where>
+	<if test="seq_id != null and seq_id != ''">
+	seq_id = #{seq_id}
+	</if>
+	<if test="order_no != null and order_no != ''">
+	order_no like '%${order_no}%'
+	</if>
+</where>
 </delete>
 
 </mapper>

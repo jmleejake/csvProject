@@ -18,5 +18,5 @@ public interface IRakutenMapper {
 	public ArrayList<RakutenVO> getTransResult(TranslationResultVO vo);
 	public ArrayList<RCSVDownVO> getRCSVDownList(RCSVDownVO vo);
 	public int updateRakutenRegistDate(String seq_id);
-	public int deleteRakutenFrozenInfo();
+	public int deleteRakutenFrozenInfo(RakutenVO vo);
 }

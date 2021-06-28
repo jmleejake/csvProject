@@ -542,7 +542,7 @@ public class RakutenController {
 	public String deleteRakutenFrozenInfo() {
 		String ret = "";
 		log.info("deleteRakutenFrozenInfo");
-		ret = dao.deleteRakutenFrozenInfo() + "件 削除完了しました。";
+		ret = dao.deleteRakutenFrozenInfo(null) + "件 削除完了しました。";
 		return ret;
 	}
 	
