@@ -58,10 +58,10 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 			</div>
 			<div class="modal-body">
 			<div class="container-fluid">
+			<input type="hidden" id="parent_seq">
 			<!-- 
 			<div class="well container-fluid">
 			<form action="getEtc" id="etcFrm">
-			<input type="hidden" id="parent_seq">
 			<div class="col-sm-6">
 			<label>商品名</label>
 			<input type="text" name="prd_nm" class="form-control" style="width: 200px;" onkeypress = "if(event.keyCode==13){ srchEtc(); event.preventDefault(); }">
