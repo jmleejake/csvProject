@@ -609,7 +609,7 @@ public class RakutenDAO {
 					transVO.setKeyword(optionName.trim());
 					searchRet = listMapper.getTransInfo(transVO);
 					prdTransVO2.setBefore_trans(searchRet.get(0).getBefore_trans());
-					
+					prdTransVO2.setJan_cd(searchRet.get(0).getJan_cd());
 					prdTransVO2.setPrd_cnt(unitsu1+"");
 					prdTransVO2.setPrd_master_hanei_gbn("0");
 					prdTransVO2.setSearch_type("translate");
@@ -646,7 +646,7 @@ public class RakutenDAO {
 				if(prdTransRet.size() > 0) {
 					prdTransVO.setSeq_id(prdTransRet.get(0).getSeq_id());
 					listMapper.updatePrdTrans(prdTransVO);
-				}else {			
+				}else {	
 					listMapper.insertPrdTrans(prdTransVO);
 				}
 				
@@ -666,7 +666,7 @@ public class RakutenDAO {
 							prdTransVO.setJan_cd(subTrans.getJan_cd());
 							prdTransVO.setBefore_trans(subTrans.getBefore_trans());
 							prdTransVO.setAfter_trans(subTrans.getAfter_trans());
-							prdTransVO.setPrd_cnt(subTrans.getPrd_cnt());
+							prdTransVO.setPrd_cnt(sintsu);
 							prdTransVO.setPrd_master_hanei_gbn("0");
 							prdTransVO.setSearch_type("translate");
 							prdTransVO.setTrans_target_type(CommonUtil.TRANS_TARGET_R);
