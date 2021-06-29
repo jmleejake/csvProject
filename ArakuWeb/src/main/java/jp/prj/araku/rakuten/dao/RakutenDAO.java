@@ -99,7 +99,7 @@ public class RakutenDAO {
 		冷凍冷蔵マスタテーブル의
 		데이터를 일괄삭제
 		 * */
-		mapper.deleteRakutenFrozenInfo();
+		mapper.deleteRakutenFrozenInfo(null);
 		BufferedReader reader = null;
 //		ArrayList<RakutenVO> errList = new ArrayList<>();
 		// 2019-10-09: 別紙처리
