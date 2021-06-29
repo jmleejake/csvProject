@@ -573,8 +573,8 @@ left outer join translation_err terr on terr.trans_target_id = ri.seq_id and ter
 		<when test="search_type =='srch'">
 		<trim prefixOverrides="AND |OR ">
 		<if test="register_date != null and register_date != ''">
-		ri.register_date between str_to_date(concat(#{register_date},' ','00:00:00'), '%Y/%m/%d %H:%i:%S')  
-		and str_to_date(concat(#{register_date},' ','23:59:59'), '%Y/%m/%d %H:%i:%S')
+		ri.register_date between str_to_date(#{fromDt}, '%Y/%m/%d %H:%i:%S')  
+		and str_to_date(#{toDt}, '%Y/%m/%d %H:%i:%S')
 		</if>
 		<if test="delivery_surname != null and delivery_surname != ''">
 		and (delivery_surname like '%${delivery_surname}%' 

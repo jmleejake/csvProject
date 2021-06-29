@@ -93,6 +93,13 @@ public class RakutenDAO {
 		log.debug("original name: " + rakUpload.getOriginalFilename());
 		log.debug("size: " + rakUpload.getSize());
 		
+		/*
+		2021.06.29
+		락텐 파일 업로드 할때마다 
+		冷凍冷蔵マスタテーブル의
+		데이터를 일괄삭제
+		 * */
+		mapper.deleteRakutenFrozenInfo();
 		BufferedReader reader = null;
 //		ArrayList<RakutenVO> errList = new ArrayList<>();
 		// 2019-10-09: 別紙처리
@@ -366,6 +373,14 @@ public class RakutenDAO {
 		// 초기상태일때 2틀간의 데이터를 얻을수있게 처리 (*srch는 검색할때 넘기는 값)
 		if (!CommonUtil.SEARCH_TYPE_SRCH.equals(vo.getSearch_type())) {
 			vo.setStart_date(CommonUtil.getStartDate());
+		}
+		// 2021.06.29 라쿠텐 시간검색 추가
+		if(null != vo.getRegister_date()) {
+			String[] arr = vo.getRegister_date().split(" ");
+			String fromDt = vo.getRegister_date()+":00";
+			String toDt = arr[0].trim()+" 23:59:59";
+			vo.setFromDt(fromDt);
+			vo.setToDt(toDt);
 		}
 		log.debug("{}", vo);
 		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
@@ -1371,7 +1386,7 @@ public class RakutenDAO {
 					}
 				}else if("multi".equals(downType)) {
 					// 20210515 jmlee 야마토 multi다운일때는 .으로 결과값을 강제로 박기!
-					//tmp.setResult_text(".");
+					tmp.setResult_text(".");
 					if(multiList.size() < 1) {
 						continue;
 					}

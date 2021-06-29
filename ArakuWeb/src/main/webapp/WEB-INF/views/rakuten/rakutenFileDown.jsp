@@ -82,9 +82,8 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 $(document).ready(function() {
 	$("#rFile").addClass("active");
 	
-	$("#register_date").datepicker({
-		language: "ja"
-		, autoclose: true
+	$("#register_date").datetimepicker({
+		locale: "ja"
 	});
 });
 </script>
