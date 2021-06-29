@@ -645,8 +645,10 @@ public class RakutenDAO {
 				ArrayList<PrdTransVO> prdTransRet = listMapper.getPrdTrans(prdTransVO);
 				if(prdTransRet.size() > 0) {
 					prdTransVO.setSeq_id(prdTransRet.get(0).getSeq_id());
+					prdTransVO.setJan_cd(prdTransRet.get(0).getJan_cd());
 					listMapper.updatePrdTrans(prdTransVO);
 				}else {
+					prdTransVO.setJan_cd(prdTransRet.get(0).getJan_cd());				
 					listMapper.insertPrdTrans(prdTransVO);
 				}
 				
@@ -663,6 +665,7 @@ public class RakutenDAO {
 							prdTransVO = new PrdTransVO();
 							prdTransVO.setOrder_no(vo.getOrder_no());
 							prdTransVO.setOrder_gbn("1");
+							prdTransVO.setJan_cd(subTrans.getJan_cd());
 							prdTransVO.setBefore_trans(subTrans.getBefore_trans());
 							prdTransVO.setAfter_trans(subTrans.getAfter_trans());
 							prdTransVO.setPrd_cnt(subTrans.getPrd_cnt());
