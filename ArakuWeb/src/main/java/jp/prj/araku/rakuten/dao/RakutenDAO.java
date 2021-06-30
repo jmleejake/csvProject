@@ -1400,7 +1400,7 @@ public class RakutenDAO {
 					}
 				}else if("multi".equals(downType)) {
 					// 20210515 jmlee 야마토 multi다운일때는 .으로 결과값을 강제로 박기!
-					tmp.setResult_text(".");
+					//tmp.setResult_text(".");
 					if(multiList.size() < 1) {
 						continue;
 					}
