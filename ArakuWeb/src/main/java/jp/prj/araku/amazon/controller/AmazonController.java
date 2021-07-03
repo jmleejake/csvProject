@@ -201,6 +201,32 @@ public class AmazonController {
 		}
 	}
 	
+	@RequestMapping(value="/yaChiDown", method=RequestMethod.POST)
+	public void processYamatoChiDownload(
+			HttpServletResponse response
+			, @RequestParam(value="id_lst") String id_lst
+			, @RequestParam(value="company") String delivery_company
+			, @RequestParam(value="isChecked") String chk_ex) {
+		log.debug("processYamatoChiDownload");
+		
+		log.debug("id list : " + id_lst);
+		log.debug("delivery company : " + delivery_company);
+		log.debug("isChecked : " + chk_ex);
+		
+		id_lst = id_lst.replace("[", "");
+		id_lst = id_lst.replace("]", "");
+		String[] seq_id_list = id_lst.split(",");
+		try {
+				dao.yamatoFormatDownload(response, seq_id_list, fileEncoding, delivery_company, chk_ex);
+		} catch (IOException e) {
+			log.error(e.toString());
+		} catch (CsvDataTypeMismatchException e) {
+			log.error(e.toString());
+		} catch (CsvRequiredFieldEmptyException e) {
+			log.error(e.toString());
+		}
+	}
+	
 	@RequestMapping(value="/saDown", method=RequestMethod.POST)
 	public void processSagawaDownload(
 			HttpServletResponse response

@@ -474,7 +474,13 @@ public class YahooDAO {
 			
 			TranslationResultVO vo = new TranslationResultVO();
 			vo.setSeq_id_list(seq_id_list);
-			vo.setDelivery_company(delivery_company);
+			//vo.setDelivery_company(delivery_company);
+			// 2021-07-03 lee S
+			ArrayList<String> deli_com_list = new ArrayList<String>();
+			deli_com_list.add(delivery_company);
+			deli_com_list.add("1011");
+			vo.setDeli_com_list(deli_com_list);
+			// 2021-07-03 lee E
 			
 			ArrayList<YahooVO> list = mapper.getTransResult(vo);
 			ArrayList<ArakuVO> yList = new ArrayList<>();

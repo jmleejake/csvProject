@@ -365,7 +365,7 @@ public class AmazonDAO {
 		CSVWriter csvWriter = null;
 		
 		try {
-			String csvFileName = "YAM" + CommonUtil.getDate("YYYYMMdd", 0) + ".csv";
+			String csvFileName = "YAM_"+delivery_company+"_"+ CommonUtil.getDate("YYYYMMdd", 0) + ".csv";
 
 			response.setContentType("text/csv");
 

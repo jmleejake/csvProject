@@ -14,6 +14,7 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 <div class="row">
 <div class="col-sm-6">
 <button id="btn_ya_down" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">YAMATO</button>
+<button id="btn_ya_chi_down" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">YAMATO地方</button>
 <button id="btn_sa_down" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">SAGAWA</button>
 <button id="btn_glb_sa_down" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">グローバル<br/>SAGAWA</button>
 <button id="btn_cp_down" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">クリックポスト</button>
@@ -30,6 +31,11 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 </div>
 </div>
 <script src="<%=svrInfo %>/resources/amazon/transResult.js"></script>
+<form id="frm_down6" action="yaChiDown" method="post">
+<input type="hidden" id="id_lst" name="id_lst" value="${idList }">
+<input type="hidden" id="ya_chi_code" name="company">
+<input type="hidden" id="ya_chi_chk" name="isChecked">
+</form>
 <form id="frm_down5" action="globalSaDown" method="post">
 <input type="hidden" id="id_lst" name="id_lst" value="${idList }">
 </form>
@@ -57,6 +63,7 @@ $(document).ready(function() {
 	
 	$("#sa_chk").val("");
 	$("#ya_chk").val("");
+	$("#ya_chi_chk").val("");
 	getData();
 });
 </script>
