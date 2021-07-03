@@ -163,6 +163,14 @@ $("#btn_ya_down").on("click", function() {
 	$("#frm_down1").submit();
 });
 
+// YAMATO地方
+$("#btn_ya_chi_down").on("click", function() {
+	console.log("yamato chiiki download button clicked");
+	$("#ya_chi_code").val("1011");
+	console.log("code : " + $("#ya_chi_code").val());
+	$("#frm_down6").submit();
+});
+
 //사가와 CSV파일 다운로드
 $("#btn_sa_down").on("click", function() {
 	console.log("sagawa download button clicked");
@@ -187,8 +195,10 @@ $("#btn_glb_sa_down").on("click", function() {
 $("#tomoEx").on("click", function() {
 	$("#sa_chk").val("");
 	$("#ya_chk").val("");
+	$("#ya_chi_chk").val("");
 	if ($("input:checked").length > 0) {
 		$("#sa_chk").val("1");
 		$("#ya_chk").val("1");
+		$("#ya_chi_chk").val("1");
 	}
 });
