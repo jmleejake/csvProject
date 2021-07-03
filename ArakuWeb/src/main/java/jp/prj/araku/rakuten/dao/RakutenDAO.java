@@ -609,7 +609,7 @@ public class RakutenDAO {
 					transVO.setKeyword(optionName.trim());
 					searchRet = listMapper.getTransInfo(transVO);
 					prdTransVO2.setBefore_trans(searchRet.get(0).getBefore_trans());
-					prdTransVO2.setJan_cd(searchRet.get(0).getJan_cd());
+					prdTransVO2.setJan_cd(searchRet.get(0).getJan_cd()); // 2021-07-03 kim
 					prdTransVO2.setPrd_cnt(unitsu1+"");
 					prdTransVO2.setPrd_master_hanei_gbn("0");
 					prdTransVO2.setSearch_type("translate");
@@ -638,13 +638,13 @@ public class RakutenDAO {
 				prdTransVO.setOrder_gbn("1");
 				prdTransVO.setBefore_trans(vo.getProduct_name());
 				prdTransVO.setAfter_trans(transedName);
-				
+				prdTransVO.setPrd_cnt(unitNo+"");
+				// 2021-07-03 kim S
 				transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
 				transVO.setKeyword(vo.getProduct_name().trim());
 				searchRet = listMapper.getTransInfo(transVO);
 				prdTransVO.setJan_cd(searchRet.get(0).getJan_cd());
-				
-				prdTransVO.setPrd_cnt(unitNo+"");
+				// 2021-07-03 kim E
 				prdTransVO.setPrd_master_hanei_gbn("0");
 				prdTransVO.setSearch_type("translate");
 				prdTransVO.setTrans_target_type(CommonUtil.TRANS_TARGET_R);
@@ -652,7 +652,7 @@ public class RakutenDAO {
 				if(prdTransRet.size() > 0) {
 					prdTransVO.setSeq_id(prdTransRet.get(0).getSeq_id());
 					listMapper.updatePrdTrans(prdTransVO);
-				}else {	
+				}else {
 					listMapper.insertPrdTrans(prdTransVO);
 				}
 				
@@ -669,10 +669,10 @@ public class RakutenDAO {
 							prdTransVO = new PrdTransVO();
 							prdTransVO.setOrder_no(vo.getOrder_no());
 							prdTransVO.setOrder_gbn("1");
-							prdTransVO.setJan_cd(subTrans.getJan_cd());
 							prdTransVO.setBefore_trans(subTrans.getBefore_trans());
 							prdTransVO.setAfter_trans(subTrans.getAfter_trans());
-							prdTransVO.setPrd_cnt(sintsu);
+							prdTransVO.setJan_cd(subTrans.getJan_cd()); // 2021-07-03 kim
+							prdTransVO.setPrd_cnt(sintsu); // 2021-07-03 kim
 							prdTransVO.setPrd_master_hanei_gbn("0");
 							prdTransVO.setSearch_type("translate");
 							prdTransVO.setTrans_target_type(CommonUtil.TRANS_TARGET_R);
@@ -905,13 +905,13 @@ public class RakutenDAO {
 				prdTransVO.setOrder_gbn("1");
 				prdTransVO.setBefore_trans(vo.getProduct_name());
 				prdTransVO.setAfter_trans(transedName);
-				
+				prdTransVO.setPrd_cnt(unitNo+"");
+				// 2021-07-03 kim S
 				transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
 				transVO.setKeyword(vo.getProduct_name().trim());
 				searchRet = listMapper.getTransInfo(transVO);
 				prdTransVO.setJan_cd(searchRet.get(0).getJan_cd());
-				
-				prdTransVO.setPrd_cnt(unitNo+"");
+				// 2021-07-03 kim E
 				prdTransVO.setPrd_master_hanei_gbn("0");
 				prdTransVO.setSearch_type("translate");
 				prdTransVO.setTrans_target_type(CommonUtil.TRANS_TARGET_R);
@@ -951,7 +951,7 @@ public class RakutenDAO {
 					transVO.setKeyword(optionName.trim());
 					searchRet = listMapper.getTransInfo(transVO);
 					prdTransVO2.setBefore_trans(searchRet.get(0).getBefore_trans());
-					prdTransVO2.setJan_cd(searchRet.get(0).getJan_cd());
+					prdTransVO2.setJan_cd(searchRet.get(0).getJan_cd()); // 2021-07-03 kim
 					prdTransVO2.setPrd_cnt(unitsu1+"");
 					prdTransVO2.setPrd_master_hanei_gbn("0");
 					prdTransVO2.setSearch_type("translate");
@@ -1004,11 +1004,11 @@ public class RakutenDAO {
 						for(SubTranslationVO subTrans : subTransList) {
 							prdTransVO = new PrdTransVO();
 							prdTransVO.setOrder_no(vo.getOrder_no());
-							prdTransVO.setJan_cd(subTrans.getJan_cd());
 							prdTransVO.setOrder_gbn("1");
 							prdTransVO.setBefore_trans(subTrans.getBefore_trans());
 							prdTransVO.setAfter_trans(subTrans.getAfter_trans());
 							prdTransVO.setPrd_cnt(subTrans.getPrd_cnt());
+							prdTransVO.setJan_cd(subTrans.getJan_cd()); // 2021-07-03 kim
 							prdTransVO.setPrd_master_hanei_gbn("0");
 							prdTransVO.setSearch_type("translate");
 							prdTransVO.setTrans_target_type(CommonUtil.TRANS_TARGET_R);
@@ -1400,7 +1400,7 @@ public class RakutenDAO {
 					}
 				}else if("multi".equals(downType)) {
 					// 20210515 jmlee 야마토 multi다운일때는 .으로 결과값을 강제로 박기!
-					//tmp.setResult_text(".");
+					// tmp.setResult_text("."); // 2021-07-03 kim
 					if(multiList.size() < 1) {
 						continue;
 					}
