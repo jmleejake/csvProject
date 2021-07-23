@@ -13,6 +13,8 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 <div class="well container-fluid">
 <div class="row">
 <div class="col-sm-6">
+<button id="btn_ya1_down" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">YAMATO１倉庫</button>
+<button id="btn_ya2_down" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">YAMATO２倉庫</button>
 <button id="btn_ya_down_one" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">YAMATO単品</button>
 <button id="btn_ya_down_multi" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">YAMATO複数</button>
 <button id="btn_sa_down" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">SAGAWA</button>
@@ -56,6 +58,7 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 <input type="hidden" id="ya_code" name="company">
 <input type="hidden" id="ya_chk" name="isChecked">
 <input type="hidden" id="downType" name="downType">
+<input type="hidden" id="storage_cd" name="storage">
 </form>
 </body>
 <script>
