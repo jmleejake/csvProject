@@ -347,10 +347,9 @@ public class AmazonDAO {
 	
 	public void yamatoFormatDownload(
 			HttpServletResponse response
-			, String[] id_lst
-			, String fileEncoding
+			, String[] id_lst, String fileEncoding
 			, String delivery_company
-			, String isChecked) 
+			, String isChecked, String storage) 
 			throws IOException
 			, CsvDataTypeMismatchException
 			, CsvRequiredFieldEmptyException {
@@ -400,7 +399,33 @@ public class AmazonDAO {
 			ArrayList<AmazonVO> list = mapper.getTransResult(vo);
 			ArrayList<ArakuVO> yList = new ArrayList<>();
 			
+			// 예외테이블에 추가한 목록에 대하여 제2창고 목록으로 떨굴수있게 처리
+			// 2021-07-23 야마토 제1창고, 2창고 구분 S
+			ArrayList<ExceptionMasterVO> exList = listMapper.getExceptionMaster(null);
+			ArrayList<AmazonVO> str1List = new ArrayList<AmazonVO>();
+			ArrayList<AmazonVO> str2List = new ArrayList<AmazonVO>();
+			boolean exChk = false;
 			for (AmazonVO tmp : list) {
+				for (ExceptionMasterVO exVO : exList) {
+					if (tmp.getResult_text().contains(exVO.getException_data())) {
+						exChk = true;
+						if("2".equals(storage)) {
+							str2List.add(tmp);
+						}
+					}
+				}
+				if(!exChk) {
+					str1List.add(tmp);
+				}
+			}
+			if("1".equals(storage)) {
+				list = str1List;
+			}else if("2".equals(storage)) {
+				list = str2List;
+			}
+			// 2021-07-23 야마토 제1창고, 2창고 구분 E
+			
+ 			for (AmazonVO tmp : list) {
 				// 빠른배송을 옵션으로 둔 항목에 대하여 체크가 되어있으면 제외
 				if ("1".equals(isChecked)) {
 					if ("NextDay".equals(tmp.getShip_service_level())) {
@@ -408,19 +433,6 @@ public class AmazonDAO {
 						continue;
 					}
 				}
-				
-				// 예외테이블에 추가한 목록에 대하여 야마토에서 제외
-				ArrayList<ExceptionMasterVO> exList = listMapper.getExceptionMaster(null);
-				boolean chkRet = false;
-				for (ExceptionMasterVO exVO : exList) {
-					if (tmp.getResult_text().contains(exVO.getException_data())) {
-						log.debug(String.format("exception_data: %s - result_txt: %s", exVO.getException_data(), tmp.getResult_text()));
-						chkRet = true;
-					}
-				}
-//				if (chkRet) {
-//					continue;
-//				}
 				
 				/**
 				 * 2020-07-28
@@ -438,7 +450,7 @@ public class AmazonDAO {
 					}
 				}
 				
-				if (chkRet && !isExY) {
+				if (!isExY) {
 					continue;
 				}
 	

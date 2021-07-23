@@ -144,7 +144,7 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 <!-- S예외데이터 마스터 -->
 <div class="container-fluid col-sm-6">
 <div class="well container-fluid">
-<h3>例外データマスタ</h3>
+<h3>第二倉庫マスタ</h3>
 
 <div class="well container-fluid">
 	<form id="exceptionFrm" action="showExceptionMaster">

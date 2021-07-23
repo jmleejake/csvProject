@@ -1224,7 +1224,8 @@ public class RakutenDAO {
 			, String fileEncoding
 			, String delivery_company
 			, String isChecked
-			, String downType) 
+			, String downType
+			, String storage) 
 			throws IOException
 			, CsvDataTypeMismatchException
 			, CsvRequiredFieldEmptyException {
@@ -1394,6 +1395,32 @@ public class RakutenDAO {
 			
 			RakutenVO.sortListVO(realRet, "getOrder_datetime", "DESC");
 			
+			// 예외테이블에 추가한 목록에 대하여 제2창고 목록으로 떨굴수있게 처리
+			// 2021-07-23 야마토 제1창고, 2창고 구분 S
+			ArrayList<ExceptionMasterVO> exList = listMapper.getExceptionMaster(null);
+			ArrayList<RakutenVO> str1List = new ArrayList<RakutenVO>();
+			ArrayList<RakutenVO> str2List = new ArrayList<RakutenVO>();
+			boolean exChk = false;
+			for (RakutenVO tmp : realRet) {
+				for (ExceptionMasterVO exVO : exList) {
+					if (tmp.getResult_text().contains(exVO.getException_data())) {
+						exChk = true;
+						if("2".equals(storage)) {
+							str2List.add(tmp);
+						}
+					}
+				}
+				if(!exChk) {
+					str1List.add(tmp);
+				}
+			}
+			if("1".equals(storage)) {
+				realRet = str1List;
+			}else if("2".equals(storage)) {
+				realRet = str2List;
+			}
+			// 2021-07-23 야마토 제1창고, 2창고 구분 E
+			
 			for (RakutenVO tmp : realRet) {
 				// 201107: 야마토 단품, 복수주문건을 나누어 다운로드
 				RakutenVO srchVO = new RakutenVO();
@@ -1420,30 +1447,6 @@ public class RakutenDAO {
 					}
 				}
 				
-				// 예외테이블에 추가한 목록에 대하여 야마토에서 제외
-				ArrayList<ExceptionMasterVO> exList = listMapper.getExceptionMaster(null);
-				boolean chkRet = false;
-				boolean chkneko = false;
-				for (ExceptionMasterVO exVO : exList) {
-					if (tmp.getResult_text().contains(exVO.getException_data())) {
-						log.debug(String.format("exception_data: %s - result_txt: %s", exVO.getException_data(), tmp.getResult_text()));
-						chkRet = true;
-//						//注文者とお届け先のお客様が同一の場合、佐川にて発送する。  2020/7/23  金
-//						String deliveryname = tmp.getDelivery_surname().trim() + tmp.getDelivery_name().trim();   //お届け先お客様
-//						String ordername =tmp.getOrder_surname().trim()+  tmp.getOrder_name().trim();		//注文者
-//						
-//						if (deliveryname.equals(ordername)) {					
-//							log.debug(String.format("exception_data: %s - result_txt: %s", exVO.getException_data(), tmp.getResult_text()));
-//							chkRet = true;
-//						}else{
-//							chkRet = false;
-//						}
-					}
-					if (tmp.getResult_text().contains("郵便")) {
-						chkneko = true;
-					}
-				}
-				
 				/**
 				 * 2020-07-28
 				 * 例外地域マスタに登録されている地域情報はヤマトによって発送する。
@@ -1456,14 +1459,7 @@ public class RakutenDAO {
 					}
 				}
 				
-				if (chkRet && !isExY) {
-					continue;
-				}
-				/**
-				 * 2020-10-13
-				 * 置換後の品名に郵便の文字がありましたら、クリックポストにて対応する。
-				 * */
-				if (chkneko) {
+				if (!isExY) {
 					continue;
 				}
 				
