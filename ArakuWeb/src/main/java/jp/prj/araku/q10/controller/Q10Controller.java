@@ -209,6 +209,7 @@ public class Q10Controller {
 	public void processYamatoDownload(
 			HttpServletResponse response
 			, @RequestParam(value="id_lst") String id_lst
+			, @RequestParam(value="storage") String storage
 			, @RequestParam(value="company") String delivery_company) {
 		log.debug("processYamatoDownload");
 		
@@ -219,7 +220,7 @@ public class Q10Controller {
 		id_lst = id_lst.replace("]", "");
 		String[] seq_id_list = id_lst.split(",");
 		try {
-				dao.yamatoFormatDownload(response, seq_id_list, downFileEncoding, delivery_company);
+				dao.yamatoFormatDownload(response, seq_id_list, downFileEncoding, delivery_company, storage);
 		} catch (IOException e) {
 			log.error(e.toString());
 		} catch (CsvDataTypeMismatchException e) {

@@ -179,6 +179,7 @@ public class AmazonController {
 	public void processYamatoDownload(
 			HttpServletResponse response
 			, @RequestParam(value="id_lst") String id_lst
+			, @RequestParam(value="storage") String storage
 			, @RequestParam(value="company") String delivery_company
 			, @RequestParam(value="isChecked") String chk_ex) {
 		log.debug("processYamatoDownload");
@@ -191,7 +192,7 @@ public class AmazonController {
 		id_lst = id_lst.replace("]", "");
 		String[] seq_id_list = id_lst.split(",");
 		try {
-				dao.yamatoFormatDownload(response, seq_id_list, fileEncoding, delivery_company, chk_ex);
+				dao.yamatoFormatDownload(response, seq_id_list, fileEncoding, delivery_company, chk_ex, storage);
 		} catch (IOException e) {
 			log.error(e.toString());
 		} catch (CsvDataTypeMismatchException e) {
@@ -217,7 +218,7 @@ public class AmazonController {
 		id_lst = id_lst.replace("]", "");
 		String[] seq_id_list = id_lst.split(",");
 		try {
-				dao.yamatoFormatDownload(response, seq_id_list, fileEncoding, delivery_company, chk_ex);
+				dao.yamatoFormatDownload(response, seq_id_list, fileEncoding, delivery_company, chk_ex, "");
 		} catch (IOException e) {
 			log.error(e.toString());
 		} catch (CsvDataTypeMismatchException e) {

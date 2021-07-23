@@ -158,12 +158,21 @@ $("#btn_yu_down").on("click", function() {
 });
 
 //야마토 CSV파일 다운로드
-$("#btn_ya_down").on("click", function() {
+// 2021-07-23 야마토 제1창고, 2창고 구분 S
+$("#btn_ya1_down").on("click", function() {
 	console.log("yamato download button clicked");
 	$("#ya_code").val("1001");
-	console.log("code : " + $("#ya_code").val());
+	$('#storage_cd').val('1');
 	$("#frm_down1").submit();
 });
+
+$("#btn_ya2_down").on("click", function() {
+	console.log("yamato download button clicked");
+	$("#ya_code").val("1001");
+	$('#storage_cd').val('2');
+	$("#frm_down1").submit();
+});
+//2021-07-23 야마토 제1창고, 2창고 구분 E
 
 //사가와 CSV파일 다운로드
 $("#btn_sa_down").on("click", function() {
