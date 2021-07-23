@@ -202,6 +202,7 @@ public class RakutenController {
 	public void processYamatoDownload(
 			HttpServletResponse response
 			, @RequestParam(value="id_lst") String id_lst
+			, @RequestParam(value="storage") String storage
 			, @RequestParam(value="company") String delivery_company
 			, @RequestParam(value="downType") String downType
 			, @RequestParam(value="isChecked") String chk_ex) {
@@ -216,7 +217,7 @@ public class RakutenController {
 		id_lst = id_lst.replace("]", "");
 		String[] seq_id_list = id_lst.split(",");
 		try {
-				dao.yamatoFormatDownload(response, seq_id_list, fileEncoding, delivery_company, chk_ex, downType);
+				dao.yamatoFormatDownload(response, seq_id_list, fileEncoding, delivery_company, chk_ex, downType, storage);
 		} catch (IOException e) {
 			log.error(e.toString());
 		} catch (CsvDataTypeMismatchException e) {
