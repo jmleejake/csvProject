@@ -1413,6 +1413,8 @@ public class RakutenDAO {
 				if(!exChk) {
 					str1List.add(tmp);
 				}
+				//例外マスタの情報有無チェックフラグを初期化する。　21.7.24 kim
+				exChk = false;
 			}
 			if("1".equals(storage)) {
 				realRet = str1List;
@@ -1446,22 +1448,23 @@ public class RakutenDAO {
 						continue;
 					}
 				}
-				
-				/**
-				 * 2020-07-28
-				 * 例外地域マスタに登録されている地域情報はヤマトによって発送する。
-				 * やまとにてDLする処理する。
-				 * */
-				boolean isExY = false;
-				for(ExceptionRegionMasterVO region : exRegionList) {
-					if(tmp.getDelivery_add1().contains(region.getException_data())) {
-						isExY = true;
-					}
-				}
-				
-				if (!isExY) {
-					continue;
-				}
+
+//				例外地域マスタ処理により、倉庫１/２対応に影響あり、取り下げする。21.7.24 kim
+//				/**
+//				 * 2020-07-28
+//				 * 例外地域マスタに登録されている地域情報はヤマトによって発送する。
+//				 * やまとにてDLする処理する。
+//				 * */
+//				boolean isExY = false;
+//				for(ExceptionRegionMasterVO region : exRegionList) {
+//					if(tmp.getDelivery_add1().contains(region.getException_data())) {
+//						isExY = true;
+//					}
+//				}
+//				
+//				if (!isExY) {
+//					continue;
+//				}
 				
 				YamatoVO yVO = new YamatoVO();
 				// 2019/12/24  キム 클리크포스트를 야마토 ネコポス로 설정함. 　⇒　ＳＴＡＲＴ
