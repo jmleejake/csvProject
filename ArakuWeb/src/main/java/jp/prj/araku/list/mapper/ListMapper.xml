@@ -174,11 +174,8 @@ from
 		exception_data like '%${keyword}%'
 	</if>
 	<if test="seq_id_list != null">
-		seq_id in
-		<foreach item="item" index="index" collection="seq_id_list"
-			open="(" separator="," close=")">
-			#{item}
-		</foreach>
+		date_format (register_date, '%Y%m%d') = date_format(now(), '%Y%m%d') or 
+		date_format (update_date, '%Y%m%d') = date_format(now(), '%Y%m%d')
 	</if>
 </where>
 </select>
@@ -190,7 +187,8 @@ values (#{exception_data})
 
 <update id="updateExceptionMaster" parameterType="ExceptionMaster">
 update exception_master
-set exception_data = #{exception_data}
+set update_date = now()
+, exception_data = #{exception_data}
 where seq_id = #{seq_id}
 </update>
 

@@ -112,6 +112,8 @@ CREATE TABLE exception_master (
 	exception_data VARCHAR(20)
 ) default charset = utf8 comment '例外マスタ';
 
+alter table exception_master add column update_date DATETIME comment '修正日付';
+
 
 DROP TABLE exception_region_master;
 CREATE TABLE exception_region_master (
