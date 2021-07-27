@@ -407,9 +407,7 @@ public class AmazonDAO {
 			boolean exChk = false;
 			for (AmazonVO tmp : list) {
 				for (ExceptionMasterVO exVO : exList) {
-					//置換前の商品名に例外マスタの情報がありましたら、倉庫２の処理対応する。　21.7.24 kim
-					//if (tmp.getResult_text().contains(exVO.getException_data())) {
-					if (tmp.getProduct_name().contains(exVO.getException_data())) {
+					if (tmp.getResult_text().contains(exVO.getException_data())) {
 						exChk = true;
 						if("2".equals(storage)) {
 							str2List.add(tmp);
