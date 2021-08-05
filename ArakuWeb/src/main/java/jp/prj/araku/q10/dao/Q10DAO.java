@@ -545,6 +545,8 @@ public class Q10DAO {
 				if(!exChk) {
 					str1List.add(tmp);
 				}
+				//例外マスタの情報有無チェックフラグを初期化する。　21.7.24 kim
+				exChk = false;
 			}
 			if("1".equals(storage)) {
 				list = str1List;
