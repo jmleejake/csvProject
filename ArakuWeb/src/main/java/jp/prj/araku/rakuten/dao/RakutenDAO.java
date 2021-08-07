@@ -1240,7 +1240,8 @@ public class RakutenDAO {
 		CSVWriter csvWriter = null;
 		
 		try {
-			String csvFileName = "YAM" + CommonUtil.getDate("YYYYMMdd", 0) +"-"+downType+".csv";
+			String frontMsg = !"".equals(storage)?storage+"SOUKO_YAMATO_":"YAMATO_";
+			String csvFileName = frontMsg + CommonUtil.getDate("YYYYMMdd", 0) +"-"+downType+".csv";
 
 			response.setContentType("text/csv");
 

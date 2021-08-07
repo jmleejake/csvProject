@@ -144,9 +144,14 @@ $("#btn_yu_down").on("click", function() {
 	pleaseSelectNotify('구현예정');
 });
 
+function yaInfoInit() {
+	$("#downType").val("");
+	$('#storage_cd').val('');
+}
+
 //야마토 CSV파일 다운로드
 $("#btn_ya_down_one").on("click", function() {
-	console.log("yamato download button clicked");
+	yaInfoInit();
 	$("#ya_code").val("1001");
 	console.log("code : " + $("#ya_code").val());
 	$("#downType").val("one");
@@ -154,7 +159,7 @@ $("#btn_ya_down_one").on("click", function() {
 });
 
 $("#btn_ya_down_multi").on("click", function() {
-	console.log("yamato download button clicked");
+	yaInfoInit();
 	$("#ya_code").val("1001");
 	console.log("code : " + $("#ya_code").val());
 	$("#downType").val("multi");
@@ -163,7 +168,7 @@ $("#btn_ya_down_multi").on("click", function() {
 
 //2021-07-23 야마토 제1창고, 2창고 구분 S
 $("#btn_ya1_down").on("click", function() {
-	console.log("yamato download button clicked");
+	yaInfoInit();
 	$("#ya_code").val("1001");
 	$('#storage_cd').val('1');
 	$("#downType").val("one");
@@ -171,7 +176,7 @@ $("#btn_ya1_down").on("click", function() {
 });
 
 $("#btn_ya2_down").on("click", function() {
-	console.log("yamato download button clicked");
+	yaInfoInit();
 	$("#ya_code").val("1001");
 	$('#storage_cd').val('2');
 	$("#downType").val("one");
