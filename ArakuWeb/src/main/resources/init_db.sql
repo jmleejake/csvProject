@@ -384,6 +384,8 @@ CREATE TABLE q10_info (
 	delivery_company VARCHAR(4) comment '配送会社'
 ) default charset = utf8 comment 'Q10情報';
 
+alter table q10_info modify column product_cd VARCHAR(50);
+
 
 DROP TABLE rakuten_frozen_info;
 CREATE TABLE rakuten_frozen_info (
