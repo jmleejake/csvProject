@@ -1474,6 +1474,9 @@ public class RakutenDAO {
 				}else {
 					yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_0);
 				}
+				if (tmp.getResult_text().contains("宅コン")) {
+					yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_8);
+				}	
 				if (tmp.getProduct_name().contains("冷凍") || tmp.getResult_text().contains("冷凍")) {
 					yVO.setCool_type(CommonUtil.COOL_TYPE_1);
 				}
