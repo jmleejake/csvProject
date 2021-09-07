@@ -67,6 +67,7 @@ public class CommonUtil {
 	public static final String INVOICE_TYPE_2 = "2";/*コレクト*/
 	public static final String INVOICE_TYPE_3 = "3";/*ＤＭ便*/
 	public static final String INVOICE_TYPE_7 = "7"; /*ネコポス*/
+	public static final String INVOICE_TYPE_8 = "8"; /*宅急便コンパクト*/
 	public static final String COOL_TYPE_1 = "1"; /*冷凍*/
 	public static final String COOL_TYPE_2 = "2"; /*冷蔵*/
 	

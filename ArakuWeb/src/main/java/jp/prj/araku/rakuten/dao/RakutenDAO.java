@@ -1235,7 +1235,7 @@ public class RakutenDAO {
 		
 		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
 		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
-		ArrayList<ExceptionRegionMasterVO> exRegionList = listMapper.getExceptionRegionMaster(null);
+		// ArrayList<ExceptionRegionMasterVO> exRegionList = listMapper.getExceptionRegionMaster(null);
 		BufferedWriter writer = null;
 		CSVWriter csvWriter = null;
 		
@@ -1690,6 +1690,7 @@ public class RakutenDAO {
 			csvWriter = new CSVWriter(writer
 					, CSVWriter.DEFAULT_SEPARATOR
 					, CSVWriter.NO_QUOTE_CHARACTER
+					
 					, CSVWriter.DEFAULT_ESCAPE_CHARACTER
 					, CSVWriter.DEFAULT_LINE_END);
 			
