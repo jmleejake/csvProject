@@ -466,7 +466,7 @@ public class AmazonDAO {
 				}	else {
 					yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_0);
 				}
-				if (tmp.getResult_text().contains("宅コン")) {
+				if (tmp.getResult_text().contains("宅コン")&& tmp.getQuantity_purchased().equals("1") ) {
 					yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_8);
 				}	
 				if (tmp.getResult_text().contains("冷凍")) {
