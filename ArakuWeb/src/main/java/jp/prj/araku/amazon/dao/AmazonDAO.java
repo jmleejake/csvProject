@@ -359,7 +359,7 @@ public class AmazonDAO {
 		
 		IAmazonMapper mapper = sqlSession.getMapper(IAmazonMapper.class);
 		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
-		ArrayList<ExceptionRegionMasterVO> exRegionList = listMapper.getExceptionRegionMaster(null);
+		// ArrayList<ExceptionRegionMasterVO> exRegionList = listMapper.getExceptionRegionMaster(null);
 		BufferedWriter writer = null;
 		CSVWriter csvWriter = null;
 		

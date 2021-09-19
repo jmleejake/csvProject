@@ -462,51 +462,74 @@ public class ListDAO {
 		return getOrderSum(vo);
 	}
 	
-	public ArrayList<OrderSumVO> executeOrderSum(String target_type) {
+	public ArrayList<OrderSumVO> executeOrderSum(String target_type, String sumType) {
 		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
 		PrdTransVO vo1 = new PrdTransVO();
 		vo1.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
 		vo1.setTrans_target_type(target_type);
 		ArrayList<PrdTransVO> list = listMapper.getPrdTrans(vo1);
-		HashSet<String> afterTransCntnt = new HashSet<>();
-		for(PrdTransVO trans : list) {
-			afterTransCntnt.add(trans.getAfter_trans());
-		}
 		
-		for(String str : afterTransCntnt) {
-			vo1.setSearch_type(CommonUtil.SEARCH_TYPE_SUM);
-			vo1.setAfter_trans(str);
-			list = listMapper.getPrdTrans(vo1);
-			int sum = 0;
+		HashSet<String> afterTransCntnt = new HashSet<>();
+		if(CommonUtil.SEARCH_TYPE_JAN_SUM.equals(sumType)) {
 			for(PrdTransVO trans : list) {
-				sum += Integer.parseInt(trans.getPrd_cnt());
+				if(null != trans.getJan_cd() && !"".equals(trans.getJan_cd())) {
+					afterTransCntnt.add(trans.getJan_cd());
+				}
 			}
-			TranslationVO transVO = new TranslationVO();
-			transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
-			transVO.setKeyword(str);
-			ArrayList<TranslationVO> transRet = listMapper.getTransInfo(transVO);
-			if(transRet.size() > 0) {
+			
+			for(String jan_cd : afterTransCntnt) {
+				vo1.setSearch_type(CommonUtil.SEARCH_TYPE_JAN_SUM);
+				vo1.setJan_cd(jan_cd);
+				list = listMapper.getPrdTrans(vo1);
+				int sum = 0;
+				for(PrdTransVO trans : list) {
+					sum += Integer.parseInt(trans.getPrd_cnt());
+				}
 				OrderSumVO sumVO = new OrderSumVO();
-				sumVO.setAfter_trans(str);
 				sumVO.setPrd_sum(sum+"");
-				sumVO.setJan_cd(transRet.get(0).getJan_cd());
 				sumVO.setTarget_type(target_type);
+				sumVO.setJan_cd(jan_cd);
 				listMapper.insertOrderSum(sumVO);
-			}else {
-				/**
-				 * 2021.06.11 order sum실행시 translation_info에 값이 없으면
-				 * translation_sub_info에서 search할수있게 처리
-				 * */
-				SubTranslationVO subTrans = new SubTranslationVO();
-				subTrans.setKeyword(str);
-				ArrayList<SubTranslationVO> subTransRet = listMapper.getSubTransInfo(subTrans);
-				if(subTransRet.size() > 0) {
+			}
+		}else {
+			for(PrdTransVO trans : list) {
+				afterTransCntnt.add(trans.getAfter_trans());
+			}
+			
+			for(String str : afterTransCntnt) {
+				vo1.setSearch_type(CommonUtil.SEARCH_TYPE_SUM);
+				vo1.setAfter_trans(str);
+				list = listMapper.getPrdTrans(vo1);
+				int sum = 0;
+				for(PrdTransVO trans : list) {
+					sum += Integer.parseInt(trans.getPrd_cnt());
+				}
+				TranslationVO transVO = new TranslationVO();
+				transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+				transVO.setKeyword(str);
+				ArrayList<TranslationVO> transRet = listMapper.getTransInfo(transVO);
+				if(transRet.size() > 0) {
 					OrderSumVO sumVO = new OrderSumVO();
 					sumVO.setAfter_trans(str);
 					sumVO.setPrd_sum(sum+"");
-					sumVO.setJan_cd(subTransRet.get(0).getJan_cd());
 					sumVO.setTarget_type(target_type);
 					listMapper.insertOrderSum(sumVO);
+				}else {
+					/**
+					 * 2021.06.11 order sum실행시 translation_info에 값이 없으면
+					 * translation_sub_info에서 search할수있게 처리
+					 * */
+					SubTranslationVO subTrans = new SubTranslationVO();
+					subTrans.setKeyword(str);
+					ArrayList<SubTranslationVO> subTransRet = listMapper.getSubTransInfo(subTrans);
+					if(subTransRet.size() > 0) {
+						OrderSumVO sumVO = new OrderSumVO();
+						sumVO.setAfter_trans(str);
+						sumVO.setPrd_sum(sum+"");
+						sumVO.setJan_cd(subTransRet.get(0).getJan_cd());
+						sumVO.setTarget_type(target_type);
+						listMapper.insertOrderSum(sumVO);
+					}
 				}
 			}
 		}

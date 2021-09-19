@@ -350,6 +350,9 @@ from
 		after_trans = #{after_trans}
 		and trans_target_type = #{trans_target_type}
 		</when>
+		<when test="search_type == 'jan'">
+		jan_cd = #{jan_cd}
+		</when>
 		<otherwise>
 		register_date between str_to_date(#{start_date}, '%Y/%m/%d %H:%i:%s') and now()
 		and trans_target_type = #{trans_target_type}

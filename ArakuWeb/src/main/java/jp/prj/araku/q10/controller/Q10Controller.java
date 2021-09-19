@@ -414,8 +414,8 @@ public class Q10Controller {
 	 * */
 	@ResponseBody
 	@RequestMapping(value = "/executeOrderSum", method = RequestMethod.POST)
-	public ArrayList<OrderSumVO> executeOrderSum() {
-		return listDao.executeOrderSum(CommonUtil.TRANS_TARGET_Q);
+	public ArrayList<OrderSumVO> executeOrderSum(@RequestParam(value = "sumType", defaultValue = "sum") String sumType) {
+		return listDao.executeOrderSum(CommonUtil.TRANS_TARGET_Q, sumType);
 	}
 	
 	@ResponseBody
