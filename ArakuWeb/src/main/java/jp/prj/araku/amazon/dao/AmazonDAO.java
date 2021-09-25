@@ -233,6 +233,11 @@ public class AmazonDAO {
 			prdTransVO.setOrder_no(vo.getOrder_id());
 			prdTransVO.setOrder_gbn("1");
 			prdTransVO.setBefore_trans(vo.getProduct_name());
+			transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+			transVO.setKeyword(vo.getProduct_name().trim());
+			searchRet = listMapper.getTransInfo(transVO);
+			prdTransVO.setBefore_trans(searchRet.get(0).getBefore_trans());
+			prdTransVO.setJan_cd(searchRet.get(0).getJan_cd()); // 2021-09-26 kim
 			prdTransVO.setAfter_trans(transedName);
 			prdTransVO.setPrd_cnt(vo.getQuantity_to_ship());
 			prdTransVO.setPrd_master_hanei_gbn("0");
@@ -260,6 +265,7 @@ public class AmazonDAO {
 						prdTransVO.setOrder_no(vo.getOrder_id());
 						prdTransVO.setOrder_gbn("1");
 						prdTransVO.setBefore_trans(subTrans.getBefore_trans());
+						prdTransVO.setJan_cd(subTrans.getJan_cd()); // 2021-09-26 kim
 						prdTransVO.setAfter_trans(subTrans.getAfter_trans());
 						prdTransVO.setPrd_cnt(subTrans.getPrd_cnt());
 						prdTransVO.setPrd_master_hanei_gbn("0");
