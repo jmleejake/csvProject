@@ -237,7 +237,7 @@ public class AmazonDAO {
 			transVO.setKeyword(vo.getProduct_name());
 			searchRet = listMapper.getTransInfo(transVO);
 			prdTransVO.setBefore_trans(searchRet.get(0).getBefore_trans());
-			prdTransVO.setJan_cd(searchRet.get(0).getJan_cd()); // 2021-09-26 kim
+			prdTransVO.setJan_cd(searchRet.get(0).getJan_cd()); // 2021-09-26 kim jan_cd 처리
 			prdTransVO.setAfter_trans(transedName);
 			prdTransVO.setPrd_cnt(vo.getQuantity_to_ship());
 			prdTransVO.setPrd_master_hanei_gbn("0");

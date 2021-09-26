@@ -758,6 +758,7 @@ alter table translation_info add column etc_cntnt varchar(30) comment 'その他
 
 alter table translation_info add column jan_cd varchar(15) comment 'ＪＡＮコード';
 
+
 DROP TABLE order_sum_info;
 CREATE TABLE order_sum_info (
 	seq_id bigint unsigned primary key auto_increment comment '区分ID'
@@ -769,6 +770,8 @@ CREATE TABLE order_sum_info (
 	, prd_master_hanei_gbn varchar(2) comment '商品マスタ反映有無フラグ：0（未）、1（済）'
 	, target_type varchar(3) comment 'メニュー区分'
 ) default charset = utf8 comment '総商品数';
+
+alter table order_sum_info modify column after_trans varchar(3000);
 
 
 

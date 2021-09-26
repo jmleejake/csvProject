@@ -28,6 +28,8 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 import jp.prj.araku.amazon.mapper.IAmazonMapper;
 import jp.prj.araku.amazon.vo.AmazonVO;
+import jp.prj.araku.jaiko.product.mapper.IJaikoPrdInfoMapper;
+import jp.prj.araku.jaiko.product.vo.JaikoPrdInfoVO;
 import jp.prj.araku.list.mapper.IListMapper;
 import jp.prj.araku.list.vo.EtcMasterVO;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
@@ -464,6 +466,7 @@ public class ListDAO {
 	
 	public ArrayList<OrderSumVO> executeOrderSum(String target_type, String sumType) {
 		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
+		IJaikoPrdInfoMapper jaikoPrdMapper = sqlSession.getMapper(IJaikoPrdInfoMapper.class);
 		PrdTransVO vo1 = new PrdTransVO();
 		vo1.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
 		vo1.setTrans_target_type(target_type);
@@ -485,11 +488,18 @@ public class ListDAO {
 				for(PrdTransVO trans : list) {
 					sum += Integer.parseInt(trans.getPrd_cnt());
 				}
-				OrderSumVO sumVO = new OrderSumVO();
-				sumVO.setPrd_sum(sum+"");
-				sumVO.setTarget_type(target_type);
-				sumVO.setJan_cd(jan_cd);
-				listMapper.insertOrderSum(sumVO);
+				JaikoPrdInfoVO prdVO = new JaikoPrdInfoVO();
+				prdVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+				prdVO.setJan_cd(jan_cd);
+				ArrayList<JaikoPrdInfoVO> prdInfoList = jaikoPrdMapper.getJaikoPrdInfo(prdVO);
+				if(prdInfoList.size() > 0) {
+					OrderSumVO sumVO = new OrderSumVO();
+					sumVO.setPrd_sum(sum+"");
+					sumVO.setAfter_trans(prdInfoList.get(0).getPrd_nm());
+					sumVO.setTarget_type(target_type);
+					sumVO.setJan_cd(jan_cd);
+					listMapper.insertOrderSum(sumVO);
+				}
 			}
 		}else {
 			for(PrdTransVO trans : list) {
