@@ -234,7 +234,7 @@ public class AmazonDAO {
 			prdTransVO.setOrder_gbn("1");
 			prdTransVO.setBefore_trans(vo.getProduct_name());
 			transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
-			transVO.setKeyword(vo.getProduct_name().trim());
+			transVO.setKeyword(vo.getProduct_name());
 			searchRet = listMapper.getTransInfo(transVO);
 			prdTransVO.setBefore_trans(searchRet.get(0).getBefore_trans());
 			prdTransVO.setJan_cd(searchRet.get(0).getJan_cd()); // 2021-09-26 kim
