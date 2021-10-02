@@ -4,22 +4,54 @@
 // specify the columns
 
 var columnDefs = [
-	{headerName: "商品メーカー名", field: "maker_nm", width: 200}
-	, {headerName: "商品名", field: "prd_nm", width: 300}
-	, {headerName: "容量", field: "capacity", width: 100}
-	, {headerName: "取引先会社名", field: "dealer_nm", width: 200}
-	, {headerName: "仕入金額", field: "inprice", width: 100}
-	, {headerName: "販売金額", field: "price", width: 100}
-	, {headerName: "商品メーカー", field: "maker_cd", width: 80}
-	, {headerName: "商品コード(JAN)", field: "prd_cd", width: 80}
-	, {headerName: "取引先コード", field: "dealer_id", width: 80}
+	{headerName: "商品メーカー名", field: "maker_nm", width: 200
+		, editable: true
+		, cellEditor: 'agLargeTextCellEditor'
+    	, cellEditorParams: {
+            maxLength: '500',
+            cols: '30',
+            rows: '6'
+        }		
+	}
+	, {headerName: "商品名", field: "prd_nm", width: 300
+		, editable: true
+		, cellEditor: 'agLargeTextCellEditor'
+    	, cellEditorParams: {
+            maxLength: '500',
+            cols: '30',
+            rows: '6'
+        }	
+	}
+	, {headerName: "容量", field: "capacity", width: 100, editable: true}
+	, {headerName: "取引先会社名", field: "dealer_nm", width: 200
+		, editable: true
+		, cellEditor: 'agLargeTextCellEditor'
+    	, cellEditorParams: {
+            maxLength: '500',
+            cols: '30',
+            rows: '6'
+        }		
+	}
+	, {headerName: "仕入金額", field: "inprice", width: 100, editable: true}
+	, {headerName: "販売金額", field: "price", width: 100, editable: true}
+	, {headerName: "商品メーカー", field: "maker_cd", width: 80, editable: true}
+	, {headerName: "商品コード(JAN)", field: "prd_cd", width: 80, editable: true}
+	, {headerName: "取引先コード", field: "dealer_id", width: 80, editable: true}
 ];
 
 // specify the data
 var rowData = [];
 // 수정데이터 배열
-var modifiedData = [];
-var previousData, afterData;
+var modData = [];
+var sMakerNm, eMakerNm;
+var sPrdNm, ePrdNm;
+var sCapa, eCapa;
+var sDealerNm, eDealerNm;
+var sInPrc, eInPrc;
+var sPrc, ePrc;
+var sMakerCd, eMakerCd;
+var sPrdCd, ePrdCd;
+var sDealerCd, eDealerCd;
 
 // let the grid know which columns and what data to use
 var orderGridOptions = {
@@ -32,7 +64,41 @@ var orderGridOptions = {
 		suppressRowClickSelection: false,
 		rowSelection: 'multiple',
 		columnDefs: columnDefs,
-		rowData: rowData
+		rowData: rowData,
+		onCellEditingStarted: function(event) {
+	    	var start = event.node.data;
+	    	sMakerNm = start.maker_nm;
+	    	sPrdNm = start.prd_nm;
+	    	sCapa = start.capacity;
+	    	sDealerNm = start.dealer_nm;
+	    	sInPrc = start.inprice;
+	    	sPrc = start.price;
+	    	sMakerCd = start.maker_cd;
+	    	sPrdCd = start.prd_cd;
+	    	sDealerCd = start.dealer_id;
+	    },
+	    onCellEditingStopped: function(event) {
+	    	var stop = event.node.data;
+	    	eMakerNm = stop.maker_nm;
+	    	ePrdNm = stop.prd_nm;
+	    	eCapa = stop.capacity;
+	    	eDealerNm = stop.dealer_nm;
+	    	eInPrc = stop.inprice;
+	    	ePrc = stop.price;
+	    	eMakerCd = stop.maker_cd;
+	    	ePrdCd = stop.prd_cd;
+	    	eDealerCd = stop.dealer_id;
+	    	
+	    	if (!(sMakerNm == eMakerNm)||!(sPrdNm == ePrdNm)
+	    			||!(sCapa == eCapa)||!(sDealerNm == eDealerNm)
+	    			||!(sInPrc == eInPrc)||!(sMakerCd == eMakerCd)
+	    			||!(sPrdCd == ePrdCd)||!(sDealerCd == eDealerCd)
+	    			||!(sInPrc == eInPrc)||!(sMakerCd == eMakerCd)||!(sPrc == ePrc)) {
+	    		console.log("modified!");
+	    		console.log(stop);
+	    		modData.push(stop);
+	    	}
+	    }
 };
 
 // lookup the container we want the Grid to use
@@ -142,5 +208,73 @@ $("#btn_down").on("click", function() {
     
 	$("#seq_id_list").val(id_lst);
 	$("#frm_down").submit();
+});
+
+$('#btn_create').on('click', function() {
+	var rowData = {
+			maker_nm: "商品メーカー名"
+			,prd_nm:"商品名"
+			,capacity:"0"
+			,dealer_nm:"取引先会社名"
+			,inprice:"0"
+			,price:"0"
+			,maker_cd:"商品メーカー"
+			,prd_cd:"商品コード"
+			,dealer_id:"取引先コード"
+	};
+	//orderGridOptions.api.updateRowData({add:[rowData], addIndex:0});
+	$.ajax({
+        type: "post"
+        , url: "addTanpin"
+    	, data: rowData
+        , success: setRowData
+    });
+});
+
+$('#btn_commit').on('click', function() {
+	if (modData.length == 0) {
+		pleaseSelectNotify('情報を修正してください。');
+		return;
+	}
+	
+	console.log(modData);
+	
+	$.ajax({
+		url: "modTanpin"
+		, type:"post"
+		, dataType: "json"
+		, contentType: 'application/json'
+		, data:JSON.stringify(modData)
+		, success: function(result){
+			setRowData(result);
+			// 수정데이터 초기화
+			modData = [];
+    	}
+	});
+});
+
+$('#btn_delete').on('click', function() {
+var selectedRows = orderGridOptions.api.getSelectedRows();
+    
+    if (selectedRows.length == 0) {
+    	pleaseSelectNotify('情報を選択してください。');
+        return;
+    }
+    
+    alertInit();
+	alertify.confirm("本当に削除しますか？", function (e) {
+		if (e) {
+			 $.ajax({
+					url: "delTanpin"
+					, type:"post"
+					, dataType: "json"
+					, contentType: 'application/json'
+					, data:JSON.stringify(selectedRows)
+					, success: setRowData
+				});
+		}else {
+			return false;
+		}
+	});
 });
 

@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
+import jp.prj.araku.tablet.vo.TabletPrdVO;
 import jp.prj.araku.tanpin.dao.TanpinDAO;
 import jp.prj.araku.tanpin.vo.TanpinVO;
 
@@ -75,5 +76,17 @@ public class TanpinController {
 		} catch (CsvDataTypeMismatchException e) {
 		} catch (CsvRequiredFieldEmptyException e) {
 		}
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/addTanpin", method=RequestMethod.POST)
+	public ArrayList<TanpinVO> addTanpin(TanpinVO vo) {
+		return dao.addTanpin(vo);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/modTanpin", method=RequestMethod.POST)
+	public ArrayList<TanpinVO> modTanpin(@RequestBody ArrayList<TanpinVO> list) {
+		return dao.modTanpin(list);
 	}
 }

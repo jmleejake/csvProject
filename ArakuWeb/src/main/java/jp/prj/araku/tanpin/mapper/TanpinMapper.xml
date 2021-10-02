@@ -107,6 +107,9 @@ set
 	<if test="prd_nm != null and prd_nm !=''">
 	, prd_nm = #{prd_nm}
 	</if>
+	<if test="prd_cd != null and prd_cd !=''">
+	, prd_cd = #{prd_cd}
+	</if>
 	<if test="capacity != null and capacity !=''">
 	, capacity = #{capacity}
 	</if>
@@ -133,9 +136,6 @@ set
 	</if>
 where
 	seq_id = #{seq_id}
-	<if test="prd_cd != null and prd_cd !=''">
-	and prd_cd = #{prd_cd}
-	</if>
 </update>
 
 <delete id="deleteTanpinInfo" parameterType="java.lang.String">

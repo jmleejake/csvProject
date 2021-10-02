@@ -47,8 +47,9 @@ public class TanpinDAO {
 		if(!("dealer".equals(vo.getSelect_type()) || "maker".equals(vo.getSelect_type()))) {
 			for(TanpinVO tmp : ret) {
 				if(null != tmp.getInprice() && null != tmp.getPrice()) {
-					tmp.setInprice("¥"+CommonUtil.toCommaFormat(Long.parseLong(tmp.getInprice())));
-					tmp.setPrice("¥"+CommonUtil.toCommaFormat(Long.parseLong(tmp.getPrice())));
+					tmp.setInprice(CommonUtil.toCommaFormat(Long.parseLong(tmp.getInprice())));
+					// "¥"
+					tmp.setPrice(CommonUtil.toCommaFormat(Long.parseLong(tmp.getPrice())));
 				}
 			}
 		}
@@ -177,7 +178,20 @@ public class TanpinDAO {
 				writer.close();
 			}
 		}
-		
+	}
+	
+	public ArrayList<TanpinVO> addTanpin(TanpinVO tanpin) {
+		ITanpinMapper mapper = sqlSession.getMapper(ITanpinMapper.class);
+		mapper.insertTanpinInfo(tanpin);
+		return getTanpinInfo("");
+	}
+	
+	public ArrayList<TanpinVO> modTanpin(ArrayList<TanpinVO> list) {
+		ITanpinMapper mapper = sqlSession.getMapper(ITanpinMapper.class);
+		for(TanpinVO tanpin : list) {
+			mapper.updateTanpinInfo(tanpin);
+		}
+		return getTanpinInfo("");
 	}
 
 }
