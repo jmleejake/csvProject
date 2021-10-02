@@ -2,6 +2,7 @@ package jp.prj.araku.q10.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -443,6 +444,12 @@ public class Q10Controller {
 		} catch (CsvRequiredFieldEmptyException e) {
 			log.error(e.toString());
 		}
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/executeHanei", method = RequestMethod.POST)
+	public HashMap<String, Object> executeHanei() {
+		return listDao.executeHanei(CommonUtil.TRANS_TARGET_Q);
 	}
 	
 	/**

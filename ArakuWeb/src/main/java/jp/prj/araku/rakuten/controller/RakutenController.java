@@ -2,6 +2,7 @@ package jp.prj.araku.rakuten.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -652,6 +653,12 @@ public class RakutenController {
 		} catch (CsvRequiredFieldEmptyException e) {
 			log.error(e.toString());
 		}
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/executeHanei", method = RequestMethod.POST)
+	public HashMap<String, Object> executeHanei() {
+		return listDao.executeHanei(CommonUtil.TRANS_TARGET_R);
 	}
 	
 	/**

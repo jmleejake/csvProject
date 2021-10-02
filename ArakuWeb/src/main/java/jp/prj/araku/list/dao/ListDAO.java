@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -28,6 +29,8 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 import jp.prj.araku.amazon.mapper.IAmazonMapper;
 import jp.prj.araku.amazon.vo.AmazonVO;
+import jp.prj.araku.jaiko.inventory.mapper.IJaikoPrdInventoryMapper;
+import jp.prj.araku.jaiko.inventory.vo.JaikoPrdInventoryVO;
 import jp.prj.araku.jaiko.product.mapper.IJaikoPrdInfoMapper;
 import jp.prj.araku.jaiko.product.vo.JaikoPrdInfoVO;
 import jp.prj.araku.list.mapper.IListMapper;
@@ -546,6 +549,45 @@ public class ListDAO {
 		OrderSumVO sumVO = new OrderSumVO();
 		sumVO.setTarget_type(target_type);
 		return listMapper.getOrderSum(sumVO);
+	}
+	
+	public HashMap<String, Object> executeHanei(String target_type) {
+		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
+		IJaikoPrdInventoryMapper invenMapper = sqlSession.getMapper(IJaikoPrdInventoryMapper.class);
+		
+		HashMap<String, Object> ret = new HashMap<>();
+		OrderSumVO sumVO = new OrderSumVO();
+		sumVO.setTarget_type(target_type);
+		ArrayList<OrderSumVO> orderSumList = listMapper.getOrderSum(sumVO);
+		if(orderSumList.size() < 1) {
+			ret.put("retCd", "ERR");
+			ret.put("retMsg", "総商品数がなし。");
+			return ret;
+		}
+		for(OrderSumVO sum : orderSumList) {
+			JaikoPrdInventoryVO invenVO = new JaikoPrdInventoryVO();
+			invenVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+			invenVO.setJan_cd(sum.getJan_cd());
+			ArrayList<JaikoPrdInventoryVO> invenList = invenMapper.getJaikoPrdInventory(invenVO);
+			if(invenList.size() > 0) {
+				for(JaikoPrdInventoryVO inven : invenList) {
+					int nowCnt = Integer.parseInt(inven.getNow_prd_cnt());
+					int minus = Integer.parseInt(sum.getPrd_sum());
+					
+					JaikoPrdInventoryVO invenUp = new JaikoPrdInventoryVO();
+					invenUp.setJan_cd(sum.getJan_cd());
+					invenUp.setSearch_type("wareOut");
+					invenUp.setNow_prd_cnt(String.valueOf(nowCnt-minus));
+					invenMapper.updateJaikoPrdInventory(invenUp);
+				}
+				ret.put("retCd", "S");
+			}else {
+				ret.put("retCd", "ERR");
+				ret.put("retMsg", "在庫管理を確認してください。");
+				return ret;
+			}
+		}
+		return ret;
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })

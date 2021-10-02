@@ -74,9 +74,7 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 	<div class="col-sm-6" style="margin-top: 7px;">
 		<form id="frm" action="sumDown" method="post"></form>
 		<button id="btn_jan_down" type="button" class="btn btn-success" style="width: 120px; margin-bottom: 10px;">ダウンロード</button>
-<!-- 	<button id="btn_create" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">列追加</button> -->
-<!-- 	<button id="btn_commit" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">登録</button> -->
-<!-- 	<button id="btn_sum" type="button" class="btn btn-primary" style="width: 120px; margin-bottom: 10px;">総商品数</button> -->
+		<button id="btn_hanei" type="button" class="btn btn-primary" style="width: 120px; margin-bottom: 10px;">反映</button>
 	</div>
 	<div class="col-sm-6" style="margin-top: 7px;">
 	<button id="btn_order_jan_sum_del" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">削除</button>

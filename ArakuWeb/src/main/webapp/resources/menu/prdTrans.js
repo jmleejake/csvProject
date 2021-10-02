@@ -109,8 +109,6 @@ var transGridOptions = {
         	|| !(startOrderNo == stopOrderNo) || !(startJanCd == stopJanCd)
         	|| !(startOrderGbn == stopOrderGbn) || !(startPrdMHaneiGbn == stopPrdMHaneiGbn)
         	|| !(startPrdCnt == stopPrdCnt)) {
-        	console.log("modified!");
-        	console.log(afterData);
         	modifiedData.push({
         		seq_id:afterData.seq_id
 				, before_trans:afterData.beforeTrans
@@ -175,7 +173,6 @@ function setRowData(result) {
 }
 
 var search = function() {
-	console.log("search");
 	var form = $("#transForm");
     var url = form.attr('action');
     
@@ -192,7 +189,6 @@ $('#btn_srch').on('click', function() {
 });
 
 $("#btn_create").on("click", function() {
-	console.log("create");
 	var rowData = {order_no:"99", jan_cd:"999", order_gbn:"0", before_trans: "置換前", after_trans: "置換後", prd_master_hanei_gbn:"0", prd_cnt:"1", trans_target_type:$('#transTarget').val()};
 	modifiedData.push(rowData);
 	$.ajax({
@@ -461,7 +457,6 @@ $.ajax({
 });
 
 $('#btn_sum_jan').on('click', function() {
-	console.log("jan click");
 	$.ajax({
 	    url: "executeOrderSum"
     	, type:"post"
@@ -497,4 +492,18 @@ $('#btn_order_jan_sum_del').on('click', function() {
 
 $("#btn_jan_down").on("click", function() {
 	$("#frm").submit();
+});
+
+$('#btn_hanei').on('click', function() {
+	$.ajax({
+	    url: "executeHanei"
+    	, type:"post"
+	    , success: function(res) {
+	    	if("S" === res.retCd) {
+	    		alert("反映完了しました。");
+	    	}else {
+	    		alert(res.retMsg);
+	    	}
+	    }
+	});
 });

@@ -94,8 +94,6 @@ var orderGridOptions = {
 	    			||!(sInPrc == eInPrc)||!(sMakerCd == eMakerCd)
 	    			||!(sPrdCd == ePrdCd)||!(sDealerCd == eDealerCd)
 	    			||!(sInPrc == eInPrc)||!(sMakerCd == eMakerCd)||!(sPrc == ePrc)) {
-	    		console.log("modified!");
-	    		console.log(stop);
 	    		modData.push(stop);
 	    	}
 	    }
@@ -236,8 +234,6 @@ $('#btn_commit').on('click', function() {
 		pleaseSelectNotify('情報を修正してください。');
 		return;
 	}
-	
-	console.log(modData);
 	
 	$.ajax({
 		url: "modTanpin"
