@@ -249,6 +249,7 @@ public class AmazonDAO {
 			}else {
 				prdTransVO.setPrd_cnt(vo.getQuantity_to_ship());
 			}
+			
 
 			prdTransVO.setPrd_master_hanei_gbn("0");
 			prdTransVO.setSearch_type("translate");

@@ -20,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
-import jp.prj.araku.tablet.vo.TabletPrdVO;
 import jp.prj.araku.tanpin.dao.TanpinDAO;
 import jp.prj.araku.tanpin.vo.TanpinVO;
 
