@@ -136,6 +136,11 @@ seq_id bigint unsigned primary key auto_increment comment '区分ID'
 ) default charset = utf8 comment '商品在庫管理';
 
 
+alter table jaiko_inventory_info add column dealer_id VARCHAR(20) comment '取引先コード';
+alter table jaiko_inventory_info add column dealer_nm VARCHAR(100) comment '取引先会社名';
+alter table jaiko_inventory_info add column prd_lot varchar(10) comment 'ロート数';
+
+
 drop table jaiko_receipt_info;
 create table jaiko_receipt_info (
 seq_id bigint unsigned primary key auto_increment comment '区分ID'

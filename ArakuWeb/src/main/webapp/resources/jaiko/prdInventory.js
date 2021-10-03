@@ -9,12 +9,22 @@ var columnDefs = [
 		, cellEditor: 'agPopupTextCellEditor'}
 	, {headerName: "ＪＡＮコード", field: "jan_cd", width: 200, editable: true
 		, cellEditor: 'agPopupTextCellEditor'}
+	, {headerName: "取引先コード", field: "dealer_id", width: 200, editable: true
+		, cellEditor: 'agPopupTextCellEditor'}
+	, {headerName: "取引先会社名", field: "dealer_nm", width: 200, editable: true
+    	, cellEditor: 'agLargeTextCellEditor'
+        	, cellEditorParams: {
+                maxLength: '500',
+                cols: '30',
+                rows: '6'
+            }
+	}
 	, {headerName: "ブランド", field: "brand_nm", width: 200
 		, editable: true
     	, cellEditor: 'agLargeTextCellEditor'
     	, cellEditorParams: {
             maxLength: '500',
-            cols: '50',
+            cols: '30',
             rows: '6'
         }
 	}
@@ -23,7 +33,7 @@ var columnDefs = [
     	, cellEditor: 'agLargeTextCellEditor'
     	, cellEditorParams: {
             maxLength: '500',
-            cols: '50',
+            cols: '30',
             rows: '6'
         }
 	}
@@ -32,6 +42,8 @@ var columnDefs = [
 	, {headerName: "ケース数", field: "prd_case", width: 250, editable: true
 		, cellEditor: 'agPopupTextCellEditor'}
 	, {headerName: "バラ数", field: "prd_bara", width: 250, editable: true
+		, cellEditor: 'agPopupTextCellEditor'}
+	, {headerName: "ロート数", field: "prd_lot", width: 250, editable: true
 		, cellEditor: 'agPopupTextCellEditor'}
 	, {headerName: "現在商品数", field: "now_prd_cnt", width: 250, editable: true
 		, cellEditor: 'agPopupTextCellEditor'}
@@ -55,6 +67,9 @@ var prevPrdBara, afterPrdBara;
 var prevNowPrdCnt, afterNowPrdCnt;
 var prevExpDt, afterExpDt;
 var prevSellPrc, afterSellPrc;
+var prevPrdLot, afterPrdLot;
+var prevDlrId, afterDlrId;
+var prevDlrNm, afterDlrNm;
 
 // let the grid know which columns and what data to use
 var prdInvenGridOptions = {
@@ -98,6 +113,9 @@ var prdInvenGridOptions = {
         prevExpDt = previousData.exp_dt;
         prevSellPrc = previousData.sell_prc;
         prevNowPrdCnt = previousData.now_prd_cnt; 
+        prevPrdLot = previousData.prd_lot;
+        prevDlrId = previousData.dealer_id;
+        prevDlrNm = previousData.dealer_nm;
     },
     onCellEditingStopped: function(event) {
         var afterData = event.node.data;
@@ -111,6 +129,9 @@ var prdInvenGridOptions = {
         afterExpDt = afterData.exp_dt;
         afterSellPrc = afterData.sell_prc;
         afterNowPrdCnt = afterData.now_prd_cnt;
+        afterPrdLot = afterData.prd_lot;
+        afterDlrId = afterData.dealer_id;
+        afterDlrNm = afterData.dealer_nm;
         
         if (!(prevBrandNm == afterBrandNm) ||
         	!(prevPrdNm == afterPrdNm) ||
@@ -121,21 +142,11 @@ var prdInvenGridOptions = {
         	!(prevPrdCase == afterPrdCase) ||
         	!(prevPrdBara == afterPrdBara) ||
         	!(prevExpDt == afterExpDt) ||
-        	!(prevSellPrc == afterSellPrc)) {
-        	console.log("modified!");
-        	modifiedData.push({
-        		seq_id:afterData.seq_id
-				, brand_nm:afterBrandNm
-				, prd_nm:afterPrdNm
-				, jan_cd:afterJanCd
-				, prd_cd:afterPrdCd
-				, now_prd_cnt:afterNowPrdCnt
-				, prd_qty:afterPrdQty
-				, prd_case:afterPrdCase
-				, prd_bara:afterPrdBara
-				, exp_dt:afterExpDt
-				, sell_prc:afterSellPrc
-        	});
+        	!(prevSellPrc == afterSellPrc)||
+        	!(prevPrdLot == afterPrdLot)||
+        	!(prevDlrId == afterDlrId)||
+        	!(prevDlrNm == afterDlrNm)) {
+        	modifiedData.push(afterData);
         }
     }
 };
@@ -237,6 +248,9 @@ function setRowData(result) {
 			, prd_bara:result[i].prd_bara
 			, exp_dt:result[i].exp_dt
 			, sell_prc:result[i].sell_prc
+			, prd_lot:result[i].prd_lot
+			, dealer_id:result[i].dealer_id
+			, dealer_nm:result[i].dealer_nm
 			, register_date:result[i].reg_dt
 			, update_date:result[i].upd_dt
 		};
@@ -252,7 +266,6 @@ function setRowData(result) {
 }
 
 $("#btn_add").on("click", function() {
-	console.log("列追加");
 	var today = new Date();
 	var dd = String(today.getDate()).padStart(2, '0');
 	var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
@@ -269,6 +282,9 @@ $("#btn_add").on("click", function() {
 		, prd_bara: "0"
 		, exp_dt: yyyy+"/"+mm+"/"+dd
 		, sell_prc: "0"
+		, prd_lot: "0"
+		, dealer_id: "取引先コード"
+		, dealer_nm: "取引先会社名"
 	});
 	$.ajax({
 		url: "/jaiko/prdInven/manipulate"
@@ -282,7 +298,6 @@ $("#btn_add").on("click", function() {
 });
 
 $("#btn_commit").on("click", function() {
-	console.log("登録");
 	if (modifiedData.length == 0) {
 		pleaseSelectNotify('情報を修正してください。');
 		return;
@@ -299,7 +314,6 @@ $("#btn_commit").on("click", function() {
 });
 
 $("#btn_delete").on("click", function() {
-	console.log("削除");
 	var selectedRows = prdInvenGridOptions.api.getSelectedRows();
 	
 	if (selectedRows.length == 0) {
