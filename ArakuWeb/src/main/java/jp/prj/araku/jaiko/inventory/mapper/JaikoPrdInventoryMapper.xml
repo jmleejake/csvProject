@@ -16,6 +16,9 @@ select
   , prd_qty
   , prd_case
   , prd_bara
+  , prd_lot
+  , dealer_id
+  , dealer_nm
   , sell_prc
   , date_format(exp_dt, '%Y/%m/%d') exp_dt
   , date_format(reg_dt, '%Y/%m/%d') reg_dt
@@ -49,9 +52,11 @@ order by upd_dt desc, seq_id desc
 
 <insert id="insertJaikoPrdInventory" parameterType="JaikoPrdInventory" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
 insert into jaiko_inventory_info (prd_cd, brand_nm, prd_nm, jan_cd, now_prd_cnt
-, prd_qty, prd_case, prd_bara, exp_dt, sell_prc)
+, prd_qty, prd_case, prd_bara, exp_dt, sell_prc
+, prd_lot, dealer_id, dealer_nm)
 values (#{prd_cd}, #{brand_nm}, #{prd_nm}, #{jan_cd}, #{now_prd_cnt}
-, #{prd_qty}, #{prd_case}, #{prd_bara}, STR_TO_DATE('9999/12/31','%Y/%m/%d'), #{sell_prc})
+, #{prd_qty}, #{prd_case}, #{prd_bara}, STR_TO_DATE('9999/12/31','%Y/%m/%d'), #{sell_prc}
+, #{prd_lot}, #{dealer_id}, #{dealer_nm})
 </insert>
 
 <insert id="insertJaikoPrdInventoryForWareIn" parameterType="JaikoPrdInventory" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
@@ -94,6 +99,15 @@ set
   </if>
   <if test="sell_prc != null and sell_prc != ''">
   , sell_prc = #{sell_prc}
+  </if>
+  <if test="prd_lot != null and prd_lot != ''">
+  , prd_lot = #{prd_lot}
+  </if>
+  <if test="dealer_id != null and dealer_id != ''">
+  , dealer_id = #{dealer_id}
+  </if>
+  <if test="dealer_nm != null and dealer_nm != ''">
+  , dealer_nm = #{dealer_nm}
   </if>
 where
   <if test="seq_id != null and seq_id != '' and !(search_type == 'wareIn' or search_type == 'wareOut')">
