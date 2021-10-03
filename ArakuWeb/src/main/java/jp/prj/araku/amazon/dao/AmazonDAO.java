@@ -239,7 +239,17 @@ public class AmazonDAO {
 			prdTransVO.setBefore_trans(searchRet.get(0).getBefore_trans());
 			prdTransVO.setJan_cd(searchRet.get(0).getJan_cd()); // 2021-09-26 kim jan_cd 처리
 			prdTransVO.setAfter_trans(transedName);
-			prdTransVO.setPrd_cnt(vo.getQuantity_to_ship());
+			if((null != searchRet.get(0).getJan_cd()) && (null != searchRet.get(0).getPrd_cnt()) && (null != vo.getQuantity_to_ship())) {
+				if(("" != searchRet.get(0).getJan_cd()) || ("" != searchRet.get(0).getPrd_cnt())) {
+					int totalcnt = Integer.parseInt(searchRet.get(0).getPrd_cnt()) * Integer.parseInt(vo.getQuantity_to_ship());
+					prdTransVO.setPrd_cnt(Integer.toString(totalcnt));	
+				}else {
+					prdTransVO.setPrd_cnt(vo.getQuantity_to_ship());
+				}	
+			}else {
+				prdTransVO.setPrd_cnt(vo.getQuantity_to_ship());
+			}
+
 			prdTransVO.setPrd_master_hanei_gbn("0");
 			prdTransVO.setSearch_type("translate");
 			prdTransVO.setTrans_target_type(CommonUtil.TRANS_TARGET_A);
@@ -267,7 +277,10 @@ public class AmazonDAO {
 						prdTransVO.setBefore_trans(subTrans.getBefore_trans());
 						prdTransVO.setJan_cd(subTrans.getJan_cd()); // 2021-09-26 kim
 						prdTransVO.setAfter_trans(subTrans.getAfter_trans());
-						prdTransVO.setPrd_cnt(subTrans.getPrd_cnt());
+						
+						int totalsubcnt = Integer.parseInt(vo.getQuantity_to_ship()) * Integer.parseInt(subTrans.getPrd_cnt());
+						prdTransVO.setPrd_cnt(Integer.toString(totalsubcnt));	
+						
 						prdTransVO.setPrd_master_hanei_gbn("0");
 						prdTransVO.setSearch_type("translate");
 						prdTransVO.setTrans_target_type(CommonUtil.TRANS_TARGET_A);
