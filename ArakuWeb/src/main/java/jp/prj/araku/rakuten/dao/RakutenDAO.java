@@ -400,7 +400,13 @@ public class RakutenDAO {
 			mapper.deleteRakutenFrozenInfo(vo2);
 		}
 		// 商品中間マスタ 날려버리기
-		listMapper.deletePrdTrans(null);
+		/*
+		2021.10.10
+		주문정보화면에서 전체 선택후 삭제처리하면
+		상품중간마스터에 정보가 삭제되지 않게
+		SQL修正부탁드립니다.
+		 * */
+		//listMapper.deletePrdTrans(null);
 	}
 	
 	@Transactional
