@@ -114,6 +114,7 @@ select
 	, b.region_name
 	, b.region_name_en
 	, b.delivery_company
+	, b.house_type
 from 
 	region_master a
 inner join region_master b on a.seq_id = b.p_id
@@ -135,7 +136,13 @@ inner join region_master b on a.seq_id = b.p_id
 update
 	region_master
 set
-	delivery_company = #{delivery_company}
+	update_date = now()
+	<if test="delivery_company != null and delivery_company != ''">
+	,delivery_company = #{delivery_company}
+	</if>
+	<if test="house_type != null and house_type != ''">
+	,house_type = #{house_type}
+	</if>
 where
 	seq_id = #{seq_id}
 </update>
@@ -173,11 +180,8 @@ from
 	<if test="keyword != null">
 		exception_data like '%${keyword}%'
 	</if>
-	<if test="seq_id_list != null">
-		date_format (register_date, '%Y%m%d') = date_format(now(), '%Y%m%d') or 
-		date_format (update_date, '%Y%m%d') = date_format(now(), '%Y%m%d')
-	</if>
 </where>
+order by register_date desc
 </select>
 
 <insert id="insertExceptionMaster" parameterType="ExceptionMaster" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
@@ -588,4 +592,40 @@ where
 <!-- 
 置換サーブ情報E
  -->
+ 
+<!-- 
+第三倉庫マスタS
+-->
+<insert id="insertHouse3Master" parameterType="House3" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
+insert into house3_master (house3_data)
+values (#{house3_data})
+</insert>
+ 
+<select id="getHouse3Master" parameterType="House3" resultType="House3">
+select 
+  seq_id, house3_data
+from
+  house3_master
+<where>
+	<if test="keyword != null">
+		house3_data like '%${keyword}%'
+	</if>
+</where>
+order by register_date desc
+</select>
+
+<update id="updateHouse3Master" parameterType="House3">
+update house3_master
+set update_date = now()
+, house3_data = #{house3_data}
+where seq_id = #{seq_id}
+</update>
+
+<delete id="deleteHouse3Master" parameterType="String">
+delete from house3_master
+where seq_id = #{seq_id}
+</delete>
+<!-- 
+第三倉庫マスタE
+-->
 </mapper>

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import jp.prj.araku.list.vo.EtcMasterVO;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
+import jp.prj.araku.list.vo.House3MasterVO;
 import jp.prj.araku.list.vo.OrderSumVO;
 import jp.prj.araku.list.vo.PrdCdMasterVO;
 import jp.prj.araku.list.vo.PrdTransVO;
@@ -86,4 +87,12 @@ public interface IListMapper {
 	public int insertSubTransInfo(SubTranslationVO vo);
 	public int updateSubTransInfo(SubTranslationVO vo);
 	public int deleteSubTransInfo(String seq_id);
+	
+	/**
+	 * 第三倉庫マスタ
+	 * */
+	public ArrayList<House3MasterVO> getHouse3Master(House3MasterVO vo);
+	public int insertHouse3Master(House3MasterVO vo);
+	public int updateHouse3Master(House3MasterVO vo);
+	public int deleteHouse3Master(String seq_id);
 }

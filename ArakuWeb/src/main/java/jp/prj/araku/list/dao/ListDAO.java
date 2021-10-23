@@ -37,6 +37,7 @@ import jp.prj.araku.list.mapper.IListMapper;
 import jp.prj.araku.list.vo.EtcMasterVO;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
+import jp.prj.araku.list.vo.House3MasterVO;
 import jp.prj.araku.list.vo.OrderSumVO;
 import jp.prj.araku.list.vo.PrdCdMasterVO;
 import jp.prj.araku.list.vo.PrdTransVO;
@@ -140,17 +141,11 @@ public class ListDAO {
 		log.debug("{}", list);
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
 		
-		ArrayList<String> idList = new ArrayList<>();
 		for (RegionMasterVO rm : list) {
 			log.debug("update target : " + rm);
 			mapper.modRegionMaster(rm);
-			idList.add(rm.getSeq_id());
 		}
-		
-		RegionMasterVO vo = new RegionMasterVO();
-		vo.setSeq_id_list(idList);
-		
-		return mapper.getRegionMaster(vo);
+		return mapper.getRegionMaster(new RegionMasterVO());
 	}
 	
 	public ArrayList<ExceptionMasterVO> getExceptionMaster(ExceptionMasterVO vo) {
@@ -718,5 +713,35 @@ public class ListDAO {
 		SubTranslationVO vo = new SubTranslationVO();
 		vo.setParent_seq_id(parent_seq);
 		return getSubTransInfo(vo);
+	}
+	
+	/**
+	 * 第三倉庫マスタ
+	 * */
+	public ArrayList<House3MasterVO> getHouse3Master(House3MasterVO vo) {
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		return mapper.getHouse3Master(vo);
+	}
+	
+	public ArrayList<House3MasterVO> manipulateHouse3Master(ArrayList<House3MasterVO> list) {
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		for(House3MasterVO vo : list) {
+			if(null != vo.getSeq_id()) {
+				mapper.updateHouse3Master(vo);
+			}else {
+				mapper.insertHouse3Master(vo);
+			}
+		}
+		House3MasterVO vo = new House3MasterVO();
+		return getHouse3Master(vo);
+	}
+	
+	public ArrayList<House3MasterVO> deleteHouse3Master(ArrayList<House3MasterVO> list) {
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		for(House3MasterVO vo : list) {
+			mapper.deleteHouse3Master(vo.getSeq_id());
+		}
+		House3MasterVO vo = new House3MasterVO();
+		return getHouse3Master(vo);
 	}
 }

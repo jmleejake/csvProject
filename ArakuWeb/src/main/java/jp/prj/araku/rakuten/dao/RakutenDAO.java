@@ -391,7 +391,7 @@ public class RakutenDAO {
 		log.info("deleteRakutenInfo");
 		log.debug("{}", list);
 		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
-		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
+		// IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
 		for (RakutenVO vo : list) {
 			mapper.deleteRakutenInfo(vo.getSeq_id());
 			// 2021.06.28 rakuten_info삭제시 rakuten_frozen_info도 주문번호를 이용하여 함께 삭제처리

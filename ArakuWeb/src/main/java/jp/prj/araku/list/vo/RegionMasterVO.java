@@ -17,6 +17,8 @@ public class RegionMasterVO {
 	private String region_name_en;
 	/**配送会社*/
 	private String delivery_company;
+	/**倉庫区分*/
+	private String house_type;
 	
 	private ArrayList<String> seq_id_list;
 	private String keyword;
@@ -75,11 +77,11 @@ public class RegionMasterVO {
 	public void setKeyword(String keyword) {
 		this.keyword = keyword;
 	}
-	
-	@Override
-	public String toString() {
-		return "RegionMasterVO [seq_id=" + seq_id + ", p_id=" + p_id + ", register_date=" + register_date
-				+ ", parent_region_name=" + parent_region_name + ", region_name=" + region_name + ", region_name_en="
-				+ region_name_en + ", delivery_company=" + delivery_company + ", keyword=" + keyword + "]";
+	public String getHouse_type() {
+		return house_type;
 	}
+	public void setHouse_type(String house_type) {
+		this.house_type = house_type;
+	}
+	
 }

@@ -133,6 +133,9 @@ create table region_master (
 	delivery_company varchar(4) comment '配送会社'
 ) default charset = utf8 comment '地域区分コードマスタ';
 
+alter table region_master add column update_date DATETIME comment '修正日付';
+alter table region_master add column house_type VARCHAR(2) comment '倉庫区分';
+
 insert into region_master (p_id, region_name, delivery_company) values
 (0, '北海道', 1003)
 , (0, '北東北', 1003)
@@ -799,3 +802,13 @@ CREATE TABLE translation_sub_info (
 	, register_date datetime default now() comment '登録日付'
 	, update_date DATETIME comment '修正日付'
 ) default charset = utf8 comment '置換サーブ情報';
+
+
+DROP TABLE house3_master;
+CREATE TABLE house3_master (
+	seq_id bigint unsigned primary key auto_increment comment '区分ID',
+	register_date datetime default now() comment '登録日付',
+	update_date DATETIME comment '修正日付',
+	house3_data VARCHAR(20) comment '第三倉庫データ'
+) default charset = utf8 comment '第三倉庫マスタ';
+
