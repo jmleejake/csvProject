@@ -48,6 +48,7 @@ import jp.prj.araku.list.mapper.IListMapper;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
 import jp.prj.araku.list.vo.GlobalSagawaDownVO;
+import jp.prj.araku.list.vo.House3MasterVO;
 import jp.prj.araku.list.vo.PrdCdMasterVO;
 import jp.prj.araku.list.vo.PrdTransVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
@@ -423,19 +424,37 @@ public class AmazonDAO {
 			// 예외테이블에 추가한 목록에 대하여 제2창고 목록으로 떨굴수있게 처리
 			// 2021-07-23 야마토 제1창고, 2창고 구분 S
 			ArrayList<ExceptionMasterVO> exList = listMapper.getExceptionMaster(null);
+			ArrayList<House3MasterVO> house3Lst = listMapper.getHouse3Master(null);
 			ArrayList<AmazonVO> str1List = new ArrayList<AmazonVO>();
 			ArrayList<AmazonVO> str2List = new ArrayList<AmazonVO>();
+			
+			// 2021-10-24 야마토 지방 (제3창고)처리
+			ArrayList<AmazonVO> str3List = new ArrayList<AmazonVO>();
 			boolean exChk = false;
-			for (AmazonVO tmp : list) {
-				for (ExceptionMasterVO exVO : exList) {
-					if (tmp.getResult_text().contains(exVO.getException_data())) {
-						exChk = true;
-						if("2".equals(storage)) {
+			for(AmazonVO tmp : list) {
+				// ship_state 지역마스터
+				RegionMasterVO regionVO = new RegionMasterVO();
+				regionVO.setKeyword(tmp.getShip_state());
+				ArrayList<RegionMasterVO> region = listMapper.getRegionMaster(regionVO);
+				String house_type = region.get(0).getHouse_type();
+				
+				if("2".equals(house_type) && "2".equals(storage)) {
+					for(ExceptionMasterVO exVO : exList) {
+						if (tmp.getResult_text().contains(exVO.getException_data())) {
+							exChk = true;
 							str2List.add(tmp);
 						}
 					}
+				}else if("3".equals(house_type)) {
+					for(House3MasterVO house3 : house3Lst) {
+						if(tmp.getResult_text().contains(house3.getHouse3_data())) {
+							exChk = true;
+							str3List.add(tmp);
+						}
+					}
 				}
-				if(!exChk) {
+				
+				if("1".equals(house_type) || !exChk) {
 					str1List.add(tmp);
 				}
 				//例外マスタの情報有無チェックフラグを初期化する。　21.7.24 kim
@@ -445,6 +464,8 @@ public class AmazonDAO {
 				list = str1List;
 			}else if("2".equals(storage)) {
 				list = str2List;
+			}else {
+				list = str3List;
 			}
 			// 2021-07-23 야마토 제1창고, 2창고 구분 E
 			

@@ -29,6 +29,7 @@ import jp.prj.araku.list.dao.ListDAO;
 import jp.prj.araku.list.vo.EtcMasterVO;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
+import jp.prj.araku.list.vo.House3MasterVO;
 import jp.prj.araku.list.vo.OrderSumVO;
 import jp.prj.araku.list.vo.PrdCdMasterVO;
 import jp.prj.araku.list.vo.PrdTransVO;
@@ -726,4 +727,26 @@ public class RakutenController {
 	public ArrayList<SubTranslationVO> deleteSubTransInfo(@RequestBody ArrayList<SubTranslationVO> list) {
 		return listDao.deleteSubTransInfo(list);
 	}
+	
+	/**
+	 * 第三倉庫マスタ
+	 * */
+	@ResponseBody
+	@RequestMapping(value = "getHouse3")
+	public ArrayList<House3MasterVO> getHouse3Master(House3MasterVO vo) {
+		return listDao.getHouse3Master(vo);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "modHouse3", method = RequestMethod.POST)
+	public ArrayList<House3MasterVO> manipulateHouse3Master(@RequestBody ArrayList<House3MasterVO> list) {
+		return listDao.manipulateHouse3Master(list);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "delHouse3", method = RequestMethod.POST)
+	public ArrayList<House3MasterVO> deleteHouse3Master(@RequestBody ArrayList<House3MasterVO> list) {
+		return listDao.deleteHouse3Master(list);
+	}
+	
 }

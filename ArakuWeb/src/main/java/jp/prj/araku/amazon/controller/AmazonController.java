@@ -608,6 +608,4 @@ public class AmazonController {
 		return listDao.deleteHouse3Master(list);
 	}
 	
-	
-	
 }
