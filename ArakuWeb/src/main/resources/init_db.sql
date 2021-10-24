@@ -812,3 +812,48 @@ CREATE TABLE house3_master (
 	house3_data VARCHAR(20) comment '第三倉庫データ'
 ) default charset = utf8 comment '第三倉庫マスタ';
 
+
+
+
+DROP TABLE amazon_info_tmp;
+CREATE TABLE amazon_info_tmp (
+	seq_id bigint unsigned primary key auto_increment comment '区分ID',
+	register_date datetime default now() comment '登録日付',
+	update_date DATETIME comment '修正日付',
+	order_id VARCHAR(20),
+	order_item_id VARCHAR(14),
+	purchase_date VARCHAR(30),
+	payments_date VARCHAR(30),
+	reporting_date VARCHAR(30),
+	promise_date VARCHAR(30),
+	days_past_promise VARCHAR(10),
+	buyer_email VARCHAR(50),
+	buyer_name VARCHAR(100),
+	buyer_phone_number VARCHAR(13),
+	sku VARCHAR(13),
+	product_name VARCHAR(500),
+	quantity_purchased VARCHAR(10),
+	quantity_shipped VARCHAR(10),
+	quantity_to_ship VARCHAR(10),
+	ship_service_level VARCHAR(13),
+	recipient_name VARCHAR(100),
+	ship_address1 VARCHAR(100),
+	ship_address2 VARCHAR(100),
+	ship_address3 VARCHAR(100),
+	ship_city VARCHAR(50),
+	ship_state VARCHAR(50),
+	ship_postal_code VARCHAR(10),
+	ship_country VARCHAR(5),
+	payment_method VARCHAR(20),
+	cod_collectible_amount VARCHAR(20),
+	already_paid VARCHAR(20),
+	payment_method_fee VARCHAR(20),
+	scheduled_delivery_start_date VARCHAR(10),
+	scheduled_delivery_end_date VARCHAR(10),
+	points_granted VARCHAR(20),
+	is_prime VARCHAR(6),
+	delivery_company VARCHAR(4) comment '配送会社',
+	baggage_claim_no VARCHAR(12) comment 'お荷物伝票番号',
+	result_text VARCHAR(200)
+) default charset = utf8 comment 'AMAZON情報TEMP';
+

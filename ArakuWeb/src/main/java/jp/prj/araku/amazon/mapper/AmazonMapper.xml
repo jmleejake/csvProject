@@ -248,4 +248,86 @@ where
 	seq_id = #{seq_id}
 </update>
 
+
+<insert id="insertAmazonInfoTmp" parameterType="Amazon" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
+insert into amazon_info_tmp (
+order_id
+, order_item_id
+, purchase_date
+, payments_date
+, reporting_date
+, promise_date
+, days_past_promise
+, buyer_email
+, buyer_name
+, buyer_phone_number
+, sku
+, product_name
+, quantity_purchased
+, quantity_shipped
+, quantity_to_ship
+, ship_service_level
+, recipient_name
+, ship_address1
+, ship_address2
+, ship_address3
+, ship_city
+, ship_state
+, ship_postal_code
+, ship_country
+, payment_method
+, cod_collectible_amount
+, already_paid
+, payment_method_fee
+, scheduled_delivery_start_date
+, scheduled_delivery_end_date
+, points_granted
+, is_prime 
+, result_text 
+, delivery_company ) 
+values(
+#{order_id}
+, #{order_item_id}
+, #{purchase_date}
+, #{payments_date}
+, #{reporting_date}
+, #{promise_date}
+, #{days_past_promise}
+, #{buyer_email}
+, #{buyer_name}
+, #{buyer_phone_number}
+, #{sku}
+, #{product_name}
+, #{quantity_purchased}
+, #{quantity_shipped}
+, #{quantity_to_ship}
+, #{ship_service_level}
+, #{recipient_name}
+, #{ship_address1}
+, #{ship_address2}
+, #{ship_address3}
+, #{ship_city}
+, #{ship_state}
+, #{ship_postal_code}
+, #{ship_country}
+, #{payment_method}
+, #{cod_collectible_amount}
+, #{already_paid}
+, #{payment_method_fee}
+, #{scheduled_delivery_start_date}
+, #{scheduled_delivery_end_date}
+, #{points_granted}
+, #{is_prime} 
+, #{result_text} 
+, #{delivery_company} )
+</insert>
+
+<select id="getAmazonInfoTmp" resultType="Amazon">
+select * from amazon_info_tmp
+</select>
+
+<delete id="deleteAmazonInfoTmp">
+delete from amazon_info_tmp
+</delete>
+
 </mapper>

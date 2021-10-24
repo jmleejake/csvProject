@@ -438,7 +438,9 @@ public class AmazonDAO {
 				ArrayList<RegionMasterVO> region = listMapper.getRegionMaster(regionVO);
 				String house_type = region.get(0).getHouse_type();
 				
-				if("2".equals(house_type) && "2".equals(storage)) {
+				if("1".equals(house_type)) {
+					str1List.add(tmp);
+				}else if("2".equals(house_type) && "2".equals(storage)) {
 					for(ExceptionMasterVO exVO : exList) {
 						if (tmp.getResult_text().contains(exVO.getException_data())) {
 							exChk = true;
@@ -454,13 +456,18 @@ public class AmazonDAO {
 					}
 				}
 				
-				if("1".equals(house_type) || !exChk) {
-					str1List.add(tmp);
+				if(!exChk && ("2".equals(house_type) || "3".equals(house_type))) {
+					// 2021-10-24 제2창고, 지방에 대한 조건이 성립되지 않으면 탬프테이블에 넣어두고 1창고 리스트를 만들때 추가
+					mapper.insertAmazonInfoTmp(tmp);
 				}
+				
 				//例外マスタの情報有無チェックフラグを初期化する。　21.7.24 kim
 				exChk = false;
 			}
 			if("1".equals(storage)) {
+				ArrayList<AmazonVO> tmpList = mapper.getAmazonInfoTmp();
+				str1List.addAll(tmpList);
+				mapper.deleteAmazonInfoTmp();
 				list = str1List;
 			}else if("2".equals(storage)) {
 				list = str2List;
