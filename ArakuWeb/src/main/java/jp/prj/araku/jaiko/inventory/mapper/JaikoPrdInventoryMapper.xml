@@ -40,6 +40,9 @@ from jaiko_inventory_info
 	<if test="jan_cd != null and jan_cd != ''">
 	and jan_cd like '%${jan_cd}%'
 	</if>
+	<if test="dealer_id != null and dealer_id != ''">
+	and dealer_id = #{dealer_id}
+	</if>
 	</trim>
 	</when>
 	<otherwise>

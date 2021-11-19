@@ -104,6 +104,15 @@ CREATE TABLE dealer_info (
 	dealer_nm VARCHAR(100)
 ) default charset = utf8 comment '取引先情報';
 
+alter table dealer_info add column dealer_tel varchar(15) comment '電話番号';
+alter table dealer_info add column dealer_fax varchar(15) comment 'FAX';
+alter table dealer_info add column dealer_mobile varchar(15) comment '携帯';
+alter table dealer_info add column dealer_post varchar(10) comment '郵便番号';
+alter table dealer_info add column dealer_add varchar(1000) comment '住所';
+alter table dealer_info add column est_delivery_dt varchar(200) comment '納品希望日';
+alter table dealer_info add column destination varchar(100) comment '納品先';
+alter table dealer_info add column remark varchar(1000) comment '備考';
+
 
 DROP TABLE exception_master;
 CREATE TABLE exception_master (

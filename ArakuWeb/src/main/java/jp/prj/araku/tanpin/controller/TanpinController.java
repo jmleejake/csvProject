@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
+import jp.prj.araku.tablet.dao.TabletPrdDAO;
 import jp.prj.araku.tanpin.dao.TanpinDAO;
 import jp.prj.araku.tanpin.vo.TanpinVO;
 
@@ -31,6 +32,9 @@ public class TanpinController {
 	
 	@Autowired
 	private TanpinDAO dao;
+	
+	@Autowired
+	private TabletPrdDAO dealerDAO;
 	
 	public String tanpinFileUpload() {
 		return "tanpin/prdManage";
@@ -88,4 +92,20 @@ public class TanpinController {
 	public ArrayList<TanpinVO> modTanpin(@RequestBody ArrayList<TanpinVO> list) {
 		return dao.modTanpin(list);
 	}
+	
+	/**
+	 * 20211120
+	 * 発注書発行画面S
+	 * */
+	
+	@RequestMapping(value = "/orderView")
+	public String showOrderIssue(Model model) {
+		model.addAttribute("dealers", dealerDAO.getDealerInfo(null));
+		return "tanpin/orderView";
+	}
+	
+	/**
+	 * 20211120
+	 * 発注書発行画面E
+	 * */
 }
