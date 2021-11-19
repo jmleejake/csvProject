@@ -34,6 +34,9 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 </div>
 </div>
 <script src="<%=svrInfo %>/resources/tanpin/orderView.js"></script>
+<form id="frm_down" action="orderDown" method="post">
+	<input type="hidden" name="dealer_id" id="down_id">
+</form>
 </body>
 <script>
 $(document).ready(function() {

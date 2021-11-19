@@ -109,6 +109,11 @@ select
 	, remark
 from
 	dealer_info
+	<where>
+	<if test="dealer_id != null and dealer_id !=''">
+	dealer_id = #{dealer_id}
+	</if>
+	</where>
 order by seq_id desc
 </select>
 

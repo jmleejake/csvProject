@@ -104,6 +104,12 @@ public class TanpinController {
 		return "tanpin/orderView";
 	}
 	
+	@RequestMapping(value = "/orderDown", method = RequestMethod.POST)
+	public void downloadOrderForm(HttpServletResponse response
+			,@RequestParam(value = "dealer_id") String id) {
+		dao.downloadOrderForm(response, id, fileEncoding);
+	}
+	
 	/**
 	 * 20211120
 	 * 発注書発行画面E

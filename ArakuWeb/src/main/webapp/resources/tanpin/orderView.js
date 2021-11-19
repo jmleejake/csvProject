@@ -4,6 +4,7 @@
 
 // 거래처 셀렉트박스 선택시
 function showOrder(id) {
+	$('#down_id').val(id);
 	$.ajax({
 		url: "/jaiko/prdInven/getPrdInven"
 		, type:"get"
@@ -20,6 +21,7 @@ function showOrder(id) {
 $('#btn_down').on('click', function() {
 	alert('該当する会社の取引先コードにて現在在庫数 ＜ ロット数 場合、発注書に該当する商品名と入数と数量を設定する。');
 	alert('어떤의미인지???');
+	$('#frm_down').submit();
 });
 
 /*
