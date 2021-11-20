@@ -15,10 +15,10 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 	<div class="col-sm-6" >
 	<div class="dropdown">
 		<button class="btn btn-primary dropdown-toggle" id="menu1" type="button" data-toggle="dropdown">
-		取引先選択<span id="selectedMaker"></span>  <span class="caret"></span></button>
+		取引先選択<span id="selectedDealer"></span>  <span class="caret"></span></button>
 		<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
 			<c:forEach items="${dealers }" var="dealer">
-			<li role="presentation"><a role="menuitem" href="javascript:showOrder('${dealer.dealer_id }')">${dealer.dealer_nm }</a></li>
+			<li role="presentation"><a role="menuitem" href="javascript:showOrder('${dealer.dealer_id }', '${dealer.dealer_nm }')">${dealer.dealer_nm }</a></li>
 			</c:forEach>
 		</ul>
 	</div>

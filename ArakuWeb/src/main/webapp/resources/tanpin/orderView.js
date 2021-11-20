@@ -3,7 +3,8 @@
  */
 
 // 거래처 셀렉트박스 선택시
-function showOrder(id) {
+function showOrder(id, nm) {
+	$('#selectedDealer').html(': '+nm);
 	$('#down_id').val(id);
 	$.ajax({
 		url: "/jaiko/prdInven/getPrdInven"
@@ -19,8 +20,6 @@ function showOrder(id) {
 }
 
 $('#btn_down').on('click', function() {
-	alert('該当する会社の取引先コードにて現在在庫数 ＜ ロット数 場合、発注書に該当する商品名と入数と数量を設定する。');
-	alert('어떤의미인지???');
 	$('#frm_down').submit();
 });
 
@@ -31,12 +30,20 @@ grid setting S
 */
 
 var columnDefs = [
-	{headerName: "商品コード", field: "prd_cd", width: 200}
-	, {headerName: "ＪＡＮコード", field: "jan_cd", width: 200}
-	, {headerName: "取引先コード", field: "dealer_id", width: 200}
-	, {headerName: "取引先会社名", field: "dealer_nm", width: 200}
+	{headerName: "商品コード", field: "prd_cd", width: 200, editable: true}
+	, {headerName: "ＪＡＮコード", field: "jan_cd", width: 200, editable: true}
+	, {headerName: "取引先コード", field: "dealer_id", width: 200, editable: true}
+	, {headerName: "取引先会社名", field: "dealer_nm", width: 200, editable: true}
 	, {headerName: "ブランド", field: "brand_nm", width: 200}
-	, {headerName: "商品名", field: "prd_nm", width: 400}
+	, {headerName: "商品名", field: "prd_nm", width: 400
+		, editable: true
+		, cellEditor: 'agLargeTextCellEditor'
+    	, cellEditorParams: {
+            maxLength: '500',
+            cols: '30',
+            rows: '6'
+        }
+	}
 	, {headerName: "入数", field: "prd_qty", width: 200}
 	, {headerName: "ケース数", field: "prd_case", width: 250}
 	, {headerName: "バラ数", field: "prd_bara", width: 250}
