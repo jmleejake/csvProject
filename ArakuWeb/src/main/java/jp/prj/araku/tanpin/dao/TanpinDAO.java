@@ -273,6 +273,8 @@ public class TanpinDAO {
 			CellStyle rightLine = workbook.createCellStyle();
 			rightLine.setBorderRight(BorderStyle.THIN);
 			
+			String ranNum = String.format("発注書No.%s", CommonUtil.getRandomNumber(7));
+			
 			if(list.size() > 10) {
 				int i = list.size()/10;
 				int ii = list.size()%10;
@@ -463,7 +465,7 @@ public class TanpinDAO {
 					cell.setCellValue("備考");
 					cell.setCellStyle(centerAllLine);
 					cell = row.createCell(1);
-					cell.setCellValue("発注書No.??");
+					cell.setCellValue(ranNum);
 					cell.setCellStyle(allLine);
 					for(int c=2; c<=8; c++) {
 						cell = row.createCell(c);
@@ -744,7 +746,7 @@ public class TanpinDAO {
 				cell.setCellValue("備考");
 				cell.setCellStyle(centerAllLine);
 				cell = row.createCell(1);
-				cell.setCellValue("発注書No.??");
+				cell.setCellValue(ranNum);
 				cell.setCellStyle(allLine);
 				for(int c=2; c<=8; c++) {
 					cell = row.createCell(c);

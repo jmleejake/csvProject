@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Random;
 
 import com.opencsv.CSVWriter;
 import com.opencsv.bean.StatefulBeanToCsv;
@@ -644,4 +645,19 @@ public class CommonUtil {
 		} 
 		return objClass; 
 	}
+	
+	/**
+	 * 난수번호 얻기
+	 * @param digit 자릿수
+	 * @return
+	 */
+	public static int getRandomNumber(int digit) {
+		Random rand = new Random();
+		String rst = Integer.toString(rand.nextInt(digit) + 1);
+		for(int i=0; i < (digit-1); i++) {
+			rst += Integer.toString(rand.nextInt(digit+1));
+		}
+		return Integer.parseInt(rst);
+	}
+	
 }
