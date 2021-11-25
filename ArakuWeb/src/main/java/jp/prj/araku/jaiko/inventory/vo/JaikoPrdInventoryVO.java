@@ -31,6 +31,12 @@ public class JaikoPrdInventoryVO {
 	private String exp_dt;
 	/**本体売価*/
 	private String sell_prc;
+	/**ロート数*/
+	private String prd_lot;
+	/**取引先コード*/
+	private String dealer_id;
+	/**取引先会社名*/
+	private String dealer_nm;
 	
 	private String search_type;
 	
@@ -184,12 +190,28 @@ public class JaikoPrdInventoryVO {
 		this.prd_unit_prc = prd_unit_prc;
 	}
 
-	@Override
-	public String toString() {
-		return String.format(
-				"JaikoPrdInventoryVO [seq_id=%s, prd_cd=%s, brand_nm=%s, prd_nm=%s, jan_cd=%s, now_prd_cnt=%s, reg_user_id=%s, reg_dt=%s, upd_user_id=%s, upd_dt=%s, prd_qty=%s, prd_case=%s, prd_bara=%s, exp_dt=%s, sell_prc=%s, search_type=%s]",
-				seq_id, prd_cd, brand_nm, prd_nm, jan_cd, now_prd_cnt, reg_user_id, reg_dt, upd_user_id, upd_dt,
-				prd_qty, prd_case, prd_bara, exp_dt, sell_prc, search_type);
+	public String getPrd_lot() {
+		return prd_lot;
+	}
+
+	public void setPrd_lot(String prd_lot) {
+		this.prd_lot = prd_lot;
+	}
+
+	public String getDealer_id() {
+		return dealer_id;
+	}
+
+	public void setDealer_id(String dealer_id) {
+		this.dealer_id = dealer_id;
+	}
+
+	public String getDealer_nm() {
+		return dealer_nm;
+	}
+
+	public void setDealer_nm(String dealer_nm) {
+		this.dealer_nm = dealer_nm;
 	}
 
 }

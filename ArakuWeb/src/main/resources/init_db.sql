@@ -104,6 +104,15 @@ CREATE TABLE dealer_info (
 	dealer_nm VARCHAR(100)
 ) default charset = utf8 comment '取引先情報';
 
+alter table dealer_info add column dealer_tel varchar(15) comment '電話番号';
+alter table dealer_info add column dealer_fax varchar(15) comment 'FAX';
+alter table dealer_info add column dealer_mobile varchar(15) comment '携帯';
+alter table dealer_info add column dealer_post varchar(10) comment '郵便番号';
+alter table dealer_info add column dealer_add varchar(1000) comment '住所';
+alter table dealer_info add column est_delivery_dt varchar(200) comment '納品希望日';
+alter table dealer_info add column destination varchar(100) comment '納品先';
+alter table dealer_info add column remark varchar(1000) comment '備考';
+
 
 DROP TABLE exception_master;
 CREATE TABLE exception_master (
@@ -132,6 +141,9 @@ create table region_master (
 	region_name_en varchar(15) comment '名称(英語)',
 	delivery_company varchar(4) comment '配送会社'
 ) default charset = utf8 comment '地域区分コードマスタ';
+
+alter table region_master add column update_date DATETIME comment '修正日付';
+alter table region_master add column house_type VARCHAR(2) comment '倉庫区分';
 
 insert into region_master (p_id, region_name, delivery_company) values
 (0, '北海道', 1003)
@@ -758,6 +770,7 @@ alter table translation_info add column etc_cntnt varchar(30) comment 'その他
 
 alter table translation_info add column jan_cd varchar(15) comment 'ＪＡＮコード';
 
+
 DROP TABLE order_sum_info;
 CREATE TABLE order_sum_info (
 	seq_id bigint unsigned primary key auto_increment comment '区分ID'
@@ -769,6 +782,8 @@ CREATE TABLE order_sum_info (
 	, prd_master_hanei_gbn varchar(2) comment '商品マスタ反映有無フラグ：0（未）、1（済）'
 	, target_type varchar(3) comment 'メニュー区分'
 ) default charset = utf8 comment '総商品数';
+
+alter table order_sum_info modify column after_trans varchar(3000);
 
 
 
@@ -796,3 +811,58 @@ CREATE TABLE translation_sub_info (
 	, register_date datetime default now() comment '登録日付'
 	, update_date DATETIME comment '修正日付'
 ) default charset = utf8 comment '置換サーブ情報';
+
+
+DROP TABLE house3_master;
+CREATE TABLE house3_master (
+	seq_id bigint unsigned primary key auto_increment comment '区分ID',
+	register_date datetime default now() comment '登録日付',
+	update_date DATETIME comment '修正日付',
+	house3_data VARCHAR(20) comment '第三倉庫データ'
+) default charset = utf8 comment '第三倉庫マスタ';
+
+
+
+
+DROP TABLE amazon_info_tmp;
+CREATE TABLE amazon_info_tmp (
+	seq_id bigint unsigned primary key auto_increment comment '区分ID',
+	register_date datetime default now() comment '登録日付',
+	update_date DATETIME comment '修正日付',
+	order_id VARCHAR(20),
+	order_item_id VARCHAR(14),
+	purchase_date VARCHAR(30),
+	payments_date VARCHAR(30),
+	reporting_date VARCHAR(30),
+	promise_date VARCHAR(30),
+	days_past_promise VARCHAR(10),
+	buyer_email VARCHAR(50),
+	buyer_name VARCHAR(100),
+	buyer_phone_number VARCHAR(13),
+	sku VARCHAR(13),
+	product_name VARCHAR(500),
+	quantity_purchased VARCHAR(10),
+	quantity_shipped VARCHAR(10),
+	quantity_to_ship VARCHAR(10),
+	ship_service_level VARCHAR(13),
+	recipient_name VARCHAR(100),
+	ship_address1 VARCHAR(100),
+	ship_address2 VARCHAR(100),
+	ship_address3 VARCHAR(100),
+	ship_city VARCHAR(50),
+	ship_state VARCHAR(50),
+	ship_postal_code VARCHAR(10),
+	ship_country VARCHAR(5),
+	payment_method VARCHAR(20),
+	cod_collectible_amount VARCHAR(20),
+	already_paid VARCHAR(20),
+	payment_method_fee VARCHAR(20),
+	scheduled_delivery_start_date VARCHAR(10),
+	scheduled_delivery_end_date VARCHAR(10),
+	points_granted VARCHAR(20),
+	is_prime VARCHAR(6),
+	delivery_company VARCHAR(4) comment '配送会社',
+	baggage_claim_no VARCHAR(12) comment 'お荷物伝票番号',
+	result_text VARCHAR(200)
+) default charset = utf8 comment 'AMAZON情報TEMP';
+

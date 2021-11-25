@@ -36,3 +36,8 @@ $("#btn_prdAnal").on("click", function() {
 	console.log("product analysis");
 	location.href = "/araku/prdAnalysis/listView";
 });
+
+$('#btn_order').on('click', function() {
+	console.log('purchase order');
+	location.href = "/araku/prdAnalysis/orderView";
+});

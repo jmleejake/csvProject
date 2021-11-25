@@ -32,6 +32,7 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 	<div class="well container-fluid">
 	<button id="btn_tanpin" class="btn btn-lg" style="width: 150px;">単品商品管理</button>
 	<button id="btn_prdAnal" class="btn btn-lg" style="width: 150px;">商品分析</button>
+	<button id="btn_order" class="btn btn-lg" style="width: 150px;">発注書</button>
 	</div>
 </div>
 <script src="<%=svrInfo %>/resources/main.js"></script>

@@ -3,11 +3,65 @@
  */
 // specify the columns
 var columnDefs4 = [
-	{headerName: "取引先ID", field: "dealer_id", width: 150
+	{headerName: "取引先コード", field: "dealer_id", width: 200
 		, editable: true
 	},
-	{headerName: "取引先名", field: "dealer_nm", width: 200
+	{headerName: "取引先名", field: "dealer_nm", width: 250
 		, editable: true
+	},
+	{headerName: "電話", field: "dealer_tel", width: 100
+		, editable: true
+	},
+	{headerName: "FAX", field: "dealer_fax", width: 100
+		, editable: true
+	},
+	{headerName: "携帯", field: "dealer_mobile", width: 100
+		, editable: true
+	},
+	{headerName: "郵便番号", field: "dealer_post", width: 100
+		, editable: true
+	},
+	{headerName: "住所", field: "dealer_add", width: 200
+		, editable: true
+		, cellEditor: 'agLargeTextCellEditor'
+	    	, cellEditorParams: {
+	            maxLength: '500',
+	            cols: '50',
+	            rows: '6'
+	        }
+			// 길이가 긴 항목에 대해서 툴팁 추가.  
+			, tooltip: function(params) {
+				return params.value;
+			}
+	},
+	{headerName: "納品希望日", field: "est_delivery_dt", width: 150
+		, editable: true
+		, cellEditor: 'agLargeTextCellEditor'
+	    	, cellEditorParams: {
+	            maxLength: '500',
+	            cols: '50',
+	            rows: '6'
+	        }
+			// 길이가 긴 항목에 대해서 툴팁 추가.  
+			, tooltip: function(params) {
+				return params.value;
+			}
+	},
+	{headerName: "納品先", field: "destination", width: 150
+		, editable: true
+	},
+	{headerName: "備考", field: "remark", width: 300
+		, editable: true
+		, cellEditor: 'agLargeTextCellEditor'
+	    	, cellEditorParams: {
+	            maxLength: '500',
+	            cols: '50',
+	            rows: '6'
+	        }
+			// 길이가 긴 항목에 대해서 툴팁 추가.  
+			, tooltip: function(params) {
+				return params.value;
+			}
 	},
 ];
 
@@ -15,8 +69,16 @@ var columnDefs4 = [
 var rowData4 = [];
 
 //수정 전후를 파악할 변수 선언
-var startDealId, stopDealId;
-var startDealNm, stopDealNm;
+var startId, stopId;
+var startNm, stopNm;
+var startTel, stopTel;
+var startFax, stopFax;
+var startMobile, stopMobile;
+var startPost, stopPost;
+var startAdd, stopAdd;
+var startEstDt, stopEstDt;
+var startDest, stopDest;
+var startRmk, stopRmk;
 
 //수정데이터 배열
 var modifiedData4 = [];
@@ -35,21 +97,46 @@ var gridOption4 = {
 		rowData: rowData4,
 		onCellEditingStarted: function(event) {
 	    	var start = event.node.data;
-	    	startDealId = start.dealer_id;
-	    	startDealNm = start.dealer_nm;
+	    	startId = start.dealer_id;
+	    	startNm = start.dealer_nm;
+	    	startTel = start.dealer_tel;
+	    	startFax = start.dealer_fax;
+	    	startMobile = start.dealer_mobile;
+	    	startPost = start.dealer_post;
+	    	startAdd = start.dealer_add;
+	    	startEstDt = start.est_delivery_dt;
+	    	startDest = start.destination;
+	    	startRmk = start.remark;
 	    },
 	    onCellEditingStopped: function(event) {
 	    	var stop = event.node.data;
-	    	stopDealId = stop.dealer_id;
-	    	stopDealNm = stop.dealer_nm;
+	    	stopId = stop.dealer_id;
+	    	stopNm = stop.dealer_nm;
+	    	stopTel = stop.dealer_tel;
+	    	stopFax = stop.dealer_fax;
+	    	stopMobile = stop.dealer_mobile;
+	    	stopPost = stop.dealer_post;
+	    	stopAdd = stop.dealer_add;
+	    	stopEstDt = stop.est_delivery_dt;
+	    	stopDest = stop.destination;
+	    	stopRmk = stop.remark;
 	    	
-	    	id4 = stop.seq_id;
-	    	if (!(startDealId == stopDealId)||!(startDealNm == stopDealNm)) {
-	    		console.log("modified!");
+	    	if (!(startId == stopId)||!(startNm == stopNm)||!(startTel == stopTel)
+	    			||!(startFax == stopFax)||!(startMobile == stopMobile)||!(startPost == stopPost)
+	    			||!(startAdd == stopAdd)||!(startEstDt == stopEstDt)
+	    			||!(startDest == stopDest)||!(startRmk == stopRmk)) {
 	    		modifiedData4.push({
-	    			seq_id: id4
-	    			, dealer_id: stopDealId
-	    			, dealer_nm: stopDealNm
+	    			seq_id: stop.seq_id
+	    			, dealer_id: stopId
+	    			, dealer_nm: stopNm
+	    			, dealer_tel: stopTel
+	    			, dealer_fax: stopFax
+	    			, dealer_mobile: stopMobile
+	    			, dealer_post: stopPost
+	    			, dealer_add: stopAdd
+	    			, est_delivery_dt: stopEstDt
+	    			, destination: stopDest
+	    			, remark: stopRmk
 	    		});
 	    	}
 	    }
@@ -85,6 +172,14 @@ function setRowData4(result) {
 				seq_id: result[i].seq_id
 				, dealer_id: result[i].dealer_id
 				, dealer_nm: result[i].dealer_nm
+				, dealer_tel: result[i].dealer_tel
+				, dealer_fax: result[i].dealer_fax
+				, dealer_mobile: result[i].dealer_mobile
+				, dealer_post: result[i].dealer_post
+				, dealer_add: result[i].dealer_add
+				, est_delivery_dt: result[i].est_delivery_dt
+				, destination: result[i].destination
+				, remark: result[i].remark
 		}
 		
 		rowData4.push(row);

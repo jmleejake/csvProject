@@ -11,4 +11,7 @@ public interface IAmazonMapper {
 	public ArrayList<AmazonVO> getTransResult(TranslationResultVO vo);
 	public int deleteAmazonInfo(String seq_id);
 	public int updateAmazonInfo(AmazonVO vo);
+	public int insertAmazonInfoTmp(AmazonVO vo);
+	public ArrayList<AmazonVO> getAmazonInfoTmp();
+	public int deleteAmazonInfoTmp();
 }

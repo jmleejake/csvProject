@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -28,10 +29,15 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 import jp.prj.araku.amazon.mapper.IAmazonMapper;
 import jp.prj.araku.amazon.vo.AmazonVO;
+import jp.prj.araku.jaiko.inventory.mapper.IJaikoPrdInventoryMapper;
+import jp.prj.araku.jaiko.inventory.vo.JaikoPrdInventoryVO;
+import jp.prj.araku.jaiko.product.mapper.IJaikoPrdInfoMapper;
+import jp.prj.araku.jaiko.product.vo.JaikoPrdInfoVO;
 import jp.prj.araku.list.mapper.IListMapper;
 import jp.prj.araku.list.vo.EtcMasterVO;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
+import jp.prj.araku.list.vo.House3MasterVO;
 import jp.prj.araku.list.vo.OrderSumVO;
 import jp.prj.araku.list.vo.PrdCdMasterVO;
 import jp.prj.araku.list.vo.PrdTransVO;
@@ -135,17 +141,11 @@ public class ListDAO {
 		log.debug("{}", list);
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
 		
-		ArrayList<String> idList = new ArrayList<>();
 		for (RegionMasterVO rm : list) {
 			log.debug("update target : " + rm);
 			mapper.modRegionMaster(rm);
-			idList.add(rm.getSeq_id());
 		}
-		
-		RegionMasterVO vo = new RegionMasterVO();
-		vo.setSeq_id_list(idList);
-		
-		return mapper.getRegionMaster(vo);
+		return mapper.getRegionMaster(new RegionMasterVO());
 	}
 	
 	public ArrayList<ExceptionMasterVO> getExceptionMaster(ExceptionMasterVO vo) {
@@ -462,57 +462,127 @@ public class ListDAO {
 		return getOrderSum(vo);
 	}
 	
-	public ArrayList<OrderSumVO> executeOrderSum(String target_type) {
+	public ArrayList<OrderSumVO> executeOrderSum(String target_type, String sumType) {
 		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
+		IJaikoPrdInfoMapper jaikoPrdMapper = sqlSession.getMapper(IJaikoPrdInfoMapper.class);
 		PrdTransVO vo1 = new PrdTransVO();
 		vo1.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
 		vo1.setTrans_target_type(target_type);
 		ArrayList<PrdTransVO> list = listMapper.getPrdTrans(vo1);
-		HashSet<String> afterTransCntnt = new HashSet<>();
-		for(PrdTransVO trans : list) {
-			afterTransCntnt.add(trans.getAfter_trans());
-		}
 		
-		for(String str : afterTransCntnt) {
-			vo1.setSearch_type(CommonUtil.SEARCH_TYPE_SUM);
-			vo1.setAfter_trans(str);
-			list = listMapper.getPrdTrans(vo1);
-			int sum = 0;
+		HashSet<String> afterTransCntnt = new HashSet<>();
+		if(CommonUtil.SEARCH_TYPE_JAN_SUM.equals(sumType)) {
 			for(PrdTransVO trans : list) {
-				sum += Integer.parseInt(trans.getPrd_cnt());
+				if(null != trans.getJan_cd() && !"".equals(trans.getJan_cd())) {
+					afterTransCntnt.add(trans.getJan_cd());
+				}
 			}
-			TranslationVO transVO = new TranslationVO();
-			transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
-			transVO.setKeyword(str);
-			ArrayList<TranslationVO> transRet = listMapper.getTransInfo(transVO);
-			if(transRet.size() > 0) {
-				OrderSumVO sumVO = new OrderSumVO();
-				sumVO.setAfter_trans(str);
-				sumVO.setPrd_sum(sum+"");
-				sumVO.setJan_cd(transRet.get(0).getJan_cd());
-				sumVO.setTarget_type(target_type);
-				listMapper.insertOrderSum(sumVO);
-			}else {
-				/**
-				 * 2021.06.11 order sum실행시 translation_info에 값이 없으면
-				 * translation_sub_info에서 search할수있게 처리
-				 * */
-				SubTranslationVO subTrans = new SubTranslationVO();
-				subTrans.setKeyword(str);
-				ArrayList<SubTranslationVO> subTransRet = listMapper.getSubTransInfo(subTrans);
-				if(subTransRet.size() > 0) {
+			
+			for(String jan_cd : afterTransCntnt) {
+				vo1.setSearch_type(CommonUtil.SEARCH_TYPE_JAN_SUM);
+				vo1.setJan_cd(jan_cd);
+				list = listMapper.getPrdTrans(vo1);
+				int sum = 0;
+				for(PrdTransVO trans : list) {
+					sum += Integer.parseInt(trans.getPrd_cnt());
+				}
+				JaikoPrdInfoVO prdVO = new JaikoPrdInfoVO();
+				prdVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+				prdVO.setJan_cd(jan_cd);
+				ArrayList<JaikoPrdInfoVO> prdInfoList = jaikoPrdMapper.getJaikoPrdInfo(prdVO);
+				if(prdInfoList.size() > 0) {
+					OrderSumVO sumVO = new OrderSumVO();
+					sumVO.setPrd_sum(sum+"");
+					sumVO.setAfter_trans(prdInfoList.get(0).getPrd_nm());
+					sumVO.setTarget_type(target_type);
+					sumVO.setJan_cd(jan_cd);
+					listMapper.insertOrderSum(sumVO);
+				}
+			}
+		}else {
+			for(PrdTransVO trans : list) {
+				afterTransCntnt.add(trans.getAfter_trans());
+			}
+			
+			for(String str : afterTransCntnt) {
+				vo1.setSearch_type(CommonUtil.SEARCH_TYPE_SUM);
+				vo1.setAfter_trans(str);
+				list = listMapper.getPrdTrans(vo1);
+				int sum = 0;
+				for(PrdTransVO trans : list) {
+					sum += Integer.parseInt(trans.getPrd_cnt());
+				}
+				TranslationVO transVO = new TranslationVO();
+				transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+				transVO.setKeyword(str);
+				ArrayList<TranslationVO> transRet = listMapper.getTransInfo(transVO);
+				if(transRet.size() > 0) {
 					OrderSumVO sumVO = new OrderSumVO();
 					sumVO.setAfter_trans(str);
 					sumVO.setPrd_sum(sum+"");
-					sumVO.setJan_cd(subTransRet.get(0).getJan_cd());
 					sumVO.setTarget_type(target_type);
 					listMapper.insertOrderSum(sumVO);
+				}else {
+					/**
+					 * 2021.06.11 order sum실행시 translation_info에 값이 없으면
+					 * translation_sub_info에서 search할수있게 처리
+					 * */
+					SubTranslationVO subTrans = new SubTranslationVO();
+					subTrans.setKeyword(str);
+					ArrayList<SubTranslationVO> subTransRet = listMapper.getSubTransInfo(subTrans);
+					if(subTransRet.size() > 0) {
+						OrderSumVO sumVO = new OrderSumVO();
+						sumVO.setAfter_trans(str);
+						sumVO.setPrd_sum(sum+"");
+						sumVO.setJan_cd(subTransRet.get(0).getJan_cd());
+						sumVO.setTarget_type(target_type);
+						listMapper.insertOrderSum(sumVO);
+					}
 				}
 			}
 		}
 		OrderSumVO sumVO = new OrderSumVO();
 		sumVO.setTarget_type(target_type);
 		return listMapper.getOrderSum(sumVO);
+	}
+	
+	public HashMap<String, Object> executeHanei(String target_type) {
+		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
+		IJaikoPrdInventoryMapper invenMapper = sqlSession.getMapper(IJaikoPrdInventoryMapper.class);
+		
+		HashMap<String, Object> ret = new HashMap<>();
+		OrderSumVO sumVO = new OrderSumVO();
+		sumVO.setTarget_type(target_type);
+		ArrayList<OrderSumVO> orderSumList = listMapper.getOrderSum(sumVO);
+		if(orderSumList.size() < 1) {
+			ret.put("retCd", "ERR");
+			ret.put("retMsg", "総商品数がなし。");
+			return ret;
+		}
+		for(OrderSumVO sum : orderSumList) {
+			JaikoPrdInventoryVO invenVO = new JaikoPrdInventoryVO();
+			invenVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+			invenVO.setJan_cd(sum.getJan_cd());
+			ArrayList<JaikoPrdInventoryVO> invenList = invenMapper.getJaikoPrdInventory(invenVO);
+			if(invenList.size() > 0) {
+				for(JaikoPrdInventoryVO inven : invenList) {
+					int nowCnt = Integer.parseInt(inven.getNow_prd_cnt());
+					int minus = Integer.parseInt(sum.getPrd_sum());
+					
+					JaikoPrdInventoryVO invenUp = new JaikoPrdInventoryVO();
+					invenUp.setJan_cd(sum.getJan_cd());
+					invenUp.setSearch_type("wareOut");
+					invenUp.setNow_prd_cnt(String.valueOf(nowCnt-minus));
+					invenMapper.updateJaikoPrdInventory(invenUp);
+				}
+				ret.put("retCd", "S");
+			}else {
+				ret.put("retCd", "ERR");
+				ret.put("retMsg", "在庫管理を確認してください。");
+				return ret;
+			}
+		}
+		return ret;
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -643,5 +713,35 @@ public class ListDAO {
 		SubTranslationVO vo = new SubTranslationVO();
 		vo.setParent_seq_id(parent_seq);
 		return getSubTransInfo(vo);
+	}
+	
+	/**
+	 * 第三倉庫マスタ
+	 * */
+	public ArrayList<House3MasterVO> getHouse3Master(House3MasterVO vo) {
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		return mapper.getHouse3Master(vo);
+	}
+	
+	public ArrayList<House3MasterVO> manipulateHouse3Master(ArrayList<House3MasterVO> list) {
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		for(House3MasterVO vo : list) {
+			if(null != vo.getSeq_id()) {
+				mapper.updateHouse3Master(vo);
+			}else {
+				mapper.insertHouse3Master(vo);
+			}
+		}
+		House3MasterVO vo = new House3MasterVO();
+		return getHouse3Master(vo);
+	}
+	
+	public ArrayList<House3MasterVO> deleteHouse3Master(ArrayList<House3MasterVO> list) {
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		for(House3MasterVO vo : list) {
+			mapper.deleteHouse3Master(vo.getSeq_id());
+		}
+		House3MasterVO vo = new House3MasterVO();
+		return getHouse3Master(vo);
 	}
 }

@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
+import jp.prj.araku.tablet.dao.TabletPrdDAO;
 import jp.prj.araku.tanpin.dao.TanpinDAO;
 import jp.prj.araku.tanpin.vo.TanpinVO;
 
@@ -31,6 +32,9 @@ public class TanpinController {
 	
 	@Autowired
 	private TanpinDAO dao;
+	
+	@Autowired
+	private TabletPrdDAO dealerDAO;
 	
 	public String tanpinFileUpload() {
 		return "tanpin/prdManage";
@@ -76,4 +80,38 @@ public class TanpinController {
 		} catch (CsvRequiredFieldEmptyException e) {
 		}
 	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/addTanpin", method=RequestMethod.POST)
+	public ArrayList<TanpinVO> addTanpin(TanpinVO vo) {
+		return dao.addTanpin(vo);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/modTanpin", method=RequestMethod.POST)
+	public ArrayList<TanpinVO> modTanpin(@RequestBody ArrayList<TanpinVO> list) {
+		return dao.modTanpin(list);
+	}
+	
+	/**
+	 * 20211120
+	 * 発注書発行画面S
+	 * */
+	
+	@RequestMapping(value = "/orderView")
+	public String showOrderIssue(Model model) {
+		model.addAttribute("dealers", dealerDAO.getDealerInfo(null));
+		return "tanpin/orderView";
+	}
+	
+	@RequestMapping(value = "/orderDown", method = RequestMethod.POST)
+	public void downloadOrderForm(HttpServletResponse response
+			,@RequestParam(value = "dealer_id") String id) {
+		dao.downloadOrderForm(response, id, fileEncoding);
+	}
+	
+	/**
+	 * 20211120
+	 * 発注書発行画面E
+	 * */
 }

@@ -3,10 +3,7 @@
  */
 // specify the columns
 var columnDefs2 = [
-	{headerName: "例外データ", field: "exception_data", width: 500
-		, editable: true
-    	, cellEditor: 'agPopupTextCellEditor'	
-	}
+	{headerName: "例外データ", field: "exception_data", width: 500, editable: true}
 ];
 
 //rowData 초기화
@@ -39,7 +36,6 @@ var gridOption2 = {
 	    	stopData2 = stop.exception_data;
 	    	id2 = stop.seq_id;
 	    	if (!(startData2 == stopData2)) {
-	    		console.log("modified!");
 	    		modifiedData2.push({
 	    			seq_id: id2
 	    			, exception_data: stopData2
@@ -72,6 +68,7 @@ function isFirstColumn(params) {
 
 function setRowData2(result) {
 	rowData2 = [];
+	modifiedData2 = [];
 	
 	for (var i=0; i<result.length; i++) {
 		var row = {
@@ -96,23 +93,7 @@ $("#btn_commit2").on("click", function() {
 		, dataType: "json"
 		, contentType: 'application/json'
 		, data:JSON.stringify(modifiedData2)
-		, success: function(result){
-			rowData2 = [];
-			
-			for (var i=0; i<result.length; i++) {
-				var row = {
-					seq_id: result[i].seq_id
-					, exception_data: result[i].exception_data
-				}
-				
-				rowData2.push(row);
-			}
-			
-			gridOption2.api.setRowData(rowData2);
-				
-			// 수정데이터 초기화
-			modifiedData2 = [];
-    	}
+		, success: setRowData2
 	});
 });
 
@@ -133,8 +114,17 @@ $('#btn_srch2').on('click', function() {
 });
 
 $("#btn_add").on("click", function() {
-	var rowData = {exception_data: "例外データ入力"};
-	gridOption2.api.updateRowData({add:[rowData], addIndex:0});
+	//var rowData = {exception_data: "例外データ入力"};
+	//gridOption2.api.updateRowData({add:[rowData], addIndex:0});
+	modifiedData2.push({exception_data: "例外データ入力"});
+	$.ajax({
+		url: "modExceptionMaster"
+		, type:"post"
+		, dataType: "json"
+		, contentType: 'application/json'
+		, data:JSON.stringify(modifiedData2)
+		, success: setRowData2
+	});
 });
 
 $("#btn_delete").on("click", function() {

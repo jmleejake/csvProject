@@ -109,8 +109,6 @@ var transGridOptions = {
         	|| !(startOrderNo == stopOrderNo) || !(startJanCd == stopJanCd)
         	|| !(startOrderGbn == stopOrderGbn) || !(startPrdMHaneiGbn == stopPrdMHaneiGbn)
         	|| !(startPrdCnt == stopPrdCnt)) {
-        	console.log("modified!");
-        	console.log(afterData);
         	modifiedData.push({
         		seq_id:afterData.seq_id
 				, before_trans:afterData.beforeTrans
@@ -175,7 +173,6 @@ function setRowData(result) {
 }
 
 var search = function() {
-	console.log("search");
 	var form = $("#transForm");
     var url = form.attr('action');
     
@@ -192,7 +189,6 @@ $('#btn_srch').on('click', function() {
 });
 
 $("#btn_create").on("click", function() {
-	console.log("create");
 	var rowData = {order_no:"99", jan_cd:"999", order_gbn:"0", before_trans: "置換前", after_trans: "置換後", prd_master_hanei_gbn:"0", prd_cnt:"1", trans_target_type:$('#transTarget').val()};
 	modifiedData.push(rowData);
 	$.ajax({
@@ -370,4 +366,144 @@ $('#btn_order_sum_del').on('click', function() {
 
 $("#btn_down").on("click", function() {
 	$("#frm").submit();
+});
+
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/*+++++++++++++++++++++++++JAN商品数+++++++++++++++++++++++++*/
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+
+var columnDefs3 = [
+	{headerName: "ＪＡＮコード", field: "jan_cd", width: 250}
+	, {headerName: "置換後名", field: "afterTrans", width: 300}
+    , {headerName: "総商品数", field: "prd_sum", width: 120}
+    , {headerName: "商品マスタ反映有無", field: "prd_master_hanei_gbn", width: 200}
+];
+
+// rowData 초기화
+var rowData3 = [];
+
+var orderJanSumGridOptions = {
+	// 첫번째 컬럼 체크박스 세팅
+	defaultColDef: {
+        width: 100,
+        headerCheckboxSelection: isFirstColumn3,
+        checkboxSelection: isFirstColumn3
+    },
+    enableColResize: true,
+    suppressRowClickSelection: false,
+    rowSelection: 'multiple',
+    columnDefs: columnDefs3,
+    onRowSelected: onRowSelected3,
+    rowData: rowData3,
+    rowClassRules: {
+    	'trans-created': function(params) {
+    		var target = params.data.register_date;
+    		return target === getDate(0);
+    	},
+    	'trans-modified': function(params) {
+    		var target = params.data.update_date;
+    		return target === getDate(0);
+    	}
+    },
+    onCellEditingStarted: function(event) {
+        var previousData = event.node.data;
+    },
+    onCellEditingStopped: function(event) {
+        var afterData = event.node.data;
+    }
+};
+
+function isFirstColumn3(params) {
+	var displayedColumns = params.columnApi.getAllDisplayedColumns();
+	var thisIsFirstColumn = displayedColumns[0] === params.column;
+	return thisIsFirstColumn;
+}
+
+function onRowSelected3(event) {
+	selectedData = event.node.data;
+}
+
+// lookup the container we want the Grid to use
+var eGridDiv3 = document.querySelector('#orderJanSumGrid');
+
+// create the grid passing in the div to use together with the columns & data we want to use
+new agGrid.Grid(eGridDiv3, orderJanSumGridOptions);
+
+function setRowData3(result) {
+	rowData3 = [];
+	
+	for (var i=0; i<result.length; i++) {
+		var row = {
+				seq_id: result[i].seq_id
+				, afterTrans:result[i].after_trans
+				, register_date:result[i].register_date
+				, update_date:result[i].update_date
+				, jan_cd:result[i].jan_cd
+				, prd_master_hanei_gbn:result[i].prd_master_hanei_gbn
+				, prd_sum:result[i].prd_sum
+				, target_type:result[i].target_type
+		}
+		rowData3.push(row);
+	}
+	orderJanSumGridOptions.api.setRowData(rowData3);
+}
+
+$.ajax({
+    url: "getOrderSum"
+    , dataType: "json"  
+    , contentType : "application/json"
+    , success: setRowData3
+});
+
+$('#btn_sum_jan').on('click', function() {
+	$.ajax({
+	    url: "executeOrderSum"
+    	, type:"post"
+    	, data:{sumVal: 'jan'}	
+	    , success: setRowData3
+	});
+});
+
+$('#btn_order_jan_sum_del').on('click', function() {
+	var selectedRows = orderJanSumGridOptions.api.getSelectedRows();
+    
+    if (selectedRows.length == 0) {
+    	pleaseSelectNotify('情報を選択してください。');
+        return;
+    }
+    
+    alertInit();
+	alertify.confirm("本当に削除しますか？", function (e) {
+		if (e) {
+			$.ajax({
+			    url: "delOrderSum"
+		    	, type:"post"
+			    , dataType: "json"  
+			    , contentType : "application/json"
+			    , data:JSON.stringify(selectedRows)
+			    , success: setRowData3
+			});
+		} else {
+			return false;
+		}
+	});
+});
+
+$("#btn_jan_down").on("click", function() {
+	$("#frm").submit();
+});
+
+$('#btn_hanei').on('click', function() {
+	$.ajax({
+	    url: "executeHanei"
+    	, type:"post"
+	    , success: function(res) {
+	    	if("S" === res.retCd) {
+	    		alert("反映完了しました。");
+	    	}else {
+	    		alert(res.retMsg);
+	    	}
+	    }
+	});
 });

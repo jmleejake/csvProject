@@ -213,6 +213,47 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 
 </div>
 <!-- E예외데이터, 지역예외데이터 마스터 -->
+
+<!-- S제3창고, 마스터 -->
+<div class="container-fluid">
+
+<!-- S제3창고 마스터 -->
+<div class="container-fluid col-sm-6">
+<div class="well container-fluid">
+<h3>第三倉庫マスタ</h3>
+
+<div class="well container-fluid">
+	<form id="house3Frm" action="getHouse3">
+	<div class="col-sm-6">
+	<label>例外データ</label>
+	<input type="text" name="keyword" class="form-control" style="width: 300px;"
+	onkeypress = "if(event.keyCode==13){ exceptionSearch(); event.preventDefault(); }">
+	</div>
+	<div class="col-sm-6" style="margin-top: 7px;">
+	<button id="btn_srch_house3" type="button" class="btn btn-default" style="width: 120px; margin-top: 18px;">検索</button>
+	</div>
+	</form>
+</div>
+<div class="well container-fluid">
+<div class="row">
+	<div class="col-sm-6" style="margin-top: 7px;">
+	<button id="btn_add_house3" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">列追加</button>
+	<button id="btn_commit_house3" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">登録</button>
+	</div>
+	<div class="col-sm-6" style="margin-top: 7px;">
+	<button id="btn_delete_house3" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">削除</button>
+	</div>
+</div>
+
+<div id="house3Grid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
+</div>
+</div>
+<script src="<%=svrInfo %>/resources/menu/house3master.js"></script>
+</div>
+<!-- E제3창고 마스터 -->
+
+</div>
+<!-- E제3창고 -->
 <script type="text/javascript">
 $(document).ready(function() {
 	$("#region").addClass("active");
@@ -221,6 +262,7 @@ $(document).ready(function() {
 	showPrdMaster();
 	showDealerMaster();
 	showExceptionRegionMaster();
+	showHouse3Master();
 	
 	/*
 	 * [마스터화면] 일주일 이상의 라쿠텐, 아마존, 큐텐, 야후 데이터 삭제

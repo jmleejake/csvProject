@@ -99,8 +99,21 @@ select
 	, update_date
 	, dealer_id
 	, dealer_nm
+	, dealer_tel
+	, dealer_fax
+	, dealer_mobile
+	, dealer_post
+	, dealer_add
+	, est_delivery_dt
+	, destination
+	, remark
 from
 	dealer_info
+	<where>
+	<if test="dealer_id != null and dealer_id !=''">
+	dealer_id = #{dealer_id}
+	</if>
+	</where>
 order by seq_id desc
 </select>
 
@@ -119,6 +132,30 @@ set
 	</if>
 	<if test="dealer_nm != null and dealer_nm !=''">
 	, dealer_nm = #{dealer_nm}
+	</if>
+	<if test="dealer_tel != null and dealer_tel !=''">
+	, dealer_tel = #{dealer_tel}
+	</if>
+	<if test="dealer_fax != null and dealer_fax !=''">
+	, dealer_fax = #{dealer_fax}
+	</if>
+	<if test="dealer_mobile != null and dealer_mobile !=''">
+	, dealer_mobile = #{dealer_mobile}
+	</if>
+	<if test="dealer_post != null and dealer_post !=''">
+	, dealer_post = #{dealer_post}
+	</if>
+	<if test="dealer_add != null and dealer_add !=''">
+	, dealer_add = #{dealer_add}
+	</if>
+	<if test="est_delivery_dt != null and est_delivery_dt !=''">
+	, est_delivery_dt = #{est_delivery_dt}
+	</if>
+	<if test="destination != null and destination !=''">
+	, destination = #{destination}
+	</if>
+	<if test="remark != null and remark !=''">
+	, remark = #{remark}
 	</if>
 where
 	seq_id = #{seq_id}

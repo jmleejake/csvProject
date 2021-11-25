@@ -33,6 +33,7 @@
 		<typeAlias type="jp.prj.araku.list.vo.OrderSumVO" alias="OrderSum" />
 		<typeAlias type="jp.prj.araku.list.vo.EtcMasterVO" alias="EtcMaster" />
 		<typeAlias type="jp.prj.araku.list.vo.SubTranslationVO" alias="SubTrans" />
+		<typeAlias type="jp.prj.araku.list.vo.House3MasterVO" alias="House3" />
 	</typeAliases>
 	<mappers>
 		<mapper resource="jp/prj/araku/list/mapper/ListMapper.xml" />
