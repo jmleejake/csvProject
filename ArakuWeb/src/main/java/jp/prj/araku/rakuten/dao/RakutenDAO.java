@@ -391,7 +391,7 @@ public class RakutenDAO {
 		log.info("deleteRakutenInfo");
 		log.debug("{}", list);
 		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
-		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
+		// IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
 		for (RakutenVO vo : list) {
 			mapper.deleteRakutenInfo(vo.getSeq_id());
 			// 2021.06.28 rakuten_info삭제시 rakuten_frozen_info도 주문번호를 이용하여 함께 삭제처리
@@ -400,7 +400,13 @@ public class RakutenDAO {
 			mapper.deleteRakutenFrozenInfo(vo2);
 		}
 		// 商品中間マスタ 날려버리기
-		listMapper.deletePrdTrans(null);
+		/*
+		2021.10.10
+		주문정보화면에서 전체 선택후 삭제처리하면
+		상품중간마스터에 정보가 삭제되지 않게
+		SQL修正부탁드립니다.
+		 * */
+		//listMapper.deletePrdTrans(null);
 	}
 	
 	@Transactional
@@ -1235,7 +1241,7 @@ public class RakutenDAO {
 		
 		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
 		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
-		ArrayList<ExceptionRegionMasterVO> exRegionList = listMapper.getExceptionRegionMaster(null);
+		// ArrayList<ExceptionRegionMasterVO> exRegionList = listMapper.getExceptionRegionMaster(null);
 		BufferedWriter writer = null;
 		CSVWriter csvWriter = null;
 		
@@ -1288,10 +1294,12 @@ public class RakutenDAO {
 			HashMap<String, ArrayList<Integer>> zenkoku = new HashMap<>();
 			HashMap<String, ArrayList<Integer>> frozen = new HashMap<>();
 			HashMap<String, ArrayList<Integer>> fridge = new HashMap<>();
+			HashMap<String, ArrayList<Integer>> takon = new HashMap<>();
 			
 			ArrayList<Integer> zenkokuCnt = new ArrayList<>();
 			ArrayList<Integer> frozenCnt = new ArrayList<>();
 			ArrayList<Integer> fridgeCnt = new ArrayList<>();
+			ArrayList<Integer> takonCnt = new ArrayList<>();
 			
 			HashSet<String> orderNoLst = new HashSet<>();
 			
@@ -1310,6 +1318,9 @@ public class RakutenDAO {
 					}else if (rVO.getProduct_name().contains("冷蔵")) {
 						fridgeCnt.add(i);
 						fridge.put(orderNo, fridgeCnt);
+					}else if (rVO.getProduct_name().contains("宅コン")) {
+						takonCnt.add(i);
+						takon.put(orderNo, takonCnt);
 					}else {
 						zenkokuCnt.add(i);
 						zenkoku.put(orderNo, zenkokuCnt);
@@ -1318,6 +1329,7 @@ public class RakutenDAO {
 					zenkokuCnt = new ArrayList<>();
 					frozenCnt = new ArrayList<>();
 					fridgeCnt = new ArrayList<>();
+					takonCnt = new ArrayList<>();
 					
 					if (rVO.getProduct_name().contains("全国送料無料")) {
 						zenkokuCnt.add(i);
@@ -1328,6 +1340,9 @@ public class RakutenDAO {
 					}else if (rVO.getProduct_name().contains("冷蔵")) {
 						fridgeCnt.add(i);
 						fridge.put(orderNo, fridgeCnt);
+					}else if (rVO.getProduct_name().contains("宅コン")) {
+						takonCnt.add(i);
+						takon.put(orderNo, takonCnt);
 					}else {
 						zenkokuCnt.add(i);
 						zenkoku.put(orderNo, zenkokuCnt);
@@ -1339,6 +1354,7 @@ public class RakutenDAO {
 				ArrayList<Integer> iZen = zenkoku.get(key);
 				ArrayList<Integer> iFro = frozen.get(key);
 				ArrayList<Integer> iFri = fridge.get(key);
+				ArrayList<Integer> iTok = takon.get(key);
 				
 				if(null != iZen && iZen.size() > 1) {
 					for(int j=0; j<iZen.size(); j++) {
@@ -1389,6 +1405,21 @@ public class RakutenDAO {
 //					}
 					if(null != iFri) {
 						int val = iFri.get(0);
+						realRet.add(list.get(val));
+					}
+				}
+				
+				if(null != iTok && iTok.size() > 1) {
+					for(int j=0; j<iTok.size(); j++) {
+						int val = iTok.get(j);
+						if(j==0) {
+							list.get(val).setResult_text(".");
+							realRet.add(list.get(val));
+						}
+					}
+				}else {
+					if(null != iTok) {
+						int val = iTok.get(0);
 						realRet.add(list.get(val));
 					}
 				}
@@ -1474,6 +1505,9 @@ public class RakutenDAO {
 				}else {
 					yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_0);
 				}
+				if (tmp.getResult_text().contains("宅コン")&& tmp.getUnit_no() .equals("1") ) {
+					yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_8);
+				}	
 				if (tmp.getProduct_name().contains("冷凍") || tmp.getResult_text().contains("冷凍")) {
 					yVO.setCool_type(CommonUtil.COOL_TYPE_1);
 				}
@@ -1662,6 +1696,7 @@ public class RakutenDAO {
 			csvWriter = new CSVWriter(writer
 					, CSVWriter.DEFAULT_SEPARATOR
 					, CSVWriter.NO_QUOTE_CHARACTER
+					
 					, CSVWriter.DEFAULT_ESCAPE_CHARACTER
 					, CSVWriter.DEFAULT_LINE_END);
 			

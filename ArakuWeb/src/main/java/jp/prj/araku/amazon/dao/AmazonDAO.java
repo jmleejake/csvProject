@@ -48,6 +48,7 @@ import jp.prj.araku.list.mapper.IListMapper;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
 import jp.prj.araku.list.vo.GlobalSagawaDownVO;
+import jp.prj.araku.list.vo.House3MasterVO;
 import jp.prj.araku.list.vo.PrdCdMasterVO;
 import jp.prj.araku.list.vo.PrdTransVO;
 import jp.prj.araku.list.vo.RegionMasterVO;
@@ -233,8 +234,24 @@ public class AmazonDAO {
 			prdTransVO.setOrder_no(vo.getOrder_id());
 			prdTransVO.setOrder_gbn("1");
 			prdTransVO.setBefore_trans(vo.getProduct_name());
+			transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+			transVO.setKeyword(vo.getProduct_name());
+			searchRet = listMapper.getTransInfo(transVO);
+			prdTransVO.setBefore_trans(searchRet.get(0).getBefore_trans());
+			prdTransVO.setJan_cd(searchRet.get(0).getJan_cd()); // 2021-09-26 kim jan_cd 처리
 			prdTransVO.setAfter_trans(transedName);
-			prdTransVO.setPrd_cnt(vo.getQuantity_to_ship());
+			if((null != searchRet.get(0).getJan_cd()) && (null != searchRet.get(0).getPrd_cnt()) && (null != vo.getQuantity_to_ship())) {
+				if(("" != searchRet.get(0).getJan_cd()) || ("" != searchRet.get(0).getPrd_cnt())) {
+					int totalcnt = Integer.parseInt(searchRet.get(0).getPrd_cnt()) * Integer.parseInt(vo.getQuantity_to_ship());
+					prdTransVO.setPrd_cnt(Integer.toString(totalcnt));	
+				}else {
+					prdTransVO.setPrd_cnt(vo.getQuantity_to_ship());
+				}	
+			}else {
+				prdTransVO.setPrd_cnt(vo.getQuantity_to_ship());
+			}
+			
+
 			prdTransVO.setPrd_master_hanei_gbn("0");
 			prdTransVO.setSearch_type("translate");
 			prdTransVO.setTrans_target_type(CommonUtil.TRANS_TARGET_A);
@@ -260,8 +277,12 @@ public class AmazonDAO {
 						prdTransVO.setOrder_no(vo.getOrder_id());
 						prdTransVO.setOrder_gbn("1");
 						prdTransVO.setBefore_trans(subTrans.getBefore_trans());
+						prdTransVO.setJan_cd(subTrans.getJan_cd()); // 2021-09-26 kim
 						prdTransVO.setAfter_trans(subTrans.getAfter_trans());
-						prdTransVO.setPrd_cnt(subTrans.getPrd_cnt());
+						
+						int totalsubcnt = Integer.parseInt(vo.getQuantity_to_ship()) * Integer.parseInt(subTrans.getPrd_cnt());
+						prdTransVO.setPrd_cnt(Integer.toString(totalsubcnt));	
+						
 						prdTransVO.setPrd_master_hanei_gbn("0");
 						prdTransVO.setSearch_type("translate");
 						prdTransVO.setTrans_target_type(CommonUtil.TRANS_TARGET_A);
@@ -359,7 +380,7 @@ public class AmazonDAO {
 		
 		IAmazonMapper mapper = sqlSession.getMapper(IAmazonMapper.class);
 		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
-		ArrayList<ExceptionRegionMasterVO> exRegionList = listMapper.getExceptionRegionMaster(null);
+		// ArrayList<ExceptionRegionMasterVO> exRegionList = listMapper.getExceptionRegionMaster(null);
 		BufferedWriter writer = null;
 		CSVWriter csvWriter = null;
 		
@@ -403,28 +424,55 @@ public class AmazonDAO {
 			// 예외테이블에 추가한 목록에 대하여 제2창고 목록으로 떨굴수있게 처리
 			// 2021-07-23 야마토 제1창고, 2창고 구분 S
 			ArrayList<ExceptionMasterVO> exList = listMapper.getExceptionMaster(null);
+			ArrayList<House3MasterVO> house3Lst = listMapper.getHouse3Master(null);
 			ArrayList<AmazonVO> str1List = new ArrayList<AmazonVO>();
 			ArrayList<AmazonVO> str2List = new ArrayList<AmazonVO>();
+			
+			// 2021-10-24 야마토 지방 (제3창고)처리
+			ArrayList<AmazonVO> str3List = new ArrayList<AmazonVO>();
 			boolean exChk = false;
-			for (AmazonVO tmp : list) {
-				for (ExceptionMasterVO exVO : exList) {
-					if (tmp.getResult_text().contains(exVO.getException_data())) {
-						exChk = true;
-						if("2".equals(storage)) {
+			for(AmazonVO tmp : list) {
+				// ship_state 지역마스터
+				RegionMasterVO regionVO = new RegionMasterVO();
+				regionVO.setKeyword(tmp.getShip_state());
+				ArrayList<RegionMasterVO> region = listMapper.getRegionMaster(regionVO);
+				String house_type = region.get(0).getHouse_type();
+				
+				if("1".equals(house_type)) {
+					str1List.add(tmp);
+				}else if("2".equals(house_type) && "2".equals(storage)) {
+					for(ExceptionMasterVO exVO : exList) {
+						if (tmp.getResult_text().contains(exVO.getException_data())) {
+							exChk = true;
 							str2List.add(tmp);
 						}
 					}
+				}else if("3".equals(house_type)) {
+					for(House3MasterVO house3 : house3Lst) {
+						if(tmp.getResult_text().contains(house3.getHouse3_data())) {
+							exChk = true;
+							str3List.add(tmp);
+						}
+					}
 				}
-				if(!exChk) {
-					str1List.add(tmp);
+				
+				if(!exChk && ("2".equals(house_type) || "3".equals(house_type))) {
+					// 2021-10-24 제2창고, 지방에 대한 조건이 성립되지 않으면 탬프테이블에 넣어두고 1창고 리스트를 만들때 추가
+					mapper.insertAmazonInfoTmp(tmp);
 				}
+				
 				//例外マスタの情報有無チェックフラグを初期化する。　21.7.24 kim
 				exChk = false;
 			}
 			if("1".equals(storage)) {
+				ArrayList<AmazonVO> tmpList = mapper.getAmazonInfoTmp();
+				str1List.addAll(tmpList);
+				mapper.deleteAmazonInfoTmp();
 				list = str1List;
 			}else if("2".equals(storage)) {
 				list = str2List;
+			}else {
+				list = str3List;
 			}
 			// 2021-07-23 야마토 제1창고, 2창고 구분 E
 			
@@ -466,6 +514,9 @@ public class AmazonDAO {
 				}	else {
 					yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_0);
 				}
+				if (tmp.getResult_text().contains("宅コン")&& tmp.getQuantity_purchased().equals("1") ) {
+					yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_8);
+				}	
 				if (tmp.getResult_text().contains("冷凍")) {
 					yVO.setCool_type(CommonUtil.COOL_TYPE_1);
 				}
