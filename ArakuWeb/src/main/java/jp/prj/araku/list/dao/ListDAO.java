@@ -51,6 +51,7 @@ import jp.prj.araku.q10.mapper.IQ10Mapper;
 import jp.prj.araku.q10.vo.Q10VO;
 import jp.prj.araku.rakuten.mapper.IRakutenMapper;
 import jp.prj.araku.rakuten.vo.RakutenVO;
+import jp.prj.araku.util.ArakuVO;
 import jp.prj.araku.util.CommonUtil;
 import jp.prj.araku.yahoo.mapper.IYahooMapper;
 import jp.prj.araku.yahoo.vo.YahooVO;
@@ -743,5 +744,91 @@ public class ListDAO {
 		}
 		House3MasterVO vo = new House3MasterVO();
 		return getHouse3Master(vo);
+	}
+	
+	/**
+	 * 置換データダウンロード
+	 * */
+	public void translationCsvDownload(
+			HttpServletResponse response, String fileEncoding) 
+					throws IOException
+					, CsvDataTypeMismatchException
+					, CsvRequiredFieldEmptyException {
+		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
+		BufferedWriter writer = null;
+		CSVWriter csvWriter = null;
+		
+		try {
+			String csvFileName = "trans_"+ CommonUtil.getDate("YYYYMMdd", 0) + ".csv";
+
+			response.setContentType("text/csv");
+
+			// creates mock data
+			String headerKey = "Content-Disposition";
+			String headerValue = String.format("attachment; filename=\"%s\"",
+					csvFileName);
+			response.setHeader(headerKey, headerValue);
+			response.setCharacterEncoding(fileEncoding);
+			
+			writer = new BufferedWriter(response.getWriter());
+			
+			csvWriter = new CSVWriter(writer
+					, CSVWriter.DEFAULT_SEPARATOR
+					, CSVWriter.NO_QUOTE_CHARACTER
+					, CSVWriter.DEFAULT_ESCAPE_CHARACTER
+					, CSVWriter.DEFAULT_LINE_END);
+			
+			String[] header = CommonUtil.transHeader();
+			
+			TranslationVO srch = new TranslationVO();
+			srch.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+			ArrayList<ArakuVO> downList = new ArrayList<ArakuVO>();
+			downList.addAll(listMapper.getTransInfo(srch));
+			CommonUtil.executeCSVDownload(csvWriter, writer, header, downList);
+		}finally {
+			if (csvWriter != null) {
+				csvWriter.close();
+			}
+			
+			if (writer != null) {
+				writer.close();
+			}
+		}
+	}
+	
+	/**
+	 * 置換データアップロード
+	 * */
+	public void translationCsvUpload(MultipartFile upload, String fileEncoding) throws IOException {
+		IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(
+					new InputStreamReader(upload.getInputStream(), fileEncoding));
+			
+			CsvToBean<TranslationVO> csvToBean = new CsvToBeanBuilder<TranslationVO>(reader)
+                    .withType(TranslationVO.class)
+                    .withSkipLines(1)
+                    .withIgnoreLeadingWhiteSpace(true)
+                    .build();
+
+            Iterator<TranslationVO> iterator = csvToBean.iterator();
+
+            while (iterator.hasNext()) {
+            	TranslationVO vo = iterator.next();
+            	
+            	TranslationVO srch = new TranslationVO();
+            	srch.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+            	srch.setKeyword(vo.getBefore_trans());
+            	ArrayList<TranslationVO> srchRet = listMapper.getTransInfo(srch);
+            	if(srchRet.size() < 1) {
+            		listMapper.addTransInfo(vo);
+            	}
+            }
+		}finally {
+			if (reader != null) {
+				reader.close();
+			}
+		}
 	}
 }
