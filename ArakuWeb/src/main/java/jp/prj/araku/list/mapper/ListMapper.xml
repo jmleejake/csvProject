@@ -47,8 +47,8 @@ order by register_date desc, update_date desc
 </select>
 
 <insert id="addTransInfo" parameterType="Trans" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
-insert into translation_info (before_trans, after_trans, prd_cnt, etc_cntnt)
-values (#{before_trans}, #{after_trans}, #{prd_cnt}, #{etc_cntnt})
+insert into translation_info (before_trans, after_trans, prd_cnt, etc_cntnt, jan_cd)
+values (#{before_trans}, #{after_trans}, #{prd_cnt}, #{etc_cntnt}, #{jan_cd})
 </insert>
 
 <update id="modTransInfo" parameterType="Trans">
