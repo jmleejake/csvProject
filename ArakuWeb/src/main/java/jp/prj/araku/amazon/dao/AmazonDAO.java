@@ -434,7 +434,12 @@ public class AmazonDAO {
 			for(AmazonVO tmp : list) {
 				// ship_state 지역마스터
 				RegionMasterVO regionVO = new RegionMasterVO();
-				regionVO.setKeyword(tmp.getShip_state());
+				// err 対応：”‐”が含まれるとエラーになるため　2021.11.21 kim 対応
+				// ハイフンで行を分割
+				String splitData = tmp.getShip_state();
+			    String[] data = splitData.split("-");
+				log.debug("Ship_state : " +data[0]);
+				regionVO.setKeyword(data[0]);
 				ArrayList<RegionMasterVO> region = listMapper.getRegionMaster(regionVO);
 				String house_type = region.get(0).getHouse_type();
 				
