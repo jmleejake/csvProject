@@ -552,4 +552,33 @@ public class Q10Controller {
 		return listDao.deleteHouse3Master(list);
 	}
 	
+	/**
+	 * 置換データダウンロード
+	 * */
+	@RequestMapping(value = "transDown", method = RequestMethod.POST)
+	public void translationCsvDownload(HttpServletResponse response) {
+		try {
+			listDao.translationCsvDownload(response, downFileEncoding);
+		} catch (IOException e) {
+			log.error(e.toString());
+		} catch (CsvDataTypeMismatchException e) {
+			log.error(e.toString());
+		} catch (CsvRequiredFieldEmptyException e) {
+			log.error(e.toString());
+		}
+	}
+	
+	/**
+	 * 置換データアップロード
+	 * */
+	@RequestMapping(value = "transUp", method =  RequestMethod.POST)
+	public String translationCsvUpload(MultipartFile upload) {
+		try {
+			listDao.translationCsvUpload(upload, upFileEncoding);
+		}catch (IOException e) {
+			log.error(e.toString());
+		}
+		return "redirect:translationView";
+	}
+	
 }

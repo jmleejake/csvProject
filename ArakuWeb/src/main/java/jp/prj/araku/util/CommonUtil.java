@@ -592,6 +592,15 @@ public class CommonUtil {
 		};
 	}
 	
+	public static String[] transHeader() {
+		return new String[] {
+			"ＪＡＮコード"
+			, "商品名・項目・選択肢 置換前"
+			, "商品名・項目・選択肢 置換後"
+			, "商品数"
+		};
+	}
+	
 	public static String toCommaFormat(long pdMoney) {
 		DecimalFormat form = new DecimalFormat("#,###");
 	    form.setDecimalSeparatorAlwaysShown(false);
