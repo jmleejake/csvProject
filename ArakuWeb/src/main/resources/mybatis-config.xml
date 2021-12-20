@@ -34,6 +34,7 @@
 		<typeAlias type="jp.prj.araku.list.vo.EtcMasterVO" alias="EtcMaster" />
 		<typeAlias type="jp.prj.araku.list.vo.SubTranslationVO" alias="SubTrans" />
 		<typeAlias type="jp.prj.araku.list.vo.House3MasterVO" alias="House3" />
+		<typeAlias type="jp.prj.araku.jaiko.order.vo.JaikoOrderVO" alias="JaikoOrder"/>
 	</typeAliases>
 	<mappers>
 		<mapper resource="jp/prj/araku/list/mapper/ListMapper.xml" />
@@ -50,5 +51,6 @@
 		<mapper resource="jp/prj/araku/jaiko/inventory/mapper/JaikoPrdInventoryMapper.xml" />
 		<mapper resource="jp/prj/araku/jaiko/partner/mapper/JaikoPartnerMapper.xml" />
 		<mapper resource="jp/prj/araku/jaiko/warehouse/mapper/JaikoWareHouseMapper.xml" />
+		<mapper resource="jp/prj/araku/jaiko/order/mapper/JaikoOrderMapper.xml" />
 	</mappers>
 </configuration>

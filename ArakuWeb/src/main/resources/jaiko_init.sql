@@ -181,3 +181,17 @@ seq_id bigint unsigned primary key auto_increment comment '区分ID'
 , upd_dt datetime default now() comment '更新日付'
 ) default charset = utf8 comment '領収書情報';
 
+
+drop table jaiko_order_status;
+create table jaiko_order_status (
+seq_id bigint unsigned primary key auto_increment comment '区分ID'
+, partner_id varchar(20) comment '納品先コード'
+, prd_nm VARCHAR(1500) comment '商品名'
+, prd_cnt_box VARCHAR(10) comment '数量（BOX） ―箱―'
+, prd_cnt VARCHAR(10) comment '数量 －個数―'
+, reg_user_id varchar(20) comment '登録者'
+, reg_dt datetime default now() comment '登録日付'
+, upd_user_id varchar(20) default null comment '更新者'
+, upd_dt datetime default now() comment '更新日付'
+) default charset = utf8 comment '注文状況';
+
