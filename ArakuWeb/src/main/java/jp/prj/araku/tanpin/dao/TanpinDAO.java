@@ -224,7 +224,15 @@ public class TanpinDAO {
 			JaikoPrdInventoryVO invenVO = new JaikoPrdInventoryVO();
 			invenVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
 			invenVO.setDealer_id(id);
-			ArrayList<JaikoPrdInventoryVO> list = invenMapper.getJaikoPrdInventory(invenVO);
+			ArrayList<JaikoPrdInventoryVO> invenList = invenMapper.getJaikoPrdInventory(invenVO);
+			ArrayList<JaikoPrdInventoryVO> list = new ArrayList<>();
+			for(JaikoPrdInventoryVO vo : invenList) {
+				// 現在在庫数＜ロット数 の場合、商品名と入数と数量をEXCELに書き込みする。
+				if(Integer.parseInt(vo.getPrd_lot()) < Integer.parseInt(vo.getNow_prd_cnt())) {
+					continue;
+				}
+				list.add(vo);
+			}
 			
 			ITabletPrdMapper dealerMapper = sqlSession.getMapper(ITabletPrdMapper.class);
 			DealerVO dealerVO = new DealerVO();
@@ -517,10 +525,6 @@ public class TanpinDAO {
 						sheet.addMergedRegion(new CellRangeAddress(i2+24,i2+24,0,2));
 						sheet.addMergedRegion(new CellRangeAddress(i2+24,i2+24,7,8));
 						JaikoPrdInventoryVO innerVO = innerList.get(i2);
-						// 現在在庫数＜ロット数 の場合、商品名と入数と数量をEXCELに書き込みする。
-						if(Integer.parseInt(innerVO.getPrd_lot()) < Integer.parseInt(innerVO.getNow_prd_cnt())) {
-							continue;
-						}
 						IJaikoPrdInfoMapper prdMapper = sqlSession.getMapper(IJaikoPrdInfoMapper.class);
 						JaikoPrdInfoVO jaikoPrdVO = new JaikoPrdInfoVO();
 						jaikoPrdVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
@@ -797,10 +801,6 @@ public class TanpinDAO {
 					sheet.addMergedRegion(new CellRangeAddress(i2+24,i2+24,0,2));
 					sheet.addMergedRegion(new CellRangeAddress(i2+24,i2+24,7,8));
 					JaikoPrdInventoryVO innerVO = list.get(i2);
-					// 現在在庫数＜ロット数 の場合、商品名と入数と数量をEXCELに書き込みする。
-					if(Integer.parseInt(innerVO.getPrd_lot()) < Integer.parseInt(innerVO.getNow_prd_cnt())) {
-						continue;
-					}
 					IJaikoPrdInfoMapper prdMapper = sqlSession.getMapper(IJaikoPrdInfoMapper.class);
 					JaikoPrdInfoVO jaikoPrdVO = new JaikoPrdInfoVO();
 					jaikoPrdVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
