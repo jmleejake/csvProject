@@ -29,11 +29,11 @@ FROM (
 ) AS a
 LEFT OUTER JOIN 
 (
-SELECT ord.SEQ_ID, ord.PARTNER_ID, PARTNER_NM
+SELECT ord.SEQ_ID, ord.PARTNER_ID, DEALER_NM PARTNER_NM
 , PRD_NM, PRD_CNT, PRD_CNT_BOX
 , DATE_FORMAT(ord.REG_DT, '%Y-%m-%d') REG_DT
 FROM JAIKO_ORDER_STATUS ord
-INNER JOIN JAIKO_PARTNER_INFO partner on partner.PARTNER_ID = ord.PARTNER_ID
+INNER JOIN DEALER_INFO partner on partner.DEALER_ID = ord.PARTNER_ID
 ORDER BY REG_DT
 ) AS order_status on  a.date_ymd = order_status.REG_DT
 WHERE 1 = 1
@@ -41,14 +41,46 @@ AND a.date_ymd LIKE '${reg_dt}-%'
 ORDER BY a.date_ymd ASC
 </select>
 
+<select id="getCalendar" parameterType="JaikoOrder" resultType="JaikoOrder">
+SELECT a.date_ymd REG_DT
+FROM (
+	SELECT CURDATE() - INTERVAL (a.a + (10 * b.a) + (100 * c.a)) DAY as date_ymd FROM (
+		SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+		UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9
+	) AS a
+	CROSS JOIN (
+		SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+		UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9
+	) AS b
+	CROSS JOIN (
+		SELECT 0 as a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+		UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9
+	) AS c
+) AS a
+WHERE 1 = 1
+AND a.date_ymd LIKE '${reg_dt}-%'
+ORDER BY a.date_ymd ASC
+</select>
+
 <select id="getData" parameterType="JaikoOrder" resultType="JaikoOrder">
-SELECT ord.SEQ_ID, ord.PARTNER_ID, PARTNER_NM
+SELECT ord.SEQ_ID, ord.PARTNER_ID, DEALER_NM PARTNER_NM
 , PRD_CNT, PRD_CNT_BOX, PRD_NM
 , DATE_FORMAT(ord.REG_DT, '%Y-%m-%d') REG_DT
 FROM JAIKO_ORDER_STATUS ord
-INNER JOIN JAIKO_PARTNER_INFO partner on partner.PARTNER_ID = ord.PARTNER_ID
-WHERE ord.PARTNER_ID = #{partner_id}
-AND ord.REG_DT BETWEEN STR_TO_DATE(#{from_dt}, '%Y-%m-%d') AND STR_TO_DATE(#{to_dt}, '%Y-%m-%d')
+INNER JOIN dealer_info partner on partner.DEALER_ID = ord.PARTNER_ID
+<where>
+	<if test="partner_id != null and partner_id != ''">
+	ord.PARTNER_ID = #{partner_id}
+	</if>
+	<choose>
+	<when test="(reg_dt != null and reg_dt != '') or (partner_id != null and partner_id != '')">
+	AND ord.REG_DT BETWEEN STR_TO_DATE(#{from_dt}, '%Y%m%d%H%i%s') AND STR_TO_DATE(#{to_dt}, '%Y%m%d%H%i%s')
+	</when>
+	<otherwise>
+	ord.REG_DT BETWEEN STR_TO_DATE(#{from_dt}, '%Y%m%d%H%i%s') AND STR_TO_DATE(#{to_dt}, '%Y%m%d%H%i%s')
+	</otherwise>
+	</choose>
+</where>
 ORDER BY REG_DT DESC
 </select>
 

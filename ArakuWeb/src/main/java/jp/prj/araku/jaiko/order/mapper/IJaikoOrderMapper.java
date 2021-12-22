@@ -6,6 +6,7 @@ import jp.prj.araku.jaiko.order.vo.JaikoOrderVO;
 
 public interface IJaikoOrderMapper {
 	ArrayList<JaikoOrderVO> getMonthlyData(JaikoOrderVO vo);
+	ArrayList<JaikoOrderVO> getCalendar(JaikoOrderVO vo);
 	ArrayList<JaikoOrderVO> getData(JaikoOrderVO vo);
 	int insertData(JaikoOrderVO vo);
 	int updateData(JaikoOrderVO vo);

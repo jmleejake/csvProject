@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import org.apache.ibatis.session.SqlSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -18,8 +16,6 @@ public class JaikoOrderDAO {
 	@Autowired
 	SqlSession sqlSession;
 	
-	private Logger log = LoggerFactory.getLogger("jaikoLog");
-	
 	public ArrayList<JaikoOrderVO> getMonthlyData(JaikoOrderVO vo) {
 		IJaikoOrderMapper mapper = sqlSession.getMapper(IJaikoOrderMapper.class);
 		if(null == vo.getReg_dt() || "".equals(vo.getReg_dt()) ) {
@@ -30,14 +26,30 @@ public class JaikoOrderDAO {
 		return mapper.getMonthlyData(vo);
 	}
 	
+	public ArrayList<JaikoOrderVO> getCalendar(JaikoOrderVO vo) {
+		IJaikoOrderMapper mapper = sqlSession.getMapper(IJaikoOrderMapper.class);
+		if(null == vo.getReg_dt() || "".equals(vo.getReg_dt()) ) {
+			Calendar cal = Calendar.getInstance();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+			vo.setReg_dt(sdf.format(cal.getTime()));
+		}
+		return mapper.getCalendar(vo);
+	}
+	
 	public ArrayList<JaikoOrderVO> getData(JaikoOrderVO vo) {
 		IJaikoOrderMapper mapper = sqlSession.getMapper(IJaikoOrderMapper.class);
-		Calendar cal = Calendar.getInstance();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		cal.add(Calendar.DATE, 1);
-		vo.setTo_dt(sdf.format(cal.getTime()));
-		cal.add(Calendar.DATE, -3);
-		vo.setFrom_dt(sdf.format(cal.getTime()));
+		if(null == vo.getReg_dt()) {
+			Calendar cal = Calendar.getInstance();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+			vo.setFrom_dt(sdf.format(cal.getTime())+"01000000");
+			int lastDay = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+			vo.setTo_dt(sdf.format(cal.getTime())+lastDay+"235959");
+		}else {
+			String regDt = vo.getReg_dt().replaceAll("-", "");
+			vo.setFrom_dt(regDt+"000000");
+			vo.setTo_dt(regDt+"235959");
+		}
+		
 		return mapper.getData(vo);
 	}
 	

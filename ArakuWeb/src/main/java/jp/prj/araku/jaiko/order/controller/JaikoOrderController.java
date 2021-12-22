@@ -2,8 +2,6 @@ package jp.prj.araku.jaiko.order.controller;
 
 import java.util.ArrayList;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -15,13 +13,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import jp.prj.araku.jaiko.order.dao.JaikoOrderDAO;
 import jp.prj.araku.jaiko.order.vo.JaikoOrderVO;
-import jp.prj.araku.jaiko.partner.dao.JaikoPartnerDAO;
+import jp.prj.araku.tablet.dao.TabletPrdDAO;
 
 @RequestMapping(value = "/jaiko/order")
 @Controller
 public class JaikoOrderController {
-	private Logger log = LoggerFactory.getLogger("jaikoLog");
-	
 	@Value("${FILE_ENCODING}")
 	private String fileEncoding;
 	
@@ -29,13 +25,22 @@ public class JaikoOrderController {
 	JaikoOrderDAO dao;
 	
 	@Autowired
-	JaikoPartnerDAO partnerDAO;
+	TabletPrdDAO tabletPrdDao;
 	
 	@RequestMapping(value = "")
+	public String showJaikoOrder(Model model, JaikoOrderVO vo) {
+		model.addAttribute("partners", tabletPrdDao.getDealerInfo(null));
+		model.addAttribute("calendar", dao.getCalendar(vo));
+		model.addAttribute("orderData", dao.getData(new JaikoOrderVO()));
+		model.addAttribute("thisMonth", vo.getReg_dt());
+		return "jaiko/order2";
+	}
+	/*
 	public String showJaikoOrder(Model model) {
 		model.addAttribute("partners", partnerDAO.getPartner(null));
 		return "jaiko/order";
 	}
+	*/
 	
 	@ResponseBody
 	@RequestMapping(value = "/getMonthlyData")
