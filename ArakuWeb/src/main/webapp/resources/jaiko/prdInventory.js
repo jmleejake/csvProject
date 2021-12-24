@@ -353,6 +353,10 @@ $("#btn_down").on("click", function() {
 	$("#frm_down").submit();
 });
 
+$("#btn_inven_down").on("click", function() {
+	$("#invenFrm").submit();
+});
+
 
 /*
 ------------------

@@ -20,6 +20,10 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 	</div>
 </div>
 <div class="well container-fluid">
+<div class="row">
+<button class="btn btn-primary" 
+data-toggle='modal' data-target='#orderDetail' onclick="showDetail('','')" style="width: 120px; margin-bottom: 10px;">列追加</button>
+</div>
 <table class="table table-bordered">
 <thead>
 <tr>
@@ -34,7 +38,7 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 	<c:forEach var="order" items="${orderData }">
 	<c:if test="${ymd.reg_dt eq order.reg_dt }">
 	<c:if test="${bfrVal ne order.partner_nm }">
-	<td><button class="btn btn-default" data-toggle='modal' data-target='#orderDetail' onclick="showDetail('${order.partner_id}','${order.partner_nm }','${order.reg_dt }')">${order.partner_nm }</button> </td>
+	<td><button class="btn btn-default" data-toggle='modal' data-target='#orderDetail' onclick="showDetail('${order.partner_id}','${order.partner_nm }','${order.reg_dt }')">${order.partner_nm }</button></td>
 	</c:if>
 	<c:set var="bfrVal" value="${order.partner_nm }" />
 	

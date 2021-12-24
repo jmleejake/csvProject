@@ -1,32 +1,52 @@
 package jp.prj.araku.jaiko.product.vo;
 
-public class JaikoPrdInfoVO {
+import com.opencsv.bean.CsvBindByPosition;
+
+import jp.prj.araku.util.ArakuVO;
+
+public class JaikoPrdInfoVO extends ArakuVO {
 	/**区分ID*/
 	private String seq_id;
 	/**取引先*/
+	@CsvBindByPosition(position=0)
 	private String partner_id;
 	/**取引先名*/
+	@CsvBindByPosition(position=1)
 	private String partner_nm;
 	/**商品コード*/
+	@CsvBindByPosition(position=2)
 	private String prd_cd;
 	/**ブランド*/
+	@CsvBindByPosition(position=3)
 	private String brand_nm;
 	/**商品名*/
+	@CsvBindByPosition(position=4)
 	private String prd_nm;
 	/**ＪＡＮコード*/
+	@CsvBindByPosition(position=5)
 	private String jan_cd;
 	/**商品入数*/
+	@CsvBindByPosition(position=6)
 	private String prd_cnt;
 	/**商品単価*/
+	@CsvBindByPosition(position=7)
 	private String prd_unit_prc;
-	/**ＳＫＵ*/
-	private String dsku;
-	/**ＡＳＩＮ*/
-	private String dasin;
 	/**商品税(抜、込)*/
+	@CsvBindByPosition(position=8)
 	private String tax_incld;
 	/**商品税率*/
+	@CsvBindByPosition(position=9)
 	private String tax_rt;
+	/**規格*/
+	@CsvBindByPosition(position=10)
+	private String std_info;
+	/**ＳＫＵ*/
+	@CsvBindByPosition(position=11)
+	private String dsku;
+	/**ＡＳＩＮ*/
+	@CsvBindByPosition(position=12)
+	private String dasin;
+	
 	/**登録者*/
 	private String reg_user_id;
 	/**登録日付*/
@@ -35,8 +55,7 @@ public class JaikoPrdInfoVO {
 	private String upd_user_id;
 	/**更新日付*/
 	private String upd_dt;
-	/**規格*/
-	private String std_info;
+	
 	
 	private String search_type;
 	

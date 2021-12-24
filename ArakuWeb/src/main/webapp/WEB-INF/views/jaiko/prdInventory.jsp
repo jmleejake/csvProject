@@ -31,6 +31,27 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 </div>
 <!-- search E -->
 
+<!-- file upload S -->
+<div class="well container-fluid">
+	<div class="col-sm-8">
+		<form id="jaiko-inven-frm" action="/jaiko/prdInven/up" method="post" enctype="multipart/form-data" onsubmit="return preCheck('jaikoInven');" >
+			<div id="jaiko-inven-csv" class="file-up col-sm-8">
+			<input type="file" id="jaiko-inven-upload" name="upFile" multiple="multiple" style="display:none">
+			<button class="original_btn" style="width: 150px;">商品情報ファイル</button>
+			<span class="icon">未選択</span>
+			</div>
+			<div class="col-sm-4">
+			<input type="submit" class="original_btn" value="アップロード">
+			</div>
+		</form>
+	</div>
+	<div class="col-sm-4">
+	<button type="button" id="btn_inven_down" class="btn btn-info" style="width: 120px;">ダウンロード</button>
+	<form id="invenFrm" action="/jaiko/prdInven/down" method="post"></form>
+	</div>
+</div>
+<!-- file upload E -->
+
 <!-- table S -->
 <div class="well container-fluid">
 <div class="row">
@@ -53,6 +74,26 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 <script type="text/javascript">
 $(document).ready(function() {
 	$("#prdInven").addClass("active");
+	
+	/* File Upload*/
+	$('#jaiko-inven-csv').on('click', 'button', function () {
+        $('#jaiko-inven-upload').click();
+        return false;
+    });
+	
+	$('#jaiko-inven-upload').on('change', function() {
+	    //選択したファイル情報を取得し変数に格納
+	    var file = $(this).prop('files')[0];
+	    //アイコンを選択中に変更
+	    $('#jaiko-inven-csv').find('.icon').addClass('select').html('選択中');
+	    //未選択→選択の場合（.filenameが存在しない場合）はファイル名表示用の<div>タグを追加
+	    if(!($('.jaiko-inven-filename').length)){
+	        $('#jaiko-inven-csv').append('<div class="jaiko-inven-filename"></div>');
+	    };
+	    //ファイル名を表示
+	    $('.jaiko-inven-filename').html('ファイル名：' + file.name);
+	});
+	/* //File Upload*/
 });
 </script>
 </body>

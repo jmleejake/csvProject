@@ -59,12 +59,24 @@ public class JaikoPrdInventoryController {
 		return dao.deleteJaikoPrdInventory(list);
 	}
 	
+	/**
+	 * 棚卸入力表
+	 * 
+	 * @param upload
+	 * @return
+	 * @throws IOException
+	 */
 	@RequestMapping(value = "/csvUpload", method = RequestMethod.POST)
 	public String processProductInventory(MultipartFile upload) throws IOException {
 		dao.processProductInventory(upload, fileEncoding);
 		return "redirect:/jaiko/prdInven";
 	}
 	
+	/**
+	 * 棚卸表DL
+	 * 
+	 * @param response
+	 */
 	@RequestMapping(value="/csvDown", method = RequestMethod.POST)
 	public void prdInventoryDownload(HttpServletResponse response) {
 		try {
@@ -76,6 +88,29 @@ public class JaikoPrdInventoryController {
 		} catch (CsvRequiredFieldEmptyException e) {
 			log.error(e.toString());
 		}
+	}
+	
+	@RequestMapping(value = "/down", method = RequestMethod.POST)
+	public void csvDownload(HttpServletResponse response) {
+		try {
+			dao.jaikoInvenCsvDownload(response, fileEncoding);
+		} catch (IOException e) {
+			log.error(e.toString());
+		} catch (CsvDataTypeMismatchException e) {
+			log.error(e.toString());
+		} catch (CsvRequiredFieldEmptyException e) {
+			log.error(e.toString());
+		}
+	}
+	
+	@RequestMapping(value = "/up", method = RequestMethod.POST)
+	public String csvUpload(MultipartFile upFile) {
+		try {
+			dao.jaikoInvenCsvUpload(upFile, fileEncoding);
+		}catch (IOException e) {
+			log.error(e.toString());
+		}
+		return "jaiko/prdInventory";
 	}
 
 }
