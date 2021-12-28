@@ -60,6 +60,8 @@ public class JaikoOrderDAO {
 			thisPartner = vo.getPartner_id();
 			if(vo.getSeq_id() != null) {
 				mapper.updateData(vo);
+				
+				// TODO 상품정보테이블의 현재상품수에 입력한 수량만큼 마이너스
 			}else {
 				mapper.insertData(vo);
 			}
@@ -75,6 +77,8 @@ public class JaikoOrderDAO {
 		for(JaikoOrderVO vo : list) {
 			thisPartner = vo.getPartner_id();
 			mapper.deleteData(vo.getSeq_id());
+			
+			// TODO 상품정보테이블의 현재상품수에 수량만큼 플러스
 		}
 		JaikoOrderVO srch = new JaikoOrderVO();
 		srch.setPartner_id(thisPartner);

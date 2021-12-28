@@ -189,9 +189,11 @@ seq_id bigint unsigned primary key auto_increment comment '区分ID'
 , prd_nm VARCHAR(1500) comment '商品名'
 , prd_cnt_box VARCHAR(10) comment '数量（BOX） ―箱―'
 , prd_cnt VARCHAR(10) comment '数量 －個数―'
+, jan_cd varchar(15) comment 'JANコード'
+, gtin_cd varchar(15) comment 'GTINコード'
 , reg_user_id varchar(20) comment '登録者'
 , reg_dt datetime default now() comment '登録日付'
 , upd_user_id varchar(20) default null comment '更新者'
-, upd_dt datetime default now() comment '更新日付'
+, upd_dt datetime comment '更新日付'
 ) default charset = utf8 comment '注文状況';
 

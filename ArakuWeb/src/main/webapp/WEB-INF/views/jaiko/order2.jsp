@@ -28,12 +28,14 @@ data-toggle='modal' data-target='#orderDetail' onclick="showDetail('','')" style
 <thead>
 <tr>
 	<th>年月日</th>
+	<th>新規登録</th>
 </tr>
 </thead>
 <tbody>
 <c:forEach var="ymd" items="${calendar }">
 <tr>
-<td>${ymd.reg_dt }</td>
+<td style="width: 110px;">${ymd.reg_dt }</td>
+<td style="width: 80px;"><button class="btn btn-default" data-toggle='modal' data-target='#orderDetail' onclick="showDetail('','','${ymd.reg_dt }')">新規登録</button></td>
 	<c:set var="bfrVal" value="" />
 	<c:forEach var="order" items="${orderData }">
 	<c:if test="${ymd.reg_dt eq order.reg_dt }">
@@ -76,6 +78,31 @@ data-toggle='modal' data-target='#orderDetail' onclick="showDetail('','')" style
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">閉じる</button>
+			</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Modal E -->
+
+<!-- Modal S -->
+<div class="modal fade" id="srchPrd" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-body">
+			<div class="well container-fluid">
+			<div class="row">
+			<form id="frm_srch">
+			<input type="hidden" name="search_type" value="srch">
+			<input type="text" name="prd_nm" class="form-control" id="prd_nm" placeholder="商品名">
+			</form>
+			<button id="btn_srch" type="button" class="btn btn-default" style="width: 100px; margin-bottom: 10px;">検索</button>
+			</div>
+			<div id="prdInfoGrid" style="width:auto; height: 300px;" class="ag-theme-balham"></div>
+			</div>
+			<div class="modal-footer">
+				<button id="btn_sel" type="button" class="btn btn-primary" style="width: 100px;">選択</button>
+				<button type="button" class="btn btn-default" style="width: 100px;" data-dismiss="modal">閉じる</button>
 			</div>
 			</div>
 		</div>
