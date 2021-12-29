@@ -6,11 +6,18 @@ public class JaikoOrderVO {
 	private String prd_nm;
 	private String prd_cnt;
 	private String prd_cnt_box;
-	private String reg_dt;
+	
 	private String seq_id;
+	private String jan_cd;
+	private String gtin_cd;
+	
+	private String reg_dt;
+	private String upd_dt;
 	
 	private String from_dt;
 	private String to_dt;
+	
+	private String search_type;
 	
 	public String getPrd_nm() {
 		return prd_nm;
@@ -65,5 +72,29 @@ public class JaikoOrderVO {
 	}
 	public void setTo_dt(String to_dt) {
 		this.to_dt = to_dt;
+	}
+	public String getJan_cd() {
+		return jan_cd;
+	}
+	public void setJan_cd(String jan_cd) {
+		this.jan_cd = jan_cd;
+	}
+	public String getGtin_cd() {
+		return gtin_cd;
+	}
+	public void setGtin_cd(String gtin_cd) {
+		this.gtin_cd = gtin_cd;
+	}
+	public String getUpd_dt() {
+		return upd_dt;
+	}
+	public void setUpd_dt(String upd_dt) {
+		this.upd_dt = upd_dt;
+	}
+	public String getSearch_type() {
+		return search_type;
+	}
+	public void setSearch_type(String search_type) {
+		this.search_type = search_type;
 	}
 }

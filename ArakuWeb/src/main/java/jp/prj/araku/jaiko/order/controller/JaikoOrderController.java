@@ -1,6 +1,9 @@
 package jp.prj.araku.jaiko.order.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,9 +33,27 @@ public class JaikoOrderController {
 	@RequestMapping(value = "")
 	public String showJaikoOrder(Model model, JaikoOrderVO vo) {
 		model.addAttribute("partners", tabletPrdDao.getDealerInfo(null));
-		model.addAttribute("calendar", dao.getCalendar(vo));
-		model.addAttribute("orderData", dao.getData(new JaikoOrderVO()));
-		model.addAttribute("thisMonth", vo.getReg_dt());
+		//model.addAttribute("calendar", dao.getCalendar(vo));
+		if(null == vo.getReg_dt() || "".equals(vo.getReg_dt()) ) {
+			Calendar cal = Calendar.getInstance();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+			vo.setReg_dt(sdf.format(cal.getTime()));
+		}
+		String thisMonth = vo.getReg_dt();
+		String[] yyyymm = thisMonth.split("-");
+		Calendar cal = GregorianCalendar.getInstance();
+		cal.set(Integer.parseInt(yyyymm[0]), Integer.parseInt(yyyymm[1])-1,1);
+		int lastDay = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+		String regDt = vo.getReg_dt().replaceAll("-", "");
+		vo.setFrom_dt(regDt+"01000000");
+		vo.setTo_dt(regDt+lastDay+"235959");
+		model.addAttribute("orderData", dao.getData(vo));
+		model.addAttribute("thisMonth", thisMonth);
+		ArrayList<String> days = new ArrayList<String>();
+		for(int i=1; i<=lastDay; i++) {
+			days.add(thisMonth+"-"+String.format("%02d", i));
+		}
+		model.addAttribute("calendar", days);
 		return "jaiko/order2";
 	}
 	/*

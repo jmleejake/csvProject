@@ -12,7 +12,7 @@ $("#yymm").datetimepicker({
 modal setting S
 ------------------
 */
-var thisPartnerId;
+var thisPartnerId, thisDt;
 function showOrder(id, nm) {
 	thisPartnerId = id;
 	$('#selectedDealer').html(': '+nm);
@@ -28,6 +28,8 @@ function showOrder(id, nm) {
 
 function showDetail(id, nm, dt) {
 	thisPartnerId = id;
+	thisDt = dt;
+	console.log("thisDt="+thisDt)
 	$('#selectedDealer').html(': '+nm);
 	$.ajax({
 		url: "/jaiko/order/getData"
@@ -40,11 +42,12 @@ function showDetail(id, nm, dt) {
 }
 
 var ordDtlColumnDef = [
-	{headerName: "年月日", field: "reg_dt", width: 200}
+	{headerName: "年月日", field: "reg_dt", width: 150}
 	, {headerName: "納品先", field: "partner_nm", width: 200}
-	, {headerName: "商品名", field: "prd_nm", width: 200, editable: true}
-	, {headerName: "数量（BOX）―箱―", field: "prd_cnt_box", width: 200, editable: true}
-	, {headerName: "数量―個数―", field: "prd_cnt", width: 200, editable: true}
+	, {headerName: "商品名検索", width: 120, cellRenderer:'btnRenderer'}
+	, {headerName: "商品名", field: "prd_nm", width: 200}
+	, {headerName: "ＪＡＮコード", field: "jan_cd", width: 150}
+	, {headerName: "数量―個数―", field: "prd_cnt", width: 120, editable: true}
 ];
 
 // specify the data
@@ -55,6 +58,7 @@ var modifiedData = [];
 var prevPrdNm, afterPrdNm;
 var prevPrdCnt, afterPrdCnt;
 var prevPrdCntBox, afterPrdCntBox;
+var srchSeqId;
 
 //let the grid know which columns and what data to use
 var ordDtlGridOptions = {
@@ -69,6 +73,26 @@ var ordDtlGridOptions = {
 	rowSelection: 'multiple',
 	columnDefs: ordDtlColumnDef,
 	rowData: ordDtlRowData,
+	rowClassRules: {
+		'trans-created': function(params) {
+    		var target = params.data.reg_dt;
+    		return target === thisDt;
+    	},
+    	'trans-modified': function(params) {
+    		var target = params.data.upd_dt;
+    		return target === getDate(0,'-');
+    	}
+	},
+	components: {
+		btnRenderer: function(param) {
+			var html = "<div>";
+			html += "<span>";
+			html += "<button type='button' class='btn btn-default' data-toggle='modal' data-target='#srchPrd' onclick='javascript:setInvenNo("+param.data.seq_id+")' style='width: 50px; height:30px;'>検索</button>";
+			html += "</span>";
+			html += "</div>"
+			return html;
+		}
+	},
 	onCellEditingStarted: function(event) {
         var previousData = event.node.data;
         prevPrdNm = previousData.prd_nm;
@@ -110,7 +134,10 @@ function ordDtlSetRowData(result) {
 			, prd_nm:result[i].prd_nm
 			, prd_cnt:result[i].prd_cnt
 			, prd_cnt_box:result[i].prd_cnt_box
+			, jan_cd:result[i].jan_cd
+			, gtin_cd:result[i].gtin_cd
 			, reg_dt:result[i].reg_dt
+			, upd_dt:result[i].upd_dt
 			, partner_id:result[i].partner_id
 			, partner_nm:result[i].partner_nm
 		};
@@ -120,10 +147,12 @@ function ordDtlSetRowData(result) {
 				
 	// 초기화
 	modifiedData = []; // 수정데이터
+	$('#srchPrd').modal('hide');
 }
 
 $('#btn_add').on('click', function() {
-	modifiedData.push({partner_id:thisPartnerId, prd_nm:'商品名', prd_cnt_box:'0', prd_cnt:'0'});
+	console.log("thisDt2="+thisDt)
+	modifiedData.push({partner_id:thisPartnerId, prd_nm:'商品名', prd_cnt_box:'0', prd_cnt:'0', reg_dt:thisDt});
 	$.ajax({
 		url: "/jaiko/order/mani"
 		, type:"post"
@@ -175,6 +204,93 @@ var selectedRows = ordDtlGridOptions.api.getSelectedRows();
 	});
 });
 
+function setInvenNo(id) {
+	srchSeqId = id;
+}
+
+// ----------------------------------------------------------------------------------------
+
+var columnDefs = [
+	, {headerName: "商品名", field: "prd_nm", width: 400
+		, tooltip:function(param) {
+			return param.value;
+		}
+	}
+	, {headerName: "現在商品数", field: "now_prd_cnt", width: 120}
+	, {headerName: "ＪＡＮコード", field: "jan_cd", width: 200}
+];
+
+// specify the data
+var rowData = [];
+
+//let the grid know which columns and what data to use
+var prdInfoGridOptions = {
+	// checkbox on first column
+	defaultColDef: {
+		width: 100,
+		headerCheckboxSelection: isFirstColumn,
+		checkboxSelection: isFirstColumn
+	},
+	enableColResize: true,
+	suppressRowClickSelection: false,
+	rowSelection: 'multiple',
+	columnDefs: columnDefs,
+	rowData: rowData
+};
+
+// lookup the container we want the Grid to use
+var prdInfoGridDiv = document.querySelector('#prdInfoGrid');
+
+// create the grid passing in the div to use together with the columns & data we want to use
+new agGrid.Grid(prdInfoGridDiv, prdInfoGridOptions);
+
+function setRowData(result) {
+	rowData = [];
+	
+	for (var i=0; i<result.length; i++) {
+		var row = {
+			seq_id: result[i].seq_id
+			, prd_nm:result[i].prd_nm
+			, jan_cd:result[i].jan_cd
+			, now_prd_cnt:result[i].now_prd_cnt
+		};
+		rowData.push(row);
+	}
+	prdInfoGridOptions.api.setRowData(rowData);
+}
+
+$("#btn_srch").on("click", function() {
+	$.ajax({
+		url: "/jaiko/prdInven/getPrdInven"
+		, type:"get"
+		, data: $("#frm_srch").serialize()
+		, dataType: "json"
+		, contentType: 'application/json'
+		, success: setRowData
+	});
+});
+
+$('#btn_sel').on('click', function() {
+	var selectedRows = prdInfoGridOptions.api.getSelectedRows();
+	if (selectedRows.length == 0) {
+    	alert('情報を選択してください。');
+        return;
+    }
+	if (selectedRows.length > 1) {
+    	alert('一つだけ選択できない。');
+        return;
+    }
+	var row = selectedRows[0];
+	modifiedData.push({seq_id:srchSeqId, reg_dt:thisDt, partner_id:thisPartnerId, prd_nm:row.prd_nm, jan_cd:row.jan_cd});
+	$.ajax({
+		url: "/jaiko/order/mani"
+		, type:"post"
+		, dataType: "json"
+		, contentType: 'application/json'
+		, data:JSON.stringify(modifiedData)
+		, success: ordDtlSetRowData
+	});
+});
 /*
 ------------------
 modal setting E

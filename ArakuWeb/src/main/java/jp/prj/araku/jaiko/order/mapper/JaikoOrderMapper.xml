@@ -6,13 +6,15 @@
 <mapper namespace="jp.prj.araku.jaiko.order.mapper.IJaikoOrderMapper">
 
 <insert id="insertData" parameterType="JaikoOrder" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
-insert into jaiko_order_status (partner_id, prd_nm, prd_cnt, prd_cnt_box)
-values (#{partner_id}, #{prd_nm}, #{prd_cnt}, #{prd_cnt_box})
+insert into jaiko_order_status (partner_id, prd_nm, prd_cnt, prd_cnt_box
+, jan_cd, gtin_cd, reg_dt)
+values (#{partner_id}, #{prd_nm}, #{prd_cnt}, #{prd_cnt_box}
+, #{jan_cd}, #{gtin_cd}, str_to_date(#{reg_dt}, '%Y-%m-%d'))
 </insert>
 
 <select id="getMonthlyData" parameterType="JaikoOrder" resultType="JaikoOrder">
 SELECT a.date_ymd REG_DT, IFNULL(PARTNER_NM,'なし') PARTNER_NM, SEQ_ID
-, PARTNER_ID, PRD_NM, PRD_CNT, PRD_CNT_BOX 
+, PARTNER_ID, PRD_NM, PRD_CNT, PRD_CNT_BOX, JAN_CD, GTIN_CD
 FROM (
 	SELECT CURDATE() - INTERVAL (a.a + (10 * b.a) + (100 * c.a)) DAY as date_ymd FROM (
 		SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
@@ -30,7 +32,7 @@ FROM (
 LEFT OUTER JOIN 
 (
 SELECT ord.SEQ_ID, ord.PARTNER_ID, DEALER_NM PARTNER_NM
-, PRD_NM, PRD_CNT, PRD_CNT_BOX
+, PRD_NM, PRD_CNT, PRD_CNT_BOX, JAN_CD, GTIN_CD
 , DATE_FORMAT(ord.REG_DT, '%Y-%m-%d') REG_DT
 FROM JAIKO_ORDER_STATUS ord
 INNER JOIN DEALER_INFO partner on partner.DEALER_ID = ord.PARTNER_ID
@@ -64,8 +66,9 @@ ORDER BY a.date_ymd ASC
 
 <select id="getData" parameterType="JaikoOrder" resultType="JaikoOrder">
 SELECT ord.SEQ_ID, ord.PARTNER_ID, DEALER_NM PARTNER_NM
-, PRD_CNT, PRD_CNT_BOX, PRD_NM
+, PRD_CNT, PRD_CNT_BOX, PRD_NM, JAN_CD, GTIN_CD
 , DATE_FORMAT(ord.REG_DT, '%Y-%m-%d') REG_DT
+, DATE_FORMAT(ord.UPD_DT, '%Y-%m-%d') UPD_DT
 FROM JAIKO_ORDER_STATUS ord
 INNER JOIN dealer_info partner on partner.DEALER_ID = ord.PARTNER_ID
 <where>
@@ -99,6 +102,12 @@ set
   </if>
   <if test="prd_cnt_box != null and prd_cnt_box != ''">
   , prd_cnt_box = #{prd_cnt_box}
+  </if>
+  <if test="jan_cd != null and jan_cd != ''">
+  , jan_cd = #{jan_cd}
+  </if>
+  <if test="gtin_cd != null and gtin_cd != ''">
+  , gtin_cd = #{gtin_cd}
   </if>
 where
   seq_id = #{seq_id}
