@@ -34,11 +34,11 @@ data-toggle='modal' data-target='#orderDetail' onclick="showDetail('','')" style
 <tbody>
 <c:forEach var="ymd" items="${calendar }">
 <tr>
-<td style="width: 110px;">${ymd.reg_dt }</td>
-<td style="width: 80px;"><button class="btn btn-default" data-toggle='modal' data-target='#orderDetail' onclick="showDetail('','','${ymd.reg_dt }')">新規登録</button></td>
+<td style="width: 110px;">${ymd }</td>
+<td style="width: 80px;"><button class="btn btn-default" data-toggle='modal' data-target='#orderDetail' onclick="showDetail('','','${ymd }')">新規登録</button></td>
 	<c:set var="bfrVal" value="" />
 	<c:forEach var="order" items="${orderData }">
-	<c:if test="${ymd.reg_dt eq order.reg_dt }">
+	<c:if test="${ymd eq order.reg_dt }">
 	<c:if test="${bfrVal ne order.partner_nm }">
 	<td><button class="btn btn-default" data-toggle='modal' data-target='#orderDetail' onclick="showDetail('${order.partner_id}','${order.partner_nm }','${order.reg_dt }')">${order.partner_nm }</button></td>
 	</c:if>

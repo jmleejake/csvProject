@@ -29,6 +29,7 @@ function showOrder(id, nm) {
 function showDetail(id, nm, dt) {
 	thisPartnerId = id;
 	thisDt = dt;
+	console.log("thisDt="+thisDt)
 	$('#selectedDealer').html(': '+nm);
 	$.ajax({
 		url: "/jaiko/order/getData"
@@ -150,6 +151,7 @@ function ordDtlSetRowData(result) {
 }
 
 $('#btn_add').on('click', function() {
+	console.log("thisDt2="+thisDt)
 	modifiedData.push({partner_id:thisPartnerId, prd_nm:'商品名', prd_cnt_box:'0', prd_cnt:'0', reg_dt:thisDt});
 	$.ajax({
 		url: "/jaiko/order/mani"
@@ -209,9 +211,13 @@ function setInvenNo(id) {
 // ----------------------------------------------------------------------------------------
 
 var columnDefs = [
-	, {headerName: "商品名", field: "prd_nm", width: 400}
-	, {headerName: "ＪＡＮコード", field: "jan_cd", width: 200}
+	, {headerName: "商品名", field: "prd_nm", width: 400
+		, tooltip:function(param) {
+			return param.value;
+		}
+	}
 	, {headerName: "現在商品数", field: "now_prd_cnt", width: 120}
+	, {headerName: "ＪＡＮコード", field: "jan_cd", width: 200}
 ];
 
 // specify the data
@@ -275,7 +281,7 @@ $('#btn_sel').on('click', function() {
         return;
     }
 	var row = selectedRows[0];
-	modifiedData.push({seq_id:srchSeqId, partner_id:thisPartnerId, prd_nm:row.prd_nm, jan_cd:row.jan_cd});
+	modifiedData.push({seq_id:srchSeqId, reg_dt:thisDt, partner_id:thisPartnerId, prd_nm:row.prd_nm, jan_cd:row.jan_cd});
 	$.ajax({
 		url: "/jaiko/order/mani"
 		, type:"post"

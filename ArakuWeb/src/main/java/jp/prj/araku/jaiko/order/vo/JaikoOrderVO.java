@@ -17,6 +17,8 @@ public class JaikoOrderVO {
 	private String from_dt;
 	private String to_dt;
 	
+	private String search_type;
+	
 	public String getPrd_nm() {
 		return prd_nm;
 	}
@@ -88,5 +90,11 @@ public class JaikoOrderVO {
 	}
 	public void setUpd_dt(String upd_dt) {
 		this.upd_dt = upd_dt;
+	}
+	public String getSearch_type() {
+		return search_type;
+	}
+	public void setSearch_type(String search_type) {
+		this.search_type = search_type;
 	}
 }
