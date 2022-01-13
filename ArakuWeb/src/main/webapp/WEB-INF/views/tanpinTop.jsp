@@ -72,6 +72,11 @@ $(document).ready(function() {
 				<a class="nav-link" href="orderView">発注書</a>
 				</li>
 			</ul>
+			<ul class="nav navbar-nav">
+				<li id="estimate" class="nav-item">
+				<a class="nav-link" href="estimate">見積書</a>
+				</li>
+			</ul>
 		</div>
 	</div>
 </nav>

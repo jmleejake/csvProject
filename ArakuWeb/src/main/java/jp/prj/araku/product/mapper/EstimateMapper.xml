@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.prj.araku.product.mapper.IEstimateMapper">
+	<select id="selectStatus" parameterType="Estimate" resultType="Estimate">
+	select seq_id, estimate_id, partner_id, partner_nm
+	, brand_nm, jan_cd, prd_cd, prd_nm, prd_prc
+	, dsku, dasin, tax_incld, tax_rt, std_info
+	, date_format(reg_dt, '%Y/%m/%d') reg_dt
+	from estimate_info
+	where partner_id = #{partner_id}
+	<if test="prd_nm != null and prd_nm !=''">
+	and prd_nm like '%${prd_nm}%'
+	</if>
+	<if test="jan_cd != null and jan_cd !=''">
+	and jan_cd like '%${jan_cd}%'
+	</if>
+	order by reg_dt desc
+	</select>
+	
+	<insert id="insertStatus" parameterType="Estimate" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
+	insert into estimate_info (partner_id, partner_nm, jan_cd, prd_nm, prd_prc)
+	values (#{partner_id}, #{partner_nm}, #{jan_cd}, #{prd_nm}, #{prd_prc});
+	</insert>
+	
+	<update id="updateStatus" parameterType="Estimate">
+	update 
+		estimate_info
+	set
+		upd_dt = now()
+		<if test="jan_cd != null and jan_cd !=''">
+		, jan_cd = #{jan_cd}
+		</if>
+		<if test="prd_nm != null and prd_nm !=''">
+		, prd_nm = #{prd_nm}
+		</if>
+		<if test="prd_prc != null and prd_prc !=''">
+		, prd_prc = #{prd_prc}
+		</if>
+	where
+		seq_id = #{seq_id}
+	</update>
+	<delete id="deleteStatus" parameterType="java.lang.String">
+	delete from estimate_info where seq_id = #{id}
+	</delete>
+</mapper>

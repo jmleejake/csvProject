@@ -20,10 +20,12 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 	</div>
 </div>
 <div class="well container-fluid">
+<!-- 
 <div class="row">
 <button class="btn btn-primary" 
 data-toggle='modal' data-target='#orderDetail' onclick="showDetail('','')" style="width: 120px; margin-bottom: 10px;">列追加</button>
 </div>
+ -->
 <table class="table table-bordered">
 <thead>
 <tr>

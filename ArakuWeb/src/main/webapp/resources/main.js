@@ -41,3 +41,8 @@ $('#btn_order').on('click', function() {
 	console.log('purchase order');
 	location.href = "/araku/prdAnalysis/orderView";
 });
+
+$('#btn_estimate').on('click', function() {
+	console.log('estimate paper');
+	location.href = "/araku/prdAnalysis/estimate";
+});
