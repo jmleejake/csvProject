@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import jp.prj.araku.product.dao.EstimateDAO;
@@ -45,6 +46,12 @@ public class EstimateController {
 	@RequestMapping(value = "/del", method = RequestMethod.POST)
 	public ArrayList<EstimateVO> deleteStatus(@RequestBody ArrayList<EstimateVO> list) {
 		return dao.deleteStatus(list);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	public ArrayList<EstimateVO> createStatus(@RequestBody ArrayList<EstimateVO> list) {
+		return dao.createStatus(list);
 	}
 
 }

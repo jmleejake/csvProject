@@ -39,6 +39,8 @@ public class EstimateVO {
 	/**更新日付*/
 	private String upd_dt;
 	
+	private double percent;
+	
 	public String getSeq_id() {
 		return seq_id;
 	}
@@ -146,6 +148,12 @@ public class EstimateVO {
 	}
 	public void setPrd_prc(String prd_prc) {
 		this.prd_prc = prd_prc;
+	}
+	public double getPercent() {
+		return percent;
+	}
+	public void setPercent(double percent) {
+		this.percent = percent;
 	}
 
 }

@@ -231,14 +231,16 @@ var prdGridOptions = {
 		rowData: prdRowData,
 		onCellEditingStarted: function(event) {
 	    	var start = event.node.data;
-	    	sPrdPrc2=start.prd_prc;
+	    	sPrdPrc2=start.prd_unit_prc;
+	    	console.log(sPrdPrc2);
 	    },
 	    onCellEditingStopped: function(event) {
 	    	var stop = event.node.data;
-	    	ePrdPrc2=stop.prd_prc;
+	    	ePrdPrc2=stop.prd_unit_prc;
+	    	console.log(ePrdPrc2);
 	    	
 	    	if (!(sPrdPrc2 == ePrdPrc2)) {
-	    		prdModData.push(stop);
+	    		prdModData.push({jan_cd:stop.jan_cd, prd_prc:ePrdPrc2, partner_id:partId2, partner_nm:partNm2});
 	    	}
 	    }
 };
@@ -293,7 +295,7 @@ function showPrd(id, nm) {
 
 $('#prd_srch').on('click', function() {
 	if('' === $('#prdDealer').html()) {
-		pleaseSelectNotify('取引先を選択してください。');
+		alert('取引先を選択してください。');
 		return;
 	}
 	
@@ -306,4 +308,51 @@ $('#prd_srch').on('click', function() {
         , data: form.serialize()
         , success: setPrdRowData
     });
+});
+
+$('#btn_batch').on('click', function() {
+	if('' === $('input[name=percent]').val()) {
+		alert('掛け率を入力してください。');
+		return;
+	}
+	if('' === $('#prdDealer').html()) {
+		alert('取引先を選択してください。');
+		return;
+	}
+	
+	prdModData.push({percent:$('input[name=percent]').val(), partner_id:partId2})
+ 	$.ajax({
+		url: "create"
+		, type:"post"
+		, data:JSON.stringify(prdModData)
+ 		, dataType: "json"
+		, contentType: 'application/json'
+		, success: function(res) {
+			prdModData = [];
+			$('#selectedDealer').html(': '+partNm2);
+			setStatusRowData(res);
+			$('#create').modal('hide');
+		}
+	});
+});
+
+$('#prd_commit').on('click', function() {
+	if (prdModData.length == 0) {
+		alert('情報を修正してください。');
+		return;
+	}
+	
+	$.ajax({
+		url: "create"
+		, type:"post"
+		, data:JSON.stringify(prdModData)
+ 		, dataType: "json"
+		, contentType: 'application/json'
+		, success: function(res) {
+			prdModData = [];
+			$('#selectedDealer').html(': '+partNm2);
+			setStatusRowData(res);
+			$('#create').modal('hide');
+		}
+	});
 });
