@@ -866,3 +866,26 @@ CREATE TABLE amazon_info_tmp (
 	result_text VARCHAR(200)
 ) default charset = utf8 comment 'AMAZON情報TEMP';
 
+
+drop table estimate_info;
+create table estimate_info (
+seq_id bigint unsigned primary key auto_increment comment '区分ID'
+, estimate_id bigint comment '見積書番号'
+, reg_user_id varchar(20) comment '登録者'
+, reg_dt datetime default now() comment '登録日付'
+, upd_user_id varchar(20) default null comment '更新者'
+, upd_dt datetime comment '更新日付'
+, partner_id varchar(20) comment '取引先No.'
+, partner_nm varchar(100) comment '取引先名'
+, brand_nm varchar(20) comment 'ブランド'
+, jan_cd varchar(15) comment 'ＪＡＮコード'
+, prd_cd varchar(20) comment '商品コード'
+, prd_nm varchar(1000) comment '商品名'
+, prd_prc varchar(20) comment '金額'
+, dsku varchar(7) comment 'ＳＫＵ'
+, dasin varchar(7) comment 'ＡＳＩＮ'
+, tax_incld varchar(12) comment '商品税(抜、込)'
+, tax_rt varchar(2) comment '商品税率'
+, std_info varchar(30) comment '規格'
+) default charset = utf8 comment '見積明細';
+

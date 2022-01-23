@@ -40,6 +40,9 @@ from jaiko_prd_info
 	<if test="jan_cd != null and jan_cd != ''">
 	and jan_cd like '%${jan_cd}%'
 	</if>
+	<if test="partner_id != null and partner_id != ''">
+	and partner_id = #{partner_id}
+	</if>
 	</trim>
 	</when>
 	<otherwise>
