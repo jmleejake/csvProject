@@ -1,5 +1,5 @@
 /**
- * 
+ * 見積書 javascript
  */
 
 var statusColumn = [
@@ -355,4 +355,12 @@ $('#prd_commit').on('click', function() {
 			$('#create').modal('hide');
 		}
 	});
+});
+
+$('#btn_down').on('click', function() {
+	if('' === $('#selectedDealer').html()) {
+		pleaseSelectNotify('取引先を選択してください。');
+		return;
+	}
+	$('#frm_down').submit();
 });

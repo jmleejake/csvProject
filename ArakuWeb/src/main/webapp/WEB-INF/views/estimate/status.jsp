@@ -51,6 +51,9 @@ data-toggle='modal' data-target='#create'>作成</button>
 </div>
 <div id="statusGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
 </div>
+<form id="frm_down" action="esimateDown" method="post">
+	<input type="hidden" name="partner_id">
+</form>
 </div>
 
 <!-- Modal S -->

@@ -2,7 +2,10 @@ package jp.prj.araku.product.controller;
 
 import java.util.ArrayList;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,6 +26,9 @@ public class EstimateController {
 	
 	@Autowired
 	private EstimateDAO dao;
+	
+	@Value("${FILE_ENCODING}")
+	private String fileEncoding;
 	
 	@RequestMapping(value = "/estimate")
 	public String estimateStatus(Model model) {
@@ -52,6 +58,12 @@ public class EstimateController {
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	public ArrayList<EstimateVO> createStatus(@RequestBody ArrayList<EstimateVO> list) {
 		return dao.createStatus(list);
+	}
+	
+	@RequestMapping(value = "/esimateDown", method = RequestMethod.POST)
+	public void downloadEstimateForm(HttpServletResponse response
+			,@RequestParam(value = "partner_id") String id) {
+		dao.downloadEstimateForm(response, id, fileEncoding);
 	}
 
 }

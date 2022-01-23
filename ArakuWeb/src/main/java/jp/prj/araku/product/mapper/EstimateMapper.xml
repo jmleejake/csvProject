@@ -5,19 +5,21 @@
 
 <mapper namespace="jp.prj.araku.product.mapper.IEstimateMapper">
 	<select id="selectStatus" parameterType="Estimate" resultType="Estimate">
-	select seq_id, estimate_id, partner_id, partner_nm
-	, brand_nm, jan_cd, prd_cd, prd_nm, prd_prc
-	, dsku, dasin, tax_incld, tax_rt, std_info
-	, date_format(reg_dt, '%Y/%m/%d') reg_dt
-	from estimate_info
-	where partner_id = #{partner_id}
+	select esti.seq_id, estimate_id, esti.partner_id, esti.partner_nm
+	, esti.brand_nm, esti.jan_cd, esti.prd_cd, esti.prd_nm, esti.prd_prc
+	, esti.dsku, esti.dasin, esti.tax_incld, esti.tax_rt, esti.std_info
+	, date_format(esti.reg_dt, '%Y/%m/%d') reg_dt
+	, prd.prd_unit_prc
+	from estimate_info esti
+	inner join jaiko_prd_info prd on prd.partner_id = esti.partner_id and prd.jan_cd = esti.jan_cd
+	where esti.partner_id = #{partner_id}
 	<if test="prd_nm != null and prd_nm !=''">
-	and prd_nm like '%${prd_nm}%'
+	and esti.prd_nm like '%${prd_nm}%'
 	</if>
 	<if test="jan_cd != null and jan_cd !=''">
-	and jan_cd like '%${jan_cd}%'
+	and esti.jan_cd like '%${jan_cd}%'
 	</if>
-	order by reg_dt desc
+	order by esti.reg_dt desc
 	</select>
 	
 	<insert id="insertStatus" parameterType="Estimate" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">

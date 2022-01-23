@@ -39,7 +39,11 @@ public class EstimateVO {
 	/**更新日付*/
 	private String upd_dt;
 	
+	/**掛け率*/
 	private double percent;
+	
+	/**単価*/
+	private String prd_unit_prc;
 	
 	public String getSeq_id() {
 		return seq_id;
@@ -154,6 +158,12 @@ public class EstimateVO {
 	}
 	public void setPercent(double percent) {
 		this.percent = percent;
+	}
+	public String getPrd_unit_prc() {
+		return prd_unit_prc;
+	}
+	public void setPrd_unit_prc(String prd_unit_prc) {
+		this.prd_unit_prc = prd_unit_prc;
 	}
 
 }
