@@ -69,8 +69,10 @@ public class EstimateDAO {
 		IEstimateMapper mapper = sqlSession.getMapper(IEstimateMapper.class);
 		IJaikoPrdInfoMapper jaikoPrdMapper = sqlSession.getMapper(IJaikoPrdInfoMapper.class);
 		String partId="";
+		String partNm="";
 		for(EstimateVO vo : list) {
 			partId = vo.getPartner_id();
+			partNm = vo.getPartner_nm();
 			double per = vo.getPercent();
 			
 			if(per == (double)0) {
@@ -85,7 +87,6 @@ public class EstimateDAO {
 			}else {
 				JaikoPrdInfoVO prdVO = new JaikoPrdInfoVO();
 				prdVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
-				prdVO.setPartner_id(vo.getPartner_id());
 				ArrayList<JaikoPrdInfoVO> prdList = jaikoPrdMapper.getJaikoPrdInfo(prdVO);
 				
 				double prd_prc = 0;
@@ -95,8 +96,8 @@ public class EstimateDAO {
 					prd_prc = prc*(per/(double)100);
 					prd_prc = prc + prd_prc;
 					
-					vo.setPartner_id(prd.getPartner_id());
-					vo.setPartner_nm(prd.getPartner_nm());
+					vo.setPartner_id(partId);
+					vo.setPartner_nm(partNm);
 					vo.setJan_cd(prd.getJan_cd());
 					
 					ArrayList<EstimateVO> srchStatus = mapper.selectStatus(vo);

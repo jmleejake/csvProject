@@ -230,17 +230,23 @@ var prdGridOptions = {
 		columnDefs: prdColumn,
 		rowData: prdRowData,
 		onCellEditingStarted: function(event) {
+			if('' === $('#prdDealer').html()) {
+	    		alert('取引先を選択してください。');
+	    		return;
+	    	}
 	    	var start = event.node.data;
 	    	sPrdPrc2=start.prd_unit_prc;
-	    	console.log(sPrdPrc2);
 	    },
 	    onCellEditingStopped: function(event) {
+	    	if('' === $('#prdDealer').html()) {
+	    		alert('取引先を選択してください。');
+	    		return;
+	    	}
+	    	
 	    	var stop = event.node.data;
 	    	ePrdPrc2=stop.prd_unit_prc;
-	    	console.log(ePrdPrc2);
-	    	
 	    	if (!(sPrdPrc2 == ePrdPrc2)) {
-	    		prdModData.push({jan_cd:stop.jan_cd, prd_prc:ePrdPrc2, partner_id:partId2, partner_nm:partNm2});
+	    		prdModData.push({jan_cd:stop.jan_cd, prd_nm:stop.prd_nm, prd_prc:ePrdPrc2, partner_id:partId2, partner_nm:partNm2});
 	    	}
 	    }
 };
@@ -280,6 +286,7 @@ function showPrd(id, nm) {
 	partId2=id;
 	partNm2=nm;
 	$('#prdDealer').html(': '+nm);
+	/*
 	$.ajax({
 		url: "/jaiko/prdInfo/getPrdInfo"
 		, type:"get"
@@ -291,14 +298,10 @@ function showPrd(id, nm) {
 		, contentType: 'application/json'
 		, success: setPrdRowData
 	});
+	*/
 }
 
 $('#prd_srch').on('click', function() {
-	if('' === $('#prdDealer').html()) {
-		alert('取引先を選択してください。');
-		return;
-	}
-	
 	var form = $("#frm_prd");
     $.ajax({
         type: "get"
@@ -320,8 +323,8 @@ $('#btn_batch').on('click', function() {
 		return;
 	}
 	
-	prdModData.push({percent:$('input[name=percent]').val(), partner_id:partId2})
- 	$.ajax({
+	prdModData.push({percent:$('input[name=percent]').val(), partner_id:partId2, partner_nm:partNm2})
+	$.ajax({
 		url: "create"
 		, type:"post"
 		, data:JSON.stringify(prdModData)
@@ -339,6 +342,10 @@ $('#btn_batch').on('click', function() {
 $('#prd_commit').on('click', function() {
 	if (prdModData.length == 0) {
 		alert('情報を修正してください。');
+		return;
+	}
+	if('' === $('#prdDealer').html()) {
+		alert('取引先を選択してください。');
 		return;
 	}
 	

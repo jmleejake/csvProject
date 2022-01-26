@@ -11,7 +11,7 @@
 	, date_format(esti.reg_dt, '%Y/%m/%d') reg_dt
 	, prd.prd_unit_prc
 	from estimate_info esti
-	inner join jaiko_prd_info prd on prd.partner_id = esti.partner_id and prd.jan_cd = esti.jan_cd
+	inner join jaiko_prd_info prd on prd.jan_cd = esti.jan_cd
 	where esti.partner_id = #{partner_id}
 	<if test="prd_nm != null and prd_nm !=''">
 	and esti.prd_nm like '%${prd_nm}%'
