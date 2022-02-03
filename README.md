@@ -2,9 +2,9 @@
 Araku system
 
 # 2022.02.03 라쿠텐 order_no 길이변경 대응
-alter table rakuten_frozen_info modify column order_no VARCHAR(30); // 라쿠텐 냉동<>
-alter table rakuten_info modify column order_no VARCHAR(30); // 라쿠텐
-alter table prd_trans_info modify column order_no VARCHAR(30); // 중간마스터
+- alter table rakuten_frozen_info modify column order_no VARCHAR(30); // 라쿠텐 냉동
+- alter table rakuten_info modify column order_no VARCHAR(30); // 라쿠텐
+- alter table prd_trans_info modify column order_no VARCHAR(30); // 중간마스터
 
 # 見積書
 - init.sql 최하단 esitmate_info 테이블 추가
