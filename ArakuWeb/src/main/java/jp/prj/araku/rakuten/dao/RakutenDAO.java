@@ -1471,6 +1471,8 @@ public class RakutenDAO {
 					}
 				}
 				
+				/*
+				// 2022-02-20: あす楽のみ　対応
 				// 빠른배송을 옵션으로 둔 항목에 대하여 체크가 되어있으면 제외
 				if ("1".equals(isChecked)) {
 					if ("1".equals(tmp.getTomorrow_hope())) {
@@ -1478,6 +1480,7 @@ public class RakutenDAO {
 						continue;
 					}
 				}
+				*/
 
 //				例外地域マスタ処理により、倉庫１/２対応に影響あり、取り下げする。21.7.24 kim
 //				/**
@@ -1631,7 +1634,14 @@ public class RakutenDAO {
 				//yVO.setProduct_name1(tmp.getResult_text().replace("\"", ""));
 				
 				// csv작성을 위한 리스트작성
-				yList.add(yVO);
+        		// 2022-02-20: あす楽のみ　対応
+				if ("1".equals(isChecked)) {
+					if ("1".equals(tmp.getTomorrow_hope())) {
+						yList.add(yVO);
+					}
+				}else {
+					yList.add(yVO);
+				}
 			}
 			
 			CommonUtil.executeCSVDownload(csvWriter, writer, header, yList);

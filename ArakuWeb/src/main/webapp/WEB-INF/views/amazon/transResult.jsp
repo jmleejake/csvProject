@@ -23,7 +23,7 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 </div>
 <div class="col-sm-6">
 <div class="checkbox">
-	<label><input type="checkbox" id="tomoEx">あす楽例外</label>
+	<label><input type="checkbox" id="tomoEx">あす楽のみ</label>
 </div>
 </div>
 </div>
