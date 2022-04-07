@@ -307,9 +307,12 @@ public class AmazonDAO {
 			ArrayList<RegionMasterVO> regionM = listMapper.getRegionMaster(rmVO);
 			
 			vo.setDelivery_company(regionM.get(0).getDelivery_company());
-			if("1011".equals(regionM.get(0).getDelivery_company())) {
-				vo.setDelivery_company("1001");
-			}
+			// 20220224 kim S
+			//if("1011".equals(regionM.get(0).getDelivery_company())) {
+			//	vo.setDelivery_company("1001");
+			//}
+			// 20220224 kim E
+			
 			log.debug("Update Amazon info : " + vo);
 			amazonMapper.updateAmazonInfo(vo);
 			
@@ -417,16 +420,31 @@ public class AmazonDAO {
 				seq_id_list.add(seq_id);
 			}
 			
+			//地域区分マスタにてヤマトと佐川の区分をチェックする。
+			//vo.setDelivery_company(delivery_company);
+			// 2022-02-24 kim S
 			TranslationResultVO vo = new TranslationResultVO();
 			vo.setSeq_id_list(seq_id_list);
-			vo.setDelivery_company(delivery_company);
+			
+			ArrayList<String> deli_com_list = new ArrayList<String>();
+			deli_com_list.add(delivery_company);
+			deli_com_list.add("1011");
+			vo.setDeli_com_list(deli_com_list);
+			// 2021-07-03 lee E
+			
+			
+			//TranslationResultVO vo = new TranslationResultVO();
+			//vo.setSeq_id_list(seq_id_list);
+			//vo.setDelivery_company(delivery_company);
+			// 2022-02-24 kim E
 			
 			ArrayList<AmazonVO> list = mapper.getTransResult(vo);
 			ArrayList<ArakuVO> yList = new ArrayList<>();
 			
 			// 예외테이블에 추가한 목록에 대하여 제2창고 목록으로 떨굴수있게 처리
 			// 2021-07-23 야마토 제1창고, 2창고 구분 S
-			ArrayList<ExceptionMasterVO> exList = listMapper.getExceptionMaster(null);
+			// 2022-03-05 야마토 제1창고,　地方に区分 S			
+//			ArrayList<ExceptionMasterVO> exList = listMapper.getExceptionMaster(null);
 			ArrayList<House3MasterVO> house3Lst = listMapper.getHouse3Master(null);
 			ArrayList<AmazonVO> str1List = new ArrayList<AmazonVO>();
 			ArrayList<AmazonVO> str2List = new ArrayList<AmazonVO>();
@@ -445,31 +463,59 @@ public class AmazonDAO {
 				regionVO.setKeyword(data[0]);
 				ArrayList<RegionMasterVO> region = listMapper.getRegionMaster(regionVO);
 				String house_type = region.get(0).getHouse_type();
+//				
+//				if("1".equals(house_type)) {
+//					str1List.add(tmp);
+//				}else if("2".equals(house_type) && "2".equals(storage)) {
+//					for(ExceptionMasterVO exVO : exList) {
+//						if (tmp.getResult_text().contains(exVO.getException_data())) {
+//							exChk = true;
+//							str2List.add(tmp);
+//						}
+//					}
+//				}else if("3".equals(house_type)) {
+//					if("1011".equals(tmp.getDelivery_company())) {
+//						for(House3MasterVO house3 : house3Lst) {
+//							if(tmp.getResult_text().contains(house3.getHouse3_data())) {
+//								exChk = true;
+//								str3List.add(tmp);
+//							}
+//						}
+//					}
+////					for(House3MasterVO house3 : house3Lst) {
+////						if(tmp.getResult_text().contains(house3.getHouse3_data())) {
+////							exChk = true;
+////							str3List.add(tmp);
+////						}
+////					}
+//				}
+//				
+//				if(!exChk && ("2".equals(house_type) || "3".equals(house_type))) {
+//					// 2021-10-24 제2창고, 지방에 대한 조건이 성립되지 않으면 탬프테이블에 넣어두고 1창고 리스트를 만들때 추가
+//					mapper.insertAmazonInfoTmp(tmp);
+//				}
 				
-				if("1".equals(house_type)) {
+				if("1011".equals(tmp.getDelivery_company())) {
+					for (House3MasterVO house3 : house3Lst) {
+						if (tmp.getResult_text().contains(house3.getHouse3_data())) {
+							exChk = true;
+							if("3".equals(house_type)) {
+								str3List.add(tmp);
+							}
+							
+							//if("2".equals(storage) && "1011".equals(vo.getDelivery_company())) {
+								//exChk = true;
+								//str2List.add(tmp);
+							//}
+						}
+					}
+				}
+				
+				if(!exChk) {
 					str1List.add(tmp);
-				}else if("2".equals(house_type) && "2".equals(storage)) {
-					for(ExceptionMasterVO exVO : exList) {
-						if (tmp.getResult_text().contains(exVO.getException_data())) {
-							exChk = true;
-							str2List.add(tmp);
-						}
-					}
-				}else if("3".equals(house_type)) {
-					for(House3MasterVO house3 : house3Lst) {
-						if(tmp.getResult_text().contains(house3.getHouse3_data())) {
-							exChk = true;
-							str3List.add(tmp);
-						}
-					}
 				}
 				
-				if(!exChk && ("2".equals(house_type) || "3".equals(house_type))) {
-					// 2021-10-24 제2창고, 지방에 대한 조건이 성립되지 않으면 탬프테이블에 넣어두고 1창고 리스트를 만들때 추가
-					mapper.insertAmazonInfoTmp(tmp);
-				}
-				
-				//例外マスタの情報有無チェックフラグを初期化する。　21.7.24 kim
+				//例外マスタの情報有無チェックフラグを初期化する。
 				exChk = false;
 			}
 			if("1".equals(storage)) {
@@ -483,6 +529,7 @@ public class AmazonDAO {
 				list = str3List;
 			}
 			// 2021-07-23 야마토 제1창고, 2창고 구분 E
+			// 2022-03-05 야마토 제1창고,　地方に区分 E
 			
  			for (AmazonVO tmp : list) {
 				/*

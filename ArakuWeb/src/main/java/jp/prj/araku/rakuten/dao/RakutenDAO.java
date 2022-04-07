@@ -645,7 +645,7 @@ public class RakutenDAO {
 				prdTransVO.setPrd_cnt(unitNo+"");
 				// 2021-07-03 kim S
 				transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
-				transVO.setKeyword(vo.getProduct_name().trim());
+				transVO.setKeyword(vo.getProduct_name());
 				searchRet = listMapper.getTransInfo(transVO);
 				prdTransVO.setJan_cd(searchRet.get(0).getJan_cd());
 				// 2021-07-03 kim E
@@ -1432,11 +1432,18 @@ public class RakutenDAO {
 			ArrayList<RakutenVO> str2List = new ArrayList<RakutenVO>();
 			boolean exChk = false;
 			for (RakutenVO tmp : realRet) {
-				for (ExceptionMasterVO exVO : exList) {
-					if (tmp.getResult_text().contains(exVO.getException_data())) {
-						exChk = true;
-						if("2".equals(storage)) {
-							str2List.add(tmp);
+				if("1011".equals(tmp.getDelivery_company())) {
+					for (ExceptionMasterVO exVO : exList) {
+						if (tmp.getResult_text().contains(exVO.getException_data())) {
+							exChk = true;
+							if("2".equals(storage)) {
+								str2List.add(tmp);
+							}
+							
+							//if("2".equals(storage) && "1011".equals(vo.getDelivery_company())) {
+								//exChk = true;
+								//str2List.add(tmp);
+							//}
 						}
 					}
 				}
