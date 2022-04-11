@@ -56,9 +56,10 @@ data-toggle='modal' data-target='#orderDetail' onclick="showDetail('','')" style
 
 <!-- Modal S -->
 <div class="modal fade" id="orderDetail" role="dialog">
-	<div class="modal-dialog">
+	<div class="modal-dialog" style="width:auto;">
 		<div class="modal-content">
 			<div class="modal-body">
+			<h4 id="dtH4"></h4>
 			<div class="well container-fluid">
 			<div class="dropdown">
 				<button class="btn btn-primary dropdown-toggle" id="menu1" type="button" data-toggle="dropdown">
@@ -76,7 +77,7 @@ data-toggle='modal' data-target='#orderDetail' onclick="showDetail('','')" style
 			<button id="btn_commit" type="button" class="btn btn-success" style="width: 120px; margin-bottom: 10px;">登録</button>
 			<button id="btn_delete" type="button" class="btn btn-danger" style="width: 120px; margin-bottom: 10px;">削除</button>
 			</div>
-			<div id="ordDtlGrid" style="width:auto; height: 300px;" class="ag-theme-balham"></div>
+			<div id="ordDtlGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">閉じる</button>

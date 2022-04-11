@@ -19,7 +19,7 @@ function showOrder(id, nm) {
 	$.ajax({
 		url: "/jaiko/order/getData"
 		, type:"get"
-		, data: {partner_id:id}
+		, data: {partner_id:id, reg_dt:$('#yymm').val()}
 		, dataType: "json"
 		, contentType: 'application/json'
 		, success: ordDtlSetRowData
@@ -29,25 +29,34 @@ function showOrder(id, nm) {
 function showDetail(id, nm, dt) {
 	thisPartnerId = id;
 	thisDt = dt;
-	console.log("thisDt="+thisDt)
 	$('#selectedDealer').html(': '+nm);
-	$.ajax({
-		url: "/jaiko/order/getData"
-		, type:"get"
-		, data: {partner_id:id, reg_dt:dt}
-		, dataType: "json"
-		, contentType: 'application/json'
-		, success: ordDtlSetRowData
-	});
+	$('#dtH4').html(thisDt);
+	if('' != id) {
+		$.ajax({
+			url: "/jaiko/order/getData"
+			, type:"get"
+			, data: {partner_id:id, reg_dt:thisDt}
+			, dataType: "json"
+			, contentType: 'application/json'
+			, success: ordDtlSetRowData
+		});
+	}else {
+		ordDtlGridOptions.api.setRowData([]);
+	}
 }
 
 var ordDtlColumnDef = [
+	/*
 	{headerName: "年月日", field: "reg_dt", width: 150}
 	, {headerName: "納品先", field: "partner_nm", width: 200}
 	, {headerName: "商品名検索", width: 120, cellRenderer:'btnRenderer'}
 	, {headerName: "商品名", field: "prd_nm", width: 200}
 	, {headerName: "ＪＡＮコード", field: "jan_cd", width: 150}
 	, {headerName: "数量―個数―", field: "prd_cnt", width: 120, editable: true}
+	*/
+	{headerName: "商品名検索", width: 200, cellRenderer:'btnRenderer'}
+	, {headerName: "商品名", field: "prd_nm", width: 800}
+	, {headerName: "数量―個数―", field: "prd_cnt", width: 150, editable: true}
 ];
 
 // specify the data
