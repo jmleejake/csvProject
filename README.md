@@ -1,22 +1,21 @@
-# csvProject
+### csvProject
 Araku system
 
-# 2022.04.11
-JAIKO管理システムにて仕様変更
-1．注文状況画面→新規登録　ボタン押下時、何も検索しないように変更する。
-2．新規登録ボタン押下時、SUB画面の幅と高さをもっと大きくする。
-3．SUB画面の詳細のカラムを以下の4項目に変更する。
-　　①商品名検索
-　　②商品名
-　　③数量(箱)
-　　④数量(個)
+### 2022.04.11 JAIKO管理システムにて仕様変更
+- 1．注文状況画面→新規登録　ボタン押下時、何も検索しないように変更する。
+- 2．新規登録ボタン押下時、SUB画面の幅と高さをもっと大きくする。
+- 3．SUB画面の詳細のカラムを以下の4項目に変更する。
+ ①商品名検索
+ ②商品名
+ ③数量(箱)
+ ④数量(個)
 
-# 2022.02.03 라쿠텐 order_no 길이변경 대응
+### 2022.02.03 라쿠텐 order_no 길이변경 대응
 - alter table rakuten_frozen_info modify column order_no VARCHAR(30); // 라쿠텐 냉동
 - alter table rakuten_info modify column order_no VARCHAR(30); // 라쿠텐
 - alter table prd_trans_info modify column order_no VARCHAR(30); // 중간마스터
 
-# 見積書
+### 見積書
 - init.sql 최하단 esitmate_info 테이블 추가
 ![image](https://user-images.githubusercontent.com/18359068/150670405-74d60872-c6cd-4098-94e3-8709c7bd77da.png)
 - 화면 확인
