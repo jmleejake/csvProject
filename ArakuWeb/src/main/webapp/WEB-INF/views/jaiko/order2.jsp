@@ -56,7 +56,7 @@ data-toggle='modal' data-target='#orderDetail' onclick="showDetail('','')" style
 
 <!-- Modal S -->
 <div class="modal fade" id="orderDetail" role="dialog">
-	<div class="modal-dialog" style="width:auto;">
+	<div class="modal-dialog" style="width:1230px;">
 		<div class="modal-content">
 			<div class="modal-body">
 			<h4 id="dtH4"></h4>
@@ -73,9 +73,15 @@ data-toggle='modal' data-target='#orderDetail' onclick="showDetail('','')" style
 			</div>
 			<div class="well container-fluid">
 			<div class="row">
+			<div class="col-sm-9">
 			<button id="btn_add" type="button" class="btn btn-primary" style="width: 120px; margin-bottom: 10px;">列追加</button>
 			<button id="btn_commit" type="button" class="btn btn-success" style="width: 120px; margin-bottom: 10px;">登録</button>
 			<button id="btn_delete" type="button" class="btn btn-danger" style="width: 120px; margin-bottom: 10px;">削除</button>
+			</div>
+			<div class="col-sm-3">
+			<button id="btn_sales" type="button" class="btn btn-info" style="width: 120px; margin-bottom: 10px;">売上登録</button>
+			<!-- 売上一覧 -->
+			</div>
 			</div>
 			<div id="ordDtlGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
 			</div>

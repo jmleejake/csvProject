@@ -160,7 +160,11 @@ function ordDtlSetRowData(result) {
 }
 
 $('#btn_add').on('click', function() {
-	console.log("thisDt2="+thisDt)
+	console.log("thisDt2="+thisDt);
+	if('' === thisPartnerId) {
+		alert('取引先を選択してください。');
+		return;
+	}
 	modifiedData.push({partner_id:thisPartnerId, prd_nm:'商品名', prd_cnt_box:'0', prd_cnt:'0', reg_dt:thisDt});
 	$.ajax({
 		url: "/jaiko/order/mani"
@@ -220,7 +224,7 @@ function setInvenNo(id) {
 // ----------------------------------------------------------------------------------------
 
 var columnDefs = [
-	, {headerName: "商品名", field: "prd_nm", width: 400
+	{headerName: "商品名", field: "prd_nm", width: 400
 		, tooltip:function(param) {
 			return param.value;
 		}
@@ -303,5 +307,24 @@ $('#btn_sel').on('click', function() {
 /*
 ------------------
 modal setting E
+------------------
+*/
+
+
+
+
+/*
+------------------
+売上 S
+------------------
+*/
+$('#btn_sales').on('click', function() {
+	//alert('売上');
+	ordDtlGridOptions.api.selectAll();
+	console.log(ordDtlGridOptions.api.getSelectedRows());
+});
+/*
+------------------
+売上 E
 ------------------
 */
