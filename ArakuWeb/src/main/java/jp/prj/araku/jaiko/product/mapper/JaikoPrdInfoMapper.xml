@@ -119,4 +119,28 @@ delete from jaiko_prd_info
 where seq_id = #{seq_id}
 </delete>
 
+<select id="getOnePrdInfo" parameterType="JaikoPrdInfo" resultType="JaikoPrdInfo">
+select
+  seq_id
+  , partner_id
+  , partner_nm
+  , prd_cd
+  , brand_nm
+  , prd_nm
+  , jan_cd
+  , prd_cnt
+  , prd_unit_prc
+  , tax_incld
+  , tax_rt
+  , std_info
+  , dsku
+  , dasin
+  , date_format(reg_dt, '%Y/%m/%d') reg_dt
+  , date_format(upd_dt, '%Y/%m/%d') upd_dt
+from jaiko_prd_info
+where 
+  partner_id = #{partner_id}
+and jan_cd = #{jan_cd}
+</select>
+
 </mapper>

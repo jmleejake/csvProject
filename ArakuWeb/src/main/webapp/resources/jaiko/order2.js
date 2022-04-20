@@ -321,7 +321,19 @@ modal setting E
 $('#btn_sales').on('click', function() {
 	//alert('売上');
 	ordDtlGridOptions.api.selectAll();
-	console.log(ordDtlGridOptions.api.getSelectedRows());
+	var selectedRows = ordDtlGridOptions.api.getSelectedRows();
+    
+	$.ajax({
+		url: "/jaiko/sales/data/ins"
+		, type:"post"
+		, dataType: "json"
+		, contentType: 'application/json'
+		, data:JSON.stringify(selectedRows)
+		, success: function(res) {
+			console.log(res);
+			alert(res.retMsg);
+		}
+	});
 });
 /*
 ------------------

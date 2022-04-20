@@ -9,4 +9,5 @@ public interface IJaikoPrdInfoMapper {
 	int insertJaikoPrdInfo(JaikoPrdInfoVO vo);
 	int updateJaikoPrdInfo(JaikoPrdInfoVO vo);
 	int deleteJaikoPrdInfo(String seq_id);
+	JaikoPrdInfoVO getOnePrdInfo(JaikoPrdInfoVO vo);
 }
