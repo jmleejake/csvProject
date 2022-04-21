@@ -1,6 +1,39 @@
 ### csvProject
 Araku system
 
+### 2022.04.19 納品書
+alter table dealer_info add column gbn varchar(20) comment '締切区分';
+
+create table jaiko_sales_info (
+seq_id bigint unsigned primary key auto_increment comment '区分ID'
+, gbn varchar(20) comment '区分'
+, partner_id varchar(20) comment '取引先コード'
+, partner_nm varchar(100) comment '取引先会社名'
+, dlv_dt datetime comment '納品日'
+, sales_no varchar(20) comment '売上番号'
+, prd_nm varchar(1500) comment '商品名'
+, prd_cd varchar(20) comment '商品コード'
+, spec varchar(20) comment '仕様・規格'
+, entry_no varchar(20) comment '入り数'
+, qty varchar(20) comment '数量'
+, dlv_prc varchar(20) comment '納品価格'
+, tax_rt varchar(2) comment '税率'
+, tot varchar(20) comment '合計'
+, cnsp_tax varchar(20) comment '消費税'
+, sub_tot varchar(20) comment '小計'
+, mid_tot varchar(20) comment '中合計'
+, bill_no varchar(20) comment '請求番号'
+, pay_method varchar(20) comment '決済方法'
+, pay_comp_yn char(1) comment '決済完了有無'
+, manager varchar(100) comment '担当'
+, mail varchar(100) comment 'メール'
+, memo varchar(4000) comment 'メモ'
+, reg_user_id varchar(20) comment '登録者'
+, reg_dt datetime default now() comment '登録日付'
+, upd_user_id varchar(20) default null comment '更新者'
+, upd_dt datetime comment '更新日付'
+) default charset = utf8 comment '売上情報';
+
 ### 2022.04.11 JAIKO管理システムにて仕様変更
 <ol>
  <li>注文状況画面→新規登録　ボタン押下時、何も検索しないように変更する。</li>
