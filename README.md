@@ -34,7 +34,7 @@ seq_id bigint unsigned primary key auto_increment comment '区分ID'
 , upd_user_id varchar(20) default null comment '更新者'
 , upd_dt datetime comment '更新日付'
 ) default charset = utf8 comment '売上情報';
-`
+```
 
 ### 2022.04.11 JAIKO管理システムにて仕様変更
 <ol>
