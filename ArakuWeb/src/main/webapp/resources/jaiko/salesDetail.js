@@ -1,5 +1,5 @@
 /**
- * 売上入力画面
+ * 売上入力
  */
 var thisDt, thisPartner, thisPartNm, thisSeq;
 var salesColDefs = [
