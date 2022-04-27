@@ -5,6 +5,7 @@ Araku system
 ```js
 alter table dealer_info add column gbn varchar(20) comment '締切区分';
 
+drop table jaiko_sales_info;
 create table jaiko_sales_info (
 seq_id bigint unsigned primary key auto_increment comment '区分ID'
 , gbn varchar(20) comment '区分'
@@ -29,6 +30,8 @@ seq_id bigint unsigned primary key auto_increment comment '区分ID'
 , manager varchar(100) comment '担当'
 , mail varchar(100) comment 'メール'
 , memo varchar(4000) comment 'メモ'
+, bill_dt datetime comment '請求日付'
+, jan_cd varchar(15) comment 'JANコード'
 , reg_user_id varchar(20) comment '登録者'
 , reg_dt datetime default now() comment '登録日付'
 , upd_user_id varchar(20) default null comment '更新者'
