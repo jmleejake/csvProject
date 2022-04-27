@@ -107,6 +107,7 @@ select
 	, est_delivery_dt
 	, destination
 	, remark
+	, gbn
 from
 	dealer_info
 	<where>
@@ -156,6 +157,9 @@ set
 	</if>
 	<if test="remark != null and remark !=''">
 	, remark = #{remark}
+	</if>
+	<if test="gbn != null and gbn !=''">
+	, gbn = #{gbn}
 	</if>
 where
 	seq_id = #{seq_id}

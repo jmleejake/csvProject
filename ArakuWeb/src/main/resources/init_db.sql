@@ -113,6 +113,8 @@ alter table dealer_info add column est_delivery_dt varchar(200) comment '納品�
 alter table dealer_info add column destination varchar(100) comment '納品先';
 alter table dealer_info add column remark varchar(1000) comment '備考';
 
+alter table dealer_info add column gbn varchar(20) comment '締切区分';
+
 
 DROP TABLE exception_master;
 CREATE TABLE exception_master (
