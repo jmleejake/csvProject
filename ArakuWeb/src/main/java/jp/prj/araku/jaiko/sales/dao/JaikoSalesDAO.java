@@ -219,7 +219,11 @@ public class JaikoSalesDAO {
 				salesMapper.insertData(vo);
 			}
 		}
-		return getSalesData(list.get(0).getPartner_id(), list.get(0).getDlv_dt());
+		if("TOT".equals(list.get(0).getGbn())) {
+			return getSalesData2(list.get(0).getPartner_id(), list.get(0).getDlv_dt(), list.get(0).getGbn());
+		}else {
+			return getSalesData(list.get(0).getPartner_id(), list.get(0).getDlv_dt());
+		}
 	}
 	
 	public ArrayList<JaikoSalesVO> deleteData(ArrayList<JaikoSalesVO> list) {

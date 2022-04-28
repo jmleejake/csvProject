@@ -52,13 +52,18 @@ var salesColDefs = [
 	, {headerName: "売上日", width: 110, field:"dlv_dt"}
 	, {headerName: "得意先", field: "partner_nm", width: 300}
 	, {headerName: "売上合計金額", field: "mid_tot", width: 200, valueFormatter: currencyFormatter}
-	, {headerName: "担当", field: "manager", width: 200}
+	, {headerName: "担当", field: "manager", width: 200, editable: true}
 	, {headerName: "操作", width: 80, cellRenderer:'dataDel'}
-	, {headerName: "メール", field: "mail", width: 300}
+	, {headerName: "メール", field: "mail", width: 300, editable: true}
 ];
 
 //specify the data
 var salesRow = [];
+
+//데이터 수정
+var modifiedData = [];
+var startMng, stopMng;
+var startMail, stopMail;
 
 //let the grid know which columns and what data to use
 var salesGridOption = {
@@ -82,8 +87,50 @@ var salesGridOption = {
 			}
 		},
 	    onCellEditingStarted: function(event) {
+	    	var prevData = event.node.data;
+	    	startMng = prevData.manager;
+	    	startMail = prevData.mail;
 	    },
 	    onCellEditingStopped: function(event) {
+	    	var afterData = event.node.data;
+	    	stopMng = afterData.manager;
+	    	stopMail = afterData.mail;
+	    	
+	    	if(!(startMng == stopMng)) {
+	    		// 担当 update
+	    		modifiedData.push({
+    		    	seq_id: afterData.seq_id
+    		    	, partner_id: afterData.partner_id
+    		    	, dlv_dt: afterData.dlv_dt
+    		    	, manager: stopMng
+    		    	, gbn:'TOT'
+	    		});
+	    		$.ajax({
+	    		    url: "/jaiko/sales/data/upd"
+			    	, type:"post"	
+	    		    , data: JSON.stringify(modifiedData)
+	    		    , dataType: "json"  
+	    		    , contentType : "application/json"
+	    		    , success: setSalesRow
+	    		});
+	    	}else if(!(startMail == stopMail)) {
+	    		// メール update
+	    		modifiedData.push({
+    		    	seq_id: afterData.seq_id
+    		    	, partner_id: afterData.partner_id
+    		    	, dlv_dt: afterData.dlv_dt
+    		    	, mail: stopMail
+    		    	, gbn:'TOT'
+	    		});
+	    		$.ajax({
+	    		    url: "/jaiko/sales/data/upd"
+			    	, type:"post"	
+	    		    , data: JSON.stringify(modifiedData)
+	    		    , dataType: "json"  
+	    		    , contentType : "application/json"
+	    		    , success: setSalesRow
+	    		});
+	    	}
 	    }
 };
 
@@ -158,4 +205,6 @@ function setSalesRow(result) {
 		salesRow.push(row);
 	}
 	salesGridOption.api.setRowData(salesRow);
+	
+	modifiedData = []; // 수정데이터 초기화
 }

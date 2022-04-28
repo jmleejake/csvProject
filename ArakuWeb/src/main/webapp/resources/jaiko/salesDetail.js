@@ -193,7 +193,12 @@ $('#btn_save').on('click', function() {
 	    , data: JSON.stringify(modifiedData)
 	    , dataType: "json"  
 	    , contentType : "application/json"
-	    , success: setSalesRow
+	    , success: function(res) {
+	    	if(res.length >= 1) {
+	    		alert('保存しました。');
+	    	}
+	    	return;
+	    }
 	});
 });
 
