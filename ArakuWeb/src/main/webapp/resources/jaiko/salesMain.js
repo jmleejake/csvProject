@@ -32,6 +32,11 @@ function showOrder(id, nm) {
 }
 
 $('#btn_srch').on('click', function() {
+	if('' === $('#startDate').val() || '' === $('#endDate').val()) {
+		alertInit();
+		alertify.alert('検索機関を選択してください。');
+		return;
+	}
 	$('input[name=from_dt]').val($('#startDate').val().replaceAll('-','')+'000000');
 	$('input[name=to_dt]').val($('#endDate').val().replaceAll('-','')+'235959');
 	$.ajax({
@@ -46,6 +51,39 @@ $('#btn_srch').on('click', function() {
 /*
  * 검색 E
  * */
+
+$('#btn_add').on('click', function() {
+	if('' === $('input[name=partner_id]').val()) {
+		alertInit();
+		alertify.alert('取引先を選択してください。');
+		return;
+	}
+	var d = new Date(),
+    month = '' + (d.getMonth() + 1),
+    day = '' + d.getDate(),
+    year = d.getFullYear();
+
+	if (month.length < 2) month = '0' + month;
+	if (day.length < 2) day = '0' + day;
+	
+	
+	var addObj = [{
+		partner_id:$('input[name=partner_id]').val()
+		, dlv_dt:[year, month, day].join('-')
+		, gbn:'TOT'
+		, mid_tot: '0'
+		, memo: ''
+	}];
+	
+	$.ajax({
+	    url: "/jaiko/sales/data/upd"
+    	, type:"post"	
+	    , data: JSON.stringify(addObj)
+	    , dataType: "json"  
+	    , contentType : "application/json"
+	    , success: setSalesRow
+	});
+});
 
 var salesColDefs = [
 	{headerName:"売上番号", width:90, field:"bill_no", cellRenderer:'goDetail'}
@@ -135,7 +173,7 @@ var salesGridOption = {
 };
 
 function fnDel(id, part, dt) {
-	var delObj = [{seq_id:id, partner_id:part, dlv_dt:dt, gbn:'TOT'}]
+	var delObj = [{seq_id:id, partner_id:part, dlv_dt:dt, gbn:'TOT'}];
 	alertInit();
 	alertify.confirm("本当に削除しますか？", function (e) {
 		if (e) {
@@ -195,7 +233,7 @@ function setSalesRow(result) {
 			, cnsp_tax:result[i].cnsp_tax
 			, sub_tot:result[i].sub_tot
 			, mid_tot:result[i].mid_tot
-			, bill_no:result[i].bill_no
+			, bill_no: null != result[i].bill_no ? result[i].bill_no : ''
 			, pay_method:result[i].pay_method
 			, pay_comp_yn:result[i].pay_comp_yn
 			, manager:result[i].manager

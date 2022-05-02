@@ -50,6 +50,16 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 		</form>
 	</div>
 	<div class="well container-fluid">
+		<button id="btn_add" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">列追加</button>
+		<!-- 
+		<button id="btn_commit" type="button" class="btn btn-success" style="width: 120px; margin-bottom: 10px;">登録</button>
+		 -->
+		<!-- 
+		<button id="btn_delete" type="button" class="btn btn-danger" style="width: 120px; margin-bottom: 10px;">削除</button>
+		 -->
+		<div id="salesGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
+	</div>
+	<div class="well container-fluid">
 		<div id="salesGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
 	</div>
 </div>
