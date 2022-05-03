@@ -105,11 +105,11 @@ public class EstimateDAO {
 					if(srchStatus.size() > 0) {
 						vo.setSeq_id(srchStatus.get(0).getSeq_id());
 						vo.setPrd_nm(prd.getPrd_nm());
-						vo.setPrd_prc(String.valueOf(prd_prc));
+						vo.setPrd_prc(String.valueOf(Math.round(prd_prc)));
 						mapper.updateStatus(vo);
 					}else {
 						vo.setPrd_nm(prd.getPrd_nm());
-						vo.setPrd_prc(String.valueOf(prd_prc));
+						vo.setPrd_prc(String.valueOf(Math.round(prd_prc)));
 						mapper.insertStatus(vo);
 					}
 				}

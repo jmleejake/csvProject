@@ -579,7 +579,7 @@ public class ListDAO {
 				ret.put("retCd", "S");
 			}else {
 				ret.put("retCd", "ERR");
-				ret.put("retMsg", "在庫管理を確認してください。");
+				ret.put("retMsg", "JANコード：" + sum.getJan_cd() +"在庫管理を確認してください。");
 				return ret;
 			}
 		}

@@ -139,8 +139,7 @@ select
   , date_format(upd_dt, '%Y/%m/%d') upd_dt
 from jaiko_prd_info
 where 
-  partner_id = #{partner_id}
-and jan_cd = #{jan_cd}
+  jan_cd = #{jan_cd}
 </select>
 
 </mapper>

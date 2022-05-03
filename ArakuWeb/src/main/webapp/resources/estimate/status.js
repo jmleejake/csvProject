@@ -16,7 +16,7 @@ var statusColumn = [
 			return params.value;
 		}
 	}
-	, {headerName: "金額", field: "prd_prc", width: 100, editable:true }
+	, {headerName: "金額", field: "prd_prc", width: 100, editable:true, valueFormatter: currencyFormatter}
 ];
 
 // specify the data
@@ -63,6 +63,16 @@ var statusGridDiv = document.querySelector('#statusGrid');
 
 // create the grid passing in the div to use together with the columns & data we want to use
 new agGrid.Grid(statusGridDiv, statusGridOptions);
+
+function currencyFormatter(param) {
+	return '￥'+formatNumber(param.value);
+}
+
+function formatNumber(number) {
+    return Math.floor(number)
+      .toString()
+      .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+}
 
 function setStatusRowData(result) {
 	statusRowData = [];

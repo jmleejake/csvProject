@@ -43,9 +43,23 @@ public class JaikoSalesDAO {
 			salesVO.setDlv_dt(dlv_dt);
 			salesVO.setJan_cd(jan_cd);
 			
+			dlv_dt = dlv_dt.replaceAll("-", "");
+			salesVO.setFrom_dt(dlv_dt+"000000");
+			salesVO.setTo_dt(dlv_dt+"235959");
+			salesVO.setPartner_id(partner_id);
+			
+			ArrayList<JaikoSalesVO> srchRet = salesMapper.selectData(salesVO);
+			if(srchRet.size() > 0) {
+				// データがあったら処理を終わり。
+				continue;
+			}
+			salesVO.setFrom_dt("");
+			salesVO.setTo_dt("");
+			salesVO.setPartner_id("");
+			
 			JaikoPrdInfoVO srchPrd = new JaikoPrdInfoVO();
 			srchPrd.setJan_cd(jan_cd);
-			srchPrd.setPartner_id(partner_id);
+			// srchPrd.setPartner_id(partner_id);
 			JaikoPrdInfoVO prdInfo = prdMapper.getOnePrdInfo(srchPrd);
 			if(null == prdInfo) {
 				ret.put("retCd", "ERR");
@@ -83,7 +97,14 @@ public class JaikoSalesDAO {
 				partner_nm = retDealer.getDealer_nm();
 				salesVO.setPartner_id(partner_id);
 				salesVO.setPartner_nm(partner_nm);
-				salesVO.setGbn(retDealer.getGbn()); // 締切区分
+				if(null == retDealer.getGbn()) {
+					ret.put("retCd", "ERR");
+					ret.put("retMsg", "["+partner_nm+"] の締切区分情報がありません。");
+					return ret;
+				}else {
+					salesVO.setGbn(retDealer.getGbn()); // 締切区分
+				}
+				
 			}else {
 				ret.put("retCd", "ERR");
 				ret.put("retMsg", "["+partner_id+"] 取引先情報がありません。");
@@ -95,21 +116,30 @@ public class JaikoSalesDAO {
 		
 		JaikoSalesVO total = new JaikoSalesVO();
 		total.setGbn("TOT");
-		total.setMid_tot("0");
-		total.setMemo("");
-		total.setDlv_dt(dlv_dt);
 		total.setPartner_id(partner_id);
-		total.setPartner_nm(partner_nm);
-		DateTimeFormatter frm = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-	    LocalDate paramDate = LocalDate.parse(dlv_dt, frm);
-	    YearMonth yearMonth = YearMonth.from(paramDate);
-	    LocalDate lastCurrentDate = yearMonth.atEndOfMonth();
-	    total.setBill_dt(lastCurrentDate.format(frm)); // 해당월의 마지막날이 請求日付
-		
-		int retIns = salesMapper.insertData(total);
-		if(retIns > 0) {
+		total.setDlv_dt(dlv_dt);
+		dlv_dt = dlv_dt.replaceAll("-", "");
+		total.setFrom_dt(dlv_dt+"000000");
+		total.setTo_dt(dlv_dt+"235959");
+		ArrayList<JaikoSalesVO> srchRet = salesMapper.selectData(total);
+		if(srchRet.size() < 1) {
+			total.setMid_tot("0");
+			total.setMemo("");
+			total.setPartner_nm(partner_nm);
+			DateTimeFormatter frm = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		    LocalDate paramDate = LocalDate.parse(dlv_dt, frm);
+		    YearMonth yearMonth = YearMonth.from(paramDate);
+		    LocalDate lastCurrentDate = yearMonth.atEndOfMonth();
+		    total.setBill_dt(lastCurrentDate.format(frm)); // 해당월의 마지막날이 請求日付
+			
+			int retIns = salesMapper.insertData(total);
+			if(retIns > 0) {
+				ret.put("retCd", "S");
+				ret.put("retMsg", "追加成功！");
+			}
+		}else {
 			ret.put("retCd", "S");
-			ret.put("retMsg", "追加成功！");
+			ret.put("retMsg", "データが存在する。");
 		}
 		
 		return ret;
@@ -167,7 +197,7 @@ public class JaikoSalesDAO {
 					vo.setGbn("");
 					EstimateVO srchEstimate = new EstimateVO();
 					srchEstimate.setJan_cd(vo.getJan_cd());
-					srchEstimate.setPartner_id(vo.getPartner_id());
+					// srchEstimate.setPartner_id(vo.getPartner_id());
 					ArrayList<EstimateVO> estiList = estimateMapper.selectStatus(srchEstimate);
 					if(estiList.size() > 0) {
 						EstimateVO estiInfo = estiList.get(0);
