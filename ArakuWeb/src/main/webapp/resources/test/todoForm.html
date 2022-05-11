@@ -1,0 +1,11 @@
+<form name="todoFrm" ng-submit="add(newTodoTitle)">
+	<div class="input-group">
+		<input type="text" class="form-control" ng-model="newTodoTitle" placeholder="새로운 할일을 입력하세요!" minlength="3" autofocus>
+		<span class="input-group-btn">
+			<button class="btn btn-success" type="submit">+</button>
+		</span>
+	</div>
+	<div ng-show="todoFrm.$dirty && todoFrm.$invalid">
+	<div class="alert alert-warning" role="alert">3글자 이상 입력해주세요.</div>
+	</div>
+</form>
