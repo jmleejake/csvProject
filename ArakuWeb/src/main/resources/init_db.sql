@@ -517,6 +517,26 @@ CREATE TABLE rakuten_frozen_info (
 	membership_program VARCHAR(1)
 ) default charset = utf8 comment '楽天中腹データ情報';
 
+alter table rakuten_frozen_info modify column order_no varchar(40) comment '注文番号';
+
+alter table rakuten_frozen_info modify column order_tel1 varchar(8) comment '注文者電話番号1';
+alter table rakuten_frozen_info modify column order_tel2 varchar(8) comment '注文者電話番号2';
+alter table rakuten_frozen_info modify column order_tel3 varchar(8) comment '注文者電話番号3';
+
+alter table rakuten_frozen_info modify column delivery_tel1 varchar(8) comment '送付先電話番号1';
+alter table rakuten_frozen_info modify column delivery_tel2 varchar(8) comment '送付先電話番号2';
+alter table rakuten_frozen_info modify column delivery_tel3 varchar(8) comment '送付先電話番号3';
+
+
+alter table rakuten_info modify column order_no varchar(40) comment '注文番号';
+
+alter table rakuten_info modify column order_tel1 varchar(8) comment '注文者電話番号1';
+alter table rakuten_info modify column order_tel2 varchar(8) comment '注文者電話番号2';
+alter table rakuten_info modify column order_tel3 varchar(8) comment '注文者電話番号3';
+
+alter table rakuten_info modify column delivery_tel1 varchar(8) comment '送付先電話番号1';
+alter table rakuten_info modify column delivery_tel2 varchar(8) comment '送付先電話番号2';
+alter table rakuten_info modify column delivery_tel3 varchar(8) comment '送付先電話番号3';
 
 DROP TABLE rakuten_info;
 CREATE TABLE rakuten_info (
