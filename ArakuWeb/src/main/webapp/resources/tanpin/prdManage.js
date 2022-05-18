@@ -65,6 +65,20 @@ var orderGridOptions = {
 		rowSelection: 'multiple',
 		columnDefs: columnDefs,
 		rowData: rowData,
+		rowClassRules: {
+	    	'trans-created': function(params) {
+	    		var target = params.data.register_date;
+	    		return target === getDate(0);
+	    	},
+	    	'trans-modified': function(params) {
+	    		var target = params.data.update_date;
+	    		return target === getDate(0);
+	    	},
+	    	'trans-error' : function(params) {
+	    		var target = params.data.err_text;
+	    		return target === 'ERR';
+	    	}
+	    },
 		onCellEditingStarted: function(event) {
 	    	var start = event.node.data;
 	    	sMakerNm = start.maker_nm;
@@ -128,6 +142,8 @@ function setRowData(result) {
 				, tax_rt: result[i].tax_rt
 				, dealer_id: result[i].dealer_id
 				, dealer_nm: result[i].dealer_nm
+				, register_date:result[i].register_date
+				, update_date:result[i].update_date
 		}
 		rowData.push(row);
 	}
