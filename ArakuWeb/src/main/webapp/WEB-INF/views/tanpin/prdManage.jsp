@@ -14,6 +14,7 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 <div class="well container-fluid">
 	<div class="col-sm-3" >
 	<div class="dropdown">
+		<!-- 
 		<button class="btn btn-primary dropdown-toggle" id="menu1" type="button" data-toggle="dropdown">
 		メーカー名<span id="selectedMaker"></span>  <span class="caret"></span></button>
 		<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
@@ -21,6 +22,13 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 			<li role="presentation"><a role="menuitem" href="javascript:setSearch('M', '${maker.maker_cd }', '${maker.maker_nm }')">${maker.maker_nm }</a></li>
 			</c:forEach>
 		</ul>
+		 -->
+		<input type="text" class="form-control" placeholder="メーカー名" list ="maker">
+		<datalist id="maker" class="dropdown-menu" role="menu">
+			<c:forEach items="${makers }" var="maker">
+			<option role="presentation"><a role="menuitem" href="javascript:setSearch('M', '${maker.maker_cd }', '${maker.maker_nm }')">${maker.maker_nm }</a></option>
+			</c:forEach>
+		</datalist>
 	</div>
 	</div>
 	<div class="col-sm-3" >
