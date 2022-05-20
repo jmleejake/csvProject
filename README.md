@@ -1,6 +1,9 @@
 ### csvProject
 Araku system
 
+### 2022.05.20 단품상품관리 メーカー名 자동완성기능
+<img src='https://user-images.githubusercontent.com/18359068/169544246-97078489-4862-4fb2-9eb6-c50fc65d47a1.png' width='600' />
+
 ### 2022.04.19 納品書
 ```js
 alter table dealer_info add column gbn varchar(20) comment '締切区分';
