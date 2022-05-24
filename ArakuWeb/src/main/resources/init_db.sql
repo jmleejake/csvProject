@@ -704,6 +704,8 @@ CREATE TABLE tanpin_info (
 	dealer_nm VARCHAR(100)
 ) default charset = utf8 comment '単品情報';
 
+alter table tanpin_info add column memo varchar(500) comment 'メモ';
+
 
 DROP TABLE translation_err;
 CREATE TABLE translation_err (

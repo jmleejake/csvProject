@@ -1,10 +1,9 @@
 /**
  * javascript for 注文情報
  */
-// specify the columns
-
 var columnDefs = [
 	{headerName: "商品メーカー名", field: "maker_nm", width: 200
+		, resizable: true
 		, editable: true
 		, cellEditor: 'agLargeTextCellEditor'
     	, cellEditorParams: {
@@ -14,6 +13,7 @@ var columnDefs = [
         }		
 	}
 	, {headerName: "商品名", field: "prd_nm", width: 300
+		, resizable: true
 		, editable: true
 		, cellEditor: 'agLargeTextCellEditor'
     	, cellEditorParams: {
@@ -22,8 +22,9 @@ var columnDefs = [
             rows: '6'
         }	
 	}
-	, {headerName: "容量", field: "capacity", width: 100, editable: true}
+	, {headerName: "容量", field: "capacity", width: 100, editable: true, resizable: true}
 	, {headerName: "取引先会社名", field: "dealer_nm", width: 200
+		, resizable: true
 		, editable: true
 		, cellEditor: 'agLargeTextCellEditor'
     	, cellEditorParams: {
@@ -32,11 +33,20 @@ var columnDefs = [
             rows: '6'
         }		
 	}
-	, {headerName: "仕入金額", field: "inprice", width: 100, editable: true}
-	, {headerName: "販売金額", field: "price", width: 100, editable: true}
-	, {headerName: "商品メーカー", field: "maker_cd", width: 80, editable: true}
-	, {headerName: "商品コード(JAN)", field: "prd_cd", width: 80, editable: true}
-	, {headerName: "取引先コード", field: "dealer_id", width: 80, editable: true}
+	, {headerName: "仕入金額", field: "inprice", width: 100, editable: true, resizable: true}
+	, {headerName: "販売金額", field: "price", width: 100, editable: true, resizable: true}
+	, {headerName: "商品メーカー", field: "maker_cd", width: 80, editable: true, resizable: true}
+	, {headerName: "商品コード(JAN)", field: "prd_cd", width: 80, editable: true, resizable: true}
+	, {headerName: "取引先コード", field: "dealer_id", width: 80, editable: true, resizable: true}
+	, {headerName: "登録日", field: "register_date", width: 150, editable: true, resizable: true, cellRenderer:'regDtFrm'} // , cellRenderer:'regDtFrm'
+	, {headerName: "メモ", field: "memo", width: 200, editable: true, resizable: true
+		, cellEditor: 'agLargeTextCellEditor'
+    	, cellEditorParams: {
+            maxLength: '500',
+            cols: '30',
+            rows: '6'
+        }
+	}
 ];
 
 // specify the data
@@ -52,65 +62,78 @@ var sPrc, ePrc;
 var sMakerCd, eMakerCd;
 var sPrdCd, ePrdCd;
 var sDealerCd, eDealerCd;
+var sMemo, eMemo;
+var sRegDt, eRegDt;
 
 // let the grid know which columns and what data to use
 var orderGridOptions = {
-		defaultColDef: {
-			width: 100,
-			headerCheckboxSelection: isFirstColumn,
-			checkboxSelection: isFirstColumn
-		},
-		enableColResize: true,
-		suppressRowClickSelection: false,
-		rowSelection: 'multiple',
-		columnDefs: columnDefs,
-		rowData: rowData,
-		rowClassRules: {
-	    	'trans-created': function(params) {
-	    		var target = params.data.register_date;
-	    		return target === getDate(0);
-	    	},
-	    	'trans-modified': function(params) {
-	    		var target = params.data.update_date;
-	    		return target === getDate(0);
-	    	},
-	    	'trans-error' : function(params) {
-	    		var target = params.data.err_text;
-	    		return target === 'ERR';
-	    	}
-	    },
-		onCellEditingStarted: function(event) {
-	    	var start = event.node.data;
-	    	sMakerNm = start.maker_nm;
-	    	sPrdNm = start.prd_nm;
-	    	sCapa = start.capacity;
-	    	sDealerNm = start.dealer_nm;
-	    	sInPrc = start.inprice;
-	    	sPrc = start.price;
-	    	sMakerCd = start.maker_cd;
-	    	sPrdCd = start.prd_cd;
-	    	sDealerCd = start.dealer_id;
-	    },
-	    onCellEditingStopped: function(event) {
-	    	var stop = event.node.data;
-	    	eMakerNm = stop.maker_nm;
-	    	ePrdNm = stop.prd_nm;
-	    	eCapa = stop.capacity;
-	    	eDealerNm = stop.dealer_nm;
-	    	eInPrc = stop.inprice;
-	    	ePrc = stop.price;
-	    	eMakerCd = stop.maker_cd;
-	    	ePrdCd = stop.prd_cd;
-	    	eDealerCd = stop.dealer_id;
-	    	
-	    	if (!(sMakerNm == eMakerNm)||!(sPrdNm == ePrdNm)
-	    			||!(sCapa == eCapa)||!(sDealerNm == eDealerNm)
-	    			||!(sInPrc == eInPrc)||!(sMakerCd == eMakerCd)
-	    			||!(sPrdCd == ePrdCd)||!(sDealerCd == eDealerCd)
-	    			||!(sInPrc == eInPrc)||!(sMakerCd == eMakerCd)||!(sPrc == ePrc)) {
-	    		modData.push(stop);
-	    	}
-	    }
+	defaultColDef: {
+		width: 100,
+		headerCheckboxSelection: isFirstColumn,
+		checkboxSelection: isFirstColumn
+	},
+	enableColResize: true,
+	suppressRowClickSelection: false,
+	rowSelection: 'multiple',
+	columnDefs: columnDefs,
+	rowData: rowData,
+	components: {
+		regDtFrm: function(param) {
+			var html = '<input type="text" class="form-control reg-dt" value="'+param.data.register_date+'" />';
+			return html;
+		}
+	},
+	rowClassRules: {
+    	'trans-created': function(params) {
+    		var target = params.data.register_date;
+    		return target === getDate(0);
+    	},
+    	'trans-modified': function(params) {
+    		var target = params.data.update_date;
+    		return target === getDate(0);
+    	},
+    	'trans-error' : function(params) {
+    		var target = params.data.err_text;
+    		return target === 'ERR';
+    	}
+    },
+	onCellEditingStarted: function(event) {
+    	var start = event.node.data;
+    	sMakerNm = start.maker_nm;
+    	sPrdNm = start.prd_nm;
+    	sCapa = start.capacity;
+    	sDealerNm = start.dealer_nm;
+    	sInPrc = start.inprice;
+    	sPrc = start.price;
+    	sMakerCd = start.maker_cd;
+    	sPrdCd = start.prd_cd;
+    	sDealerCd = start.dealer_id;
+    	sMemo = start.memo;
+    	sRegDt = start.register_date;
+    },
+    onCellEditingStopped: function(event) {
+    	var stop = event.node.data;
+    	eMakerNm = stop.maker_nm;
+    	ePrdNm = stop.prd_nm;
+    	eCapa = stop.capacity;
+    	eDealerNm = stop.dealer_nm;
+    	eInPrc = stop.inprice;
+    	ePrc = stop.price;
+    	eMakerCd = stop.maker_cd;
+    	ePrdCd = stop.prd_cd;
+    	eDealerCd = stop.dealer_id;
+    	eMemo = stop.memo;
+    	eRegDt = stop.register_date;
+    	
+    	if (!(sMakerNm == eMakerNm)||!(sPrdNm == ePrdNm)
+    			||!(sCapa == eCapa)||!(sDealerNm == eDealerNm)
+    			||!(sInPrc == eInPrc)||!(sMakerCd == eMakerCd)
+    			||!(sPrdCd == ePrdCd)||!(sDealerCd == eDealerCd)
+    			||!(sInPrc == eInPrc)||!(sMakerCd == eMakerCd)||!(sPrc == ePrc)
+    			||!(sMemo == eMemo)||!(sRegDt == eRegDt)) {
+    		modData.push(stop);
+    	}
+    }
 };
 
 // lookup the container we want the Grid to use
@@ -144,10 +167,28 @@ function setRowData(result) {
 				, dealer_nm: result[i].dealer_nm
 				, register_date:result[i].register_date
 				, update_date:result[i].update_date
+				, memo: result[i].memo
 		}
 		rowData.push(row);
 	}
 	orderGridOptions.api.setRowData(rowData);
+	
+	const rowCnt = orderGridOptions.api.getDisplayedRowCount();
+	if(rowCnt > 0) {
+		console.log(rowCnt);
+		console.log($('.reg-dt'));
+		/*
+		$('.reg-dt').datepicker({
+			language: "ja"
+		    ,format: "yyyy/mm/dd"
+		    ,todayHighlight: true
+		    ,autoclose: true
+		}).on('changeDate', function(){
+		    console.log($(this));
+		    console.log($(this).val());
+		});
+		*/
+	}
 }
 
 
@@ -178,7 +219,6 @@ $("#btn_srch").on("click", function() {
         , data: form.serialize() // serializes the form's elements.
         , success: setRowData
     });
-
 });
 
 $("#btn_del").on("click", function() {

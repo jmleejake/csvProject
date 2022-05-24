@@ -49,6 +49,9 @@ public class TanpinVO extends ArakuVO {
 	/**商品税率*/
 	@CsvBindByPosition(position=11)
 	private String tax_rt;
+	/**メモ*/
+	@CsvBindByPosition(position=12)
+	private String memo;
 	
 	private String select_type;
 	private String search_type;
@@ -161,6 +164,12 @@ public class TanpinVO extends ArakuVO {
 	}
 	public void setSeq_id_list(ArrayList<String> seq_id_list) {
 		this.seq_id_list = seq_id_list;
+	}
+	public String getMemo() {
+		return memo;
+	}
+	public void setMemo(String memo) {
+		this.memo = memo;
 	}
 
 }
