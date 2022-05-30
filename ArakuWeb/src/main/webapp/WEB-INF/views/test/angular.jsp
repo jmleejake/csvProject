@@ -12,6 +12,7 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 <jsp:include page="../cdnList.jsp"></jsp:include>
 <script src="<%=svrInfo %>/resources/test/angular.js"></script>
 <script src="<%=svrInfo %>/resources/test/directives.js"></script>
+<script src="<%=svrInfo %>/resources/test/controllers.js"></script>
 <script src="<%=svrInfo %>/resources/test/services.js"></script>
 <link rel="stylesheet" href="<%=svrInfo %>/resources/test/angular.css">
 <script>

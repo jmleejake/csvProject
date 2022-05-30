@@ -37,6 +37,7 @@
 		<typeAlias type="jp.prj.araku.jaiko.order.vo.JaikoOrderVO" alias="JaikoOrder"/>
 		<typeAlias type="jp.prj.araku.product.vo.EstimateVO" alias="Estimate" />
 		<typeAlias type="jp.prj.araku.jaiko.sales.vo.JaikoSalesVO" alias="JaikoSales"/>
+		<typeAlias type="jp.prj.araku.angular.vo.TodoVO" alias="Todo"/>
 	</typeAliases>
 	<mappers>
 		<mapper resource="jp/prj/araku/list/mapper/ListMapper.xml" />
@@ -56,5 +57,6 @@
 		<mapper resource="jp/prj/araku/jaiko/order/mapper/JaikoOrderMapper.xml" />
 		<mapper resource="jp/prj/araku/product/mapper/EstimateMapper.xml" />
 		<mapper resource="jp/prj/araku/jaiko/sales/mapper/JaikoSalesMapper.xml" />
+		<mapper resource="jp/prj/araku/angular/mapper/TodoMapper.xml" />
 	</mappers>
 </configuration>

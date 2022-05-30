@@ -28,11 +28,6 @@ public class HomeController {
 		return "arakuMain";
 	}
 	
-	@RequestMapping(value = "/ang")
-	public String angularTestPage() {
-		return "test/angular";
-	}
-	
 	@RequestMapping(value = "/translationView")
 	public String translationView() {
 		log.debug("Welcome to translationView");
