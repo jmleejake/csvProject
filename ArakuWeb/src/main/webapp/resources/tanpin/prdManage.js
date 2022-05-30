@@ -38,7 +38,7 @@ var columnDefs = [
 	, {headerName: "商品メーカー", field: "maker_cd", width: 80, editable: true, resizable: true}
 	, {headerName: "商品コード(JAN)", field: "prd_cd", width: 80, editable: true, resizable: true}
 	, {headerName: "取引先コード", field: "dealer_id", width: 80, editable: true, resizable: true}
-	, {headerName: "登録日", field: "register_date", width: 150, editable: true, resizable: true, cellRenderer:'regDtFrm'} // , cellRenderer:'regDtFrm'
+	, {headerName: "登録日", field: "register_date", width: 150, editable: true, resizable: true} // , cellRenderer:'regDtFrm'
 	, {headerName: "メモ", field: "memo", width: 200, editable: true, resizable: true
 		, cellEditor: 'agLargeTextCellEditor'
     	, cellEditorParams: {
