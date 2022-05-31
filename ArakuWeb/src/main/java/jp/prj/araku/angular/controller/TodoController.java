@@ -31,8 +31,8 @@ public class TodoController {
 	
 	@ResponseBody
 	@RequestMapping(value = "maniTodo", method = RequestMethod.POST)
-	public ArrayList<TodoVO> manipulateTodo(TodoVO vo) {
-		return null;
+	public ArrayList<TodoVO> manipulateTodo(@RequestBody TodoVO vo) {
+		return dao.manipulateTodoList(vo);
 	}
 	
 	@ResponseBody

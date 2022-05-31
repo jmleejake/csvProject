@@ -1,0 +1,10 @@
+<div class="input-group">                                                             
+	<span class="input-group-addon">                                                   
+		<input type="checkbox" ng-model="todo.todo_end_yn" value="todo.todo_end_yn" ng-click="update2(todo)">                              
+	</span>                                                                            
+	<input type="text" class="form-control" ng-model="todo.cntnt" ng-blur="update2(todo)">                     
+	<span class="input-group-btn">                                                     
+		<button class="btn btn-danger" type="button" ng-click="remove(todo)">X</button>
+	</span>                                                                            
+</div>
+<div>{{todo.reg_dt}}</div>

@@ -6,7 +6,8 @@ angular.module('todo').directive('todoTitle', function() {
 
 angular.module('todo').directive('todoItem', function() {
 	return {
-		templateUrl:svr+'/resources/test/todoItem.html'
+//		templateUrl:svr+'/resources/test/todoItem.html'
+		templateUrl:svr+'/resources/test/todoItem2.html'
 		/*
 		template: '<div class="input-group">                                                            '
 					+'	<span class="input-group-addon">                                                   '

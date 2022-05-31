@@ -28,7 +28,8 @@ angular.module('todo').factory('todoService', function($http) {
 			}
 			
 			, get: function() {
-				angular.copy(storage._getFromLocalStorage(), storage.todos);
+//				angular.copy(storage._getFromLocalStorage(), storage.todos);
+				storage.getSomething('/araku/ang/getTodo');
 				return storage.todos;
 			}
 			
@@ -74,23 +75,25 @@ angular.module('todo').factory('todoService', function($http) {
 			, getSomething: function(url, data) {
 				return $http.get(url, {params: data}).then(succ, err);
 				function succ(res) {
-					console.log('succ');
-					console.log(res);
+					console.log('get succ');
+					angular.copy(res.data, storage.todos);
+					return res;
 				}
 				function err(res) {
-					console.log('err');
-					console.log(res);
+					console.log('get err');
+					return res;
 				}
 			}
 			, postSomething: function(url, data) {
 				return $http.post(url, JSON.stringify(data)).then(succ, err);
 				function succ(res) {
-					console.log('succ');
-					console.log(res);
+					console.log('post succ');
+					angular.copy(res.data, storage.todos);
+					return res;
 				}
 				function err(res) {
-					console.log('err');
-					console.log(res);
+					console.log('post err');
+					return res;
 				}
 			}
 	

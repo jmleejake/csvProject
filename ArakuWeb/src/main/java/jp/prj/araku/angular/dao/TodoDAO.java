@@ -20,6 +20,14 @@ public class TodoDAO {
 	}
 	
 	public ArrayList<TodoVO> manipulateTodoList(TodoVO vo) {
+		ITodoMapper mapper = sqlSession.getMapper(ITodoMapper.class);
+		if(null == vo.getSeq_id()) {
+			mapper.insertTodo(vo);
+			System.out.println(String.format("지금 insert한 seq_id? = %s", vo.getSeq_id()));
+		}else {
+			mapper.updateTodo(vo);
+			System.out.println(String.format("지금 update한 seq_id? = %s", vo.getSeq_id()));
+		}
 		return getTodoList();
 	}
 	
