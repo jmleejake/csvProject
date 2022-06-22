@@ -1,6 +1,54 @@
 /**
  * javascript for 注文情報
  */
+// 수정데이터 배열
+var modData = [];
+class ColAsDatePicker {
+    init(params) {
+    	console.log(params);
+		// create the cell
+		this.eGui = document.createElement('input');
+		$(this.eGui).addClass('form-control');
+		$(this.eGui).css('width','100px');
+		$(this.eGui).css('height','22px');
+		$(this.eGui).val(params.value);
+		$(this.eGui).datepicker({
+			language: "ja"
+			 ,format: "yyyy/mm/dd"
+			 ,todayHighlight: true
+			 ,autoclose: true
+		}).on('changeDate', function(){
+			modData.push({seq_id: params.data.seq_id, register_date: $(this).val()});
+			$.ajax({
+				url: "modTanpin"
+				, type:"post"
+				, dataType: "json"
+				, contentType: 'application/json'
+				, data:JSON.stringify(modData)
+				, success: function(result){
+					setRowData(result);
+					// 수정데이터 초기화
+					modData = [];
+		    	}
+			});
+		});
+    }
+
+    getGui() {
+    	return this.eGui;
+    }
+
+    // gets called whenever the cell refreshes
+    refresh(params) {
+    	return true;
+    }
+
+    // gets called when the cell is removed from the grid
+    destroy() {
+    }
+
+ }
+
 var columnDefs = [
 	{headerName: "商品メーカー名", field: "maker_nm", width: 200
 		, resizable: true
@@ -38,7 +86,7 @@ var columnDefs = [
 	, {headerName: "商品メーカー", field: "maker_cd", width: 80, editable: true, resizable: true}
 	, {headerName: "商品コード(JAN)", field: "prd_cd", width: 80, editable: true, resizable: true}
 	, {headerName: "取引先コード", field: "dealer_id", width: 80, editable: true, resizable: true}
-	, {headerName: "登録日", field: "register_date", width: 150, editable: true, resizable: true} // , cellRenderer:'regDtFrm'
+	, {headerName: "登録日", field: "register_date", width: 150, editable: true, resizable: true, cellRenderer:'regDtFrm'} 
 	, {headerName: "メモ", field: "memo", width: 200, editable: true, resizable: true
 		, cellEditor: 'agLargeTextCellEditor'
     	, cellEditorParams: {
@@ -51,8 +99,6 @@ var columnDefs = [
 
 // specify the data
 var rowData = [];
-// 수정데이터 배열
-var modData = [];
 var sMakerNm, eMakerNm;
 var sPrdNm, ePrdNm;
 var sCapa, eCapa;
@@ -78,10 +124,7 @@ var orderGridOptions = {
 	columnDefs: columnDefs,
 	rowData: rowData,
 	components: {
-		regDtFrm: function(param) {
-			var html = '<input type="text" class="form-control reg-dt" value="'+param.data.register_date+'" />';
-			return html;
-		}
+		regDtFrm: ColAsDatePicker
 	},
 	rowClassRules: {
     	'trans-created': function(params) {
@@ -172,23 +215,6 @@ function setRowData(result) {
 		rowData.push(row);
 	}
 	orderGridOptions.api.setRowData(rowData);
-	
-	const rowCnt = orderGridOptions.api.getDisplayedRowCount();
-	if(rowCnt > 0) {
-		console.log(rowCnt);
-		console.log($('.reg-dt'));
-		/*
-		$('.reg-dt').datepicker({
-			language: "ja"
-		    ,format: "yyyy/mm/dd"
-		    ,todayHighlight: true
-		    ,autoclose: true
-		}).on('changeDate', function(){
-		    console.log($(this));
-		    console.log($(this).val());
-		});
-		*/
-	}
 }
 
 
@@ -329,4 +355,3 @@ var selectedRows = orderGridOptions.api.getSelectedRows();
 		}
 	});
 });
-
