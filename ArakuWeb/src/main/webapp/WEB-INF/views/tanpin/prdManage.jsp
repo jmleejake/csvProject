@@ -36,7 +36,8 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 	 -->
 	</div>
 	<div class="col-sm-3" >
-	<input type="text" name="prd_nm" class="form-control" style="width: 250px;" placeholder="商品名">
+	<input type="text" name="prd_nm" class="form-control" style="width: 250px;" placeholder="商品名"
+	onkeypress = "if(event.keyCode==13){ srch(); event.preventDefault(); }">
 	<input type="hidden" name="dealer_id" id="hidDealerId">
 	<input type="hidden" name="search_type" value="srch"> 
 	</div>

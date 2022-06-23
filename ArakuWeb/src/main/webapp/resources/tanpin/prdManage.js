@@ -235,6 +235,10 @@ function setSearch(type, cd, nm) {
 }
 
 $("#btn_srch").on("click", function() {
+	srch();
+});
+
+function srch() {
 	var form = $("#frm");
     
     $.ajax({
@@ -245,7 +249,7 @@ $("#btn_srch").on("click", function() {
         , data: form.serialize() // serializes the form's elements.
         , success: setRowData
     });
-});
+}
 
 $("#btn_del").on("click", function() {
 	var selectedRows = orderGridOptions.api.getSelectedRows();
