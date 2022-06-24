@@ -54,6 +54,9 @@ from
 	and gbn = #{gbn}
 </when>
 <otherwise>
+	<if test="jan_cd != null and '' != jan_cd">
+		and jan_cd = #{jan_cd}
+	</if>
 	and gbn != 'TOT'
 </otherwise>
 </choose>

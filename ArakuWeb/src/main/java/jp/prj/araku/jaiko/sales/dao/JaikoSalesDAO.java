@@ -35,11 +35,13 @@ public class JaikoSalesDAO {
 		String partner_id = "";
 		String partner_nm = "";
 		String dlv_dt = "";
+		String thisDate = "";
 		for(JaikoOrderVO orderVO : list) {
 			JaikoSalesVO salesVO = new JaikoSalesVO();
 			String jan_cd = orderVO.getJan_cd();
 			partner_id = orderVO.getPartner_id();
 			dlv_dt = orderVO.getReg_dt();
+			thisDate = orderVO.getReg_dt();
 			salesVO.setDlv_dt(dlv_dt);
 			salesVO.setJan_cd(jan_cd);
 			
@@ -117,7 +119,7 @@ public class JaikoSalesDAO {
 		JaikoSalesVO total = new JaikoSalesVO();
 		total.setGbn("TOT");
 		total.setPartner_id(partner_id);
-		total.setDlv_dt(dlv_dt);
+		total.setDlv_dt(thisDate);
 		dlv_dt = dlv_dt.replaceAll("-", "");
 		total.setFrom_dt(dlv_dt+"000000");
 		total.setTo_dt(dlv_dt+"235959");
@@ -127,7 +129,7 @@ public class JaikoSalesDAO {
 			total.setMemo("");
 			total.setPartner_nm(partner_nm);
 			DateTimeFormatter frm = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-		    LocalDate paramDate = LocalDate.parse(dlv_dt, frm);
+		    LocalDate paramDate = LocalDate.parse(thisDate, frm);	    
 		    YearMonth yearMonth = YearMonth.from(paramDate);
 		    LocalDate lastCurrentDate = yearMonth.atEndOfMonth();
 		    total.setBill_dt(lastCurrentDate.format(frm)); // 해당월의 마지막날이 請求日付

@@ -1516,10 +1516,14 @@ public class RakutenDAO {
 				if (tmp.getResult_text().contains("宅コン")&& tmp.getUnit_no() .equals("1") ) {
 					yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_8);
 				}	
-				if (tmp.getProduct_name().contains("冷凍") || tmp.getResult_text().contains("冷凍")) {
+				if (tmp.getResult_text().contains("冷凍")) {
+//					if (tmp.getProduct_name().contains("冷凍") || tmp.getResult_text().contains("冷凍")) {
+
 					yVO.setCool_type(CommonUtil.COOL_TYPE_1);
 				}
-				if (tmp.getProduct_name().contains("冷蔵") || tmp.getResult_text().contains("冷蔵")) {
+				if (tmp.getResult_text().contains("冷蔵")) {
+//					if (tmp.getProduct_name().contains("冷蔵") || tmp.getResult_text().contains("冷蔵")) {
+
 					yVO.setCool_type(CommonUtil.COOL_TYPE_2);		
 				}
 				// 2019/12/24  キム 클리크포스트를 야마토 ネコポス로 설정함. 　⇒　ＥＮＤ
