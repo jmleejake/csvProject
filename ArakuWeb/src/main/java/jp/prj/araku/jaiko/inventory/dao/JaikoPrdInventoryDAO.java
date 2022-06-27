@@ -347,11 +347,12 @@ public class JaikoPrdInventoryDAO {
 	 * 
 	 * @param response
 	 * @param fileEncoding
+	 * @param list >> seq_id_list
 	 * @throws IOException
 	 * @throws CsvDataTypeMismatchException
 	 * @throws CsvRequiredFieldEmptyException
 	 */
-	public void jaikoInvenCsvDownload(HttpServletResponse response, String fileEncoding) 
+	public void jaikoInvenCsvDownload(HttpServletResponse response, String fileEncoding, String[] list) 
 			throws IOException
 			, CsvDataTypeMismatchException
 			, CsvRequiredFieldEmptyException {
@@ -379,8 +380,14 @@ public class JaikoPrdInventoryDAO {
 					, CSVWriter.DEFAULT_ESCAPE_CHARACTER
 					, CSVWriter.DEFAULT_LINE_END);
 			
+			ArrayList<String> seq_id_list = new ArrayList<String>();
+			for(String id : list) {
+				seq_id_list.add(id);
+			}
+			
 			JaikoPrdInventoryVO srch = new JaikoPrdInventoryVO();
 			srch.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+			srch.setSeq_id_list(seq_id_list);
 			ArrayList<ArakuVO> downList = new ArrayList<ArakuVO>();
 			downList.addAll(mapper.getJaikoPrdInventory(srch));
 			CommonUtil.executeCSVDownload(csvWriter, writer, CommonUtil.jaikoInvenHeader(), downList);

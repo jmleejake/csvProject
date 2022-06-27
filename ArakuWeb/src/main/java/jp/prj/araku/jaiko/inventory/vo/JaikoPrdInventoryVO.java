@@ -1,5 +1,7 @@
 package jp.prj.araku.jaiko.inventory.vo;
 
+import java.util.ArrayList;
+
 import com.opencsv.bean.CsvBindByPosition;
 
 import jp.prj.araku.util.ArakuVO;
@@ -57,6 +59,9 @@ public class JaikoPrdInventoryVO extends ArakuVO {
 	private String exp_dt;
 	
 	private String search_type;
+	
+	/**検索用*/
+	private ArrayList<String> seq_id_list;
 	
 	// for download
 	/**規格*/
@@ -230,6 +235,14 @@ public class JaikoPrdInventoryVO extends ArakuVO {
 
 	public void setDealer_nm(String dealer_nm) {
 		this.dealer_nm = dealer_nm;
+	}
+
+	public ArrayList<String> getSeq_id_list() {
+		return seq_id_list;
+	}
+
+	public void setSeq_id_list(ArrayList<String> seq_id_list) {
+		this.seq_id_list = seq_id_list;
 	}
 
 }

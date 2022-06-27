@@ -354,6 +354,19 @@ $("#btn_down").on("click", function() {
 });
 
 $("#btn_inven_down").on("click", function() {
+	var selectedRows = prdInvenGridOptions.api.getSelectedRows();
+	
+	if (selectedRows.length == 0) {
+    	pleaseSelectNotify('情報を選択してください。');
+        return;
+    }
+	
+	let arr = [];
+	selectedRows.forEach(function(data, idx) {
+		arr.push(data.seq_id);
+	});
+	
+	$('#hid_data').val(arr);
 	$("#invenFrm").submit();
 });
 
