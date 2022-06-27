@@ -2,10 +2,10 @@
 Araku system
 
 ### 2022.06.27
-####発注書 포맷변경
+#### 発注書 포맷변경
 <img src='https://user-images.githubusercontent.com/18359068/175954313-cdd4dc55-195c-4eee-815b-ede76e140185.png' width='600' />
 <img src='https://user-images.githubusercontent.com/18359068/175954066-0ae3eea3-e41b-4d80-9870-2659044bf71e.png' width='600' />
-####재고관리 > 상품재고 > 다운로드 클릭시 선택된 데이터만 다운로드 가능하도록 수정
+#### 재고관리 > 상품재고 > 다운로드 클릭시 선택된 데이터만 다운로드 가능하도록 수정
 <img src='https://user-images.githubusercontent.com/18359068/175954489-ef9f329a-4f91-4cc4-b481-05f65aa8b89f.png' width='600' />
 
 ### 2022.05.20 단품상품관리 メーカー名 자동완성기능
