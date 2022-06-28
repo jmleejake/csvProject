@@ -20,7 +20,7 @@
 <img src='https://user-images.githubusercontent.com/18359068/169544246-97078489-4862-4fb2-9eb6-c50fc65d47a1.png' width='600' />
 
 ### 2022.04.19 納品書
-```js
+```sql
 alter table dealer_info add column gbn varchar(20) comment '締切区分';
 
 drop table jaiko_sales_info;
@@ -79,7 +79,7 @@ seq_id bigint unsigned primary key auto_increment comment '区分ID'
 
 ### 見積書
 - init.sql > esitmate_info 테이블 추가
-```js
+```sql
 drop table estimate_info;
 create table estimate_info (
 seq_id bigint unsigned primary key auto_increment comment '区分ID'
