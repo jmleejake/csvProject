@@ -568,7 +568,6 @@ public class RakutenDAO {
 				/**
 				 * 2021.02.22 kim 치환시 주문정보를 商品中間マスタ로 insert처리
 				 * */
-				/*
 				PrdTransVO prdTransVO = new PrdTransVO();
 				prdTransVO.setOrder_no(vo.getOrder_no());
 				prdTransVO.setOrder_gbn("1");
@@ -585,7 +584,6 @@ public class RakutenDAO {
 				}else {
 					listMapper.insertPrdTrans(prdTransVO);
 				}
-				*/
 				
 				int i = 1;
 				for (String optionName : optionNames) {
@@ -647,7 +645,7 @@ public class RakutenDAO {
 				prdTransVO.setPrd_cnt(unitNo+"");
 				// 2021-07-03 kim S
 				transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
-				transVO.setKeyword(vo.getProduct_name().trim());
+				transVO.setKeyword(vo.getProduct_name());
 				searchRet = listMapper.getTransInfo(transVO);
 				prdTransVO.setJan_cd(searchRet.get(0).getJan_cd());
 				// 2021-07-03 kim E
@@ -1434,11 +1432,18 @@ public class RakutenDAO {
 			ArrayList<RakutenVO> str2List = new ArrayList<RakutenVO>();
 			boolean exChk = false;
 			for (RakutenVO tmp : realRet) {
-				for (ExceptionMasterVO exVO : exList) {
-					if (tmp.getResult_text().contains(exVO.getException_data())) {
-						exChk = true;
-						if("2".equals(storage)) {
-							str2List.add(tmp);
+				if("1011".equals(tmp.getDelivery_company())) {
+					for (ExceptionMasterVO exVO : exList) {
+						if (tmp.getResult_text().contains(exVO.getException_data())) {
+							exChk = true;
+							if("2".equals(storage)) {
+								str2List.add(tmp);
+							}
+							
+							//if("2".equals(storage) && "1011".equals(vo.getDelivery_company())) {
+								//exChk = true;
+								//str2List.add(tmp);
+							//}
 						}
 					}
 				}
@@ -1473,6 +1478,8 @@ public class RakutenDAO {
 					}
 				}
 				
+				/*
+				// 2022-02-20: あす楽のみ　対応
 				// 빠른배송을 옵션으로 둔 항목에 대하여 체크가 되어있으면 제외
 				if ("1".equals(isChecked)) {
 					if ("1".equals(tmp.getTomorrow_hope())) {
@@ -1480,6 +1487,7 @@ public class RakutenDAO {
 						continue;
 					}
 				}
+				*/
 
 //				例外地域マスタ処理により、倉庫１/２対応に影響あり、取り下げする。21.7.24 kim
 //				/**
@@ -1508,10 +1516,14 @@ public class RakutenDAO {
 				if (tmp.getResult_text().contains("宅コン")&& tmp.getUnit_no() .equals("1") ) {
 					yVO.setInvoice_type(CommonUtil.INVOICE_TYPE_8);
 				}	
-				if (tmp.getProduct_name().contains("冷凍") || tmp.getResult_text().contains("冷凍")) {
+				if (tmp.getResult_text().contains("冷凍")) {
+//					if (tmp.getProduct_name().contains("冷凍") || tmp.getResult_text().contains("冷凍")) {
+
 					yVO.setCool_type(CommonUtil.COOL_TYPE_1);
 				}
-				if (tmp.getProduct_name().contains("冷蔵") || tmp.getResult_text().contains("冷蔵")) {
+				if (tmp.getResult_text().contains("冷蔵")) {
+//					if (tmp.getProduct_name().contains("冷蔵") || tmp.getResult_text().contains("冷蔵")) {
+
 					yVO.setCool_type(CommonUtil.COOL_TYPE_2);		
 				}
 				// 2019/12/24  キム 클리크포스트를 야마토 ネコポス로 설정함. 　⇒　ＥＮＤ
@@ -1633,7 +1645,14 @@ public class RakutenDAO {
 				//yVO.setProduct_name1(tmp.getResult_text().replace("\"", ""));
 				
 				// csv작성을 위한 리스트작성
-				yList.add(yVO);
+        		// 2022-02-20: あす楽のみ　対応
+				if ("1".equals(isChecked)) {
+					if ("1".equals(tmp.getTomorrow_hope())) {
+						yList.add(yVO);
+					}
+				}else {
+					yList.add(yVO);
+				}
 			}
 			
 			CommonUtil.executeCSVDownload(csvWriter, writer, header, yList);

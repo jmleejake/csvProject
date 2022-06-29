@@ -1,7 +1,10 @@
 /**
  * 
  */
-function getDate(range) {
+function getDate(range, type) {
+	if(undefined === type) {
+		type = '/';
+	}
 	var d = new Date();
 	var month = ''+(d.getMonth() + 1);
     var day = ''+(d.getDate()+range);
@@ -10,7 +13,7 @@ function getDate(range) {
 	if (month.length < 2) month = '0' + month;
 	if (day.length < 2) day = '0' + day;
 	
-	var date = year +'/'+ month + '/' + day;
+	var date = year+''+type+''+month+''+type+''+day;
 	return date;
 }
 

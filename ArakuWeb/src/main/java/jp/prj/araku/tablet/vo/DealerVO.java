@@ -28,6 +28,9 @@ public class DealerVO {
 	/**備考*/
 	private String remark;
 	
+	/**締切区分*/
+	private String gbn;
+	
 	public String getSeq_id() {
 		return seq_id;
 	}
@@ -105,5 +108,11 @@ public class DealerVO {
 	}
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+	public String getGbn() {
+		return gbn;
+	}
+	public void setGbn(String gbn) {
+		this.gbn = gbn;
 	}
 }

@@ -1,6 +1,7 @@
 package jp.prj.araku.jaiko.inventory.dao;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.opencsv.CSVWriter;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
@@ -41,6 +43,7 @@ import jp.prj.araku.jaiko.inventory.vo.InventoryUpVO;
 import jp.prj.araku.jaiko.inventory.vo.JaikoPrdInventoryVO;
 import jp.prj.araku.jaiko.product.mapper.IJaikoPrdInfoMapper;
 import jp.prj.araku.jaiko.product.vo.JaikoPrdInfoVO;
+import jp.prj.araku.util.ArakuVO;
 import jp.prj.araku.util.CommonUtil;
 
 @Repository
@@ -337,6 +340,105 @@ public class JaikoPrdInventoryDAO {
 		}finally {
 			
 		}
+	}
+	
+	/**
+	 * CSVダウンロード
+	 * 
+	 * @param response
+	 * @param fileEncoding
+	 * @param list >> seq_id_list
+	 * @throws IOException
+	 * @throws CsvDataTypeMismatchException
+	 * @throws CsvRequiredFieldEmptyException
+	 */
+	public void jaikoInvenCsvDownload(HttpServletResponse response, String fileEncoding, String[] list) 
+			throws IOException
+			, CsvDataTypeMismatchException
+			, CsvRequiredFieldEmptyException {
+		IJaikoPrdInventoryMapper mapper = sqlSession.getMapper(IJaikoPrdInventoryMapper.class);
+		BufferedWriter writer = null;
+		CSVWriter csvWriter = null;
+		
+		try {
+			String csvFileName = "jaiko_inven_"+ CommonUtil.getDate("YYYYMMdd", 0) + ".csv";
+
+			response.setContentType("text/csv");
+
+			// creates mock data
+			String headerKey = "Content-Disposition";
+			String headerValue = String.format("attachment; filename=\"%s\"",
+					csvFileName);
+			response.setHeader(headerKey, headerValue);
+			response.setCharacterEncoding(fileEncoding);
 			
+			writer = new BufferedWriter(response.getWriter());
+			
+			csvWriter = new CSVWriter(writer
+					, CSVWriter.DEFAULT_SEPARATOR
+					, CSVWriter.NO_QUOTE_CHARACTER
+					, CSVWriter.DEFAULT_ESCAPE_CHARACTER
+					, CSVWriter.DEFAULT_LINE_END);
+			
+			ArrayList<String> seq_id_list = new ArrayList<String>();
+			for(String id : list) {
+				seq_id_list.add(id);
+			}
+			
+			JaikoPrdInventoryVO srch = new JaikoPrdInventoryVO();
+			srch.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+			srch.setSeq_id_list(seq_id_list);
+			ArrayList<ArakuVO> downList = new ArrayList<ArakuVO>();
+			downList.addAll(mapper.getJaikoPrdInventory(srch));
+			CommonUtil.executeCSVDownload(csvWriter, writer, CommonUtil.jaikoInvenHeader(), downList);
+		}finally {
+			if (csvWriter != null) {
+				csvWriter.close();
+			}
+			
+			if (writer != null) {
+				writer.close();
+			}
+		}
+	}
+	
+	/**
+	 * アップロード
+	 * 
+	 * @param upFile
+	 * @param fileEncoding
+	 * @throws IOException
+	 */
+	public void jaikoInvenCsvUpload(MultipartFile upFile, String fileEncoding) throws IOException {
+		IJaikoPrdInventoryMapper mapper = sqlSession.getMapper(IJaikoPrdInventoryMapper.class);
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(
+					new InputStreamReader(upFile.getInputStream(), fileEncoding));
+			
+			CsvToBean<JaikoPrdInventoryVO> csvToBean = new CsvToBeanBuilder<JaikoPrdInventoryVO>(reader)
+                    .withType(JaikoPrdInventoryVO.class)
+                    .withSkipLines(1)
+                    .withIgnoreLeadingWhiteSpace(true)
+                    .build();
+
+            Iterator<JaikoPrdInventoryVO> iterator = csvToBean.iterator();
+
+            while (iterator.hasNext()) {
+            	JaikoPrdInventoryVO vo = iterator.next();
+            	
+            	JaikoPrdInventoryVO srch = new JaikoPrdInventoryVO();
+            	srch.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+            	srch.setJan_cd(vo.getJan_cd());
+            	ArrayList<JaikoPrdInventoryVO> srchRet = mapper.getJaikoPrdInventory(srch);
+            	if(srchRet.size() < 1) {
+            		mapper.insertJaikoPrdInventory(vo);
+            	}
+            }
+		}finally {
+			if (reader != null) {
+				reader.close();
+			}
+		}
 	}
 }

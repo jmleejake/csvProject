@@ -50,6 +50,7 @@ var columnDefs4 = [
 	{headerName: "納品先", field: "destination", width: 150
 		, editable: true
 	},
+	{headerName: "締切区分", field: "gbn", width: 150, editable: true},
 	{headerName: "備考", field: "remark", width: 300
 		, editable: true
 		, cellEditor: 'agLargeTextCellEditor'
@@ -79,6 +80,7 @@ var startAdd, stopAdd;
 var startEstDt, stopEstDt;
 var startDest, stopDest;
 var startRmk, stopRmk;
+var startGbn, stopGbn;
 
 //수정데이터 배열
 var modifiedData4 = [];
@@ -107,6 +109,7 @@ var gridOption4 = {
 	    	startEstDt = start.est_delivery_dt;
 	    	startDest = start.destination;
 	    	startRmk = start.remark;
+	    	startGbn = start.gbn;
 	    },
 	    onCellEditingStopped: function(event) {
 	    	var stop = event.node.data;
@@ -120,11 +123,13 @@ var gridOption4 = {
 	    	stopEstDt = stop.est_delivery_dt;
 	    	stopDest = stop.destination;
 	    	stopRmk = stop.remark;
+	    	stopGbn = stop.gbn;
 	    	
 	    	if (!(startId == stopId)||!(startNm == stopNm)||!(startTel == stopTel)
 	    			||!(startFax == stopFax)||!(startMobile == stopMobile)||!(startPost == stopPost)
 	    			||!(startAdd == stopAdd)||!(startEstDt == stopEstDt)
-	    			||!(startDest == stopDest)||!(startRmk == stopRmk)) {
+	    			||!(startDest == stopDest)||!(startRmk == stopRmk)
+	    			||!(startGbn == stopGbn)) {
 	    		modifiedData4.push({
 	    			seq_id: stop.seq_id
 	    			, dealer_id: stopId
@@ -137,6 +142,7 @@ var gridOption4 = {
 	    			, est_delivery_dt: stopEstDt
 	    			, destination: stopDest
 	    			, remark: stopRmk
+	    			, gbn: stopGbn
 	    		});
 	    	}
 	    }
@@ -180,6 +186,7 @@ function setRowData4(result) {
 				, est_delivery_dt: result[i].est_delivery_dt
 				, destination: result[i].destination
 				, remark: result[i].remark
+				, gbn: result[i].gbn
 		}
 		
 		rowData4.push(row);

@@ -45,6 +45,15 @@ function preCheck(type) {
 	if ("saga2006" == type) {
 		hasFile = $("#saga-upload2006")[0].files.length;
 	}
+	if ("trans" == type) {
+		hasFile = $("#trans-upload")[0].files.length;
+	}
+	if ("jaikoInven" == type) {
+		hasFile = $("#jaiko-inven-upload")[0].files.length;
+	}
+	if ("jaikoPrd" == type) {
+		hasFile = $("#jaiko-prd-upload")[0].files.length;
+	}
 	
 	if (hasFile <= 0) {
 		$.notify({

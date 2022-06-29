@@ -43,6 +43,13 @@ from jaiko_inventory_info
 	<if test="dealer_id != null and dealer_id != ''">
 	and dealer_id = #{dealer_id}
 	</if>
+	<if test="seq_id_list != null">
+		and seq_id in
+		<foreach item="item" index="index" collection="seq_id_list"
+			open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
 	</trim>
 	</when>
 	<otherwise>

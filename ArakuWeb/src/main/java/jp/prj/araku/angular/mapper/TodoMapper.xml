@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.prj.araku.angular.mapper.ITodoMapper">
+
+<insert id="insertTodo" parameterType="Todo" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
+insert into tb_todo (cntnt)
+values (#{cntnt})
+</insert>
+
+<select id="selectTodo" parameterType="Todo" resultType="Todo">
+select
+seq_id
+, cntnt
+,  todo_end_yn
+, date_format(reg_dt, '%Y-%m-%d %H:%i:%s') reg_dt
+, date_format(upd_dt, '%Y-%m-%d %H:%i:%s') upd_dt 
+from tb_todo
+order by reg_dt desc
+</select>
+
+<delete id="deleteTodo" parameterType="String">
+delete from tb_todo
+where seq_id = #{seq_id}
+</delete>
+
+<update id="updateTodo" parameterType="Todo">
+update tb_todo
+set upd_dt = now()
+<if test="cntnt != null and cntnt != ''">
+, cntnt = #{cntnt}
+</if>
+<if test="todo_end_yn != null and todo_end_yn != ''">
+, todo_end_yn = #{todo_end_yn}
+</if>
+where seq_id = #{seq_id}
+</update>
+
+</mapper>

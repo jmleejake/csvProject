@@ -443,3 +443,7 @@ $("#btn_etc_delete").on("click", function() {
 		}
 	});
 });
+
+$('#btn_down').on('click', function() {
+	$('#transFrm').submit();
+});

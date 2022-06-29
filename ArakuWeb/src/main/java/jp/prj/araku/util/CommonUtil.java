@@ -592,6 +592,50 @@ public class CommonUtil {
 		};
 	}
 	
+	public static String[] transHeader() {
+		return new String[] {
+			"ＪＡＮコード"
+			, "商品名・項目・選択肢 置換前"
+			, "商品名・項目・選択肢 置換後"
+			, "商品数"
+		};
+	}
+	
+	public static String[] jaikoPrdHeader() {
+		return new String[] {
+			"取引先コード"
+			, "取引先名"
+			, "商品コード"
+			, "ブランド"
+			, "商品名"
+			, "ＪＡＮコード"
+			, "商品入数"
+			, "商品単価"
+			, "商品税(抜、込)"
+			, "商品税率"
+			, "規格"
+			, "ＳＫＵ"
+			, "ＡＳＩＮ"
+		};
+	}
+	
+	public static String[] jaikoInvenHeader() {
+		return new String[] {
+			"商品コード"
+			,"ブランド"
+			,"商品名"
+			,"ＪＡＮコード"
+			,"現在商品数"
+			,"入数"
+			,"ケース数"
+			,"バラ数"
+			,"本体売価"
+			,"ロート数"
+			,"取引先コード"
+			,"取引先会社名"
+		};
+	}
+	
 	public static String toCommaFormat(long pdMoney) {
 		DecimalFormat form = new DecimalFormat("#,###");
 	    form.setDecimalSeparatorAlwaysShown(false);

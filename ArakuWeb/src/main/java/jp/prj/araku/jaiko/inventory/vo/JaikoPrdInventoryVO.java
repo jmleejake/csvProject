@@ -1,18 +1,52 @@
 package jp.prj.araku.jaiko.inventory.vo;
 
-public class JaikoPrdInventoryVO {
+import java.util.ArrayList;
+
+import com.opencsv.bean.CsvBindByPosition;
+
+import jp.prj.araku.util.ArakuVO;
+
+public class JaikoPrdInventoryVO extends ArakuVO {
 	/**区分ID*/
 	private String seq_id;
+	
 	/**商品コード*/
+	@CsvBindByPosition(position=0)
 	private String prd_cd;
 	/**ブランド*/
+	@CsvBindByPosition(position=1)
 	private String brand_nm;
 	/**商品名*/
+	@CsvBindByPosition(position=2)
 	private String prd_nm;
 	/**ＪＡＮコード*/
+	@CsvBindByPosition(position=3)
 	private String jan_cd;
 	/**現在商品数*/
+	@CsvBindByPosition(position=4)
 	private String now_prd_cnt;
+	/**入数*/
+	@CsvBindByPosition(position=5)
+	private String prd_qty;
+	/**ケース数*/
+	@CsvBindByPosition(position=6)
+	private String prd_case;
+	/**バラ数*/
+	@CsvBindByPosition(position=7)
+	private String prd_bara;
+	/**本体売価*/
+	@CsvBindByPosition(position=8)
+	private String sell_prc;
+	/**ロート数*/
+	@CsvBindByPosition(position=9)
+	private String prd_lot;
+	/**取引先コード*/
+	@CsvBindByPosition(position=10)
+	private String dealer_id;
+	/**取引先会社名*/
+	@CsvBindByPosition(position=11)
+	private String dealer_nm;
+	
 	/**登録者*/
 	private String reg_user_id;
 	/**登録日付*/
@@ -21,24 +55,13 @@ public class JaikoPrdInventoryVO {
 	private String upd_user_id;
 	/**更新日付*/
 	private String upd_dt;
-	/**入数*/
-	private String prd_qty;
-	/**ケース数*/
-	private String prd_case;
-	/**バラ数*/
-	private String prd_bara;
 	/**賞味期限*/
 	private String exp_dt;
-	/**本体売価*/
-	private String sell_prc;
-	/**ロート数*/
-	private String prd_lot;
-	/**取引先コード*/
-	private String dealer_id;
-	/**取引先会社名*/
-	private String dealer_nm;
 	
 	private String search_type;
+	
+	/**検索用*/
+	private ArrayList<String> seq_id_list;
 	
 	// for download
 	/**規格*/
@@ -212,6 +235,14 @@ public class JaikoPrdInventoryVO {
 
 	public void setDealer_nm(String dealer_nm) {
 		this.dealer_nm = dealer_nm;
+	}
+
+	public ArrayList<String> getSeq_id_list() {
+		return seq_id_list;
+	}
+
+	public void setSeq_id_list(ArrayList<String> seq_id_list) {
+		this.seq_id_list = seq_id_list;
 	}
 
 }

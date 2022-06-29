@@ -35,6 +35,28 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 	</div>
 	</form>
 </div>
+
+<div class="well container-fluid">
+	<div class="col-sm-8">
+	<form id="trans-frm" action="transUp" method="post" enctype="multipart/form-data" onsubmit="return preCheck('trans');" >
+		<div id="trans-csv" class="file-up col-sm-8">
+		<input type="file" id="trans-upload" name="upload" multiple="multiple" style="display:none">
+		<button class="original_btn" style="width: 150px;">置換データファイル</button>
+		<span class="icon">未選択</span>
+		</div>
+		<div class="col-sm-4">
+		<input type="submit" class="original_btn" value="アップロード">
+		</div>
+	</form>
+	</div>
+	<div class="col-sm-4">
+	<button type="button" id="btn_down" class="btn btn-info" style="width: 120px;">ダウンロード</button>
+	<!-- 
+	<button type="button" id="btn_del" class="btn btn-danger" style="width: 120px;">削除</button>
+	 -->
+	</div>
+</div>
+
 <div class="well container-fluid">
 <div class="row">
 	<div class="col-sm-6" style="margin-top: 7px;">
@@ -93,10 +115,32 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 	</div>
 </div>
 <script src="<%=svrInfo %>/resources/menu/translation.js"></script>
+
+<form id="transFrm" action="transDown" method="post"></form>
 </body>
 <script>
 $(document).ready(function() {
 	$("#trans").addClass("active");
+	
+	/* File Upload*/
+	$('#trans-csv').on('click', 'button', function () {
+        $('#trans-upload').click();
+        return false;
+    });
+	
+	$('#trans-upload').on('change', function() {
+	    //選択したファイル情報を取得し変数に格納
+	    var file = $(this).prop('files')[0];
+	    //アイコンを選択中に変更
+	    $('#trans-csv').find('.icon').addClass('select').html('選択中');
+	    //未選択→選択の場合（.filenameが存在しない場合）はファイル名表示用の<div>タグを追加
+	    if(!($('.trans-filename').length)){
+	        $('#trans-csv').append('<div class="trans-filename"></div>');
+	    };
+	    //ファイル名を表示
+	    $('.trans-filename').html('ファイル名：' + file.name);
+	});
+	/* //File Upload*/
 });
 </script>
 </html>

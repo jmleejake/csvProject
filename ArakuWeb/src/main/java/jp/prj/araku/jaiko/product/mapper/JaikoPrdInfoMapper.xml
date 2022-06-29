@@ -8,6 +8,8 @@
 <select id="getJaikoPrdInfo" parameterType="JaikoPrdInfo" resultType="JaikoPrdInfo">
 select
   seq_id
+  , partner_id
+  , partner_nm
   , prd_cd
   , brand_nm
   , prd_nm
@@ -17,6 +19,8 @@ select
   , tax_incld
   , tax_rt
   , std_info
+  , dsku
+  , dasin
   , date_format(reg_dt, '%Y/%m/%d') reg_dt
   , date_format(upd_dt, '%Y/%m/%d') upd_dt
 from jaiko_prd_info
@@ -36,6 +40,9 @@ from jaiko_prd_info
 	<if test="jan_cd != null and jan_cd != ''">
 	and jan_cd like '%${jan_cd}%'
 	</if>
+	<if test="partner_id != null and partner_id != ''">
+	and partner_id = #{partner_id}
+	</if>
 	</trim>
 	</when>
 	<otherwise>
@@ -48,9 +55,11 @@ order by upd_dt desc, seq_id desc
 
 <insert id="insertJaikoPrdInfo" parameterType="JaikoPrdInfo" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
 insert into jaiko_prd_info (prd_cd, brand_nm, prd_nm, jan_cd, prd_cnt
-, prd_unit_prc, tax_incld, tax_rt, std_info)
+, prd_unit_prc, tax_incld, tax_rt, std_info
+, partner_id, partner_nm, dsku, dasin)
 values (#{prd_cd}, #{brand_nm}, #{prd_nm}, #{jan_cd}, #{prd_cnt}
-, #{prd_unit_prc}, #{tax_incld}, #{tax_rt}, #{std_info})
+, #{prd_unit_prc}, #{tax_incld}, #{tax_rt}, #{std_info}
+, #{partner_id}, #{partner_nm}, #{dsku}, #{dasin})
 </insert>
 
 <update id="updateJaikoPrdInfo" parameterType="JaikoPrdInfo">
@@ -109,5 +118,28 @@ where
 delete from jaiko_prd_info
 where seq_id = #{seq_id}
 </delete>
+
+<select id="getOnePrdInfo" parameterType="JaikoPrdInfo" resultType="JaikoPrdInfo">
+select
+  seq_id
+  , partner_id
+  , partner_nm
+  , prd_cd
+  , brand_nm
+  , prd_nm
+  , jan_cd
+  , prd_cnt
+  , prd_unit_prc
+  , tax_incld
+  , tax_rt
+  , std_info
+  , dsku
+  , dasin
+  , date_format(reg_dt, '%Y/%m/%d') reg_dt
+  , date_format(upd_dt, '%Y/%m/%d') upd_dt
+from jaiko_prd_info
+where 
+  jan_cd = #{jan_cd}
+</select>
 
 </mapper>

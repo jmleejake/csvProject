@@ -19,6 +19,7 @@ maker_cd
 , tax_rt
 , dealer_id
 , dealer_nm
+, memo
 )
 values(
 #{maker_cd}
@@ -33,6 +34,7 @@ values(
 , #{tax_rt}
 , #{dealer_id}
 , #{dealer_nm}
+, #{memo}
 )
 </insert>
 
@@ -61,6 +63,7 @@ values(
 		, tax_rt
 		, dealer_id
 		, dealer_nm
+		, memo
 	</otherwise>
 </choose>
 from
@@ -133,6 +136,12 @@ set
 	</if>
 	<if test="dealer_nm != null and dealer_nm !=''">
 	, dealer_nm = #{dealer_nm}
+	</if>
+	<if test="memo != null and memo !=''">
+	, memo = #{memo}
+	</if>
+	<if test="register_date != null and register_date != ''">
+	, register_date = str_to_date(#{register_date}, '%Y/%m/%d')
 	</if>
 where
 	seq_id = #{seq_id}

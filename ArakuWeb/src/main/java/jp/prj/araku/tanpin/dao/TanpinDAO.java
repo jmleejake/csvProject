@@ -224,7 +224,15 @@ public class TanpinDAO {
 			JaikoPrdInventoryVO invenVO = new JaikoPrdInventoryVO();
 			invenVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
 			invenVO.setDealer_id(id);
-			ArrayList<JaikoPrdInventoryVO> list = invenMapper.getJaikoPrdInventory(invenVO);
+			ArrayList<JaikoPrdInventoryVO> invenList = invenMapper.getJaikoPrdInventory(invenVO);
+			ArrayList<JaikoPrdInventoryVO> list = new ArrayList<>();
+			for(JaikoPrdInventoryVO vo : invenList) {
+				// 現在在庫数＜ロット数 の場合、商品名と入数と数量をEXCELに書き込みする。
+				if(Integer.parseInt(vo.getPrd_lot()) < Integer.parseInt(vo.getNow_prd_cnt())) {
+					continue;
+				}
+				list.add(vo);
+			}
 			
 			ITabletPrdMapper dealerMapper = sqlSession.getMapper(ITabletPrdMapper.class);
 			DealerVO dealerVO = new DealerVO();
@@ -500,13 +508,13 @@ public class TanpinDAO {
 					cell.setCellValue("数量");
 					cell.setCellStyle(centerAllLine);
 					cell = row.createCell(5);
-					cell.setCellValue("単価");
+					cell.setCellValue("単位");
 					cell.setCellStyle(centerAllLine);
 					cell = row.createCell(6);
-					cell.setCellValue("合計金額");
+					cell.setCellValue("備考");
 					cell.setCellStyle(centerAllLine);
 					cell = row.createCell(7);
-					cell.setCellValue("備考");
+					cell.setCellValue("");
 					cell.setCellStyle(centerAllLine);
 					cell = row.createCell(8);
 					cell.setCellStyle(allLine);
@@ -517,15 +525,13 @@ public class TanpinDAO {
 						sheet.addMergedRegion(new CellRangeAddress(i2+24,i2+24,0,2));
 						sheet.addMergedRegion(new CellRangeAddress(i2+24,i2+24,7,8));
 						JaikoPrdInventoryVO innerVO = innerList.get(i2);
-						// 現在在庫数＜ロット数 の場合、商品名と入数と数量をEXCELに書き込みする。
-						if(Integer.parseInt(innerVO.getPrd_lot()) < Integer.parseInt(innerVO.getNow_prd_cnt())) {
-							continue;
-						}
+						/*
 						IJaikoPrdInfoMapper prdMapper = sqlSession.getMapper(IJaikoPrdInfoMapper.class);
 						JaikoPrdInfoVO jaikoPrdVO = new JaikoPrdInfoVO();
 						jaikoPrdVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
 						jaikoPrdVO.setJan_cd(innerVO.getJan_cd());
 						ArrayList<JaikoPrdInfoVO> prdInfo = prdMapper.getJaikoPrdInfo(jaikoPrdVO);
+						*/
 						cell = row.createCell(0);
 						cell.setCellValue(innerVO.getPrd_nm());
 						cell.setCellStyle(allLine);
@@ -535,10 +541,11 @@ public class TanpinDAO {
 						cell.setCellStyle(allLine);
 						cell = row.createCell(3);
 						cell.setCellValue(innerVO.getPrd_qty());
-						cell.setCellStyle(allLine);
+						cell.setCellStyle(centerAllLine);
 						cell = row.createCell(4);
 						cell.setCellValue("1");
-						cell.setCellStyle(allLine);
+						cell.setCellStyle(centerAllLine);
+						/*
 						cell = row.createCell(5);
 						cell.setCellValue(String.valueOf(prdInfo.get(0).getPrd_unit_prc()));
 						cell.setCellStyle(allLine);
@@ -549,6 +556,19 @@ public class TanpinDAO {
 						cell.setCellStyle(allLine);
 						cell = row.createCell(7);
 						cell.setCellValue(innerVO.getJan_cd());
+						cell.setCellStyle(allLine);
+						cell = row.createCell(8);
+						cell.setCellStyle(allLine);
+						finalLine = i2+24;
+						*/
+						cell = row.createCell(5);
+						cell.setCellValue("ケース");
+						cell.setCellStyle(centerAllLine);
+						cell = row.createCell(6);
+						cell.setCellValue("");
+						cell.setCellStyle(allLine);
+						cell = row.createCell(7);
+						cell.setCellValue("");
 						cell.setCellStyle(allLine);
 						cell = row.createCell(8);
 						cell.setCellStyle(allLine);
@@ -797,10 +817,6 @@ public class TanpinDAO {
 					sheet.addMergedRegion(new CellRangeAddress(i2+24,i2+24,0,2));
 					sheet.addMergedRegion(new CellRangeAddress(i2+24,i2+24,7,8));
 					JaikoPrdInventoryVO innerVO = list.get(i2);
-					// 現在在庫数＜ロット数 の場合、商品名と入数と数量をEXCELに書き込みする。
-					if(Integer.parseInt(innerVO.getPrd_lot()) < Integer.parseInt(innerVO.getNow_prd_cnt())) {
-						continue;
-					}
 					IJaikoPrdInfoMapper prdMapper = sqlSession.getMapper(IJaikoPrdInfoMapper.class);
 					JaikoPrdInfoVO jaikoPrdVO = new JaikoPrdInfoVO();
 					jaikoPrdVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);

@@ -1000,9 +1000,14 @@ from
 			#{item}
 		</foreach>
 	</if>
-	<if test="delivery_company != null">
+	<choose>
+		<when test="delivery_company != null and delivery_company =='1001'">
+		and delivery_company in ('1001', '1011')
+		</when>
+		<otherwise>
 		and delivery_company = #{delivery_company}
-	</if>
+		</otherwise>
+	</choose>
 </where>
 </select>
 

@@ -12,7 +12,18 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 <jsp:include page="../tanpinTop.jsp"></jsp:include>
 <div class="container-fluid">
 <div class="well container-fluid">
+	<form id="frm">
 	<div class="col-sm-3" >
+	<div class="dropdown">
+		<input type="text" name="maker_cd" class="form-control" placeholder="メーカー名" list ="maker">
+		<datalist id="maker" class="dropdown-menu" role="menu">
+			<c:forEach items="${makers }" var="maker">
+			<option value="${maker.maker_cd }">${maker.maker_nm }</option>
+			</c:forEach>
+		</datalist>
+	</div>
+		
+	<!-- 
 	<div class="dropdown">
 		<button class="btn btn-primary dropdown-toggle" id="menu1" type="button" data-toggle="dropdown">
 		メーカー名<span id="selectedMaker"></span>  <span class="caret"></span></button>
@@ -22,15 +33,15 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 			</c:forEach>
 		</ul>
 	</div>
+	 -->
 	</div>
 	<div class="col-sm-3" >
-	<form id="frm">
-	<input type="text" name="prd_nm" class="form-control" style="width: 250px;" placeholder="商品名">
-	<input type="hidden" name="maker_cd" id="hidMakerCd">
+	<input type="text" name="prd_nm" class="form-control" style="width: 250px;" placeholder="商品名"
+	onkeypress = "if(event.keyCode==13){ srch(); event.preventDefault(); }">
 	<input type="hidden" name="dealer_id" id="hidDealerId">
 	<input type="hidden" name="search_type" value="srch"> 
-	</form>
 	</div>
+	</form>
 	<div class="col-sm-3" >
 	<div class="dropdown">
 		<button class="btn btn-primary dropdown-toggle" id="menu1" type="button" data-toggle="dropdown">

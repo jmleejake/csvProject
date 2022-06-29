@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.prj.araku.jaiko.sales.mapper.IJaikoSalesMapper">
+
+<insert id="insertData" parameterType="JaikoSales">
+insert into jaiko_sales_info (partner_id, partner_nm, gbn
+<choose>
+<when test="'' != gbn and 'TOT' == gbn">
+, mid_tot, memo, dlv_dt, bill_dt
+</when>
+<otherwise>
+, prd_cd, prd_nm, jan_cd, dlv_prc
+, tax_rt, cnsp_tax, dlv_dt
+</otherwise>
+</choose>
+)
+values (#{partner_id}, #{partner_nm}, #{gbn}
+<choose>
+<when test="'' != gbn and 'TOT' == gbn">
+, #{mid_tot}, #{memo}, str_to_date(#{dlv_dt}, '%Y-%m-%d')
+, str_to_date(#{bill_dt}, '%Y-%m-%d'))
+</when>
+<otherwise>
+, #{prd_cd}, #{prd_nm}, #{jan_cd}, #{dlv_prc}
+, #{tax_rt}, #{cnsp_tax}, str_to_date(#{dlv_dt}, '%Y-%m-%d'))
+</otherwise>
+</choose>
+</insert>
+
+<select id="selectData" parameterType="JaikoSales" resultType="JaikoSales">
+select 
+	seq_id, partner_id, partner_nm, gbn, prd_nm, prd_cd, jan_cd
+	,entry_no, qty, dlv_prc, tax_rt, tot, cnsp_tax, sub_tot
+	,sales_no, spec, mid_tot, bill_no, pay_method, pay_comp_yn
+	,manager, mail, memo
+	,date_format(dlv_dt, '%Y-%m-%d') dlv_dt
+	,date_format(bill_dt, '%Y-%m-%d') bill_dt
+	,date_format(reg_dt, '%Y-%m-%d') reg_dt
+	,date_format(upd_dt, '%Y-%m-%d') upd_dt
+from 
+	jaiko_sales_info
+<trim prefix="WHERE" prefixOverrides="AND|OR ">
+<if test="partner_id != null and '' != partner_id">
+	partner_id = #{partner_id}
+</if>
+<if test="from_dt != null and to_dt != null  and '' != from_dt and '' != to_dt">
+	and dlv_dt between str_to_date(#{from_dt}, '%Y%m%d%H%i%s') and str_to_date(#{to_dt}, '%Y%m%d%H%i%s')
+</if>
+<choose>
+<when test="'TOT' == gbn">
+	and gbn = #{gbn}
+</when>
+<otherwise>
+	<if test="jan_cd != null and '' != jan_cd">
+		and jan_cd = #{jan_cd}
+	</if>
+	and gbn != 'TOT'
+</otherwise>
+</choose>
+</trim>
+</select>
+
+<update id="updateData" parameterType="JaikoSales">
+update jaiko_sales_info
+set
+	upd_dt = now()
+	<if test="sales_no != null and sales_no != ''">
+	, sales_no = #{sales_no}
+	</if>
+	<if test="prd_nm != null and prd_nm != ''">
+	, prd_nm = #{prd_nm}
+	</if>
+	<if test="prd_cd != null and prd_cd != ''">
+	, prd_cd = #{prd_cd}
+	</if>
+	<if test="jan_cd != null and jan_cd != ''">
+	, jan_cd = #{jan_cd}
+	</if>
+	<if test="spec != null and spec != ''">
+	, spec = #{spec}
+	</if>
+	<if test="entry_no != null and entry_no != ''">
+	, entry_no = #{entry_no}
+	</if>
+	<if test="qty != null and qty != ''">
+	, qty = #{qty}
+	</if>
+	<if test="dlv_prc != null and dlv_prc != ''">
+	, dlv_prc = #{dlv_prc}
+	</if>
+	<if test="tax_rt != null and tax_rt != ''">
+	, tax_rt = #{tax_rt}
+	</if>
+	<if test="tot != null and tot != ''">
+	, tot = #{tot}
+	</if>
+	<if test="cnsp_tax != null and cnsp_tax != ''">
+	, cnsp_tax = #{cnsp_tax}
+	</if>
+	<if test="sub_tot != null and sub_tot != ''">
+	, sub_tot = #{sub_tot}
+	</if>
+	<if test="mid_tot != null and mid_tot != ''">
+	, mid_tot = #{mid_tot}
+	</if>
+	<if test="bill_no != null and bill_no != ''">
+	, bill_no = #{bill_no}
+	</if>
+	<if test="pay_method != null and pay_method != ''">
+	, pay_method = #{pay_method}
+	</if>
+	<if test="pay_comp_yn != null and pay_comp_yn != ''">
+	, pay_comp_yn = #{pay_comp_yn}
+	</if>
+	<if test="manager != null and manager != ''">
+	, manager = #{manager}
+	</if>
+	<if test="mail != null and mail != ''">
+	, mail = #{mail}
+	</if>
+	<if test="memo != null and memo != ''">
+	, memo = #{memo}
+	</if>
+	<if test="bill_dt != null and bill_dt != ''">
+	, bill_dt = str_to_date(#{bill_dt}, '%Y-%m-%d')
+	</if>
+where
+	seq_id = #{seq_id}
+</update>
+
+<delete id="deleteData" parameterType="java.lang.String">
+	delete from jaiko_sales_info
+	where seq_id = #{seq_id}
+</delete>
+</mapper>

@@ -6,25 +6,7 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 <title>アラクシステム</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
-<script src="<%=svrInfo %>/resources/bootstrap-notify/bootstrap-notify.min.js"></script>
-
-<link rel="stylesheet" href="<%=svrInfo %>/resources/alertfy-js-0.3.11/alertify.core.css">
-<link rel="stylesheet" href="<%=svrInfo %>/resources/alertfy-js-0.3.11/alertify.default.css">
-<script src="<%=svrInfo %>/resources/alertfy-js-0.3.11/alertify.min.js"></script>
-
-<link rel="stylesheet" href="<%=svrInfo %>/resources/ag-grid/ag-grid.css">
-<link rel="stylesheet" href="<%=svrInfo %>/resources/ag-grid/ag-theme-balham.css">
-<script src="<%=svrInfo %>/resources/ag-grid/ag-grid.min.noStyle.js"></script>
-
-<link rel="stylesheet" href="<%=svrInfo %>/resources/bootstrap-datepicker-1.6.4/bootstrap-datepicker.min.css">
-<link rel="stylesheet" href="<%=svrInfo %>/resources/bootstrap-datepicker-1.6.4/bootstrap-datepicker3.min.css">
-<script src="<%=svrInfo %>/resources/bootstrap-datepicker-1.6.4/bootstrap-datepicker.min.js"></script>
-<script src="<%=svrInfo %>/resources/bootstrap-datepicker-1.6.4/bootstrap-datepicker.ja.min.js"></script>
+<jsp:include page="cdnList.jsp"></jsp:include>
 
 <link rel="stylesheet" href="<%=svrInfo %>/resources/fileView.css">
 <script src="<%=svrInfo %>/resources/fileView.js"></script>
@@ -70,6 +52,11 @@ $(document).ready(function() {
 			<ul class="nav navbar-nav">
 				<li id="order" class="nav-item">
 				<a class="nav-link" href="orderView">発注書</a>
+				</li>
+			</ul>
+			<ul class="nav navbar-nav">
+				<li id="estimate" class="nav-item">
+				<a class="nav-link" href="estimate">見積書</a>
 				</li>
 			</ul>
 		</div>

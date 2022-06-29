@@ -259,6 +259,10 @@ $("#btn_search").on("click", function() {
 	});
 });
 
+$('#btn_down').on('click', function() {
+	$('#jaikoPrdFrm').submit();
+});
+
 
 /*
 ------------------
