@@ -1526,6 +1526,17 @@ public class RakutenDAO {
 
 					yVO.setCool_type(CommonUtil.COOL_TYPE_2);		
 				}
+				
+				//商品名置換結果が"."の場合、置換前の商品名を検索する。
+				if (tmp.getResult_text().contains(".")) {
+					if (tmp.getProduct_name().contains("冷凍")) {
+						yVO.setCool_type(CommonUtil.COOL_TYPE_1);
+					}
+					if (tmp.getProduct_name().contains("冷蔵")) {
+						yVO.setCool_type(CommonUtil.COOL_TYPE_2);		
+					}
+				}
+				
 				// 2019/12/24  キム 클리크포스트를 야마토 ネコポス로 설정함. 　⇒　ＥＮＤ
 				
 				yVO.setCustomer_no(tmp.getOrder_no().replace("\"", ""));
