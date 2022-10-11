@@ -705,6 +705,7 @@ CREATE TABLE tanpin_info (
 ) default charset = utf8 comment '単品情報';
 
 alter table tanpin_info add column memo varchar(500) comment 'メモ';
+alter table tanpin_info modify column prd_nm varchar(3000) comment '商品名';
 
 
 DROP TABLE translation_err;

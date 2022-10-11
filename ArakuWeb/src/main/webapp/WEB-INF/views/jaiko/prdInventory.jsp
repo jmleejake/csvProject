@@ -47,7 +47,9 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 	</div>
 	<div class="col-sm-4">
 	<button type="button" id="btn_inven_down" class="btn btn-info" style="width: 120px;">ダウンロード</button>
-	<form id="invenFrm" action="/jaiko/prdInven/down" method="post"></form>
+	<form id="invenFrm" action="/jaiko/prdInven/down" method="post">
+		<input type="hidden" id="hid_data" name="list">
+	</form>
 	</div>
 </div>
 <!-- file upload E -->

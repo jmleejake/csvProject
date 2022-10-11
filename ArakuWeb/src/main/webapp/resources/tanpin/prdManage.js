@@ -1,6 +1,10 @@
 /**
  * javascript for 注文情報
  */
+$(function() {
+	srch();
+});
+
 // 수정데이터 배열
 var modData = [];
 class ColAsDatePicker {

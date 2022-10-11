@@ -91,9 +91,9 @@ public class JaikoPrdInventoryController {
 	}
 	
 	@RequestMapping(value = "/down", method = RequestMethod.POST)
-	public void csvDownload(HttpServletResponse response) {
+	public void csvDownload(HttpServletResponse response, String[] list) {
 		try {
-			dao.jaikoInvenCsvDownload(response, fileEncoding);
+			dao.jaikoInvenCsvDownload(response, fileEncoding, list);
 		} catch (IOException e) {
 			log.error(e.toString());
 		} catch (CsvDataTypeMismatchException e) {
