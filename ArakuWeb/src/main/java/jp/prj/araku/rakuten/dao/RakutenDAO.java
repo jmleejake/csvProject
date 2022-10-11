@@ -954,6 +954,9 @@ public class RakutenDAO {
 					transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
 					transVO.setKeyword(optionName.trim());
 					searchRet = listMapper.getTransInfo(transVO);
+					if(searchRet.size() < 1) {
+						continue;
+					}
 					prdTransVO2.setBefore_trans(searchRet.get(0).getBefore_trans());
 					prdTransVO2.setJan_cd(searchRet.get(0).getJan_cd()); // 2021-07-03 kim
 					prdTransVO2.setPrd_cnt(unitsu1+"");
