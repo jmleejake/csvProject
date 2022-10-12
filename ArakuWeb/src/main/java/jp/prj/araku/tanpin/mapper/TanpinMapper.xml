@@ -93,7 +93,7 @@ from
 	</trim>
 	</if>
 </where>
-order by update_date desc, register_date desc
+order by seq_id desc, update_date desc, register_date desc
 </select>
 
 <update id="updateTanpinInfo" parameterType="Tanpin">
