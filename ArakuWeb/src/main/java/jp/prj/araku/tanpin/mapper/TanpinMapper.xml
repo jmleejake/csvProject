@@ -70,7 +70,7 @@ from
 	tanpin_info
 <where>
 	<if test="prd_cd != null and prd_cd !=''">
-	prd_cd = #{prd_cd}
+	prd_cd like '%${prd_cd}%'
 	</if>
 	<if test="seq_id_list != null">
 		seq_id in

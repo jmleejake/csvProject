@@ -41,8 +41,12 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 	<input type="hidden" name="dealer_id" id="hidDealerId">
 	<input type="hidden" name="search_type" value="srch"> 
 	</div>
+	<div class="col-sm-2">
+	<input type="text" name="prd_cd" class="form-control" style="width: 250px;" placeholder="商品コード(JAN)"
+	onkeypress = "if(event.keyCode==13){ srch(); event.preventDefault(); }">
+	</div>
 	</form>
-	<div class="col-sm-3" >
+	<div class="col-sm-2" >
 	<div class="dropdown">
 		<button class="btn btn-primary dropdown-toggle" id="menu1" type="button" data-toggle="dropdown">
 		取引先<span id="selectedDealer"></span>  <span class="caret"></span></button>
@@ -53,7 +57,7 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 		</ul>
 	</div>
 	</div>
-	<div class="col-sm-3">
+	<div class="col-sm-2">
 	<button type="button" id="btn_srch" class="btn btn-default" style="width: 120px;">検索</button>
 	</div>
 </div>
