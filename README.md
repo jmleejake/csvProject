@@ -1,5 +1,15 @@
 ## Araku system Contents update list <csvProject>
 ### 2022.10.23 아마존 > 在庫管理(Keyword別) 메뉴추가
+```sql
+ drop table kwrd_srch_info;
+ create table kwrd_srch_info(
+	seq_id bigint unsigned primary key auto_increment comment '区分ID'
+	, register_date datetime default now() comment '登録日付'
+	, update_date DATETIME comment '修正日付'
+	, kwrd1 VARCHAR(50) comment 'キーワード１(メーカー名)'
+	, kwrd2 VARCHAR(50) comment 'キーワード2(キーワード名)'
+ ) default charset = utf8 comment 'キーワード検索管理';
+ ```
 <ul>
  <li>
  추가메뉴 캡쳐
