@@ -1,7 +1,19 @@
 ## Araku system Contents update list <csvProject>
 ### 2022.10.23 아마존 > 在庫管理(Keyword別) 메뉴추가
-<img src='https://user-images.githubusercontent.com/18359068/197352982-db43433c-f1bc-4925-9757-49d8c82e1458.png' width='600' />
-<img src='https://user-images.githubusercontent.com/18359068/197353308-bb69e680-6f5b-4a58-a318-bb45bf3928de.png' width='600' />
+<ul>
+ <li>
+ 추가메뉴 캡쳐
+ <div>
+ <img src='https://user-images.githubusercontent.com/18359068/197352982-db43433c-f1bc-4925-9757-49d8c82e1458.png' width='600' />
+ </div>
+ </li>
+ <li>
+ LOMBOK 인스톨
+ <div>
+ <img src='https://user-images.githubusercontent.com/18359068/197353308-bb69e680-6f5b-4a58-a318-bb45bf3928de.png' width='600' />
+ </div>
+ </li>
+</ul>
 
 ### 2022.06.27
 <ol>
