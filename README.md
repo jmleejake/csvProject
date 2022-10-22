@@ -1,4 +1,7 @@
 ## Araku system Contents update list <csvProject>
+### 2022.10.23 아마존 > 在庫管理(Keyword別) 메뉴추가
+<img src='https://user-images.githubusercontent.com/18359068/197350984-a0afbce8-8635-4ac4-9b1a-5ec56e6d2bde.png' width='600' />
+
 ### 2022.06.27
 <ol>
 <li>
