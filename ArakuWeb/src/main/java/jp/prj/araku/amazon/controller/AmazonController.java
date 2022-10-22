@@ -29,6 +29,7 @@ import jp.prj.araku.list.vo.EtcMasterVO;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
 import jp.prj.araku.list.vo.House3MasterVO;
+import jp.prj.araku.list.vo.KeywordSearchInfo;
 import jp.prj.araku.list.vo.OrderSumVO;
 import jp.prj.araku.list.vo.PrdCdMasterVO;
 import jp.prj.araku.list.vo.PrdTransVO;
@@ -635,6 +636,32 @@ public class AmazonController {
 			log.error(e.toString());
 		}
 		return "redirect:translationView";
+	}
+	
+	/**
+	 * 在庫管理(Keyword別)
+	 */
+	@RequestMapping(value = "/kwrdView")
+	public String keywordView() {
+		return "amazon/kwrdView";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "getKwrdInfo")
+	public ArrayList<KeywordSearchInfo> getKwrdInfo(KeywordSearchInfo vo) {
+		return listDao.getKwrdInfo(vo);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "modKwrdInfo", method = RequestMethod.POST)
+	public ArrayList<KeywordSearchInfo> manipulateKwrdInfo(@RequestBody ArrayList<KeywordSearchInfo> list) {
+		return listDao.manipulateKwrdInfo(list);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "delKwrdInfo", method = RequestMethod.POST)
+	public ArrayList<KeywordSearchInfo> deleteKwrdInfo(@RequestBody ArrayList<KeywordSearchInfo> list) {
+		return listDao.deleteKwrdInfo(list);
 	}
 	
 }

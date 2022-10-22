@@ -38,6 +38,7 @@
 		<typeAlias type="jp.prj.araku.product.vo.EstimateVO" alias="Estimate" />
 		<typeAlias type="jp.prj.araku.jaiko.sales.vo.JaikoSalesVO" alias="JaikoSales"/>
 		<typeAlias type="jp.prj.araku.angular.vo.TodoVO" alias="Todo"/>
+		<typeAlias type="jp.prj.araku.list.vo.KeywordSearchInfo" alias="KwrdSrch" />
 	</typeAliases>
 	<mappers>
 		<mapper resource="jp/prj/araku/list/mapper/ListMapper.xml" />

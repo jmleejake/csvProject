@@ -38,6 +38,7 @@ import jp.prj.araku.list.vo.EtcMasterVO;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
 import jp.prj.araku.list.vo.House3MasterVO;
+import jp.prj.araku.list.vo.KeywordSearchInfo;
 import jp.prj.araku.list.vo.OrderSumVO;
 import jp.prj.araku.list.vo.PrdCdMasterVO;
 import jp.prj.araku.list.vo.PrdTransVO;
@@ -830,5 +831,35 @@ public class ListDAO {
 				reader.close();
 			}
 		}
+	}
+	
+	/**
+	 * 第三倉庫マスタ
+	 * */
+	public ArrayList<KeywordSearchInfo> getKwrdInfo(KeywordSearchInfo vo) {
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		return mapper.getKwrdInfo(vo);
+	}
+	
+	public ArrayList<KeywordSearchInfo> manipulateKwrdInfo(ArrayList<KeywordSearchInfo> list) {
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		for(KeywordSearchInfo vo : list) {
+			if(null != vo.getSeq_id()) {
+				mapper.updateKwrdInfo(vo);
+			}else {
+				mapper.insertKwrdInfo(vo);
+			}
+		}
+		KeywordSearchInfo vo = new KeywordSearchInfo();
+		return getKwrdInfo(vo);
+	}
+	
+	public ArrayList<KeywordSearchInfo> deleteKwrdInfo(ArrayList<KeywordSearchInfo> list) {
+		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
+		for(KeywordSearchInfo vo : list) {
+			mapper.deleteKwrdInfo(vo.getSeq_id());
+		}
+		KeywordSearchInfo vo = new KeywordSearchInfo();
+		return getKwrdInfo(vo);
 	}
 }

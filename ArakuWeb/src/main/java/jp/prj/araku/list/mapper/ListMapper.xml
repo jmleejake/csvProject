@@ -628,4 +628,48 @@ where seq_id = #{seq_id}
 <!-- 
 第三倉庫マスタE
 -->
+
+<!-- 
+キーワード検索管理S
+-->
+<insert id="insertKwrdInfo" parameterType="KwrdSrch">
+insert into kwrd_srch_info (kwrd1, kwrd2)
+values (#{kwrd1}, #{kwrd2})
+</insert>
+
+<select id="getKwrdInfo" parameterType="KwrdSrch" resultType="KwrdSrch">
+select seq_id, kwrd1, kwrd2
+, date_format(register_date, '%Y/%m/%d') register_date
+, date_format(update_date, '%Y/%m/%d') update_date
+from kwrd_srch_info
+<trim prefix="WHERE" prefixOverrides="AND |OR ">
+<if test="null != kwrd1 and '' != kwrd1">
+	kwrd1 like '%${kwrd1}%'
+</if>
+<if test="null != kwrd2 and '' != kwrd2">
+	and kwrd2 like '%${kwrd2}%'
+</if>
+</trim>
+order by seq_id desc
+</select>
+
+<update id="updateKwrdInfo" parameterType="KwrdSrch">
+update kwrd_srch_info
+set update_date = now()
+<if test="null != kwrd1 and '' != kwrd1">
+	, kwrd1 = #{kwrd1}
+</if>
+<if test="null != kwrd2 and '' != kwrd2">
+	, kwrd2 = #{kwrd2}
+</if>
+where seq_id = #{seq_id}
+</update>
+
+<delete id="deleteKwrdInfo" parameterType="String">
+delete from kwrd_srch_info
+where seq_id = #{seq_id}
+</delete>
+<!-- 
+キーワード検索管理E
+-->
 </mapper>

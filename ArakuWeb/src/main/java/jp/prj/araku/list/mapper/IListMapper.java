@@ -6,6 +6,7 @@ import jp.prj.araku.list.vo.EtcMasterVO;
 import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
 import jp.prj.araku.list.vo.House3MasterVO;
+import jp.prj.araku.list.vo.KeywordSearchInfo;
 import jp.prj.araku.list.vo.OrderSumVO;
 import jp.prj.araku.list.vo.PrdCdMasterVO;
 import jp.prj.araku.list.vo.PrdTransVO;
@@ -95,4 +96,12 @@ public interface IListMapper {
 	public int insertHouse3Master(House3MasterVO vo);
 	public int updateHouse3Master(House3MasterVO vo);
 	public int deleteHouse3Master(String seq_id);
+	
+	/**
+	 * キーワード検索管理
+	 * */
+	public ArrayList<KeywordSearchInfo> getKwrdInfo(KeywordSearchInfo vo);
+	public int insertKwrdInfo(KeywordSearchInfo vo);
+	public int updateKwrdInfo(KeywordSearchInfo vo);
+	public int deleteKwrdInfo(String seq_id);
 }
