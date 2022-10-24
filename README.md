@@ -1,4 +1,7 @@
 ## Araku system Contents update list <csvProject>
+### 2023.04 Rakuten download/upload 탬플릿항목 추가 예정
+<img src='https://user-images.githubusercontent.com/18359068/197534164-9f25bbfe-969c-4c52-9350-c4c264c66b17.png' width='600' />
+
 ### 2022.10.23 아마존 > 在庫管理(Keyword別) 메뉴추가
 ```sql
  drop table kwrd_srch_info;
