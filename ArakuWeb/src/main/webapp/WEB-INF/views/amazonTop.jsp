@@ -44,9 +44,6 @@ $(document).ready(function() {
 				<li id="home" class="nav-item">
 				<a class="nav-link" href="fileView">情報取り込み</a>
 				</li>
-				<li id="kwrd" class="nav-item">
-				<a class="nav-link" href="kwrdView">在庫管理(Keyword別)</a>
-				</li>
 				<li id="order" class="nav-item">
 				<a class="nav-link" href="orderView">注文情報</a>
 				</li>
@@ -55,6 +52,9 @@ $(document).ready(function() {
 				</li>
 				<li id="prdTrans" class="nav-item">
 				<a class="nav-link" href="prdTransView">商品中間マスタ</a>
+				</li>
+				<li id="kwrd" class="nav-item">
+				<a class="nav-link" href="kwrdView">在庫管理(Keyword別)</a>
 				</li>
 				<li id="region" class="nav-item">
 				<a class="nav-link" href="regionView">マスタ管理</a>

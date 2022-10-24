@@ -1,8 +1,6 @@
 package jp.prj.araku.list.vo;
 
 import lombok.Data;
-import lombok.Setter;
-import lombok.Getter;
 
 public @Data class KeywordSearchInfo {
 	/**区分ID*/
