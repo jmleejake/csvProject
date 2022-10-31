@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import jp.prj.araku.jaiko.partner.dao.JaikoPartnerDAO;
 import jp.prj.araku.jaiko.partner.vo.JaikoPartnerVO;
+import jp.prj.araku.jaiko.partner.vo.JaikoWareTantou;
 
 @RequestMapping(value = "/jaiko/partner")
 @Controller
@@ -34,6 +35,24 @@ public class JaikoPartnerController {
 	@RequestMapping(value = "/delete", method = RequestMethod.POST)
 	public ArrayList<JaikoPartnerVO> deleteJaikoPartner(@RequestBody ArrayList<JaikoPartnerVO> list) {
 		return dao.deletePartner(list);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/tantou/getInfo")
+	public ArrayList<JaikoWareTantou> getWareTantou(JaikoWareTantou vo) {
+		return dao.getWareTantou(vo);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/tantou/manipulate", method = RequestMethod.POST)
+	public ArrayList<JaikoWareTantou> manipulateWareTantou(@RequestBody ArrayList<JaikoWareTantou> list) {
+		return dao.manipulateWareTantou(list);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/tantou/delete", method = RequestMethod.POST)
+	public ArrayList<JaikoWareTantou> deleteWareTantou(@RequestBody ArrayList<JaikoWareTantou> list) {
+		return dao.deleteWareTantou(list);
 	}
 
 }

@@ -33,13 +33,13 @@ public class JaikoMainController {
 	@RequestMapping(value = "/prdWareIn", method = RequestMethod.GET)
 	public String jaikoPrdWareHouseIn() {
 		log.debug("jaikoPrdWareHouseIn");
-		return "jaiko/prdWarehouseIn";
+		return "jaiko/newWareIn";
 	}
 	
 	@RequestMapping(value = "/prdWareOut", method = RequestMethod.GET)
 	public String jaikoPrdWareHouseOut() {
 		log.debug("jaikoPrdWareHouseOut");
-		return "jaiko/prdWarehouseOut";
+		return "jaiko/newWareOut";
 	}
 	
 	@RequestMapping(value = "/fileView", method = RequestMethod.GET)

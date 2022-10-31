@@ -230,3 +230,12 @@ seq_id bigint unsigned primary key auto_increment comment '区分ID'
 , upd_user_id varchar(20) default null comment '更新者'
 , upd_dt datetime comment '更新日付'
 ) default charset = utf8 comment '売上情報';
+
+drop table jaiko_warehouse_tantou_info;
+create table jaiko_warehouse_tantou_info (
+seq_id bigint unsigned primary key auto_increment comment '区分ID'
+, reg_dt datetime default now() comment '登録日付'
+, upd_dt datetime comment '更新日付'
+, tantou_nm varchar(100) comment '担当者名'
+, tantou_tel varchar(20) comment '電話番号'
+) default charset = utf8 comment '担当者情報';

@@ -69,4 +69,36 @@ delete from jaiko_partner_info
 where seq_id = #{seq_id}
 </delete>
 
+<select id="getWareTantou" parameterType="WareTantou" resultType="WareTantou">
+select seq_id, tantou_nm, tantou_tel, reg_dt, upd_dt
+from jaiko_warehouse_tantou_info
+<trim prefix="where" prefixOverrides="and |or ">
+<if test="null != tantou_nm and '' != tantou_nm">
+	tantou_nm like '%${tantou_nm}%'
+</if>
+</trim>
+</select>
+
+<insert id="insertWareTantou" parameterType="WareTantou" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
+insert into jaiko_warehouse_tantou_info (tantou_nm, tantou_tel)
+values (#{tantou_nm},#{tantou_tel})
+</insert>
+
+<update id="updateWareTantou" parameterType="WareTantou">
+update jaiko_warehouse_tantou_info
+set upd_dt = now()
+<if test="tantou_nm != null and tantou_nm != ''">
+, tantou_nm = #{tantou_nm}
+</if>
+<if test="tantou_tel != null and tantou_tel != ''">
+, tantou_tel = #{tantou_tel}
+</if>
+where seq_id = #{seq_id}
+</update>
+
+<delete id="deleteWareTantou" parameterType="java.lang.String">
+delete from jaiko_warehouse_tantou_info
+where seq_id = #{seq_id}
+</delete>
+
 </mapper>
