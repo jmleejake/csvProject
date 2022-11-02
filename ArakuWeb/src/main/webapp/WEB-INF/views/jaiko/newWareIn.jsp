@@ -11,7 +11,6 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 <body>
 <jsp:include page="../jaikoTop.jsp"></jsp:include>
 <div class="container-fluid">
-<div class="col-sm-12">
 <div class="container-fluid">
 <!-- 거래처정보설정 S -->
 <div class="well container-fluid">
@@ -52,13 +51,24 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 </div>
 <!-- 거래처정보설정 E -->
 </div>
-</div>
-
 
 <!-- table S -->
 <div class="well container-fluid">
-<button id="btn_commit" type="button" class="btn btn-success" style="width: 120px; margin-bottom: 10px;">登録</button>
-<button id="btn_delete" type="button" class="btn btn-danger" style="width: 120px; margin-bottom: 10px;">削除</button>
+<div class="container-fluid">
+<form id="frm_srch">
+<div class="col-sm-4"><input type="text" class="form-control" name="prd_nm" placeholder="商品名" onkeypress = "if(event.keyCode==13){ srch(); event.preventDefault(); }"></div>
+<div class="col-sm-4"><input type="text" class="form-control" name="jan_cd" placeholder="JANコード" onkeypress = "if(event.keyCode==13){ srch(); event.preventDefault(); }"></div>
+<input type="hidden" name="search_type" value="srch">
+</form>
+<div class="col-sm-4"><button id="btn_srch" type="button" class="btn btn-primary" style="width: 120px;"><span class="glyphicon glyphicon-search"></span>検索</button></div>
+</div>
+<div class="container-fluid">
+<div class="col-sm-4">
+<button id="btn_commit" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px; margin-top: 10px;">一括登録</button>
+</div>
+<div class="col-sm-4"></div>
+<div class="col-sm-4"></div>
+</div>
 <div id="prdWareInGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
 </div>
 <!-- table E -->
@@ -181,7 +191,7 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 </div>
 <!-- Modal E -->
 </div>
-<script src="<%=svrInfo %>/resources/jaiko/prdWarehouseIn.js"></script>
+<script src="<%=svrInfo %>/resources/jaiko/newWareIn.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
 	$("#prdWareIn").addClass("active");

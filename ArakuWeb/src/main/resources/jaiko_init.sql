@@ -37,6 +37,12 @@ seq_id bigint unsigned primary key auto_increment comment '区分ID'
 , upd_dt datetime default now() comment '更新日付'
 ) default charset = utf8 comment '入出庫在庫';
 
+
+alter table jaiko_warehouse_info add column tantou_nm varchar(100) comment '担当者名';
+alter table jaiko_warehouse_info add column prd_unit char(1) comment '単位';
+alter table jaiko_warehouse_info add column ware_loc char(1) comment '場所';
+
+
 drop table jaiko_prd_info;
 create table jaiko_prd_info (
 seq_id bigint unsigned primary key auto_increment comment '区分ID'

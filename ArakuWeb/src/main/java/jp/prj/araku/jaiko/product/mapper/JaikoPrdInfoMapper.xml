@@ -24,32 +24,32 @@ select
   , date_format(reg_dt, '%Y/%m/%d') reg_dt
   , date_format(upd_dt, '%Y/%m/%d') upd_dt
 from jaiko_prd_info
-<where>
+<trim prefix="where" prefixOverrides="and |or ">
 	<choose>
-	<when test="search_type == 'srch'">
-	<if test="seq_id != null and seq_id != ''">
-	seq_id = #{seq_id}
-	</if>
-	<trim prefixOverrides="and|or">
-	<if test="prd_cd != null and prd_cd != ''">
-	and prd_cd like '%${prd_cd}%'
-	</if>
-	<if test="prd_nm != null and prd_nm != ''">
-	and prd_nm like '%${prd_nm}%'
-	</if>
-	<if test="jan_cd != null and jan_cd != ''">
-	and jan_cd like '%${jan_cd}%'
-	</if>
-	<if test="partner_id != null and partner_id != ''">
-	and partner_id = #{partner_id}
-	</if>
-	</trim>
-	</when>
-	<otherwise>
-	upd_dt between date_add(now(), interval -1 day) and now()
-	</otherwise>
+		<when test="search_type == 'srch'">
+		<if test="seq_id != null and seq_id != ''">
+		seq_id = #{seq_id}
+		</if>
+		<trim prefixOverrides="and|or">
+		<if test="prd_cd != null and prd_cd != ''">
+		and prd_cd like '%${prd_cd}%'
+		</if>
+		<if test="prd_nm != null and prd_nm != ''">
+		and prd_nm like '%${prd_nm}%'
+		</if>
+		<if test="jan_cd != null and jan_cd != ''">
+		and jan_cd like '%${jan_cd}%'
+		</if>
+		<if test="partner_id != null and partner_id != ''">
+		and partner_id = #{partner_id}
+		</if>
+		</trim>
+		</when>
+		<otherwise>
+		upd_dt between date_add(now(), interval -1 day) and now()
+		</otherwise>
 	</choose>
-</where>
+</trim>
 order by upd_dt desc, seq_id desc
 </select>
 
