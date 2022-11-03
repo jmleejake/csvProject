@@ -21,6 +21,12 @@ select
   , std_info
   , dsku
   , dasin
+  , jan_cd1
+  , prd_cnt1
+  , jan_cd2
+  , prd_cnt2
+  , jan_cd3
+  , prd_cnt3
   , date_format(reg_dt, '%Y/%m/%d') reg_dt
   , date_format(upd_dt, '%Y/%m/%d') upd_dt
 from jaiko_prd_info
@@ -38,7 +44,7 @@ from jaiko_prd_info
 		and prd_nm like '%${prd_nm}%'
 		</if>
 		<if test="jan_cd != null and jan_cd != ''">
-		and jan_cd like '%${jan_cd}%'
+		and (jan_cd1 like '%${jan_cd}%' or jan_cd2 like '%${jan_cd}%' or jan_cd3 like '%${jan_cd}%')
 		</if>
 		<if test="partner_id != null and partner_id != ''">
 		and partner_id = #{partner_id}
@@ -56,10 +62,12 @@ order by upd_dt desc, seq_id desc
 <insert id="insertJaikoPrdInfo" parameterType="JaikoPrdInfo" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
 insert into jaiko_prd_info (prd_cd, brand_nm, prd_nm, jan_cd, prd_cnt
 , prd_unit_prc, tax_incld, tax_rt, std_info
-, partner_id, partner_nm, dsku, dasin)
+, partner_id, partner_nm, dsku, dasin
+, jan_cd1, prd_cnt1, jan_cd2, prd_cnt2, jan_cd3, prd_cnt3)
 values (#{prd_cd}, #{brand_nm}, #{prd_nm}, #{jan_cd}, #{prd_cnt}
 , #{prd_unit_prc}, #{tax_incld}, #{tax_rt}, #{std_info}
-, #{partner_id}, #{partner_nm}, #{dsku}, #{dasin})
+, #{partner_id}, #{partner_nm}, #{dsku}, #{dasin}
+, #{jan_cd1}, #{prd_cnt1}, #{jan_cd2}, #{prd_cnt2}, #{jan_cd3}, #{prd_cnt3})
 </insert>
 
 <update id="updateJaikoPrdInfo" parameterType="JaikoPrdInfo">
@@ -105,6 +113,24 @@ set
   <if test="std_info != null and std_info != ''">
   , std_info = #{std_info}
   </if>
+  <if test="jan_cd1 != null and jan_cd1 != ''">
+  , jan_cd1 = #{jan_cd1}
+  </if>
+  <if test="prd_cnt1 != null and prd_cnt1 != ''">
+  , prd_cnt1 = #{prd_cnt1}
+  </if>
+  <if test="jan_cd2 != null and jan_cd2 != ''">
+  , jan_cd2 = #{jan_cd2}
+  </if>
+  <if test="prd_cnt2 != null and prd_cnt2 != ''">
+  , prd_cnt2 = #{prd_cnt2}
+  </if>
+  <if test="jan_cd3 != null and jan_cd3 != ''">
+  , jan_cd3 = #{jan_cd3}
+  </if>
+  <if test="prd_cnt3 != null and prd_cnt3 != ''">
+  , prd_cnt3 = #{prd_cnt3}
+  </if>
 where
   <if test="seq_id != null and seq_id != ''">
   seq_id = #{seq_id}
@@ -135,6 +161,12 @@ select
   , std_info
   , dsku
   , dasin
+  , jan_cd1
+  , prd_cnt1
+  , jan_cd2
+  , prd_cnt2
+  , jan_cd3
+  , prd_cnt3
   , date_format(reg_dt, '%Y/%m/%d') reg_dt
   , date_format(upd_dt, '%Y/%m/%d') upd_dt
 from jaiko_prd_info

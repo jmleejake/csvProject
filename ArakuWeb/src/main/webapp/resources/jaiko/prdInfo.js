@@ -24,6 +24,19 @@ var columnDefs = [
             rows: '6'
         }
 	}
+	, {headerName: "JAＮコード1(単品)", field: "jan_cd1", width: 200, editable: true
+    	, cellEditor: 'agPopupTextCellEditor'}
+	, {headerName: "商品数1", field: "prd_cnt1", width: 200, editable: true
+    	, cellEditor: 'agPopupTextCellEditor'}
+	, {headerName: "JANコード2(中数)", field: "jan_cd2", width: 200, editable: true
+    	, cellEditor: 'agPopupTextCellEditor'}
+	, {headerName: "商品数2", field: "prd_cnt2", width: 200, editable: true
+    	, cellEditor: 'agPopupTextCellEditor'}
+	, {headerName: "JANコード3(箱)", field: "jan_cd3", width: 200, editable: true
+    	, cellEditor: 'agPopupTextCellEditor'}
+	, {headerName: "商品数3", field: "prd_cnt3", width: 200, editable: true
+    	, cellEditor: 'agPopupTextCellEditor'}
+	/*
 	, {headerName: "ＪＡＮコード", field: "jan_cd", width: 200, editable: true
     	, cellEditor: 'agPopupTextCellEditor'}
 	, {headerName: "入数", field: "prd_cnt", width: 100, editable: true
@@ -34,6 +47,7 @@ var columnDefs = [
     	, cellEditor: 'agPopupTextCellEditor'}
 	, {headerName: "税率", field: "tax_rt", width: 100, editable: true
     	, cellEditor: 'agPopupTextCellEditor'}
+    */
 ];
 
 // specify the data
@@ -49,6 +63,12 @@ var prevPrdCnt, afterPrdCnt;
 var prevPrdUnitPrc, afterPrdUnitPrc;
 var prevTaxIncld, afterTaxIncld;
 var prevTaxRt, afterTaxRt;
+var prevJan1, afterJan1;
+var prevJan2, afterJan2;
+var prevJan3, afterJan3;
+var prevCnt1, afterCnt1;
+var prevCnt2, afterCnt2;
+var prevCnt3, afterCnt3;
 
 // let the grid know which columns and what data to use
 var prdInfoGridOptions = {
@@ -77,27 +97,30 @@ var prdInfoGridOptions = {
     		return target === 'ERR';
     	}
     },
+
     onCellEditingStarted: function(event) {
         var previousData = event.node.data;
         prevPrdCd = previousData.prd_cd;
         prevBrandNm = previousData.brand_nm;
         prevPrdNm = previousData.prd_nm;
-        prevJanCd = previousData.jan_cd;
-        prevPrdCnt = previousData.prd_cnt;
-        prevPrdUnitPrc = previousData.prd_unit_prc;
-        prevTaxIncld = previousData.tax_incld;
-        prevTaxRt = previousData.tax_rt;
+        prevJan1 = previousData.jan_cd1;
+        prevJan2 = previousData.jan_cd2;
+        prevJan3 = previousData.jan_cd3;
+        prevCnt1 = previousData.prd_cnt1;
+        prevCnt2 = previousData.prd_cnt2;
+        prevCnt3 = previousData.prd_cnt3;
     },
     onCellEditingStopped: function(event) {
         var afterData = event.node.data;
         afterPrdCd = afterData.prd_cd;
         afterBrandNm = afterData.brand_nm;
         afterPrdNm = afterData.prd_nm;
-        afterJanCd = afterData.jan_cd;
-        afterPrdCnt = afterData.prd_cnt;
-        afterPrdUnitPrc = afterData.prd_unit_prc;
-        afterTaxIncld = afterData.tax_incld;
-        afterTaxRt = afterData.tax_rt;
+        afterJan1 = afterData.jan_cd1;
+        afterJan2 = afterData.jan_cd2;
+        afterJan3 = afterData.jan_cd3;
+        afterCnt1 = afterData.prd_cnt1;
+        afterCnt2 = afterData.prd_cnt2;
+        afterCnt3 = afterData.prd_cnt3;
         
         if (!(prevPrdCd == afterPrdCd) || 
         	!(prevBrandNm == afterBrandNm) ||
@@ -106,7 +129,13 @@ var prdInfoGridOptions = {
         	!(prevPrdCnt == afterPrdCnt) ||
         	!(prevPrdUnitPrc == afterPrdUnitPrc) ||
         	!(prevTaxIncld == afterTaxIncld) ||
-        	!(prevTaxRt == afterTaxRt)) {
+        	!(prevTaxRt == afterTaxRt) ||
+        	!(prevJan1 == afterJan1) ||
+        	!(prevJan2 == afterJan2) ||
+        	!(prevJan3 == afterJan3) ||
+        	!(prevCnt1 == afterCnt1) ||
+        	!(prevCnt2 == afterCnt2) ||
+        	!(prevCnt3 == afterCnt3)) {
         	console.log("modified!");
         	modifiedData.push({
         		seq_id:afterData.seq_id
@@ -118,6 +147,12 @@ var prdInfoGridOptions = {
 				, prd_unit_prc:afterPrdUnitPrc
 				, tax_incld:afterTaxIncld
 				, tax_rt:afterTaxRt
+				, jan_cd1: afterJan1
+				, jan_cd2: afterJan2
+				, jan_cd3: afterJan3
+				, prd_cnt1: afterCnt1
+				, prd_cnt2: afterCnt2
+				, prd_cnt3: afterCnt3
         	});
         }
     }
@@ -168,6 +203,12 @@ function setRowData(result) {
 			, prd_unit_prc:result[i].prd_unit_prc
 			, tax_incld:result[i].tax_incld
 			, tax_rt:result[i].tax_rt
+			, jan_cd1: result[i].jan_cd1
+			, prd_cnt1: result[i].prd_cnt1
+			, jan_cd2: result[i].jan_cd2
+			, prd_cnt2: result[i].prd_cnt2
+			, jan_cd3: result[i].jan_cd3
+			, prd_cnt3: result[i].prd_cnt3
 			, register_date:result[i].reg_dt
 			, update_date:result[i].upd_dt
 		};
@@ -188,11 +229,12 @@ $("#btn_add").on("click", function() {
 		prd_cd: "商品コード"
 			, brand_nm: "ブランド"
 			, prd_nm: "商品名"
-			, jan_cd: "ＪＡＮコード"
-			, prd_cnt: "0"
-			, prd_unit_prc: "0"
-			, tax_incld: "0"
-			, tax_rt: "0"
+			, jan_cd1: '単品'
+			, prd_cnt1: '0'
+			, jan_cd2: '中数'
+			, prd_cnt2: '0'
+			, jan_cd3: '箱'
+			, prd_cnt3: '0'
 	});
 	$.ajax({
 		url: "/jaiko/prdInfo/manipulate"

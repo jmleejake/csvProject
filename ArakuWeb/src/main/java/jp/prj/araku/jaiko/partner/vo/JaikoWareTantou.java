@@ -13,4 +13,10 @@ public @Data class JaikoWareTantou {
 	private String tantou_nm;
 	/**電話番号*/
 	private String tantou_tel;
+	/**担当者ID*/
+	private String tantou_id;
+	/**パスワード*/
+	private String tantou_pass;
+	/**権限*/
+	private String tantou_auth;
 }

@@ -5,8 +5,11 @@ grid setting S
 */
 
 var tantouCal = [
-	{headerName: "担当者名", field: "tantou_nm", width: 200, editable: true}
-	, {headerName: "電話番号", field: "tantou_tel", width: 200, editable: true}
+	{headerName: "ID", field: "tantou_id", width: 150, editable: true}
+	, {headerName: "パスワード", field: "tantou_pass", width: 150, editable: true}
+	, {headerName: "担当者名", field: "tantou_nm", width: 150, editable: true}
+	, {headerName: "電話番号", field: "tantou_tel", width: 150, editable: true}
+	, {headerName: "権限", field: "tantou_auth", width: 100, editable: true}
 ];
 
 // specify the data
@@ -16,6 +19,9 @@ var rowData = [];
 var tantouModified = [];
 var prevTantouNm, afterTantouNm;
 var prevTantouTel, afterTantouTel;
+var prevId, afterId;
+var prevPass, afterPass;
+var prevAuth, afterAuth;
 
 // let the grid know which columns and what data to use
 var tantouGridOptions = {
@@ -44,14 +50,23 @@ var tantouGridOptions = {
         var prev = event.node.data;
         prevTantouNm = prev.tantou_nm;
         prevTantouTel = prev.tantou_tel;
+        prevId = prev.tantou_id;
+        prevPass = prev.tantou_pass;
+        prevAuth = prev.tantou_auth;
     },
     onCellEditingStopped: function(event) {
         var after = event.node.data;
         afterTantouNm = after.tantou_nm;
         afterTantouTel = after.tantou_tel;
+        afterId = after.tantou_id;
+        afterPass = after.tantou_pass;
+        afterAuth = after.tantou_auth;
         
         if (!(prevTantouNm == afterTantouNm) ||
-        	!(prevTantouTel == afterTantouTel)) {
+        	!(prevTantouTel == afterTantouTel) ||
+        	!(prevId == afterId) ||
+        	!(prevPass == afterPass) ||
+        	!(prevAuth == afterAuth)) {
         	console.log("modified!");
         	tantouModified.push(after);
         }
@@ -90,6 +105,9 @@ function setTantouRow(result) {
 			seq_id: result[i].seq_id
 			, tantou_nm:result[i].tantou_nm
 			, tantou_tel:result[i].tantou_tel
+			, tantou_id: result[i].tantou_id
+			, tantou_pass: result[i].tantou_pass
+			, tantou_auth: result[i].tantou_auth
 			, register_date:result[i].reg_dt
 			, update_date:result[i].upd_dt
 		};
@@ -108,6 +126,9 @@ $("#btn_tantou_add").on("click", function() {
 	tantouModified.push({
 		tantou_nm: "担当者名"
 		, tantou_tel: "電話番号"
+		, tantou_id: 'ID'
+		, tantou_pass: 'パスワード'
+		, tantou_auth: '1'	
 	});
 	$.ajax({
 		url: "/jaiko/partner/tantou/manipulate"
@@ -194,7 +215,7 @@ $("#btn_tantou_select").on("click", function() {
     
     $("#tantouModal").modal("hide");
     $("#tantou_nm").html(selectedRows[0].tantou_nm);
-    $("#seq_id").html(selectedRows[0].seq_id);
+    $("#tantou_id").val(selectedRows[0].tantou_id);
     $("#jan_cd").focus();
 });
 

@@ -70,7 +70,9 @@ where seq_id = #{seq_id}
 </delete>
 
 <select id="getWareTantou" parameterType="WareTantou" resultType="WareTantou">
-select seq_id, tantou_nm, tantou_tel, reg_dt, upd_dt
+select seq_id, tantou_nm, tantou_tel
+, tantou_id, tantou_pass, tantou_auth
+, reg_dt, upd_dt
 from jaiko_warehouse_tantou_info
 <trim prefix="where" prefixOverrides="and |or ">
 <if test="null != tantou_nm and '' != tantou_nm">
@@ -80,8 +82,8 @@ from jaiko_warehouse_tantou_info
 </select>
 
 <insert id="insertWareTantou" parameterType="WareTantou" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
-insert into jaiko_warehouse_tantou_info (tantou_nm, tantou_tel)
-values (#{tantou_nm},#{tantou_tel})
+insert into jaiko_warehouse_tantou_info (tantou_nm, tantou_tel, tantou_id, tantou_pass, tantou_auth)
+values (#{tantou_nm},#{tantou_tel}, #{tantou_id}, #{tantou_pass}, #{tantou_auth})
 </insert>
 
 <update id="updateWareTantou" parameterType="WareTantou">
@@ -92,6 +94,15 @@ set upd_dt = now()
 </if>
 <if test="tantou_tel != null and tantou_tel != ''">
 , tantou_tel = #{tantou_tel}
+</if>
+<if test="tantou_id != null and tantou_id != ''">
+, tantou_id = #{tantou_id}
+</if>
+<if test="tantou_pass != null and tantou_pass != ''">
+, tantou_pass = #{tantou_pass}
+</if>
+<if test="tantou_auth != null and tantou_auth != ''">
+, tantou_auth = #{tantou_auth}
 </if>
 where seq_id = #{seq_id}
 </update>

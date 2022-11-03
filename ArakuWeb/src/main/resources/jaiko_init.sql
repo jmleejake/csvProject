@@ -39,8 +39,8 @@ seq_id bigint unsigned primary key auto_increment comment '区分ID'
 
 
 alter table jaiko_warehouse_info add column tantou_nm varchar(100) comment '担当者名';
-alter table jaiko_warehouse_info add column prd_unit char(1) comment '単位';
-alter table jaiko_warehouse_info add column ware_loc char(1) comment '場所';
+alter table jaiko_warehouse_info add column prd_unit char(1) default '2' comment '単位';
+alter table jaiko_warehouse_info add column ware_loc char(1) default '1' comment '場所';
 
 
 drop table jaiko_prd_info;
@@ -64,6 +64,14 @@ seq_id bigint unsigned primary key auto_increment comment '区分ID'
 , upd_user_id varchar(20) default null comment '更新者'
 , upd_dt datetime default now() comment '更新日付'
 ) default charset = utf8 comment '商品情報';
+
+
+alter table jaiko_prd_info add column jan_cd1 varchar(15) comment 'JAＮコード1(単品)';
+alter table jaiko_prd_info add column prd_cnt1 varchar(15) comment '商品数1';
+alter table jaiko_prd_info add column jan_cd2 varchar(15) comment 'JANコード2(中数)';
+alter table jaiko_prd_info add column prd_cnt2 varchar(15) comment '商品数2';
+alter table jaiko_prd_info add column jan_cd3 varchar(15) comment 'JANコード3(箱)';
+alter table jaiko_prd_info add column prd_cnt3 varchar(15) comment '商品数3';
 
 
 drop table jaiko_invoice_info;
@@ -242,6 +250,9 @@ create table jaiko_warehouse_tantou_info (
 seq_id bigint unsigned primary key auto_increment comment '区分ID'
 , reg_dt datetime default now() comment '登録日付'
 , upd_dt datetime comment '更新日付'
+, tantou_id varchar(20) comment '担当者ID'
+, tantou_pass varchar(20) comment 'パスワード'
 , tantou_nm varchar(100) comment '担当者名'
 , tantou_tel varchar(20) comment '電話番号'
+, tantou_auth varchar(3) comment '権限'
 ) default charset = utf8 comment '担当者情報';

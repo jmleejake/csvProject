@@ -4,9 +4,26 @@ grid setting S
 ------------------
 */
 
+// 単位
+const unit = {
+  1: '単品',
+  2: '中品',
+  3: '箱'
+};
+
+//場所
+const loc = {
+  1: '倉庫1',
+  2: '倉庫2',
+  3: '倉庫3'
+};
+
+function extractValues(mappings) {
+  return Object.keys(mappings);
+}
+
 var columnDefs = [
-	, {headerName: "ＪＡＮコード", field: "jan_cd", width: 200}
-	, {headerName: "商品名", field: "prd_nm", width: 400
+	{headerName: "商品名", field: "prd_nm", width: 400
 		, editable: true
     	, cellEditor: 'agLargeTextCellEditor'
     	, cellEditorParams: {
@@ -15,64 +32,31 @@ var columnDefs = [
             rows: '6'
         }
 	}
-	, {headerName: "数量", field: "prd_case", width: 100, editable: true}
-	, {headerName: "単位", field: "prd_bara", width: 100, editable: true
+	, {headerName: "数量", field: "prd_cnt", width: 100, editable: true}
+	, {headerName: "単位", field: "prd_unit", width: 100, editable: true
 		, cellEditor: 'agSelectCellEditor'
 	    , cellEditorParams: {
-	    	values: ['箱', '個']
+	    	values: extractValues(unit)
 	    }
+		, filter: 'agSetColumnFilter'
+		, refData: unit
+	}
+	, {headerName: "場所", field: "ware_loc", width: 100, editable: true
+		, cellEditor: 'agSelectCellEditor'
+	    , cellEditorParams: {
+	    	values: extractValues(loc)
+	    }
+		, filter: 'agSetColumnFilter'
+		, refData: loc
 	}
 	, {headerName: "削除", width: 100, cellRenderer: 'btnRenderer'}
 ];
-
-/*
-var columnDefs = [
-	{headerName: "商品コード", field: "prd_cd", width: 200}
-	, {headerName: "ＪＡＮコード", field: "jan_cd", width: 200}
-	, {headerName: "ブランド", field: "brand_nm", width: 200
-		, editable: true
-    	, cellEditor: 'agLargeTextCellEditor'
-    	, cellEditorParams: {
-            maxLength: '500',
-            cols: '50',
-            rows: '6'
-        }
-	}
-	, {headerName: "商品名", field: "prd_nm", width: 400
-		, editable: true
-    	, cellEditor: 'agLargeTextCellEditor'
-    	, cellEditorParams: {
-            maxLength: '500',
-            cols: '50',
-            rows: '6'
-        }
-	}
-	, {headerName: "入数", field: "prd_qty", width: 100, editable: true
-    	, cellEditor: 'agPopupTextCellEditor'}
-	, {headerName: "ケース数", field: "prd_case", width: 250, editable: true
-    	, cellEditor: 'agPopupTextCellEditor'}
-	, {headerName: "バラ数", field: "prd_bara", width: 250, editable: true
-    	, cellEditor: 'agPopupTextCellEditor'}
-	, {headerName: "現在商品数", field: "now_prd_cnt", width: 250}
-	, {headerName: "賞味期限", field: "exp_dt", width: 250, editable: true, cellEditor: 'datePicker'}
-	, {headerName: "本体売価", field: "sell_prc", width: 250, editable: true
-    	, cellEditor: 'agPopupTextCellEditor'}
-	, {headerName: "単価", field: "prd_unit_prc", width: 100, editable: true
-    	, cellEditor: 'agPopupTextCellEditor'}
-	, {headerName: "商品税(抜、込)", field: "tax_incld", width: 100, editable: true
-    	, cellEditor: 'agPopupTextCellEditor'}
-	, {headerName: "税率", field: "tax_rt", width: 100, editable: true
-    	, cellEditor: 'agPopupTextCellEditor'}
-];
-*/
 
 // specify the data
 var rowData = [];
 
 // 수정데이터 배열
 var modifiedData = [];
-var prevPrdCnt, afterPrdCnt;
-var prevPrdUnitPrc, afterPrdUnitPrc;
 
 // let the grid know which columns and what data to use
 var prdWareInGridOptions = {
@@ -91,67 +75,16 @@ var prdWareInGridOptions = {
 		}
     },
     onCellEditingStarted: function(event) {
-        var previousData = event.node.data;
-        prevPrdCnt = previousData.prd_cnt;
-        prevPrdUnitPrc = previousData.prd_unit_prc;
+        var prev = event.node.data;
+        
+        console.log('prev');
+        console.log(prev);
     },
     onCellEditingStopped: function(event) {
-        var afterData = event.node.data;
-        afterPrdCnt = afterData.prd_cnt;
-        afterPrdUnitPrc = afterData.prd_unit_prc;
+        var after = event.node.data;
         
-        if(!(prevPrdQty == afterPrdQty)) {
-        	modifiedData.push({
-        		seq_id:afterData.seq_id
-        		, jan_cd:afterData.jan_cd
-    			, prd_cnt:afterPrdCnt
-    			, prd_unit_prc:afterPrdUnitPrc
-    			, tax_incld:afterTaxIncld
-    			, tax_rt:afterTaxRt
-    			, brand_nm:afterBrandNm
-    			, prd_nm:afterPrdNm
-    			, prd_qty:afterPrdQty
-    			, exp_dt:afterExpDt
-    			, sell_prc:afterSellPrc
-    			, partner_id:$("#partner_id").text()
-    			, partner_nm:$("#partner_nm").text()
-    			, search_type:'wareIn'
-        	});
-        }else if(!(prevPrdCase == afterPrdCase)) {
-        	modifiedData.push({
-        		seq_id:afterData.seq_id
-        		, jan_cd:afterData.jan_cd
-    			, prd_cnt:afterPrdCnt
-    			, prd_unit_prc:afterPrdUnitPrc
-    			, tax_incld:afterTaxIncld
-    			, tax_rt:afterTaxRt
-    			, brand_nm:afterBrandNm
-    			, prd_nm:afterPrdNm
-    			, prd_case:afterPrdCase
-    			, exp_dt:afterExpDt
-    			, sell_prc:afterSellPrc
-    			, partner_id:$("#partner_id").text()
-    			, partner_nm:$("#partner_nm").text()
-    			, search_type:'wareIn'
-        	});
-        }else if(!(prevPrdBara == afterPrdBara)) {
-        	modifiedData.push({
-        		seq_id:afterData.seq_id
-        		, jan_cd:afterData.jan_cd
-    			, prd_cnt:afterPrdCnt
-    			, prd_unit_prc:afterPrdUnitPrc
-    			, tax_incld:afterTaxIncld
-    			, tax_rt:afterTaxRt
-    			, brand_nm:afterBrandNm
-    			, prd_nm:afterPrdNm
-    			, prd_bara:afterPrdBara
-    			, exp_dt:afterExpDt
-    			, sell_prc:afterSellPrc
-    			, partner_id:$("#partner_id").text()
-    			, partner_nm:$("#partner_nm").text()
-    			, search_type:'wareIn'
-        	});
-        }
+        console.log('after');
+        console.log(after);
     }
 };
 
@@ -273,6 +206,11 @@ $("#btn_commit").on("click", function() {
 		return;
 	}
 	
+	if($("#tantou_id").val() === "") {
+		pleaseSelectNotify('担当者を選択してください。');
+		return;
+	}
+	
 	if(modifiedData.length == 0) {
 		pleaseSelectNotify('情報を修正してください。');
 		return;
@@ -365,8 +303,9 @@ function srch() {
 	    			seq_id: result[i].seq_id
 	    			, prd_nm:result[i].prd_nm
 	    			, jan_cd:result[i].jan_cd
-	    			, dsku: '0'
-	    			, dasin: '個'
+	    			, prd_cnt: '0'
+	    			, prd_unit: '1'
+	    			, ware_loc: '1'
 	    		};
 	    		rowData.push(row);
 	    	}

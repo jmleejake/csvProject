@@ -19,13 +19,11 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 	<table class="table table-bordered">
 		<thead>
 		  <tr>
-<!-- 		    <th>取引先No.</th> -->
 		    <th>取引先名</th>
 		  </tr>
 		</thead>
 		<tbody>
 		  <tr>
-<!-- 		    <td id="partner_id"></td> -->
 		    <td id="partner_nm"></td>
 		  </tr>
 		</tbody>
@@ -46,7 +44,7 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 		  </tr>
 		</tbody>
 	</table>
-	<input type="hidden" id="seq_id">
+	<input type="hidden" id="tantou_id">
 	</div>
 </div>
 <!-- 거래처정보설정 E -->
@@ -64,7 +62,7 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 </div>
 <div class="container-fluid">
 <div class="col-sm-4">
-<button id="btn_commit" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px; margin-top: 10px;">一括登録</button>
+<button id="btn_commit" type="button" class="btn btn-success" style="width: 120px; margin-bottom: 10px; margin-top: 10px;"">登録</button>
 </div>
 <div class="col-sm-4"></div>
 <div class="col-sm-4"></div>
