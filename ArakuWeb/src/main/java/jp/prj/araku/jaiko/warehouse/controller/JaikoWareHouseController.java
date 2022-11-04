@@ -48,9 +48,9 @@ public class JaikoWareHouseController {
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = "/proc", method = RequestMethod.POST)
-	public int processJaikoWarehouse() {
-		return dao.processJaikoWarehouse();
+	@RequestMapping(value = "/proc")
+	public int processJaikoWarehouse(JaikoWareHouseVO vo) {
+		return dao.processJaikoWarehouse(vo.getSearch_type());
 	}
 
 }

@@ -174,7 +174,7 @@ public class JaikoWareHouseDAO {
 		return ret;
 	}
 	
-	public int processJaikoWarehouse() {
+	public int processJaikoWarehouse(String type) {
 		IJaikoWareHouseMapper wareHouseMapper = sqlSession.getMapper(IJaikoWareHouseMapper.class);
 		IJaikoPrdInventoryMapper invenMapper = sqlSession.getMapper(IJaikoPrdInventoryMapper.class);
 		IJaikoPrdInfoMapper prdMapper = sqlSession.getMapper(IJaikoPrdInfoMapper.class);
@@ -208,12 +208,16 @@ public class JaikoWareHouseDAO {
 				unitCnt = Integer.parseInt(prdInfo.getPrd_cnt3());
 				break;
 			}
-			invenSrch.setSearch_type("wareIn");
-			invenSrch.setNow_prd_cnt(String.valueOf(nowCnt + quantity*unitCnt));
+			invenSrch.setSearch_type(type);
+			if("wareIn".equals(type)) {
+				invenSrch.setNow_prd_cnt(String.valueOf(nowCnt + quantity*unitCnt));
+			}else if("wareOut".equals(type)) {
+				invenSrch.setNow_prd_cnt(String.valueOf(nowCnt - quantity*unitCnt));
+			}
 			ret = invenMapper.updateJaikoPrdInventory(invenSrch);
 			
 			JaikoWareHouseVO houseSrch = new JaikoWareHouseVO();
-			houseSrch.setSearch_type("wareIn");
+			houseSrch.setSearch_type(type);
 			ret = wareHouseMapper.insertWarehouseFromWareTemp(houseSrch);
 		}
 		return ret;

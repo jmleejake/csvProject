@@ -48,7 +48,7 @@ var prevUnit, afterUnit;
 var prevLoc, afterLoc;
 
 // let the grid know which columns and what data to use
-var prdWareInGridOptions = {
+var prdWareOutGridOptions = {
 	suppressRowClickSelection: false,
 	rowSelection: 'multiple',
 	columnDefs: columnDefs,
@@ -64,13 +64,13 @@ var prdWareInGridOptions = {
 		}
     },
     onCellEditingStarted: function(event) {
-        var prev = event.node.data;
+    	var prev = event.node.data;
         prevCnt = prev.prd_quantity;
         prevUnit = prev.prd_unit;
         prevLoc = prev.ware_loc;
     },
     onCellEditingStopped: function(event) {
-        var after = event.node.data;
+    	var after = event.node.data;
         afterCnt = after.prd_quantity;
         afterUnit = after.prd_unit;
         afterLoc = after.ware_loc;
@@ -104,16 +104,10 @@ var prdWareInGridOptions = {
 };
 
 // lookup the container we want the Grid to use
-var prdWareInGridDiv = document.querySelector('#prdWareInGrid');
+var prdWareOutGridDiv = document.querySelector('#prdWareOutGrid');
 
 // create the grid passing in the div to use together with the columns & data we want to use
-new agGrid.Grid(prdWareInGridDiv, prdWareInGridOptions);
-
-function isFirstColumn(params) {
-	var displayedColumns = params.columnApi.getAllDisplayedColumns();
-	var thisIsFirstColumn = displayedColumns[0] === params.column;
-	return thisIsFirstColumn;
-}
+new agGrid.Grid(prdWareOutGridDiv, prdWareOutGridOptions);
 
 /*
 ------------------
@@ -143,7 +137,7 @@ $("#btn_commit").on("click", function() {
 		url: "/jaiko/warehouse/proc"
 		, dataType: "json"
 		, contentType: 'application/json'
-		, data: {search_type: 'wareIn'}
+		, data: {search_type: 'wareOut'}	
 		, success: function(res) {
 			if('1' == res) {
 				alert('登録終わりました。');
@@ -194,7 +188,7 @@ function srch() {
 	    		};
 	    		rowData.push(row);
 	    	}
-	    	prdWareInGridOptions.api.setRowData(rowData);
+	    	prdWareOutGridOptions.api.setRowData(rowData);
 	    				
 	    	$.ajax({
 	    		url: "/jaiko/warehouse/temp/mani"
@@ -212,8 +206,8 @@ function srch() {
 }
 
 function deleteRow() {
-	var selectedData = prdWareInGridOptions.api.getSelectedRows();
-	prdWareInGridOptions.api.applyTransaction({ remove: selectedData });
+	var selectedData = prdWareOutGridOptions.api.getSelectedRows();
+	prdWareOutGridOptions.api.applyTransaction({ remove: selectedData });
 }
 
 /*

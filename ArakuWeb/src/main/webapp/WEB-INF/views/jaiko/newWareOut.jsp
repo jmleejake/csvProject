@@ -20,13 +20,11 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 	<table class="table table-bordered">
 		<thead>
 		  <tr>
-<!-- 		    <th>取引先No.</th> -->
 		    <th>取引先名</th>
 		  </tr>
 		</thead>
 		<tbody>
 		  <tr>
-<!-- 		    <td id="partner_id"></td> -->
 		    <td id="partner_nm"></td>
 		  </tr>
 		</tbody>
@@ -47,7 +45,7 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 		  </tr>
 		</tbody>
 	</table>
-	<input type="hidden" id="seq_id">
+	<input type="hidden" id="tantou_id">
 	</div>
 </div>
 <!-- 거래처정보설정 E -->
@@ -57,8 +55,21 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 
 <!-- table S -->
 <div class="well container-fluid">
-<button id="btn_commit" type="button" class="btn btn-success" style="width: 120px; margin-bottom: 10px;">登録</button>
-<button id="btn_delete" type="button" class="btn btn-danger" style="width: 120px; margin-bottom: 10px;">削除</button>
+<div class="container-fluid">
+<form id="frm_srch">
+<div class="col-sm-4"><input type="text" class="form-control" name="prd_nm" placeholder="商品名" onkeypress = "if(event.keyCode==13){ srch(); event.preventDefault(); }"></div>
+<div class="col-sm-4"><input type="text" class="form-control" name="jan_cd" placeholder="JANコード" onkeypress = "if(event.keyCode==13){ srch(); event.preventDefault(); }"></div>
+<input type="hidden" name="search_type" value="srch">
+</form>
+<div class="col-sm-4"><button id="btn_srch" type="button" class="btn btn-primary" style="width: 120px;"><span class="glyphicon glyphicon-search"></span>検索</button></div>
+</div>
+<div class="container-fluid">
+<div class="col-sm-4">
+<button id="btn_commit" type="button" class="btn btn-success" style="width: 120px; margin-bottom: 10px; margin-top: 10px;"">登録</button>
+</div>
+<div class="col-sm-4"></div>
+<div class="col-sm-4"></div>
+</div>
 <div id="prdWareOutGrid" style="width:auto; height: 500px;" class="ag-theme-balham"></div>
 </div>
 <!-- table E -->
@@ -181,7 +192,7 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 </div>
 <!-- Modal E -->
 </div>
-<script src="<%=svrInfo %>/resources/jaiko/prdWarehouseOut.js"></script>
+<script src="<%=svrInfo %>/resources/jaiko/newWareOut.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
 	$("#prdWareOut").addClass("active");

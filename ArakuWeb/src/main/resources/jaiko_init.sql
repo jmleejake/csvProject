@@ -38,8 +38,9 @@ seq_id bigint unsigned primary key auto_increment comment '区分ID'
 ) default charset = utf8 comment '入出庫在庫';
 
 
+alter table jaiko_warehouse_info add column tantou_id varchar(20) comment '担当者ID';
 alter table jaiko_warehouse_info add column tantou_nm varchar(100) comment '担当者名';
-alter table jaiko_warehouse_info add column prd_unit char(1) default '2' comment '単位';
+alter table jaiko_warehouse_info add column prd_unit char(1) default '1' comment '単位';
 alter table jaiko_warehouse_info add column ware_loc char(1) default '1' comment '場所';
 
 
@@ -66,7 +67,7 @@ seq_id bigint unsigned primary key auto_increment comment '区分ID'
 ) default charset = utf8 comment '商品情報';
 
 
-alter table jaiko_prd_info add column jan_cd1 varchar(15) comment 'JAＮコード1(単品)';
+alter table jaiko_prd_info add column jan_cd1 varchar(15) comment 'JANコード1(単品)';
 alter table jaiko_prd_info add column prd_cnt1 varchar(15) comment '商品数1';
 alter table jaiko_prd_info add column jan_cd2 varchar(15) comment 'JANコード2(中数)';
 alter table jaiko_prd_info add column prd_cnt2 varchar(15) comment '商品数2';
@@ -256,3 +257,20 @@ seq_id bigint unsigned primary key auto_increment comment '区分ID'
 , tantou_tel varchar(20) comment '電話番号'
 , tantou_auth varchar(3) comment '権限'
 ) default charset = utf8 comment '担当者情報';
+
+drop table jaiko_warehouse_temp;
+create table jaiko_warehouse_temp (
+seq_id bigint unsigned comment '区分ID'
+, partner_id varchar(20) comment '取引先'
+, partner_nm varchar(100) comment '取引先名'
+, tantou_id varchar(20) comment '本社担当者ID'
+, tantou_nm varchar(100) comment '本社担当者名'
+, jan_cd varchar(15) comment 'JANコード'
+, prd_cd varchar(20) comment '商品コード'
+, prd_nm varchar(1000) comment '商品名'
+, prd_quantity varchar(5) comment '商品数量'
+, prd_unit char(1) comment '単位'
+, ware_loc char(1) comment '場所'
+, reg_dt datetime default now() comment '登録日付'
+, upd_dt datetime default now() comment '更新日付'
+) default charset = utf8 comment '入出庫TEMP';
