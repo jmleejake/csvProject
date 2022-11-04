@@ -220,6 +220,7 @@ public class JaikoWareHouseDAO {
 			houseSrch.setSearch_type(type);
 			ret = wareHouseMapper.insertWarehouseFromWareTemp(houseSrch);
 		}
+		ret = wareHouseMapper.deleteWareTemp();
 		return ret;
 	}
 
