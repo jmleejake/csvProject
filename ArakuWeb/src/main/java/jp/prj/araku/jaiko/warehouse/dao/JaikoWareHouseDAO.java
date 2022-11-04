@@ -10,8 +10,11 @@ import org.springframework.stereotype.Repository;
 
 import jp.prj.araku.jaiko.inventory.mapper.IJaikoPrdInventoryMapper;
 import jp.prj.araku.jaiko.inventory.vo.JaikoPrdInventoryVO;
+import jp.prj.araku.jaiko.product.mapper.IJaikoPrdInfoMapper;
+import jp.prj.araku.jaiko.product.vo.JaikoPrdInfoVO;
 import jp.prj.araku.jaiko.warehouse.mapper.IJaikoWareHouseMapper;
 import jp.prj.araku.jaiko.warehouse.vo.JaikoWareHouseVO;
+import jp.prj.araku.jaiko.warehouse.vo.JaikoWareTempVO;
 import jp.prj.araku.util.CommonUtil;
 
 @Repository
@@ -155,6 +158,65 @@ public class JaikoWareHouseDAO {
 		JaikoWareHouseVO retVO = new JaikoWareHouseVO();
 		retVO.setSearch_type("afterCommit");
 		return getJaikoWareHouse(retVO);
+	}
+	
+	public int manipulateJaikoWareTemp(ArrayList<JaikoWareTempVO> list) {
+		IJaikoWareHouseMapper mapper = sqlSession.getMapper(IJaikoWareHouseMapper.class);
+		int ret = 0;
+		for(JaikoWareTempVO vo : list) {
+			JaikoWareTempVO data = mapper.getWareTemp(vo.getJan_cd()).size() > 0  ? mapper.getWareTemp(vo.getJan_cd()).get(0) : null;
+			if(null != data) {
+				ret = mapper.updateWareTemp(vo);
+			}else {
+				ret = mapper.insertWareTemp(vo);
+			}
+		}
+		return ret;
+	}
+	
+	public int processJaikoWarehouse() {
+		IJaikoWareHouseMapper wareHouseMapper = sqlSession.getMapper(IJaikoWareHouseMapper.class);
+		IJaikoPrdInventoryMapper invenMapper = sqlSession.getMapper(IJaikoPrdInventoryMapper.class);
+		IJaikoPrdInfoMapper prdMapper = sqlSession.getMapper(IJaikoPrdInfoMapper.class);
+		
+		int ret = 0;
+		
+		ArrayList<JaikoWareTempVO> tempList = wareHouseMapper.getWareTemp("");
+		for(JaikoWareTempVO temp : tempList) {
+			JaikoPrdInfoVO prdSrch = new JaikoPrdInfoVO();
+			prdSrch.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+			prdSrch.setJan_cd(temp.getJan_cd());
+			JaikoPrdInfoVO prdInfo = prdMapper.getJaikoPrdInfo(prdSrch).get(0);
+			
+			JaikoPrdInventoryVO invenSrch = new JaikoPrdInventoryVO();
+			invenSrch.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+			invenSrch.setJan_cd(temp.getJan_cd());
+			JaikoPrdInventoryVO inven = invenMapper.getJaikoPrdInventory(invenSrch).get(0);
+			
+			int quantity = Integer.parseInt(temp.getPrd_quantity());
+			int unit = Integer.parseInt(temp.getPrd_unit());
+			int nowCnt = Integer.parseInt(inven.getNow_prd_cnt());
+			int unitCnt = Integer.parseInt(prdInfo.getPrd_cnt1());
+			switch (unit) {
+			case 2:
+				// 中品
+				unitCnt = Integer.parseInt(prdInfo.getPrd_cnt2());
+				break;
+				
+			case 3:
+				// 箱
+				unitCnt = Integer.parseInt(prdInfo.getPrd_cnt3());
+				break;
+			}
+			invenSrch.setSearch_type("wareIn");
+			invenSrch.setNow_prd_cnt(String.valueOf(nowCnt + quantity*unitCnt));
+			ret = invenMapper.updateJaikoPrdInventory(invenSrch);
+			
+			JaikoWareHouseVO houseSrch = new JaikoWareHouseVO();
+			houseSrch.setSearch_type("wareIn");
+			ret = wareHouseMapper.insertWarehouseFromWareTemp(houseSrch);
+		}
+		return ret;
 	}
 
 }

@@ -7,6 +7,7 @@ grid setting S
 var columnDefs = [
 	{headerName: "商品コード", field: "prd_cd", width: 200, editable: true
     	, cellEditor: 'agPopupTextCellEditor'}
+	/*
 	, {headerName: "ブランド", field: "brand_nm", width: 200, editable: true
     	, cellEditor: 'agLargeTextCellEditor'
     	, cellEditorParams: {
@@ -15,6 +16,7 @@ var columnDefs = [
             rows: '6'
         }
 	}
+	*/
 	, {headerName: "商品名", field: "prd_nm", width: 400
 		, editable: true
     	, cellEditor: 'agLargeTextCellEditor'

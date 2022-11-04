@@ -23,16 +23,8 @@ function extractValues(mappings) {
 }
 
 var columnDefs = [
-	{headerName: "商品名", field: "prd_nm", width: 400
-		, editable: true
-    	, cellEditor: 'agLargeTextCellEditor'
-    	, cellEditorParams: {
-            maxLength: '500',
-            cols: '50',
-            rows: '6'
-        }
-	}
-	, {headerName: "数量", field: "prd_cnt", width: 100, editable: true}
+	{headerName: "商品名", field: "prd_nm", width: 400}
+	, {headerName: "数量", field: "prd_quantity", width: 100, editable: true}
 	, {headerName: "単位", field: "prd_unit", width: 100, editable: true
 		, cellEditor: 'agSelectCellEditor'
 	    , cellEditorParams: {
@@ -57,6 +49,9 @@ var rowData = [];
 
 // 수정데이터 배열
 var modifiedData = [];
+var prevCnt, afterCnt;
+var prevUnit, afterUnit;
+var prevLoc, afterLoc;
 
 // let the grid know which columns and what data to use
 var prdWareInGridOptions = {
@@ -76,15 +71,41 @@ var prdWareInGridOptions = {
     },
     onCellEditingStarted: function(event) {
         var prev = event.node.data;
-        
-        console.log('prev');
-        console.log(prev);
+        prevCnt = prev.prd_quantity;
+        prevUnit = prev.prd_unit;
+        prevLoc = prev.ware_loc;
     },
     onCellEditingStopped: function(event) {
         var after = event.node.data;
-        
-        console.log('after');
-        console.log(after);
+        afterCnt = after.prd_quantity;
+        afterUnit = after.prd_unit;
+        afterLoc = after.ware_loc;
+        if(!(prevCnt === afterCnt) || !(prevUnit === afterUnit) || !(prevLoc === afterLoc)) {
+            modifiedData.push({
+	         	seq_id: after.seq_id
+	         	, partner_id: $("#partner_id").val()
+	         	, partner_nm: $("#partner_nm").html()
+	         	, tantou_id: $("#tantou_id").val()
+	         	, tantou_nm: $("#tantou_nm").html()
+	         	, jan_cd: after.jan_cd
+	         	, prd_cd: after.prd_cd
+	         	, prd_nm: after.prd_nm
+	         	, prd_quantity: afterCnt
+	         	, prd_unit: afterUnit
+	         	, ware_loc: afterLoc
+            });
+            $.ajax({
+        		url: "/jaiko/warehouse/temp/mani"
+        		, type:"post"
+        		, dataType: "json"
+        		, contentType: 'application/json'
+        		, data:JSON.stringify(modifiedData)
+        		, success: function(res) {
+        			console.log('mani');
+        			console.log(res);
+        		}
+        	});
+        }
     }
 };
 
@@ -162,43 +183,6 @@ grid setting E
 button action S
 ------------------
 */
-var janCd;
-function setRowData(result) {
-	rowData = [];
-	
-	if(result.length < 1) {
-		alert(janCd + "\n登録されていないコードです。");
-		return false;
-	}
-	
-	for (var i=0; i<result.length; i++) {
-		var row = {
-			seq_id: result[i].seq_id
-			, prd_cd:result[i].prd_cd
-			, brand_nm:result[i].brand_nm
-			, prd_nm:result[i].prd_nm
-			, jan_cd:result[i].jan_cd
-			, prd_cnt:result[i].prd_cnt
-			, prd_unit_prc:result[i].prd_unit_prc
-			, tax_incld:result[i].tax_incld
-			, tax_rt:result[i].tax_rt
-			, now_prd_cnt:result[i].now_prd_cnt
-			, prd_qty:result[i].prd_qty
-			, prd_case:result[i].prd_case
-			, prd_bara:result[i].prd_bara
-			, exp_dt:result[i].exp_dt
-			, sell_prc:result[i].sell_prc
-			, register_date:result[i].reg_dt
-			, update_date:result[i].upd_dt
-		};
-		rowData.push(row);
-	}
-	prdWareInGridOptions.api.setRowData(rowData);
-				
-	// 초기화
-	modifiedData = []; // 수정데이터
-}
-
 $("#btn_commit").on("click", function() {
 	console.log("登録");
 	if($("#partner_id").val() === "") {
@@ -211,85 +195,33 @@ $("#btn_commit").on("click", function() {
 		return;
 	}
 	
-	if(modifiedData.length == 0) {
-		pleaseSelectNotify('情報を修正してください。');
-		return;
-	}
-	
-	for(var i=0; i<modifiedData.length; i++) {
-		modifiedData[i].partner_id = $("#partner_id").val();
-		modifiedData[i].partner_nm = $("#partner_nm").text();
-	}
-	
-	
 	$.ajax({
-		url: "/jaiko/warehouse/manipulate"
+		url: "/jaiko/warehouse/proc"
 		, type:"post"
 		, dataType: "json"
 		, contentType: 'application/json'
-		, data:JSON.stringify(modifiedData)
-		, success: setRowData
+		, success: function(res) {
+			console.log('mani');
+			console.log(res);
+		}
 	});
 });
-
-$("#btn_delete").on("click", function() {
-	var selectedData = prdWareInGridOptions.api.getSelectedRows();
-	prdWareInGridOptions.api.applyTransaction({ remove: selectedData });
-	prdWareInGridOptions.api.selectAll();
-	selectedData = prdWareInGridOptions.api.getSelectedRows();
-	rowData = [];
-	rowData = selectedData;
-});
-
-$("#btn_search").on("click", function() {
-	$.ajax({
-	    url: "/jaiko/warehouse/getList"
-	    , dataType: "json"  
-	    , contentType : "application/json"
-	    , data: {
-	    	search_type: 'warehouse',
-	    	warehouse_dt: $("#warehouse_dt").val()
-	    }
-	    , success: setRowData2
-	});
-});
-
-function setRowData2(result) {
-	rowData = [];
-	
-	for (var i=0; i<result.length; i++) {
-		var row = {
-			seq_id: result[i].seq_id
-			, prd_cd:result[i].prd_cd
-			, brand_nm:result[i].brand_nm
-			, prd_nm:result[i].prd_nm
-			, jan_cd:result[i].jan_cd
-			, prd_cnt:result[i].prd_cnt
-			, prd_unit_prc:result[i].prd_unit_prc
-			, tax_incld:result[i].tax_incld
-			, tax_rt:result[i].tax_rt
-			, now_prd_cnt:result[i].now_prd_cnt
-			, prd_qty:result[i].prd_qty
-			, prd_case: '' != result[i].prd_case && '0' != result[i].prd_case ? result[i].prd_case : '0'
-			, prd_bara:result[i].prd_bara
-			, exp_dt:result[i].exp_dt
-			, sell_prc:result[i].sell_prc
-			, register_date:result[i].reg_dt
-			, update_date:result[i].upd_dt
-		};
-		rowData.push(row);
-	}
-	prdWareInGridOptions.api.setRowData(rowData);
-				
-	// 초기화
-	modifiedData = []; // 수정데이터
-}
 
 $('#btn_srch').on('click', function() {
 	srch();
 });
 
 function srch() {
+	if($("#partner_id").val() === "") {
+		pleaseSelectNotify('取引先を選択してください。');
+		return;
+	}
+	
+	if($("#tantou_id").val() === "") {
+		pleaseSelectNotify('担当者を選択してください。');
+		return;
+	}
+	
 	$.ajax({
 	    url: "/jaiko/warehouse/getPrd"
 	    , dataType: "json"  
@@ -299,11 +231,17 @@ function srch() {
 	    	rowData = [];
 	    	
 	    	for (var i=0; i<result.length; i++) {
+	    		console.log(result[i]);
 	    		var row = {
 	    			seq_id: result[i].seq_id
+	    			, partner_id: $("#partner_id").val()
+		         	, partner_nm: $("#partner_nm").html()
+		         	, tantou_id: $("#tantou_id").val()
+		         	, tantou_nm: $("#tantou_nm").html()
 	    			, prd_nm:result[i].prd_nm
-	    			, jan_cd:result[i].jan_cd
-	    			, prd_cnt: '0'
+	    			, jan_cd:result[i].jan_cd1
+	    			, prd_cd: result[i].prd_cd
+	    			, prd_quantity: '0'
 	    			, prd_unit: '1'
 	    			, ware_loc: '1'
 	    		};
@@ -311,8 +249,17 @@ function srch() {
 	    	}
 	    	prdWareInGridOptions.api.setRowData(rowData);
 	    				
-	    	// 초기화
-	    	modifiedData = []; // 수정데이터
+	    	$.ajax({
+	    		url: "/jaiko/warehouse/temp/mani"
+	    		, type:"post"
+	    		, dataType: "json"
+	    		, contentType: 'application/json'
+	    		, data:JSON.stringify(rowData)
+	    		, success: function(res) {
+	    			console.log('mani');
+	    			console.log(res);
+	    		}
+	    	});
 	    }
     });
 }
@@ -320,77 +267,10 @@ function srch() {
 function deleteRow() {
 	var selectedData = prdWareInGridOptions.api.getSelectedRows();
 	prdWareInGridOptions.api.applyTransaction({ remove: selectedData });
-	/*
-	prdWareInGridOptions.api.selectAll();
-	selectedData = prdWareInGridOptions.api.getSelectedRows();
-	rowData = [];
-	rowData = selectedData;
-	*/
 }
 
 /*
 ------------------
 button action E
-------------------
-*/
-
-
-/*
-------------------
- propertychange change keyup paste input S
-------------------
-*/
-
-function search() {
-    $.ajax({
-    url: "/jaiko/warehouse/getPrd"
-    , dataType: "json"  
-    , contentType : "application/json"
-    , data: {
-    jan_cd: $("#jan_cd").val()
-    , search_type: 'srch'
-    }
-    , success: function(result) {
-    	if(result.length < 1) {
-			alert(janCd + "\n登録されていないコードです。");
-			return false;
-		}
-    	var row = {
-			seq_id: result[0].seq_id
-			, prd_cd:result[0].prd_cd
-			, brand_nm:result[0].brand_nm
-			, prd_nm:result[0].prd_nm
-			, jan_cd:result[0].jan_cd
-			, prd_cnt:result[0].prd_cnt
-			, prd_unit_prc:result[0].prd_unit_prc
-			, tax_incld:result[0].tax_incld
-			, tax_rt:result[0].tax_rt
-			, now_prd_cnt:'0'
-			, prd_qty:'0'
-			, prd_case:'0'
-			, prd_bara:'0'
-			, exp_dt:'9999/12/31'
-			, sell_prc:'0'
-			, register_date:result[0].reg_dt
-			, update_date:result[0].upd_dt
-		};
-		rowData.push(row);
-		prdWareInGridOptions.api.setRowData(rowData);
-    }
-    });
-}
-
-$("#jan_cd").on("change paste", function() {
-	janCd =  $("#jan_cd").val();
-	if("" != janCd) {
-		search();
-		$("#jan_cd").val("");
-		$("#jan_cd").focus();
-	}
-});
-
-/*
-------------------
- propertychange change keyup paste input E
 ------------------
 */

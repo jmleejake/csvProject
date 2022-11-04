@@ -5,9 +5,12 @@ grid setting S
 */
 
 var columnDefs = [
-	{headerName: "商品コード", field: "prd_cd", width: 200, editable: true
+	{headerName: "ＪＡＮコード", field: "jan_cd", width: 200, editable: true
 		, cellEditor: 'agPopupTextCellEditor'}
-	, {headerName: "ＪＡＮコード", field: "jan_cd", width: 200, editable: true
+	, {headerName: "現在商品数", field: "now_prd_cnt", width: 250, editable: true
+		, cellEditor: 'agPopupTextCellEditor'}
+	/*
+	{headerName: "商品コード", field: "prd_cd", width: 200, editable: true
 		, cellEditor: 'agPopupTextCellEditor'}
 	, {headerName: "取引先コード", field: "dealer_id", width: 200, editable: true
 		, cellEditor: 'agPopupTextCellEditor'}
@@ -45,11 +48,10 @@ var columnDefs = [
 		, cellEditor: 'agPopupTextCellEditor'}
 	, {headerName: "ロート数", field: "prd_lot", width: 250, editable: true
 		, cellEditor: 'agPopupTextCellEditor'}
-	, {headerName: "現在商品数", field: "now_prd_cnt", width: 250, editable: true
-		, cellEditor: 'agPopupTextCellEditor'}
 	, {headerName: "賞味期限", field: "exp_dt", width: 250, editable: true, cellEditor: 'datePicker'}
 	, {headerName: "本体売価", field: "sell_prc", width: 250, editable: true
     	, cellEditor: 'agPopupTextCellEditor'}
+	*/
 ];
 
 // specify the data

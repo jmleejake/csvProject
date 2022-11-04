@@ -40,6 +40,7 @@
 		<typeAlias type="jp.prj.araku.angular.vo.TodoVO" alias="Todo"/>
 		<typeAlias type="jp.prj.araku.list.vo.KeywordSearchInfo" alias="KwrdSrch" />
 		<typeAlias type="jp.prj.araku.jaiko.partner.vo.JaikoWareTantou" alias="WareTantou" />
+		<typeAlias type="jp.prj.araku.jaiko.warehouse.vo.JaikoWareTempVO" alias="WareTemp" />
 	</typeAliases>
 	<mappers>
 		<mapper resource="jp/prj/araku/list/mapper/ListMapper.xml" />
