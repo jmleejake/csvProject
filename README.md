@@ -1,6 +1,6 @@
 ## Araku system Contents update list <csvProject>
 ### 2023.04 Rakuten download/upload 탬플릿항목 추가 예정
-<img src='https://user-images.githubusercontent.com/18359068/197534164-9f25bbfe-969c-4c52-9350-c4c264c66b17.png' width='600' />
+<img src='https://user-images.githubusercontent.com/18359068/197534164-9f25bbfe-969c-4c52-9350-c4c264c66b17.png' width='300' />
 
 ### 2022.10.23 아마존 > 在庫管理(Keyword別) 메뉴추가
 ```sql
@@ -17,13 +17,13 @@
  <li>
  추가메뉴 캡쳐
  <div>
- <img src='https://user-images.githubusercontent.com/18359068/197352982-db43433c-f1bc-4925-9757-49d8c82e1458.png' width='600' />
+ <img src='https://user-images.githubusercontent.com/18359068/197352982-db43433c-f1bc-4925-9757-49d8c82e1458.png' width='300' />
  </div>
  </li>
  <li>
  LOMBOK 인스톨
  <div>
- <img src='https://user-images.githubusercontent.com/18359068/197353308-bb69e680-6f5b-4a58-a318-bb45bf3928de.png' width='600' />
+ <img src='https://user-images.githubusercontent.com/18359068/197353308-bb69e680-6f5b-4a58-a318-bb45bf3928de.png' width='300' />
  </div>
  </li>
 </ul>
@@ -33,20 +33,22 @@
 <li>
 発注書 포맷변경
 <div>
-<img src='https://user-images.githubusercontent.com/18359068/175954313-cdd4dc55-195c-4eee-815b-ede76e140185.png' width='600' />
+<img src='https://user-images.githubusercontent.com/18359068/175954313-cdd4dc55-195c-4eee-815b-ede76e140185.png' width='300' />
 </div>
 <div>
-<img src='https://user-images.githubusercontent.com/18359068/175954066-0ae3eea3-e41b-4d80-9870-2659044bf71e.png' width='600' />
+<img src='https://user-images.githubusercontent.com/18359068/175954066-0ae3eea3-e41b-4d80-9870-2659044bf71e.png' width='300' />
 </div>
 </li>
 <li>
 재고관리 > 상품재고 > 다운로드 클릭시 선택된 데이터만 다운로드 가능하도록 수정
-<img src='https://user-images.githubusercontent.com/18359068/175954489-ef9f329a-4f91-4cc4-b481-05f65aa8b89f.png' width='600' />
+<div>
+<img src='https://user-images.githubusercontent.com/18359068/175954489-ef9f329a-4f91-4cc4-b481-05f65aa8b89f.png' width='300' />
+</div>
 </li>
 </ol>
 
 ### 2022.05.20 단품상품관리 メーカー名 자동완성기능
-<img src='https://user-images.githubusercontent.com/18359068/169544246-97078489-4862-4fb2-9eb6-c50fc65d47a1.png' width='600' />
+<img src='https://user-images.githubusercontent.com/18359068/169544246-97078489-4862-4fb2-9eb6-c50fc65d47a1.png' width='300' />
 
 ### 2022.04.19 納品書
 ```sql
@@ -135,40 +137,40 @@ seq_id bigint unsigned primary key auto_increment comment '区分ID'
 <li>
 화면 확인
 <div>
-<img src='https://user-images.githubusercontent.com/18359068/150670441-5b813687-9484-4804-81a3-fcb95ed31ca1.png' width='600' />
+<img src='https://user-images.githubusercontent.com/18359068/150670441-5b813687-9484-4804-81a3-fcb95ed31ca1.png' width='300' />
 </div>
 <div>
-<img src='https://user-images.githubusercontent.com/18359068/150670454-13388c79-18a6-419e-9a5f-8f1ec4b40418.png' width='600' />
+<img src='https://user-images.githubusercontent.com/18359068/150670454-13388c79-18a6-419e-9a5f-8f1ec4b40418.png' width='300' />
 </div>
 <div>
-<img src='https://user-images.githubusercontent.com/18359068/150670467-22bf395a-9603-45f2-a905-ae8609483804.png' width='600' />
+<img src='https://user-images.githubusercontent.com/18359068/150670467-22bf395a-9603-45f2-a905-ae8609483804.png' width='300' />
 </div>
 <div>
-<img src='https://user-images.githubusercontent.com/18359068/150670486-fdad38c7-b917-4bf9-9041-54d876332dc8.png' width='600' />
+<img src='https://user-images.githubusercontent.com/18359068/150670486-fdad38c7-b917-4bf9-9041-54d876332dc8.png' width='300' />
 </div>
 <div>
-<img src='https://user-images.githubusercontent.com/18359068/150670503-7cc569f1-b4e4-4431-a14f-d325c60d8ead.png' width='600' />
+<img src='https://user-images.githubusercontent.com/18359068/150670503-7cc569f1-b4e4-4431-a14f-d325c60d8ead.png' width='300' />
 </div>
 </li>
 <li>
 작성 > 일괄 변경시
 <div>
-<img src='https://user-images.githubusercontent.com/18359068/150670517-ae3e0b90-8a50-4e4b-a38e-9cbd5f551bfb.png' width='600' />
+<img src='https://user-images.githubusercontent.com/18359068/150670517-ae3e0b90-8a50-4e4b-a38e-9cbd5f551bfb.png' width='300' />
 </div>
 </li>
 <li>
 개별 변경시
 <div>
-<img src='https://user-images.githubusercontent.com/18359068/150670550-caefdeba-8aba-4cae-9e27-6d69382f1f25.png' width='600' />
+<img src='https://user-images.githubusercontent.com/18359068/150670550-caefdeba-8aba-4cae-9e27-6d69382f1f25.png' width='300' />
 </div>
 <div>
-<img src='https://user-images.githubusercontent.com/18359068/150670560-5f57636c-10b8-4f2a-978f-65fc1ebcf044.png' width='600' />
+<img src='https://user-images.githubusercontent.com/18359068/150670560-5f57636c-10b8-4f2a-978f-65fc1ebcf044.png' width='300' />
 </div>
 </li>
 <li>
 다운로드
 <div>
-<img src='https://user-images.githubusercontent.com/18359068/150670580-7300c431-5ac1-4d6c-97cc-4ba9f12063ce.png' width='600' />
+<img src='https://user-images.githubusercontent.com/18359068/150670580-7300c431-5ac1-4d6c-97cc-4ba9f12063ce.png' width='300' />
 </div>
 </li>
 </ul>
