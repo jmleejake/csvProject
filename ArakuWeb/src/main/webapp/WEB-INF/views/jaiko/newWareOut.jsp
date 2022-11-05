@@ -59,7 +59,7 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 <form id="frm_srch">
 <div class="col-sm-4"><input type="text" class="form-control" name="prd_nm" placeholder="商品名" onkeypress = "if(event.keyCode==13){ srch(); event.preventDefault(); }"></div>
 <div class="col-sm-4"><input type="text" class="form-control" name="jan_cd" placeholder="JANコード" onkeypress = "if(event.keyCode==13){ srch(); event.preventDefault(); }"></div>
-<input type="hidden" name="search_type" value="srch">
+<input type="hidden" name="search_type" value="wareOut">
 </form>
 <div class="col-sm-4"><button id="btn_srch" type="button" class="btn btn-primary" style="width: 120px;"><span class="glyphicon glyphicon-search"></span>検索</button></div>
 </div>

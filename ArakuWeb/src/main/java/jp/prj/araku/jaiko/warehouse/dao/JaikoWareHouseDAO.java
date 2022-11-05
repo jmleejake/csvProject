@@ -184,7 +184,7 @@ public class JaikoWareHouseDAO {
 		ArrayList<JaikoWareTempVO> tempList = wareHouseMapper.getWareTemp("");
 		for(JaikoWareTempVO temp : tempList) {
 			JaikoPrdInfoVO prdSrch = new JaikoPrdInfoVO();
-			prdSrch.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+			prdSrch.setSearch_type(type);
 			prdSrch.setJan_cd(temp.getJan_cd());
 			JaikoPrdInfoVO prdInfo = prdMapper.getJaikoPrdInfo(prdSrch).get(0);
 			
