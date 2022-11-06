@@ -7,16 +7,6 @@ grid setting S
 var columnDefs = [
 	{headerName: "商品コード", field: "prd_cd", width: 200, editable: true
     	, cellEditor: 'agPopupTextCellEditor'}
-	/*
-	, {headerName: "ブランド", field: "brand_nm", width: 200, editable: true
-    	, cellEditor: 'agLargeTextCellEditor'
-    	, cellEditorParams: {
-            maxLength: '500',
-            cols: '50',
-            rows: '6'
-        }
-	}
-	*/
 	, {headerName: "商品名", field: "prd_nm", width: 400
 		, editable: true
     	, cellEditor: 'agLargeTextCellEditor'
@@ -30,17 +20,6 @@ var columnDefs = [
     	, cellEditor: 'agPopupTextCellEditor'}
 	, {headerName: "商品数1", field: "prd_cnt1", width: 200, editable: true
     	, cellEditor: 'agPopupTextCellEditor'}
-	, {headerName: "JANコード2(中数)", field: "jan_cd2", width: 200, editable: true
-    	, cellEditor: 'agPopupTextCellEditor'}
-	, {headerName: "商品数2", field: "prd_cnt2", width: 200, editable: true
-    	, cellEditor: 'agPopupTextCellEditor'}
-	, {headerName: "JANコード3(箱)", field: "jan_cd3", width: 200, editable: true
-    	, cellEditor: 'agPopupTextCellEditor'}
-	, {headerName: "商品数3", field: "prd_cnt3", width: 200, editable: true
-    	, cellEditor: 'agPopupTextCellEditor'}
-	/*
-	, {headerName: "ＪＡＮコード", field: "jan_cd", width: 200, editable: true
-    	, cellEditor: 'agPopupTextCellEditor'}
 	, {headerName: "入数", field: "prd_cnt", width: 100, editable: true
     	, cellEditor: 'agPopupTextCellEditor'}
 	, {headerName: "単価", field: "prd_unit_prc", width: 100, editable: true
@@ -49,7 +28,14 @@ var columnDefs = [
     	, cellEditor: 'agPopupTextCellEditor'}
 	, {headerName: "税率", field: "tax_rt", width: 100, editable: true
     	, cellEditor: 'agPopupTextCellEditor'}
-    */
+	, {headerName: "JANコード3(箱)", field: "jan_cd3", width: 200, editable: true
+    	, cellEditor: 'agPopupTextCellEditor'}
+	, {headerName: "商品数3", field: "prd_cnt3", width: 200, editable: true
+    	, cellEditor: 'agPopupTextCellEditor'}
+	, {headerName: "JANコード2(中数)", field: "jan_cd2", width: 200, editable: true
+    	, cellEditor: 'agPopupTextCellEditor'}
+	, {headerName: "商品数2", field: "prd_cnt2", width: 200, editable: true
+    	, cellEditor: 'agPopupTextCellEditor'}
 ];
 
 // specify the data
@@ -111,6 +97,10 @@ var prdInfoGridOptions = {
         prevCnt1 = previousData.prd_cnt1;
         prevCnt2 = previousData.prd_cnt2;
         prevCnt3 = previousData.prd_cnt3;
+        prevPrdCnt = previousData.prd_cnt;
+        prevPrdUnitPrc = previousData.prd_unit_prc;
+        prevTaxIncld = previousData.tax_incld;
+        prevTaxRt = previousData.tax_rt;
     },
     onCellEditingStopped: function(event) {
         var afterData = event.node.data;
@@ -123,6 +113,10 @@ var prdInfoGridOptions = {
         afterCnt1 = afterData.prd_cnt1;
         afterCnt2 = afterData.prd_cnt2;
         afterCnt3 = afterData.prd_cnt3;
+        afterPrdCnt = afterData.prd_cnt;
+        afterPrdUnitPrc = afterData.prd_unit_prc;
+        afterTaxIncld = afterData.tax_incld;
+        afterTaxRt = afterData.tax_rt;
         
         if (!(prevPrdCd == afterPrdCd) || 
         	!(prevBrandNm == afterBrandNm) ||
