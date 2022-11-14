@@ -2,7 +2,75 @@
 ### 2023.04 Rakuten download/upload 탬플릿항목 추가 예정
 <img src='https://user-images.githubusercontent.com/18359068/197534164-9f25bbfe-969c-4c52-9350-c4c264c66b17.png' width='300' />
 
+### 2022.11.14
+<ul>
+<li>
+아마존 > 在庫管理(Keyword別) > 아마존재고/아마존/라쿠텐 검색기능 / 메모입력 추가
+<div>
+
+```sql
+alter table kwrd_srch_info add column memo varchar(2000) comment 'メモ';
+```
+</div>
+<div>
+<img src='https://user-images.githubusercontent.com/18359068/201694241-fcb74374-8ed1-4c26-91b0-1af98f97a668.png' width='300' />
+</div>
+</li>
+<li>
+재고관리 > 입고/출고 > jan_cd검색시 temp테이블 jan_cd에 상품정보 jan_cd1 입력
+<div>
+<img src='https://user-images.githubusercontent.com/18359068/201694374-0a85b136-b4c8-4cd7-b18a-fd74df0e8969.png' width='300' />
+</div>
+</li>
+</ul>
+
+### 2022.11.02 - 11.06 재고관리시스템 > 입고/출고 화면 개편
+
+```sql
+alter table jaiko_warehouse_info add column tantou_id varchar(20) comment '担当者ID';
+alter table jaiko_warehouse_info add column tantou_nm varchar(100) comment '担当者名';
+alter table jaiko_warehouse_info add column prd_unit char(1) default '1' comment '単位';
+alter table jaiko_warehouse_info add column ware_loc char(1) default '1' comment '場所';
+
+alter table jaiko_prd_info add column jan_cd1 varchar(15) comment 'JAＮコード1(単品)';
+alter table jaiko_prd_info add column prd_cnt1 varchar(15) comment '商品数1';
+alter table jaiko_prd_info add column jan_cd2 varchar(15) comment 'JANコード2(中数)';
+alter table jaiko_prd_info add column prd_cnt2 varchar(15) comment '商品数2';
+alter table jaiko_prd_info add column jan_cd3 varchar(15) comment 'JANコード3(箱)';
+alter table jaiko_prd_info add column prd_cnt3 varchar(15) comment '商品数3';
+
+drop table jaiko_warehouse_tantou_info;
+create table jaiko_warehouse_tantou_info (
+seq_id bigint unsigned primary key auto_increment comment '区分ID'
+, reg_dt datetime default now() comment '登録日付'
+, upd_dt datetime comment '更新日付'
+, tantou_id varchar(20) comment '担当者ID'
+, tantou_pass varchar(20) comment 'パスワード'
+, tantou_nm varchar(100) comment '担当者名'
+, tantou_tel varchar(20) comment '電話番号'
+, tantou_auth varchar(3) comment '権限'
+) default charset = utf8 comment '担当者情報';
+
+drop table jaiko_warehouse_temp;
+create table jaiko_warehouse_temp (
+seq_id bigint unsigned comment '区分ID'
+, partner_id varchar(20) comment '取引先'
+, partner_nm varchar(100) comment '取引先名'
+, tantou_id varchar(20) comment '本社担当者ID'
+, tantou_nm varchar(100) comment '本社担当者名'
+, jan_cd varchar(15) comment 'JAＮコード'
+, prd_cd varchar(20) comment '商品コード'
+, prd_nm varchar(1000) comment '商品名'
+, prd_quantity varchar(5) comment '商品数量'
+, prd_unit char(1) comment '単位'
+, ware_loc char(1) comment '場所'
+, reg_dt datetime default now() comment '登録日付'
+, upd_dt datetime default now() comment '更新日付'
+) default charset = utf8 comment '入出庫TEMP';
+```
+
 ### 2022.10.23 아마존 > 在庫管理(Keyword別) 메뉴추가
+
 ```sql
  drop table kwrd_srch_info;
  create table kwrd_srch_info(
@@ -51,6 +119,7 @@
 <img src='https://user-images.githubusercontent.com/18359068/169544246-97078489-4862-4fb2-9eb6-c50fc65d47a1.png' width='300' />
 
 ### 2022.04.19 納品書
+
 ```sql
 alter table dealer_info add column gbn varchar(20) comment '締切区分';
 
@@ -110,6 +179,7 @@ seq_id bigint unsigned primary key auto_increment comment '区分ID'
 
 ### 見積書
 - init.sql > esitmate_info 테이블 추가
+
 ```sql
 drop table estimate_info;
 create table estimate_info (
