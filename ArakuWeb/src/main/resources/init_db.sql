@@ -923,3 +923,5 @@ create table kwrd_srch_info(
 	, kwrd2 VARCHAR(50) comment 'キーワード2(キーワード名)'
 ) default charset = utf8 comment 'キーワード検索管理';
 
+alter table kwrd_srch_info add column memo varchar(2000) comment 'メモ';
+

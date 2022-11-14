@@ -633,12 +633,12 @@ where seq_id = #{seq_id}
 キーワード検索管理S
 -->
 <insert id="insertKwrdInfo" parameterType="KwrdSrch">
-insert into kwrd_srch_info (kwrd1, kwrd2)
-values (#{kwrd1}, #{kwrd2})
+insert into kwrd_srch_info (kwrd1, kwrd2, memo)
+values (#{kwrd1}, #{kwrd2}, #{memo})
 </insert>
 
 <select id="getKwrdInfo" parameterType="KwrdSrch" resultType="KwrdSrch">
-select seq_id, kwrd1, kwrd2
+select seq_id, kwrd1, kwrd2, memo
 , date_format(register_date, '%Y/%m/%d') register_date
 , date_format(update_date, '%Y/%m/%d') update_date
 from kwrd_srch_info
@@ -661,6 +661,9 @@ set update_date = now()
 </if>
 <if test="null != kwrd2 and '' != kwrd2">
 	, kwrd2 = #{kwrd2}
+</if>
+<if test="null != memo and '' != memo">
+	, memo = #{memo}
 </if>
 where seq_id = #{seq_id}
 </update>

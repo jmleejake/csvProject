@@ -183,15 +183,27 @@ public class JaikoWareHouseDAO {
 		
 		ArrayList<JaikoWareTempVO> tempList = wareHouseMapper.getWareTemp("");
 		for(JaikoWareTempVO temp : tempList) {
+			// 商品情報
 			JaikoPrdInfoVO prdSrch = new JaikoPrdInfoVO();
 			prdSrch.setSearch_type(type);
 			prdSrch.setJan_cd(temp.getJan_cd());
-			JaikoPrdInfoVO prdInfo = prdMapper.getJaikoPrdInfo(prdSrch).get(0);
+			JaikoPrdInfoVO prdInfo = null;
+			try {
+				prdInfo = prdMapper.getJaikoPrdInfo(prdSrch).get(0);
+			}catch (Exception e) {
+				return 99;
+			}
 			
+			// 在庫情報
 			JaikoPrdInventoryVO invenSrch = new JaikoPrdInventoryVO();
-			invenSrch.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
-			invenSrch.setJan_cd(temp.getJan_cd());
-			JaikoPrdInventoryVO inven = invenMapper.getJaikoPrdInventory(invenSrch).get(0);
+			JaikoPrdInventoryVO inven = null;
+			try {
+				invenSrch.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+				invenSrch.setJan_cd(temp.getJan_cd());
+				inven = invenMapper.getJaikoPrdInventory(invenSrch).get(0);
+			} catch (Exception e) {
+				return 98;
+			}
 			
 			int quantity = Integer.parseInt(temp.getPrd_quantity());
 			int unit = Integer.parseInt(temp.getPrd_unit());

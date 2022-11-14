@@ -148,7 +148,13 @@ $("#btn_commit").on("click", function() {
 			if('1' == res) {
 				alert('登録終わりました。');
 			}else {
-				alert('データ確認が必要です。');
+				if('99' == res) {
+					alert('商品情報がありません。');
+				}else if('98' == res) {
+					alert('在庫情報がありません。');
+				}else {
+					alert('データ確認が必要です。');
+				}
 			}
 		}
 	});

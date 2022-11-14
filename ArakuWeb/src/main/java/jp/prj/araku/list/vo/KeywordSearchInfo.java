@@ -13,4 +13,6 @@ public @Data class KeywordSearchInfo {
 	private String kwrd1;
 	/**キーワード2(キーワード名)*/
 	private String kwrd2;
+	/**メモ*/
+	private String memo;
 }

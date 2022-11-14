@@ -5,12 +5,24 @@ var columnDefs = [
     {headerName: "メーカー名", field: "kwrd1", width: 300, editable: true}
     , {headerName: "キーワード名", field: "kwrd2", width: 300, editable: true}
     , {headerName: "検索", width: 200, cellRenderer: 'btnRenderer'}
+    , {headerName: "検索", width: 200, cellRenderer: 'btnRenderer2'}
+    , {headerName: "検索", width: 200, cellRenderer: 'btnRenderer3'}
+    , {headerName: "メモ", field: "memo", width: 100
+    	, editable: true
+    	, cellEditor: 'agLargeTextCellEditor'
+    	, cellEditorParams: {
+            maxLength: '100',
+            cols: '50',
+            rows: '6'
+        }
+    }
 ];
 
 var rowData = [];
 var modifiedData = [];
 var sKwrd1, eKwrd1
-,sKwrd2, eKwrd2;
+,sKwrd2, eKwrd2
+,sMemo, eMemo;
 
 var gridOptions = {
 	// 첫번째 컬럼 체크박스 세팅
@@ -39,14 +51,17 @@ var gridOptions = {
         var previousData = event.node.data;
         sKwrd1 = previousData.kwrd1;
         sKwrd2 = previousData.kwrd2;
+        sMemo = previousData.memo;
     },
     onCellEditingStopped: function(event) {
         var afterData = event.node.data;
         eKwrd1 = afterData.kwrd1;
         eKwrd2 = afterData.kwrd2;
+        eMemo = afterData.memo;
         
         if (!(sKwrd1 == eKwrd1) || 
-    		!(sKwrd2 == eKwrd2)) {
+    		!(sKwrd2 == eKwrd2) ||
+    		!(sMemo == eMemo)) {
         	console.log("modified!");
         	modifiedData.push(afterData);
         }
@@ -54,8 +69,20 @@ var gridOptions = {
     components: {
 		btnRenderer: function(param) {
 			var html = "<a class='custm_btn srch' href='https://sellercentral.amazon.co.jp/inventory/ref=xx_invmgr_dnav_xx?tbla_myitable=sort:%7B%22sortOrder%22%3A%22DESCENDING%22%7D;search:"+param.data.kwrd2+";pagination:1;' target='_blank'>";
-			html += "検索";
-			html += "</a>"
+			html += "アマゾン在庫";
+			html += "</a>";
+			return html;
+		}
+	    , btnRenderer2: function(param) {
+	    	var html = "<a class='custm_btn srch' href='https://www.amazon.co.jp/s?k="+param.data.kwrd2+"'>";
+	    	html += "アマゾン";
+	    	html += "</a>";
+			return html;
+		}
+	    , btnRenderer3: function(param) {
+			var html = "<a class='custm_btn srch' href='https://search.rakuten.co.jp/search/mall/"+param.data.kwrd2+"'>";
+			html += "楽天";
+			html += "</a>";
 			return html;
 		}
 	}	
@@ -93,6 +120,7 @@ function setRowData(result) {
 			seq_id: result[i].seq_id
 			, kwrd1: result[i].kwrd1
 			, kwrd2: result[i].kwrd2
+			, memo: result[i].memo
 			, register_date: result[i].register_date
 			, update_date: result[i].update_date
 		};
@@ -123,6 +151,7 @@ $('#btn_add').click('on', function() {
 	modifiedData.push({
 		kwrd1: 'メーカー'
 		, kwrd2: 'キーワード'
+		, memo: 'メモ'
 	});
 	$.ajax({
 		url: "modKwrdInfo"

@@ -128,10 +128,19 @@ values (
 <update id="updateWareTemp" parameterType="WareTemp">
 update jaiko_warehouse_temp
 set upd_dt = now()
+<if test="prd_quantity != null and prd_quantity != ''">
 , prd_quantity = #{prd_quantity}
+</if>
+<if test="prd_unit != null and prd_unit != ''">
 , prd_unit = #{prd_unit}
+</if>
+<if test="ware_loc != null and ware_loc != ''">
 , ware_loc = #{ware_loc}
-where jan_cd = #{jan_cd}
+</if>
+<if test="jan_cd != null and jan_cd != ''">
+, jan_cd = #{jan_cd}
+</if>
+where seq_id = #{seq_id}
 </update>
 
 <delete id="deleteWareTemp">
