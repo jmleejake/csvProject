@@ -27,11 +27,11 @@ var sKwrd1, eKwrd1
 var gridOptions = {
 	// 첫번째 컬럼 체크박스 세팅
 	defaultColDef: {
-        width: 100,
-        headerCheckboxSelection: isFirstColumn,
-        checkboxSelection: isFirstColumn
+        width: 100
+        , headerCheckboxSelection: isFirstColumn
+        , checkboxSelection: isFirstColumn
+        , resizable: true
     },
-    enableColResize: true,
     suppressRowClickSelection: false,
     rowSelection: 'multiple',
     columnDefs: columnDefs,

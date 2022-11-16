@@ -49,6 +49,9 @@ var prevLoc, afterLoc;
 
 // let the grid know which columns and what data to use
 var prdWareOutGridOptions = {
+	defaultColDef: {
+		resizable: true
+	},
 	suppressRowClickSelection: false,
 	rowSelection: 'multiple',
 	columnDefs: columnDefs,

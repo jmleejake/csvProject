@@ -65,11 +65,11 @@ var modifiedData = [];
 var transGridOptions = {
 	// 첫번째 컬럼 체크박스 세팅
 	defaultColDef: {
-        width: 100,
-        headerCheckboxSelection: isFirstColumn,
-        checkboxSelection: isFirstColumn
-    },
-    enableColResize: true,
+		width: 100
+		, headerCheckboxSelection: isFirstColumn
+		, checkboxSelection: isFirstColumn
+		, resizable: true
+	},
     suppressRowClickSelection: false,
     rowSelection: 'multiple',
     columnDefs: columnDefs,
@@ -259,11 +259,11 @@ var rowData2 = [];
 var orderSumGridOptions = {
 	// 첫번째 컬럼 체크박스 세팅
 	defaultColDef: {
-        width: 100,
-        headerCheckboxSelection: isFirstColumn2,
-        checkboxSelection: isFirstColumn2
-    },
-    enableColResize: true,
+		width: 100
+		, headerCheckboxSelection: isFirstColumn
+		, checkboxSelection: isFirstColumn
+		, resizable: true
+	},
     suppressRowClickSelection: false,
     rowSelection: 'multiple',
     columnDefs: columnDefs2,
@@ -386,11 +386,11 @@ var rowData3 = [];
 var orderJanSumGridOptions = {
 	// 첫번째 컬럼 체크박스 세팅
 	defaultColDef: {
-        width: 100,
-        headerCheckboxSelection: isFirstColumn3,
-        checkboxSelection: isFirstColumn3
-    },
-    enableColResize: true,
+		width: 100
+		, headerCheckboxSelection: isFirstColumn
+		, checkboxSelection: isFirstColumn
+		, resizable: true
+	},
     suppressRowClickSelection: false,
     rowSelection: 'multiple',
     columnDefs: columnDefs3,

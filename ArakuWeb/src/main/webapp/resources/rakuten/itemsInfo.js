@@ -78,11 +78,11 @@ var st1, st2, st3, st4, ed1, ed2, ed3, ed4;
 var itemsGridOptions = {
 	// checkbox on first column
 	defaultColDef: {
-		width: 100,
-		headerCheckboxSelection: isFirstColumn,
-		checkboxSelection: isFirstColumn
+		width: 100
+		, headerCheckboxSelection: isFirstColumn
+		, checkboxSelection: isFirstColumn
+		, resizable: true
 	},
-	enableColResize: true,
 	suppressRowClickSelection: false,
 	rowSelection: 'multiple',
 	columnDefs: columnDefs,

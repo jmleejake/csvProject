@@ -21,7 +21,9 @@ var rowData = [];
 
 //let the grid know which columns and what data to use
 var prdOrdGridOption = {
-	enableColResize: true,
+	defaultColDef: {
+		resizable: true
+	},
 	suppressRowClickSelection: false,
 	rowSelection: 'multiple',
 	columnDefs: columnDefs,
@@ -154,11 +156,11 @@ var prevPrdCntBox, afterPrdCntBox;
 var ordDtlGridOptions = {
 	// checkbox on first column
 	defaultColDef: {
-		width: 100,
-		headerCheckboxSelection: isFirstColumn,
-		checkboxSelection: isFirstColumn
+		width: 100
+		, headerCheckboxSelection: isFirstColumn
+		, checkboxSelection: isFirstColumn
+		, resizable: true
 	},
-	enableColResize: true,
 	suppressRowClickSelection: false,
 	rowSelection: 'multiple',
 	columnDefs: ordDtlColumnDef,

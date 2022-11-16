@@ -52,11 +52,11 @@ var modifiedData = [];
 var transGridOptions = {
 	// 첫번째 컬럼 체크박스 세팅
 	defaultColDef: {
-        width: 100,
-        headerCheckboxSelection: isFirstColumn,
-        checkboxSelection: isFirstColumn
-    },
-    enableColResize: true,
+		width: 100
+		, headerCheckboxSelection: isFirstColumn
+		, checkboxSelection: isFirstColumn
+		, resizable: true
+	},
     suppressRowClickSelection: false,
     rowSelection: 'multiple',
     columnDefs: columnDefs,
@@ -300,11 +300,11 @@ var modifiedEtcData = [];
 var etcGridOptions = {
 	// 첫번째 컬럼 체크박스 세팅
 	defaultColDef: {
-        width: 100,
-        headerCheckboxSelection: isEtcFirstColumn,
-        checkboxSelection: isEtcFirstColumn
-    },
-    enableColResize: true,
+		width: 100
+		, headerCheckboxSelection: isFirstColumn
+		, checkboxSelection: isFirstColumn
+		, resizable: true
+	},
     suppressRowClickSelection: false,
     rowSelection: 'multiple',
     columnDefs: etcColumnDefs,

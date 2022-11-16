@@ -56,6 +56,9 @@ var startData, stopData, id;
 var modifiedData = [];
 
 var gridOption = {
+		defaultColDef: {
+			resizable: true
+		},
 		getRowHeight: function(params) {
             return isHeaderRow(params) ? 40 : 25;
 		},

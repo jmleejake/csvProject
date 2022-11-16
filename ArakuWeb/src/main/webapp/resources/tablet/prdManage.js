@@ -18,6 +18,9 @@ var previousData, afterData, baggageClaimNo;
 
 // let the grid know which columns and what data to use
 var orderGridOptions = {
+	defaultColDef: {
+		resizable: true
+	},
 	columnDefs: columnDefs,
 	rowData: rowData
 };

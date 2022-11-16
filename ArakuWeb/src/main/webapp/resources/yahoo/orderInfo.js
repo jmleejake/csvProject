@@ -37,11 +37,11 @@ var previousData, afterData;
 var orderGridOptions = {
 	// checkbox on first column
 	defaultColDef: {
-		width: 100,
-		headerCheckboxSelection: isFirstColumn,
-		checkboxSelection: isFirstColumn
+		width: 100
+		, headerCheckboxSelection: isFirstColumn
+		, checkboxSelection: isFirstColumn
+		, resizable: true
 	},
-	enableColResize: true,
 	suppressRowClickSelection: false,
 	rowSelection: 'multiple',
 	columnDefs: columnDefs,

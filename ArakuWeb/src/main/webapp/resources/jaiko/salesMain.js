@@ -105,7 +105,9 @@ var startMail, stopMail;
 
 //let the grid know which columns and what data to use
 var salesGridOption = {
-		enableColResize: true,
+		defaultColDef: {
+			resizable: true
+		},
 		suppressRowClickSelection: false,
 		rowSelection: 'multiple',
 		columnDefs: salesColDefs,

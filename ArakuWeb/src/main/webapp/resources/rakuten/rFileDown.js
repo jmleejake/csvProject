@@ -54,11 +54,11 @@ var modifiedData = [];
 var rFileDownGridOptions = {
 	// checkbox on first column
 	defaultColDef: {
-        width: 100,
-        headerCheckboxSelection: isFirstColumn,
-        checkboxSelection: isFirstColumn
-    },
-    enableColResize: true,
+		width: 100
+		, headerCheckboxSelection: isFirstColumn
+		, checkboxSelection: isFirstColumn
+		, resizable: true
+	},
     suppressRowClickSelection: false,
     rowSelection: 'multiple',
     columnDefs: columnDefs,

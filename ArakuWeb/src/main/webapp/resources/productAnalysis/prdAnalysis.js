@@ -79,11 +79,11 @@ var prevEtc, afterEtc;
 // let the grid know which columns and what data to use
 var orderGridOptions = {
 		defaultColDef: {
-			width: 100,
-			headerCheckboxSelection: isFirstColumn,
-			checkboxSelection: isFirstColumn
+			width: 100
+			, headerCheckboxSelection: isFirstColumn
+			, checkboxSelection: isFirstColumn
+			, resizable: true
 		},
-		enableColResize: true,
 		suppressRowClickSelection: false,
 		rowSelection: 'multiple',
 		columnDefs: columnDefs,

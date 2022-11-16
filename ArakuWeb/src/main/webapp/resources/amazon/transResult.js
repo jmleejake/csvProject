@@ -60,7 +60,9 @@ var startResultTxt, stopResultTxt;
 
 // let the grid know which columns and what data to use
 var gridOptions = {
-	enableColResize: true,
+	defaultColDef: {
+		resizable: true
+	},
 	suppressRowClickSelection: false,
 	rowSelection: 'multiple',
 	columnDefs: columnDefs,

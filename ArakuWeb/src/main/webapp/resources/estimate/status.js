@@ -30,11 +30,11 @@ var sPrdPrc, ePrdPrc;
 // let the grid know which columns and what data to use
 var statusGridOptions = {
 		defaultColDef: {
-			width: 100,
-			headerCheckboxSelection: isFirstColumn,
-			checkboxSelection: isFirstColumn
+			width: 100
+			, headerCheckboxSelection: isFirstColumn
+			, checkboxSelection: isFirstColumn
+			, resizable: true
 		},
-		enableColResize: true,
 		suppressRowClickSelection: false,
 		rowSelection: 'multiple',
 		columnDefs: statusColumn,
@@ -230,11 +230,11 @@ var sPrdPrc2, ePrdPrc2;
 // let the grid know which columns and what data to use
 var prdGridOptions = {
 		defaultColDef: {
-			width: 100,
-			headerCheckboxSelection: isFirstColumn,
-			checkboxSelection: isFirstColumn
+			width: 100
+			, headerCheckboxSelection: isFirstColumn
+			, checkboxSelection: isFirstColumn
+			, resizable: true
 		},
-		enableColResize: true,
 		suppressRowClickSelection: false,
 		rowSelection: 'multiple',
 		columnDefs: prdColumn,

@@ -73,11 +73,11 @@ var srchSeqId;
 var ordDtlGridOptions = {
 	// checkbox on first column
 	defaultColDef: {
-		width: 100,
-		headerCheckboxSelection: isFirstColumn,
-		checkboxSelection: isFirstColumn
+		width: 100
+		, headerCheckboxSelection: isFirstColumn
+		, checkboxSelection: isFirstColumn
+		, resizable: true
 	},
-	enableColResize: true,
 	suppressRowClickSelection: false,
 	rowSelection: 'multiple',
 	columnDefs: ordDtlColumnDef,
@@ -240,11 +240,11 @@ var rowData = [];
 var prdInfoGridOptions = {
 	// checkbox on first column
 	defaultColDef: {
-		width: 100,
-		headerCheckboxSelection: isFirstColumn,
-		checkboxSelection: isFirstColumn
+		width: 100
+		, headerCheckboxSelection: isFirstColumn
+		, checkboxSelection: isFirstColumn
+		, resizable: true
 	},
-	enableColResize: true,
 	suppressRowClickSelection: false,
 	rowSelection: 'multiple',
 	columnDefs: columnDefs,
