@@ -74,13 +74,13 @@ var gridOptions = {
 			return html;
 		}
 	    , btnRenderer2: function(param) {
-	    	var html = "<a class='custm_btn srch' href='https://www.amazon.co.jp/s?k="+param.data.kwrd2+"'>";
+	    	var html = "<a class='custm_btn srch' href='https://www.amazon.co.jp/s?k="+param.data.kwrd2+"' target='_blank'>";
 	    	html += "アマゾン";
 	    	html += "</a>";
 			return html;
 		}
 	    , btnRenderer3: function(param) {
-			var html = "<a class='custm_btn srch' href='https://search.rakuten.co.jp/search/mall/"+param.data.kwrd2+"'>";
+			var html = "<a class='custm_btn srch' href='https://search.rakuten.co.jp/search/mall/"+param.data.kwrd2+"' target='_blank'>";
 			html += "楽天";
 			html += "</a>";
 			return html;
