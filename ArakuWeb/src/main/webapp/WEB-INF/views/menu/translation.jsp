@@ -72,7 +72,7 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 </div>
 
 <div id="etcModal" class="modal fade" role="modal">
-	<div class="modal-dialog">
+	<div class="modal-dialog" style="width:1320px;">
 		<div class="modal-content">
 			<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal">&times;</button>

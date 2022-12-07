@@ -24,7 +24,27 @@ $(document).ready(function() {
 	    ,todayHighlight: true
 	    ,autoclose: true
 	});
+	
+	var today = new Date();
+	var week = addDays(today, -7);
+	$('#startDate').val(week.getFullYear()
+			+'-'+pluaZero((week.getMonth()+1))+'-'+pluaZero(week.getDate()));
+	$('#endDate').val(today.getFullYear()
+			+'-'+pluaZero((today.getMonth()+1))+'-'+pluaZero(today.getDate()));
 });
+
+function addDays(date, days) {
+    var result = new Date(date);
+    result.setDate(date.getDate() + days);
+    return result;
+}
+
+function pluaZero(day) {
+	if(day < 10) {
+		return '0'+day;
+	}
+	return day;
+}
 
 function showOrder(id, nm) {
 	$('input[name=partner_id]').val(id);

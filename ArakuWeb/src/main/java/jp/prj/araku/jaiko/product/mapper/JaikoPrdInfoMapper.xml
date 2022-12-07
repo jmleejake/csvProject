@@ -44,7 +44,7 @@ from jaiko_prd_info
 		and prd_nm like '%${prd_nm}%'
 		</if>
 		<if test="jan_cd != null and jan_cd != ''">
-		and jan_cd like '%${jan_cd}%'
+		and (jan_cd like '%${jan_cd}%' or jan_cd1 like '%${jan_cd}%' or jan_cd2 like '%${jan_cd}%' or jan_cd3 like '%${jan_cd}%')
 		</if>
 		<if test="partner_id != null and partner_id != ''">
 		and partner_id = #{partner_id}
