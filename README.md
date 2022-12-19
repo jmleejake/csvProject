@@ -2,6 +2,34 @@
 ### 2023.04 Rakuten download/upload 탬플릿항목 추가 예정
 <img src='https://user-images.githubusercontent.com/18359068/197534164-9f25bbfe-969c-4c52-9350-c4c264c66b17.png' width='300' />
 
+### 2022.12
+<ul>
+<li>
+src/main/java/jp/prj/araku/tanpin/dao/TanpinDAO.java > downloadOrderForm
+<div>
+<img src='https://user-images.githubusercontent.com/18359068/208329093-90f75b6c-c2c7-4488-be65-dabea2567d81.png' width='300' />
+</div>
+</li>
+<li>
+src/main/webapp/resources/jaiko/salesMain.js > 페이지 접근시 일주일 default설정
+<div>
+<img src='https://user-images.githubusercontent.com/18359068/208329258-5c5ee011-2824-47df-9552-8d89bcf386cf.png' width='300' />
+</div>
+</li>
+<li>
+src/main/java/jp/prj/araku/jaiko/product/mapper/JaikoPrdInfoMapper.xml > getJaikoPrdInfo
+<div>
+<img src='https://user-images.githubusercontent.com/18359068/208329304-ee3716e1-45ac-43cd-967b-9ac8d530c922.png' width='300' />
+</div>
+</li>
+<li>
+src/main/webapp/WEB-INF/views/menu/translation.jsp > modal-dialog > style width설정
+<div>
+<img src='https://user-images.githubusercontent.com/18359068/208329331-158cc084-86d1-495e-be4e-d9110b283522.png' width='300' />
+</div>
+</li>
+</ul>
+
 ### 2022.11.14
 <ul>
 <li>
