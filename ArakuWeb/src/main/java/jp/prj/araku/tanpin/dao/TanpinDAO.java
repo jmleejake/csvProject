@@ -290,7 +290,6 @@ public class TanpinDAO {
 				if(ii > 0) {
 					arr = new int[i+1];
 				}
-				
 				List<List<JaikoPrdInventoryVO>> subList = new ArrayList<>();
 				
 				for(int j=0; j<arr.length; j++) {
@@ -304,9 +303,9 @@ public class TanpinDAO {
 					}
 					
 					if(arr[k] > list.size()) {
-						subList.add(list.subList(k*arr[k-1], list.size()));
+						subList.add(list.subList(arr[k-1], list.size()));
 					}else {
-						subList.add(list.subList(k*arr[k-1], arr[k]));
+						subList.add(list.subList(arr[k-1], arr[k]));
 					}
 				}
 				
