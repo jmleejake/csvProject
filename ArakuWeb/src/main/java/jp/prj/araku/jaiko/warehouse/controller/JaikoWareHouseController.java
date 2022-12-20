@@ -52,5 +52,11 @@ public class JaikoWareHouseController {
 	public int processJaikoWarehouse(JaikoWareHouseVO vo) {
 		return dao.processJaikoWarehouse(vo.getSearch_type());
 	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/delTemp")
+	public int deleteTempWarehouse() {
+		return dao.deleteWareTemp();
+	}
 
 }

@@ -235,5 +235,10 @@ public class JaikoWareHouseDAO {
 		ret = wareHouseMapper.deleteWareTemp();
 		return ret;
 	}
+	
+	public int deleteWareTemp() {
+		IJaikoWareHouseMapper wareHouseMapper = sqlSession.getMapper(IJaikoWareHouseMapper.class);
+		return wareHouseMapper.deleteWareTemp();
+	}
 
 }

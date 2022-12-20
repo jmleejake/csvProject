@@ -1,3 +1,13 @@
+$.ajax({
+	url: "/jaiko/warehouse/delTemp"
+	, dataType: "json"
+	, contentType: 'application/json'
+	, success: function(res) {
+		console.log('wareOut');
+		console.log(res);
+	}
+});
+
 // 単位
 const unit = {
   1: '単品',
