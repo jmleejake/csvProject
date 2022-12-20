@@ -28,6 +28,12 @@ src/main/webapp/WEB-INF/views/menu/translation.jsp > modal-dialog > style widthì
 <img src='https://user-images.githubusercontent.com/18359068/208329331-158cc084-86d1-495e-be4e-d9110b283522.png' width='300' />
 </div>
 </li>
+<li>
+src/main/java/jp/prj/araku/jaiko/product/mapper/JaikoPrdInfoMapper.xml > getJaikoPrdInfo
+<div>
+<img src='https://user-images.githubusercontent.com/18359068/208593862-08203099-e3e9-4b39-910f-f14cd13584e9.png' width='300' />
+</div>
+</li>
 </ul>
 
 ### 2022.11.14
