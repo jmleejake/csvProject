@@ -55,6 +55,9 @@ from jaiko_prd_info
 		<if test="jan_cd != null and jan_cd != ''">
 		and (jan_cd1 like '%${jan_cd}%' or jan_cd2 like '%${jan_cd}%' or jan_cd3 like '%${jan_cd}%')
 		</if>
+		<if test="prd_nm != null and prd_nm != ''">
+		and prd_nm like '%${prd_nm}%'
+		</if>
 		</when>
 		<otherwise>
 		upd_dt between date_add(now(), interval -1 day) and now()
