@@ -2,6 +2,21 @@
 ### 2023.04 Rakuten download/upload 탬플릿항목 추가 예정
 <img src='https://user-images.githubusercontent.com/18359068/197534164-9f25bbfe-969c-4c52-9350-c4c264c66b17.png' width='300' />
 
+### 2023.01
+<ul>
+<li>
+발주서 상품리스트 노출영역 24줄로 수정
+<div>src/main/java/jp/prj/araku/tanpin/dao/TanpinDAO.java > downloadOrderForm</div>
+<div>
+<img src='https://user-images.githubusercontent.com/18359068/212219842-09ca1d17-3554-4a8c-829c-1d49d0fd9e42.png' width='300' />
+</div>
+</li>
+<li>
+재고관리화면 > 거래처별 다운로드 구현
+<div>9. 재고 관리화면에서  거래처별 재고 다운로드 하고 싶습니다.</div>
+</li>
+</ul>
+
 ### 2022.12
 <ul>
 <li>
