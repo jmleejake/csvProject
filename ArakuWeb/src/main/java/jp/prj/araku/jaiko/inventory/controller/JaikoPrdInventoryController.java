@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,6 +22,7 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 import jp.prj.araku.jaiko.inventory.dao.JaikoPrdInventoryDAO;
 import jp.prj.araku.jaiko.inventory.vo.JaikoPrdInventoryVO;
+import jp.prj.araku.tablet.dao.TabletPrdDAO;
 
 @RequestMapping(value = "/jaiko/prdInven")
 @Controller
@@ -33,8 +35,12 @@ public class JaikoPrdInventoryController {
 	@Autowired
 	JaikoPrdInventoryDAO dao;
 	
+	@Autowired
+	TabletPrdDAO tabletPrdDao;
+	
 	@RequestMapping(value = "")
-	public String showJaikoPrdInventory() {
+	public String showJaikoPrdInventory(Model model) {
+		model.addAttribute("partners", tabletPrdDao.getDealerInfo(null));
 		return "jaiko/prdInventory";
 	}
 	

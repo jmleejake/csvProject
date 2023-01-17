@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix ="c" uri ="http://java.sun.com/jsp/jstl/core" %>
 <%
 String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 %>
@@ -21,10 +22,20 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 	<div class="col-sm-3">
 	<input type="text" name="prd_cd" class="form-control" id="prd_cd" placeholder="商品コード">
 	</div>
-	<div class="col-sm-4">
+	<div class="col-sm-3">
 	<input type="text" name="prd_nm" class="form-control" id="prd_nm" placeholder="商品名">
 	</div>
-	<div class="col-sm-2">
+	<input type="hidden" name="dealer_id" id="d_id">
+	<div class="dropdown col-sm-2">
+		<button class="btn btn-primary dropdown-toggle" id="menu1" type="button" data-toggle="dropdown">
+		取引先選択<span id="selectedDealer"></span>  <span class="caret"></span></button>
+		<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+			<c:forEach items="${partners }" var="partner">
+			<li role="presentation"><a role="menuitem" href="javascript:setDealer('${partner.dealer_id }', '${partner.dealer_nm }')">${partner.dealer_nm }</a></li>
+			</c:forEach>
+		</ul>
+	</div>
+	<div class="col-sm-1">
 	<button id="btn_search" type="button" class="btn btn-default" style="width: 120px; margin-bottom: 10px;">検索</button>
 	</div>
 	</form>

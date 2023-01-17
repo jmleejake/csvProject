@@ -283,9 +283,9 @@ public class TanpinDAO {
 			
 			String ranNum = String.format("発注書No.%s", CommonUtil.getRandomNumber(7));
 			
-			if(list.size() > 10) {
-				int i = list.size()/10;
-				int ii = list.size()%10;
+			if(list.size() > 24) {
+				int i = list.size()/24;
+				int ii = list.size()%24;
 				int[] arr = new int[i];
 				if(ii > 0) {
 					arr = new int[i+1];
@@ -293,7 +293,7 @@ public class TanpinDAO {
 				List<List<JaikoPrdInventoryVO>> subList = new ArrayList<>();
 				
 				for(int j=0; j<arr.length; j++) {
-					arr[j] = (j+1)*10;
+					arr[j] = (j+1)*24;
 				}
 				
 				for(int k=0; k<arr.length; k++) {

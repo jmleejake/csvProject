@@ -339,6 +339,10 @@ $("#btn_delete").on("click", function() {
 });
 
 $("#btn_search").on("click", function() {
+	srch();
+});
+
+function srch() {
 	$.ajax({
 		url: "/jaiko/prdInven/getPrdInven"
 		, type:"get"
@@ -347,7 +351,13 @@ $("#btn_search").on("click", function() {
 		, contentType: 'application/json'
 		, success: setRowData
 	});
-});
+}
+
+function setDealer(id,nm) {
+	$('#d_id').val(id);
+	$('#selectedDealer').html(': '+nm);
+	srch();
+}
 
 $("#btn_down").on("click", function() {
 	$("#frm_down").submit();
