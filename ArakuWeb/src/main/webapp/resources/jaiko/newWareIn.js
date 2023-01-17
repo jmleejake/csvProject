@@ -158,17 +158,13 @@ $("#btn_commit").on("click", function() {
 		, contentType: 'application/json'
 		, data: {search_type: 'wareIn'}
 		, success: function(res) {
-			if('1' == res) {
-				alert('登録終わりました。');
-			}else {
-				if('99' == res) {
+			if('99' == res) {
 					alert('商品情報がありません。');
 				}else if('98' == res) {
 					alert('在庫情報がありません。');
 				}else {
-					alert('データ確認が必要です。');
+					alert('登録終わりました。');
 				}
-			}
 		}
 	});
 });

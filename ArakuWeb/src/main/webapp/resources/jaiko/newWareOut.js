@@ -152,11 +152,7 @@ $("#btn_commit").on("click", function() {
 		, contentType: 'application/json'
 		, data: {search_type: 'wareOut'}	
 		, success: function(res) {
-			if('1' == res) {
-				alert('登録終わりました。');
-			}else {
-				alert('データ確認が必要です。');
-			}
+			alert('登録終わりました。');
 		}
 	});
 });
