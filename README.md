@@ -13,7 +13,21 @@
 </li>
 <li>
 재고관리화면 > 거래처별 다운로드 구현
-<div>9. 재고 관리화면에서  거래처별 재고 다운로드 하고 싶습니다.</div>
+<div>src/main/java/jp/prj/araku/jaiko/inventory/controller/JaikoPrdInventoryController.java > showJaikoPrdInventory</div>
+<div>src/main/webapp/WEB-INF/views/jaiko/prdInventory.jsp</div>
+<div>src/main/webapp/resources/jaiko/prdInventory.js</div>
+<div>
+<img src='https://user-images.githubusercontent.com/18359068/212800933-52c88f17-075a-49a5-9093-3fa97d7289dc.png' width='300' />
+</div>
+</li>
+<li>
+에러 대응
+<div>해당 부분 디버깅시 정상작동하는것으로 판단되어 관련 alert메시지 수정</div>
+<div>src/main/webapp/resources/jaiko/newWareIn.js</div>
+<div>src/main/webapp/resources/jaiko/newWareOut.js</div>
+<div>
+<img src='https://user-images.githubusercontent.com/18359068/212801376-8542a040-d51f-45c3-87a0-6395f94c070e.png' width='300' />
+</div>
 </li>
 </ul>
 
