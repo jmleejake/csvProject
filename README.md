@@ -29,6 +29,21 @@
 <img src='https://user-images.githubusercontent.com/18359068/212801376-8542a040-d51f-45c3-87a0-6395f94c070e.png' width='300' />
 </div>
 </li>
+<li>
+치환마스터 화면에 사이즈컬럼 추가
+<div>
+
+```sql
+alter table translation_info add column prd_size varchar(5) comment 'サイズ';
+```
+</div>
+<div>src/main/java/jp/prj/araku/list/vo/TranslationVO.java</div>
+<div>src/main/java/jp/prj/araku/list/mapper/ListMapper.xml</div>
+<div>src/main/webapp/resources/menu/translation.js</div>
+<div>
+<img src='https://user-images.githubusercontent.com/18359068/215120179-182c357d-3712-434f-b1a4-9ecb8f3ffa29.png' width='300' />
+</div>
+</li>
 </ul>
 
 ### 2022.12
