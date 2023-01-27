@@ -4,8 +4,9 @@ import com.opencsv.bean.CsvBindByPosition;
 
 import jp.prj.araku.util.ArakuVO;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-public @Data class JaikoPrdInfoVO extends ArakuVO {
+public @Data @EqualsAndHashCode(callSuper=false) class JaikoPrdInfoVO extends ArakuVO {
 	/**区分ID*/
 	private String seq_id;
 	/**取引先*/

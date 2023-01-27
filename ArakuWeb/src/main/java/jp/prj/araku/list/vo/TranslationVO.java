@@ -6,8 +6,9 @@ import com.opencsv.bean.CsvBindByPosition;
 
 import jp.prj.araku.util.ArakuVO;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-public @Data class TranslationVO extends ArakuVO {
+public @Data @EqualsAndHashCode(callSuper=false) class TranslationVO extends ArakuVO {
 	/**区分ID*/
 	private String seq_id;
 	/**データ登録日*/
@@ -29,6 +30,9 @@ public @Data class TranslationVO extends ArakuVO {
 	/**商品数*/
 	@CsvBindByPosition(position=3)
 	private String prd_cnt;
+	/**サイズ*/
+	@CsvBindByPosition(position=4)
+	private String prd_size;
 	
 	/**検索用*/
 	private String start_date;

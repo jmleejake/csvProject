@@ -13,6 +13,7 @@ select
 	, prd_cnt
 	, etc_cntnt
 	, jan_cd
+	, prd_size
 	, date_format(register_date, '%Y/%m/%d') register_date
 	, date_format(update_date, '%Y/%m/%d') update_date
 from
@@ -47,8 +48,8 @@ order by register_date desc, update_date desc
 </select>
 
 <insert id="addTransInfo" parameterType="Trans" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
-insert into translation_info (before_trans, after_trans, prd_cnt, etc_cntnt, jan_cd)
-values (#{before_trans}, #{after_trans}, #{prd_cnt}, #{etc_cntnt}, #{jan_cd})
+insert into translation_info (before_trans, after_trans, prd_cnt, etc_cntnt, jan_cd, prd_size)
+values (#{before_trans}, #{after_trans}, #{prd_cnt}, #{etc_cntnt}, #{jan_cd}, #{prd_size})
 </insert>
 
 <update id="modTransInfo" parameterType="Trans">
@@ -70,6 +71,9 @@ set
 	</if>
 	<if test="jan_cd != null">
 	, jan_cd = #{jan_cd}
+	</if>
+	<if test="prd_size != null">
+	, prd_size = #{prd_size}
 	</if>
 where
 	seq_id = #{seq_id}

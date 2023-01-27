@@ -32,6 +32,7 @@ var columnDefs = [
     	, editable: true
     	, cellEditor: 'agPopupTextCellEditor'
     }
+    , {headerName: "サイズ", field: "prd_size", width: 120, editable: true}
     , {headerName: "その他", width: 250, cellRenderer: 'btnRenderer'}
 ];
 
@@ -44,7 +45,8 @@ var selectedData
 , startAfterTrans, stopAfterTrans
 , startPrdCnt, stopPrdCnt
 , startEtcCntnt, stopEtcCntnt
-, startJanCd, stopJanCd;
+, startJanCd, stopJanCd
+, sPrdSize, ePrdSize;
 
 //수정데이터 배열
 var modifiedData = [];
@@ -79,6 +81,7 @@ var transGridOptions = {
         startPrdCnt = previousData.prd_cnt;
         startEtcCntnt = previousData.etc_cntnt;
         startJanCd = previousData.jan_cd;
+        sPrdSize = previousData.prd_size;
     },
     onCellEditingStopped: function(event) {
         var afterData = event.node.data;
@@ -87,12 +90,14 @@ var transGridOptions = {
         stopPrdCnt = afterData.prd_cnt;
         stopEtcCntnt = afterData.etc_cntnt;
         stopJanCd = afterData.jan_cd;
+        ePrdSize = afterData.prd_size;
         
         if (!(startBeforeTrans == stopBeforeTrans) || 
         		!(startAfterTrans == stopAfterTrans) ||
         		!(startPrdCnt == stopPrdCnt) ||
         		!(startEtcCntnt == stopEtcCntnt) ||
-        		!(startJanCd == stopJanCd)) {
+        		!(startJanCd == stopJanCd) ||
+        		!(sPrdSize == ePrdSize)) {
         	console.log("modified!");
         	modifiedData.push({
         		seq_id:afterData.seq_id
@@ -101,6 +106,7 @@ var transGridOptions = {
 				, prd_cnt:afterData.prd_cnt
 				, etc_cntnt:afterData.etc_cntnt
 				, jan_cd:afterData.jan_cd
+				, prd_size: afterData.prd_size
         	});
         }
     },
@@ -149,7 +155,8 @@ function setRowData(result) {
 				, afterTrans:result[i].after_trans
 				, prd_cnt:result[i].prd_cnt
 				, etc_cntnt:result[i].etc_cntnt
-				, jan_cd:result[i].jan_cd 
+				, jan_cd:result[i].jan_cd
+				, prd_size: result[i].prd_size
 				, register_date:result[i].register_date
 				, update_date:result[i].update_date
 		}
