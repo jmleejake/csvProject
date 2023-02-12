@@ -91,7 +91,7 @@ var columnDefs = [
 	, {headerName: "商品メーカー", field: "maker_cd", width: 80, editable: true, resizable: true}
 	, {headerName: "取引先コード", field: "dealer_id", width: 80, editable: true, resizable: true}
 	, {headerName: "登録日", field: "register_date", width: 150, editable: true, resizable: true, cellRenderer:'regDtFrm'} 
-	, {headerName: "メモ", field: "memo", width: 80, editable: true, resizable: true
+	, {headerName: "メモ", field: "memo", width: 480, editable: true, resizable: true
 		, cellEditor: 'agLargeTextCellEditor'
     	, cellEditorParams: {
             maxLength: '500',
