@@ -24,3 +24,27 @@ where seq_id = 7;
 SELECT DATE_ADD(now(), INTERVAL -1 DAY); 
 
 /*//190630 청구서작업을 위한 테이블 테스트*/
+
+
+alter table rakuten_frozen_info modify column order_no varchar(40) comment '注文番号';
+
+alter table rakuten_frozen_info modify column order_tel1 varchar(8) comment '注文者電話番号1';
+alter table rakuten_frozen_info modify column order_tel2 varchar(8) comment '注文者電話番号2';
+alter table rakuten_frozen_info modify column order_tel3 varchar(8) comment '注文者電話番号3';
+
+alter table rakuten_frozen_info modify column delivery_tel1 varchar(8) comment '送付先電話番号1';
+alter table rakuten_frozen_info modify column delivery_tel2 varchar(8) comment '送付先電話番号2';
+alter table rakuten_frozen_info modify column delivery_tel3 varchar(8) comment '送付先電話番号3';
+
+
+alter table rakuten_info modify column order_no varchar(40) comment '注文番号';
+
+alter table rakuten_info modify column order_tel1 varchar(8) comment '注文者電話番号1';
+alter table rakuten_info modify column order_tel2 varchar(8) comment '注文者電話番号2';
+alter table rakuten_info modify column order_tel3 varchar(8) comment '注文者電話番号3';
+
+alter table rakuten_info modify column delivery_tel1 varchar(8) comment '送付先電話番号1';
+alter table rakuten_info modify column delivery_tel2 varchar(8) comment '送付先電話番号2';
+alter table rakuten_info modify column delivery_tel3 varchar(8) comment '送付先電話番号3';
+
+select order_no,order_tel1,order_tel2,order_tel3 from rakuten_info;
