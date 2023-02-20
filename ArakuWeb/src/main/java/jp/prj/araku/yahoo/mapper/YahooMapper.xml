@@ -297,7 +297,7 @@ left outer join translation_err terr on terr.trans_target_id = yi.seq_id and ter
 	and ship_company_cd = #{delivery_company}
 	</if>
 </where>
-order by tr.seq_id desc
+order by result_text desc
 </select>
 
 <delete id="deleteYahooInfo" parameterType="String">

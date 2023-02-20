@@ -920,7 +920,7 @@ left outer join translation_err terr on terr.trans_target_id = rfi.seq_id and te
 	and delivery_company = #{delivery_company}
 	</if>
 </where>
-order by order_datetime desc
+order by result_text desc
 </select>
 
 <update id="updateRakutenInfo" parameterType="Rakuten">

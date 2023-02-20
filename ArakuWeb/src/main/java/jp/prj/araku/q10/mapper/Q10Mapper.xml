@@ -273,7 +273,7 @@ left outer join translation_err terr on terr.trans_target_id = qi.seq_id and ter
 	and delivery_company = #{delivery_company}
 	</if>
 </where>
-order by pay_date desc
+order by result_text desc
 </select>
 
 <update id="updateQ10Info" parameterType="Q10">
