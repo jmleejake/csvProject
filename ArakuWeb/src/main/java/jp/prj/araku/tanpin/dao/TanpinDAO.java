@@ -835,15 +835,15 @@ public class TanpinDAO {
 					cell.setCellValue("1");
 					cell.setCellStyle(allLine);
 					cell = row.createCell(5);
-					cell.setCellValue(String.valueOf(prdInfo.get(0).getPrd_unit_prc()));
+					//cell.setCellValue(String.valueOf(prdInfo.get(0).getPrd_unit_prc()));
 					cell.setCellStyle(allLine);
 					cell = row.createCell(6);
 					// 入数 * 数量 * 単価 = 合計金額"
-					int sum = Integer.parseInt(innerVO.getPrd_qty()) * 1 * Integer.parseInt(prdInfo.get(0).getPrd_unit_prc());
-					cell.setCellValue(String.valueOf(sum));
+					//int sum = Integer.parseInt(innerVO.getPrd_qty()) * 1 * Integer.parseInt(prdInfo.get(0).getPrd_unit_prc());
+					//cell.setCellValue(String.valueOf(sum));
 					cell.setCellStyle(allLine);
 					cell = row.createCell(7);
-					cell.setCellValue(innerVO.getJan_cd());
+					//cell.setCellValue(innerVO.getJan_cd());
 					cell.setCellStyle(allLine);
 					cell = row.createCell(8);
 					cell.setCellStyle(allLine);
