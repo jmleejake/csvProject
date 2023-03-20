@@ -446,7 +446,7 @@ public class TanpinDAO {
 					cell.setCellValue("TEL");
 					cell.setCellStyle(centerAllLine);
 					cell = row.createCell(1);
-					cell.setCellValue(dealerInfo.get(0).getDealer_tel());
+					cell.setCellValue("048-242-3801");
 					cell.setCellStyle(allLine);
 					for(int c=2; c<=8; c++) {
 						cell = row.createCell(c);
@@ -739,7 +739,7 @@ public class TanpinDAO {
 				cell.setCellValue("TEL");
 				cell.setCellStyle(centerAllLine);
 				cell = row.createCell(1);
-				cell.setCellValue(dealerInfo.get(0).getDealer_tel());
+				cell.setCellValue("048-242-3801");
 				cell.setCellStyle(allLine);
 				for(int c=2; c<=8; c++) {
 					cell = row.createCell(c);
