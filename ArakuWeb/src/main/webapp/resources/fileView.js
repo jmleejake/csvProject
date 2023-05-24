@@ -54,6 +54,9 @@ function preCheck(type) {
 	if ("jaikoPrd" == type) {
 		hasFile = $("#jaiko-prd-upload")[0].files.length;
 	}
+	if ("k-center" == type) {
+		hasFile = $("#k-center-upload")[0].files.length;
+	}
 	
 	if (hasFile <= 0) {
 		$.notify({

@@ -1,6 +1,7 @@
 package jp.prj.araku.jaiko.warehouse.controller;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import jp.prj.araku.jaiko.product.dao.JaikoPrdInfoDAO;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import jp.prj.araku.jaiko.product.vo.JaikoPrdInfoVO;
 import jp.prj.araku.jaiko.warehouse.dao.JaikoWareHouseDAO;
 import jp.prj.araku.jaiko.warehouse.vo.JaikoWareHouseVO;
@@ -57,6 +59,12 @@ public class JaikoWareHouseController {
 	@RequestMapping(value = "/delTemp")
 	public int deleteTempWarehouse() {
 		return dao.deleteWareTemp();
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/kCenterImg", method = RequestMethod.POST)
+	public Map<String, Object> kCenterOCR(MultipartHttpServletRequest multiFile) {
+		return dao.kCenterOCR(multiFile);
 	}
 
 }

@@ -1,12 +1,21 @@
 package jp.prj.araku.jaiko.warehouse.dao;
 
+import java.io.File;
+import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.HashSet;
 
 import org.apache.ibatis.session.SqlSession;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import jp.prj.araku.jaiko.inventory.mapper.IJaikoPrdInventoryMapper;
 import jp.prj.araku.jaiko.inventory.vo.JaikoPrdInventoryVO;
@@ -21,6 +30,7 @@ import jp.prj.araku.util.CommonUtil;
 public class JaikoWareHouseDAO {
 	@Autowired
 	SqlSession sqlSession;
+	private Logger log = LoggerFactory.getLogger("jaikoLog");
 	
 	public int insertJaikoWareHouse(JaikoWareHouseVO vo) {
 		IJaikoWareHouseMapper mapper = sqlSession.getMapper(IJaikoWareHouseMapper.class);
@@ -240,5 +250,56 @@ public class JaikoWareHouseDAO {
 		IJaikoWareHouseMapper wareHouseMapper = sqlSession.getMapper(IJaikoWareHouseMapper.class);
 		return wareHouseMapper.deleteWareTemp();
 	}
+	
+	public Map<String, Object> kCenterOCR(MultipartHttpServletRequest multiRequest) {
+		Map<String, Object> ret = new HashMap<String, Object>();
+		
+		try {
+			// 파라미터 이름을 키로 파라미터에 해당하는 파일 정보를 값으로 하는 Map을 가져온다.
+			Map<String, MultipartFile> files = multiRequest.getFileMap();
+			
+			// files.entrySet()의 요소를 읽어온다.
+			Iterator<Entry<String, MultipartFile>> itr = files.entrySet().iterator();
+			
+			MultipartFile mFile;
+			
+			// 파일이 업로드 될 경로를 지정한다.
+			String filePath = "C:\\jmwork\\workspace\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp0\\wtpwebapps\\araku\\resources\\k-center";
+			
+			// 읽어 올 요소가 있으면 true, 없으면 false를 반환한다. 
+			while (itr.hasNext()) {
+				
+				Entry<String, MultipartFile> entry = itr.next();
+				
+				// entry에 값을 가져온다.
+				mFile = entry.getValue();
+				
+				// 파일명
+				String fileName = mFile.getOriginalFilename();
+				
+				// 저장될 경로와 파일명
+				String saveFilePath = filePath + File.separator + fileName;
+				
+				// filePath에 해당되는 파일의 File 객체를 생성한다.
+				File fileFolder = new File(filePath);
+				
+				if (!fileFolder.exists()) {
+					// 부모 폴더까지 포함하여 경로에 폴더를 만든다.
+					if (fileFolder.mkdirs()) {
+						log.info("[file.mkdirs] : Success");
+					} else {
+						log.error("[file.mkdirs] : Fail");
+					}
+				}
+				
+				File saveFile = new File(saveFilePath);
+				mFile.transferTo(saveFile);
+				ret.put("dictFile", saveFilePath);
+				ret.put("fName", fileName);
+			}
+		} catch(Exception e) {}
+		
+		return ret;
+    }
 
 }
