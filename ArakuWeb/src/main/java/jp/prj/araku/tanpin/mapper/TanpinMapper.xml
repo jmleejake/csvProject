@@ -20,6 +20,8 @@ maker_cd
 , dealer_id
 , dealer_nm
 , memo
+, prd_qty
+, exp_dt
 )
 values(
 #{maker_cd}
@@ -35,6 +37,8 @@ values(
 , #{dealer_id}
 , #{dealer_nm}
 , #{memo}
+, #{prd_qty}
+, str_to_date(#{exp_dt}, '%Y/%m/%d')
 )
 </insert>
 
@@ -51,6 +55,7 @@ values(
 		seq_id
 		, date_format(register_date, '%Y/%m/%d') register_date
 		, date_format(update_date, '%Y/%m/%d') update_date
+		, date_format(exp_dt, '%Y/%m/%d') exp_dt
 		, maker_cd
 		, maker_nm
 		, prd_cd
@@ -64,6 +69,7 @@ values(
 		, dealer_id
 		, dealer_nm
 		, memo
+		, prd_qty
 	</otherwise>
 </choose>
 from
@@ -90,10 +96,13 @@ from
 	<if test="prd_nm != null and prd_nm !=''">
 	and prd_nm like '%${prd_nm}%'
 	</if>
+	<if test="start_date != null and start_date !='' and end_date != null and end_date !=''">
+	and register_date between str_to_date(#{start_date}, '%Y/%m/%d') and str_to_date(#{end_date}, '%Y/%m/%d %H:%i:%S')
+	</if>
 	</trim>
 	</if>
 </where>
-order by seq_id desc, update_date desc, register_date desc
+order by update_date desc, seq_id desc
 </select>
 
 <update id="updateTanpinInfo" parameterType="Tanpin">
@@ -143,6 +152,12 @@ set
 	<if test="register_date != null and register_date != ''">
 	, register_date = str_to_date(#{register_date}, '%Y/%m/%d')
 	</if>
+	<if test="exp_dt != null and exp_dt != ''">
+	, exp_dt = str_to_date(#{exp_dt}, '%Y/%m/%d')
+	</if>
+	<if test="prd_qty != null and prd_qty !=''">
+	, prd_qty = #{prd_qty}
+	</if>
 where
 	seq_id = #{seq_id}
 </update>
@@ -151,5 +166,12 @@ where
 delete from tanpin_info
 where seq_id = #{seq_id}
 </delete>
+
+<insert id="insertExpireManage" parameterType="ExpireManage" useGeneratedKeys="true" keyProperty="seq_id" keyColumn="seq_id">
+insert into expire_manage 
+(jan_cd, prd_nm, partner_id, partner_nm, prd_qty, exp_dt)
+values
+(#{jan_cd}, #{prd_nm}, #{partner_id}, #{partner_nm}, #{prd_qty}, str_to_date(#{exp_dt}, '%Y/%m/%d'))
+</insert>
 
 </mapper>

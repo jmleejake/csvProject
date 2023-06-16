@@ -13,52 +13,72 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 <div class="container-fluid">
 <div class="well container-fluid">
 	<form id="frm">
-	<div class="col-sm-3" >
-	<div class="dropdown">
-		<input type="text" name="maker_cd" class="form-control" placeholder="メーカー名" list ="maker">
-		<datalist id="maker" class="dropdown-menu" role="menu">
-			<c:forEach items="${makers }" var="maker">
-			<option value="${maker.maker_cd }">${maker.maker_nm }</option>
-			</c:forEach>
-		</datalist>
+	<div class="row">
+		<div class="col-sm-4">
+		<label>登録日付</label>
+		<div class="row">
+		<!-- datepicker -->
+		<div class="col-sm-6">
+		<input type="text" name="start_date" class="form-control" style="width: 200px;" id="start_date" placeholder="From">
+		</div>
+		<div class="col-sm-6">
+		<input type="text" name="end_date" class="form-control" style="width: 200px;" id="end_date" placeholder="To">
+		</div>
+		</div>
+		</div>
+		<div class="col-sm-4">
+		</div>
+		<div class="col-sm-4">
+		</div>
 	</div>
-		
-	<!-- 
-	<div class="dropdown">
-		<button class="btn btn-primary dropdown-toggle" id="menu1" type="button" data-toggle="dropdown">
-		メーカー名<span id="selectedMaker"></span>  <span class="caret"></span></button>
-		<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-			<c:forEach items="${makers }" var="maker">
-			<li role="presentation"><a role="menuitem" href="javascript:setSearch('M', '${maker.maker_cd }', '${maker.maker_nm }')">${maker.maker_nm }</a></li>
-			</c:forEach>
-		</ul>
-	</div>
-	 -->
-	</div>
-	<div class="col-sm-3" >
-	<input type="text" name="prd_nm" class="form-control" style="width: 250px;" placeholder="商品名"
-	onkeypress = "if(event.keyCode==13){ srch(); event.preventDefault(); }">
-	<input type="hidden" name="dealer_id" id="hidDealerId">
-	<input type="hidden" name="search_type" value="srch"> 
-	</div>
-	<div class="col-sm-2">
-	<input type="text" name="prd_cd" class="form-control" style="width: 250px;" placeholder="商品コード(JAN)"
-	onkeypress = "if(event.keyCode==13){ srch(); event.preventDefault(); }">
-	</div>
-	</form>
-	<div class="col-sm-2" >
-	<div class="dropdown">
-		<button class="btn btn-primary dropdown-toggle" id="menu1" type="button" data-toggle="dropdown">
-		取引先<span id="selectedDealer"></span>  <span class="caret"></span></button>
-		<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-			<c:forEach items="${dealers }" var="dealer">
-			<li role="presentation"><a role="menuitem" href="javascript:setSearch('D', '${dealer.dealer_id }', '${dealer.dealer_nm }')">${dealer.dealer_nm }</a></li>
-			</c:forEach>
-		</ul>
-	</div>
-	</div>
-	<div class="col-sm-2">
-	<button type="button" id="btn_srch" class="btn btn-default" style="width: 120px;">検索</button>
+	<div class="row">
+		<div class="col-sm-3" >
+		<div class="dropdown">
+			<input type="text" name="maker_cd" class="form-control" placeholder="メーカー名" list ="maker">
+			<datalist id="maker" class="dropdown-menu" role="menu">
+				<c:forEach items="${makers }" var="maker">
+				<option value="${maker.maker_cd }">${maker.maker_nm }</option>
+				</c:forEach>
+			</datalist>
+		</div>
+			
+		<!-- 
+		<div class="dropdown">
+			<button class="btn btn-primary dropdown-toggle" id="menu1" type="button" data-toggle="dropdown">
+			メーカー名<span id="selectedMaker"></span>  <span class="caret"></span></button>
+			<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+				<c:forEach items="${makers }" var="maker">
+				<li role="presentation"><a role="menuitem" href="javascript:setSearch('M', '${maker.maker_cd }', '${maker.maker_nm }')">${maker.maker_nm }</a></li>
+				</c:forEach>
+			</ul>
+		</div>
+		 -->
+		</div>
+		<div class="col-sm-3" >
+		<input type="text" name="prd_nm" class="form-control" style="width: 250px;" placeholder="商品名"
+		onkeypress = "if(event.keyCode==13){ srch(); event.preventDefault(); }">
+		<input type="hidden" name="dealer_id" id="hidDealerId">
+		<input type="hidden" name="search_type" value="srch"> 
+		</div>
+		<div class="col-sm-2">
+		<input type="text" name="prd_cd" class="form-control" style="width: 250px;" placeholder="商品コード(JAN)"
+		onkeypress = "if(event.keyCode==13){ srch(); event.preventDefault(); }">
+		</div>
+		</form>
+		<div class="col-sm-2" >
+		<div class="dropdown">
+			<button class="btn btn-primary dropdown-toggle" id="menu1" type="button" data-toggle="dropdown">
+			取引先<span id="selectedDealer"></span>  <span class="caret"></span></button>
+			<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+				<c:forEach items="${dealers }" var="dealer">
+				<li role="presentation"><a role="menuitem" href="javascript:setSearch('D', '${dealer.dealer_id }', '${dealer.dealer_nm }')">${dealer.dealer_nm }</a></li>
+				</c:forEach>
+			</ul>
+		</div>
+		</div>
+		<div class="col-sm-2">
+		<button type="button" id="btn_srch" class="btn btn-default" style="width: 120px;">検索</button>
+		</div>
 	</div>
 </div>
 <div class="well container-fluid">
@@ -97,6 +117,16 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 <script>
 $(document).ready(function() {
 	$("#prdM").addClass("active");
+	
+	$("#start_date").datepicker({
+		language: "ja"
+		, autoclose: true
+	});
+	
+	$("#end_date").datepicker({
+		language: "ja"
+		, autoclose: true
+	});
 	
 	/* File Upload*/
 	$('#tanpin-csv').on('click', 'button', function () {

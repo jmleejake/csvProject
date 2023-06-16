@@ -3,12 +3,24 @@
  */
 $(function() {
 	srch();
+	
+	$("#end_date").attr("disabled", "disabled");
+	$("#start_date").on("change", function() {
+		var empty = $("#start_date").val() == "";
+		if(empty) {
+			$("#end_date").val("");
+			$("#end_date").attr("disabled", "disabled");
+		} else {
+			$("#end_date").removeAttr("disabled");
+		}
+	});
 });
 
 // 수정데이터 배열
 var modData = [];
 class ColAsDatePicker {
     init(params) {
+    	console.log('datePicker');
     	console.log(params);
 		// create the cell
 		this.eGui = document.createElement('input');
@@ -23,6 +35,53 @@ class ColAsDatePicker {
 			 ,autoclose: true
 		}).on('changeDate', function(){
 			modData.push({seq_id: params.data.seq_id, register_date: $(this).val()});
+			$.ajax({
+				url: "modTanpin"
+				, type:"post"
+				, dataType: "json"
+				, contentType: 'application/json'
+				, data:JSON.stringify(modData)
+				, success: function(result){
+					setRowData(result);
+					// 수정데이터 초기화
+					modData = [];
+		    	}
+			});
+		});
+    }
+
+    getGui() {
+    	return this.eGui;
+    }
+
+    // gets called whenever the cell refreshes
+    refresh(params) {
+    	return true;
+    }
+
+    // gets called when the cell is removed from the grid
+    destroy() {
+    }
+
+ }
+
+class ColAsDatePicker2 {
+    init(params) {
+    	console.log('datePicker2');
+    	console.log(params);
+		// create the cell
+		this.eGui = document.createElement('input');
+		$(this.eGui).addClass('form-control');
+		$(this.eGui).css('width','100px');
+		$(this.eGui).css('height','22px');
+		$(this.eGui).val(params.value);
+		$(this.eGui).datepicker({
+			language: "ja"
+			 ,format: "yyyy/mm/dd"
+			 ,todayHighlight: true
+			 ,autoclose: true
+		}).on('changeDate', function(){
+			modData.push({seq_id: params.data.seq_id, exp_dt: $(this).val()});
 			$.ajax({
 				url: "modTanpin"
 				, type:"post"
@@ -90,6 +149,8 @@ var columnDefs = [
 	, {headerName: "販売金額", field: "price", width: 100, editable: true, resizable: true}
 	, {headerName: "商品メーカー", field: "maker_cd", width: 80, editable: true, resizable: true}
 	, {headerName: "取引先コード", field: "dealer_id", width: 80, editable: true, resizable: true}
+	, {headerName: "入庫数", field: "prd_qty", width: 60, editable: true, resizable: true}
+	, {headerName: "賞味期限", field: "exp_dt", width: 150, editable: true, resizable: true, cellRenderer:'expDtFrm'}
 	, {headerName: "登録日", field: "register_date", width: 150, editable: true, resizable: true, cellRenderer:'regDtFrm'} 
 	, {headerName: "メモ", field: "memo", width: 480, editable: true, resizable: true
 		, cellEditor: 'agLargeTextCellEditor'
@@ -114,6 +175,7 @@ var sPrdCd, ePrdCd;
 var sDealerCd, eDealerCd;
 var sMemo, eMemo;
 var sRegDt, eRegDt;
+var sPrdQty, ePrdQty;
 
 // let the grid know which columns and what data to use
 var orderGridOptions = {
@@ -129,6 +191,7 @@ var orderGridOptions = {
 	rowData: rowData,
 	components: {
 		regDtFrm: ColAsDatePicker
+		, expDtFrm: ColAsDatePicker2
 	},
 	rowClassRules: {
     	'trans-created': function(params) {
@@ -157,6 +220,7 @@ var orderGridOptions = {
     	sDealerCd = start.dealer_id;
     	sMemo = start.memo;
     	sRegDt = start.register_date;
+    	sPrdQty = start.prd_qty;
     },
     onCellEditingStopped: function(event) {
     	var stop = event.node.data;
@@ -171,13 +235,14 @@ var orderGridOptions = {
     	eDealerCd = stop.dealer_id;
     	eMemo = stop.memo;
     	eRegDt = stop.register_date;
+    	ePrdQty = stop.prd_qty;
     	
     	if (!(sMakerNm == eMakerNm)||!(sPrdNm == ePrdNm)
     			||!(sCapa == eCapa)||!(sDealerNm == eDealerNm)
     			||!(sInPrc == eInPrc)||!(sMakerCd == eMakerCd)
     			||!(sPrdCd == ePrdCd)||!(sDealerCd == eDealerCd)
     			||!(sInPrc == eInPrc)||!(sMakerCd == eMakerCd)||!(sPrc == ePrc)
-    			||!(sMemo == eMemo)||!(sRegDt == eRegDt)) {
+    			||!(sMemo == eMemo)||!(sRegDt == eRegDt)||!(sPrdQty == ePrdQty)) {
     		modData.push(stop);
     	}
     }
@@ -215,6 +280,8 @@ function setRowData(result) {
 				, register_date:result[i].register_date
 				, update_date:result[i].update_date
 				, memo: result[i].memo
+				, prd_qty: result[i].prd_qty
+				, exp_dt: result[i].exp_dt
 		}
 		rowData.push(row);
 	}

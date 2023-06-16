@@ -64,6 +64,7 @@ public class JaikoPrdInventoryDAO {
 			if(vo.getSeq_id() != null) {
 				mapper.updateJaikoPrdInventory(vo);
 			}else {
+				vo.setExp_dt("2999/12/31");
 				mapper.insertJaikoPrdInventory(vo);
 			}
 		}

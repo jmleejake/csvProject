@@ -2,6 +2,7 @@ package jp.prj.araku.tanpin.mapper;
 
 import java.util.ArrayList;
 
+import jp.prj.araku.tanpin.vo.ExpireManageVo;
 import jp.prj.araku.tanpin.vo.TanpinVO;
 
 public interface ITanpinMapper {
@@ -9,4 +10,5 @@ public interface ITanpinMapper {
 	public ArrayList<TanpinVO> getTanpinInfo(TanpinVO vo);
 	public int updateTanpinInfo(TanpinVO vo);
 	public int deleteTanpinInfo(String seq_id);
+	public int insertExpireManage(ExpireManageVo vo);
 }

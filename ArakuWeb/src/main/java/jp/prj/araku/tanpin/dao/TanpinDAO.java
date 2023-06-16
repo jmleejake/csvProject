@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.opencsv.CSVWriter;
@@ -41,6 +42,7 @@ import jp.prj.araku.jaiko.product.vo.JaikoPrdInfoVO;
 import jp.prj.araku.tablet.mapper.ITabletPrdMapper;
 import jp.prj.araku.tablet.vo.DealerVO;
 import jp.prj.araku.tanpin.mapper.ITanpinMapper;
+import jp.prj.araku.tanpin.vo.ExpireManageVo;
 import jp.prj.araku.tanpin.vo.TanpinVO;
 import jp.prj.araku.util.ArakuVO;
 import jp.prj.araku.util.CommonUtil;
@@ -60,6 +62,9 @@ public class TanpinDAO {
 	
 	public ArrayList<TanpinVO> getTanpinInfo(TanpinVO vo) {
 		ITanpinMapper mapper = sqlSession.getMapper(ITanpinMapper.class);
+		if(null != vo.getEnd_date() && !"".equals(vo.getEnd_date())) {
+			vo.setEnd_date(vo.getEnd_date()+" 23:59:59");
+		}
 		ArrayList<TanpinVO> ret = mapper.getTanpinInfo(vo);
 		if(!("dealer".equals(vo.getSelect_type()) || "maker".equals(vo.getSelect_type()))) {
 			for(TanpinVO tmp : ret) {
@@ -203,10 +208,96 @@ public class TanpinDAO {
 		return getTanpinInfo("");
 	}
 	
+	@Transactional(rollbackFor = Exception.class)
 	public ArrayList<TanpinVO> modTanpin(ArrayList<TanpinVO> list) {
 		ITanpinMapper mapper = sqlSession.getMapper(ITanpinMapper.class);
+		IJaikoPrdInventoryMapper prdInvenMapper = sqlSession.getMapper(IJaikoPrdInventoryMapper.class);
+		IJaikoPrdInfoMapper prdInfoMapper = sqlSession.getMapper(IJaikoPrdInfoMapper.class);
+		
 		for(TanpinVO tanpin : list) {
 			mapper.updateTanpinInfo(tanpin);
+			
+			if(tanpin.getPrd_qty() > 0) {
+				// 入庫数 0、NULL이외의 숫자가 입력되면 재고관리테이블에서 현재재고와 합한값을 갱신한다.
+				JaikoPrdInventoryVO prdInvenSrch = new JaikoPrdInventoryVO();
+				prdInvenSrch.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+				prdInvenSrch.setJan_cd(tanpin.getPrd_cd());
+				ArrayList<JaikoPrdInventoryVO> invenList = prdInvenMapper.getJaikoPrdInventory(prdInvenSrch);
+				if(invenList.size() > 0) {
+					prdInvenSrch = invenList.get(0);
+					
+					int nowPrdCnt = 0;
+					String prdInvenSeqId = prdInvenSrch.getSeq_id();
+					if(null != prdInvenSrch.getNow_prd_cnt() && !"".equals(prdInvenSrch.getNow_prd_cnt())) {
+						nowPrdCnt = Integer.parseInt(prdInvenSrch.getNow_prd_cnt());
+					}
+					prdInvenSrch = new JaikoPrdInventoryVO();
+					prdInvenSrch.setSeq_id(prdInvenSeqId);
+					prdInvenSrch.setNow_prd_cnt(String.valueOf(tanpin.getPrd_qty() + nowPrdCnt));
+					prdInvenMapper.updateJaikoPrdInventory(prdInvenSrch);
+				}else {
+					// 재고관리 테이블에 관련 JANCODE 가 없을 경우
+					/*
+					単一商品管理T
+					JANCODE
+					入庫数
+					取引先コード
+					取引先会社名
+					ブランド ???
+					商品名
+					賞味期限
+					登録日
+					 * */
+					/*
+					在庫管理T
+					JANCODE
+					現在商品数
+					取引先コード
+					取引先会社名
+					ブランド
+					商品名
+					賞味期限
+					登録日
+			 		*/
+					prdInvenSrch.setNow_prd_cnt(String.valueOf(tanpin.getPrd_qty()));
+					prdInvenSrch.setDealer_id(tanpin.getDealer_id());
+					prdInvenSrch.setDealer_nm(tanpin.getDealer_nm());
+					// prdInvenSrch.setBrand_nm(tanpin.get);
+					prdInvenSrch.setPrd_nm(tanpin.getPrd_nm());
+					prdInvenSrch.setExp_dt(tanpin.getExp_dt());
+					prdInvenMapper.insertJaikoPrdInventory(prdInvenSrch);
+					
+					/*
+					商品情報T
+					JANCODE jan_cd
+					商品名 prd_nm
+					単価 prd_unit_prc
+					*/
+					JaikoPrdInfoVO jaikoPrdVo = new JaikoPrdInfoVO();
+					jaikoPrdVo.setPrd_nm(tanpin.getPrd_nm());
+					jaikoPrdVo.setJan_cd(tanpin.getPrd_cd());
+					jaikoPrdVo.setPrd_unit_prc(tanpin.getPrice());
+					prdInfoMapper.insertJaikoPrdInfo(jaikoPrdVo);
+					/*
+					賞味管理T
+					JANCODE
+					商品名
+					取引先コード
+					取引先会社名
+					入庫数
+					賞味期限
+					登録日
+					 */
+					ExpireManageVo expire = new ExpireManageVo();
+					expire.setJan_cd(tanpin.getPrd_cd());
+					expire.setPrd_nm(tanpin.getPrd_nm());
+					expire.setPartner_id(tanpin.getDealer_id());
+					expire.setPartner_nm(tanpin.getDealer_nm());
+					expire.setPrd_qty(tanpin.getPrd_qty());
+					expire.setExp_dt(tanpin.getExp_dt());
+					mapper.insertExpireManage(expire);
+				}
+			}
 		}
 		return getTanpinInfo("");
 	}
@@ -816,11 +907,13 @@ public class TanpinDAO {
 					sheet.addMergedRegion(new CellRangeAddress(i2+24,i2+24,0,2));
 					sheet.addMergedRegion(new CellRangeAddress(i2+24,i2+24,7,8));
 					JaikoPrdInventoryVO innerVO = list.get(i2);
+					/*
 					IJaikoPrdInfoMapper prdMapper = sqlSession.getMapper(IJaikoPrdInfoMapper.class);
 					JaikoPrdInfoVO jaikoPrdVO = new JaikoPrdInfoVO();
 					jaikoPrdVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
 					jaikoPrdVO.setJan_cd(innerVO.getJan_cd());
 					ArrayList<JaikoPrdInfoVO> prdInfo = prdMapper.getJaikoPrdInfo(jaikoPrdVO);
+					*/
 					cell = row.createCell(0);
 					cell.setCellValue(innerVO.getPrd_nm());
 					cell.setCellStyle(allLine);
