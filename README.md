@@ -1,4 +1,38 @@
 ## Araku system Contents update list <csvProject>
+### 2023.06
+<ul>
+<li>
+単品管理 수정 요청사항 대응	
+<div>
+	
+```sql
+alter table tanpin_info add column prd_qty int4 COMMENT '入庫数';
+alter table tanpin_info add column exp_dt datetime COMMENT '賞味期限';
+
+drop table expire_manage;
+create table expire_manage(
+	seq_id bigint unsigned primary key auto_increment comment '区分ID'
+	, register_date datetime default now() comment '登録日付'
+	, update_date DATETIME comment '修正日付'
+	, jan_cd varchar(15) comment 'ＪＡＮコード'	
+	, prd_nm varchar(1000) comment '商品名'
+	, partner_id varchar(20) comment '取引先'
+	, partner_nm varchar(100) comment '取引先名'
+	, prd_qty int4 comment '入庫数'
+	, exp_dt datetime COMMENT '賞味期限'
+) default charset = utf8 comment '賞味管理';
+```	
+</div>
+<div>src/main/webapp/WEB-INF/views/tanpin/prdManage.jsp</div>
+<div>src/main/webapp/resources/tanpin/prdManage.js</div>
+<div>src/main/java/jp/prj/araku/tanpin/vo/TanpinVO.java</div>
+<div>src/main/java/jp/prj/araku/tanpin/vo/ExpireManageVo.java</div>
+<div>
+<img src='https://github.com/jmleejake/csvProject/assets/18359068/b6d54e5d-cb81-4e05-bcae-52836914a716' width='300' />	
+</div>
+</li>
+</ul>
+
 ### 2023.04 Rakuten download/upload 탬플릿항목 추가 예정
 <img src='https://user-images.githubusercontent.com/18359068/197534164-9f25bbfe-969c-4c52-9350-c4c264c66b17.png' width='300' />
 
