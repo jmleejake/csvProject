@@ -31,6 +31,13 @@ create table expire_manage(
 <img src='https://github.com/jmleejake/csvProject/assets/18359068/b6d54e5d-cb81-4e05-bcae-52836914a716' width='300' />	
 </div>
 </li>
+<li>
+タブレット注文画面 수정 요청사항 대응
+<div>src/main/webapp/WEB-INF/views/menu/tabletOrder.jsp</div>
+<div>
+<img src='https://github.com/jmleejake/csvProject/assets/18359068/ee94a878-0499-4b81-9d04-522e0f6457fa' width='300' />
+</div>
+</li>
 </ul>
 
 ### 2023.04 Rakuten download/upload 탬플릿항목 추가 예정
