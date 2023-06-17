@@ -38,6 +38,16 @@ create table expire_manage(
 <img src='https://github.com/jmleejake/csvProject/assets/18359068/ee94a878-0499-4b81-9d04-522e0f6457fa' width='300' />
 </div>
 </li>
+<li>
+商品名置換 수정 요청사항 대응
+<div>src/main/webapp/resources/menu/translation.js</div>
+<div>
+<img src='https://github.com/jmleejake/csvProject/assets/18359068/1e920606-6676-464f-b041-8fd34fe9c358' width='300' />
+</div>
+<div>
+<img src='https://github.com/jmleejake/csvProject/assets/18359068/d5db5cb9-4210-4ca0-8e40-00e00bf5db56' width='300' />
+</div>
+</li>
 </ul>
 
 ### 2023.04 Rakuten download/upload 탬플릿항목 추가 예정
