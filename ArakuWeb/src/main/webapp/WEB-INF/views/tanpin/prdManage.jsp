@@ -64,7 +64,6 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 		<input type="text" name="prd_cd" class="form-control" style="width: 250px;" placeholder="商品コード(JAN)"
 		onkeypress = "if(event.keyCode==13){ srch(); event.preventDefault(); }">
 		</div>
-		</form>
 		<div class="col-sm-2" >
 		<div class="dropdown">
 			<button class="btn btn-primary dropdown-toggle" id="menu1" type="button" data-toggle="dropdown">
@@ -80,6 +79,7 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 		<button type="button" id="btn_srch" class="btn btn-default" style="width: 120px;">検索</button>
 		</div>
 	</div>
+	</form>
 </div>
 <div class="well container-fluid">
 	<div class="col-sm-8">

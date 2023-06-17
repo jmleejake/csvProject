@@ -174,4 +174,54 @@ values
 (#{jan_cd}, #{prd_nm}, #{partner_id}, #{partner_nm}, #{prd_qty}, str_to_date(#{exp_dt}, '%Y/%m/%d'))
 </insert>
 
+<select id="selectExpireManage" resultType="ExpireManage">
+select 
+	seq_id, jan_cd, prd_nm, partner_id, partner_nm, prd_qty
+	, date_format(register_date, '%Y/%m/%d') register_date
+	, date_format(update_date, '%Y/%m/%d') update_date
+	, date_format(exp_dt, '%Y/%m/%d') exp_dt
+from expire_manage
+<where>
+	<if test="prd_nm != null and prd_nm !=''">
+		prd_nm like '%${prd_nm}%'
+	</if>
+	<if test="jan_cd != null and jan_cd !=''">
+		jan_cd like '%${jan_cd}%'
+	</if>
+</where>
+order by seq_id desc, jan_cd desc
+</select>
+
+<update id="updateExpireManage" parameterType="ExpireManage">
+	update expire_manage
+	set update_date = now()
+	<if test="register_date != null and register_date != ''">
+	, register_date = str_to_date(#{register_date}, '%Y/%m/%d')
+	</if>
+	<if test="exp_dt != null and exp_dt != ''">
+	, exp_dt = str_to_date(#{exp_dt}, '%Y/%m/%d')
+	</if>
+	<if test="prd_qty != null and prd_qty !=''">
+	, prd_qty = #{prd_qty}
+	</if>
+	<if test="prd_nm != null and prd_nm !=''">
+	, prd_nm = #{prd_nm}
+	</if>
+	<if test="jan_cd != null and jan_cd !=''">
+	, jan_cd = #{jan_cd}
+	</if>
+	<if test="partner_id != null and partner_id !=''">
+	, partner_id = #{partner_id}
+	</if>
+	<if test="partner_nm != null and partner_nm !=''">
+	, partner_nm = #{partner_nm}
+	</if>
+	where seq_id = #{seq_id}
+</update>
+
+<delete id="deleteExpireManage" parameterType="java.lang.String">
+delete from expire_manage
+where seq_id = #{seq_id}
+</delete>
+
 </mapper>

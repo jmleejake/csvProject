@@ -2,6 +2,7 @@ package jp.prj.araku.tanpin.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,6 +23,7 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 import jp.prj.araku.tablet.dao.TabletPrdDAO;
 import jp.prj.araku.tanpin.dao.TanpinDAO;
+import jp.prj.araku.tanpin.vo.ExpireManageVo;
 import jp.prj.araku.tanpin.vo.TanpinVO;
 
 @RequestMapping(value="/araku/prdAnalysis")
@@ -113,5 +115,42 @@ public class TanpinController {
 	/**
 	 * 20211120
 	 * 発注書発行画面E
+	 * */
+	
+	/**
+	 * 20230617
+	 * 賞味期限管理S
+	 * */
+	@RequestMapping(value = "/expMng")
+	public String showExpireManage(Model model) {
+		return "tanpin/expManage";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/getExpMng")
+	public List<ExpireManageVo> getExpireManage(ExpireManageVo vo) {
+		return dao.getExpireManage(vo);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/addExpMng", method=RequestMethod.POST)
+	public List<ExpireManageVo> addExpireManage(ExpireManageVo vo) {
+		return dao.addExpireManage(vo);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/modExpMng", method=RequestMethod.POST)
+	public List<ExpireManageVo> modifyExpireManage(@RequestBody List<ExpireManageVo> list) {
+		return dao.modifyExpireManage(list);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/delExpMng", method=RequestMethod.POST)
+	public List<ExpireManageVo> removeExpireManage(@RequestBody List<ExpireManageVo> list) {
+		return dao.removeExpireManage(list);
+	}
+	/**
+	 * 20230617
+	 * 賞味期限管理E
 	 * */
 }

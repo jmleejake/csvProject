@@ -979,5 +979,40 @@ public class TanpinDAO {
 			workbook.close();
 		}catch (IOException e) {}
 	}
+	
+	/**
+	 * 20230617
+	 * 賞味期限管理S
+	 * */
+	public List<ExpireManageVo> getExpireManage(ExpireManageVo vo) {
+		ITanpinMapper mapper = sqlSession.getMapper(ITanpinMapper.class);
+		return mapper.selectExpireManage(vo);
+	}
+	
+	public List<ExpireManageVo> addExpireManage(ExpireManageVo vo) {
+		ITanpinMapper mapper = sqlSession.getMapper(ITanpinMapper.class);
+		mapper.insertExpireManage(vo);
+		return mapper.selectExpireManage(null);
+	}
+	
+	public List<ExpireManageVo> modifyExpireManage(List<ExpireManageVo> list) {
+		ITanpinMapper mapper = sqlSession.getMapper(ITanpinMapper.class);
+		for(ExpireManageVo expire : list) {
+			mapper.updateExpireManage(expire);
+		}
+		return mapper.selectExpireManage(null);
+	}
+	
+	public List<ExpireManageVo> removeExpireManage(List<ExpireManageVo> list) {
+		ITanpinMapper mapper = sqlSession.getMapper(ITanpinMapper.class);
+		for(ExpireManageVo expire : list) {
+			mapper.deleteExpireManage(expire.getSeq_id());
+		}
+		return mapper.selectExpireManage(null);
+	}
+	/**
+	 * 20230617
+	 * 賞味期限管理E
+	 * */
 
 }
