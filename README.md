@@ -48,6 +48,17 @@ create table expire_manage(
 <img src='https://github.com/jmleejake/csvProject/assets/18359068/d5db5cb9-4210-4ca0-8e40-00e00bf5db56' width='300' />
 </div>
 </li>
+<li>
+賞味期限管理 화면 추가
+<div>src/main/webapp/WEB-INF/views/tanpin/expManage.jsp</div>
+<div>src/main/webapp/resources/tanpin/expManage.js</div>
+<div>
+<img src='https://github.com/jmleejake/csvProject/assets/18359068/27181a24-14eb-48eb-ad1d-7d860cea2817' width='300' />
+</div>
+<div>
+<img src='https://github.com/jmleejake/csvProject/assets/18359068/12969449-e975-44d7-931d-03e4fae8a5d5' width='300' />
+</div>
+</li>
 </ul>
 
 ### 2023.04 Rakuten download/upload 탬플릿항목 추가 예정
