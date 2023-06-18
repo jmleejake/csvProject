@@ -37,6 +37,9 @@ create table expire_manage(
 <div>
 <img src='https://github.com/jmleejake/csvProject/assets/18359068/ee94a878-0499-4b81-9d04-522e0f6457fa' width='300' />
 </div>
+<div>
+<img src='https://github.com/jmleejake/csvProject/assets/18359068/7f2438fa-93bd-40f4-9da3-c555dc27c10c' width='300' />
+</div>
 </li>
 <li>
 商品名置換 수정 요청사항 대응
@@ -57,6 +60,13 @@ create table expire_manage(
 </div>
 <div>
 <img src='https://github.com/jmleejake/csvProject/assets/18359068/12969449-e975-44d7-931d-03e4fae8a5d5' width='300' />
+</div>
+</li>
+<li>
+발주서 금일데이터 다운로드
+<div>src/main/webapp/WEB-INF/views/tanpin/orderView.jsp</div>
+<div>
+<img src='https://github.com/jmleejake/csvProject/assets/18359068/0b6116fa-4350-4b95-a057-22acaa875f89' width='300' />
 </div>
 </li>
 </ul>
