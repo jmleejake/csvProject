@@ -49,8 +49,8 @@ $(document).ready(function() {
 	$('#baggage_id').focus();
 	
 	$("#btn_srch").on("click", function() {
-		// goUrl();
-		srch();
+		goUrl();
+		// srch();
 	});
 	
 });
