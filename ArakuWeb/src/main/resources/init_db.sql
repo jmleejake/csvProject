@@ -925,3 +925,17 @@ create table kwrd_srch_info(
 
 alter table kwrd_srch_info add column memo varchar(2000) comment 'メモ';
 
+
+drop table expire_manage;
+create table expire_manage(
+	seq_id bigint unsigned primary key auto_increment comment '区分ID'
+	, register_date datetime default now() comment '登録日付'
+	, update_date DATETIME comment '修正日付'
+	, jan_cd varchar(15) comment 'ＪＡＮコード'	
+	, prd_nm varchar(1000) comment '商品名'
+	, partner_id varchar(20) comment '取引先'
+	, partner_nm varchar(100) comment '取引先名'
+	, prd_qty int4 comment '入庫数'
+	, exp_dt datetime COMMENT '賞味期限'
+) default charset = utf8 comment '賞味管理';
+
