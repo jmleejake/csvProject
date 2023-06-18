@@ -276,7 +276,7 @@ public class TanpinDAO {
 					JaikoPrdInfoVO jaikoPrdVo = new JaikoPrdInfoVO();
 					jaikoPrdVo.setPrd_nm(tanpin.getPrd_nm());
 					jaikoPrdVo.setJan_cd(tanpin.getPrd_cd());
-					jaikoPrdVo.setPrd_unit_prc(tanpin.getPrice());
+					jaikoPrdVo.setPrd_unit_prc(tanpin.getInprice());
 					prdInfoMapper.insertJaikoPrdInfo(jaikoPrdVo);
 					/*
 					賞味管理T

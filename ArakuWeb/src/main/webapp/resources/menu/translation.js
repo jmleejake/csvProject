@@ -93,7 +93,7 @@ var transGridOptions = {
         ePrdSize = afterData.prd_size;
         
         if(afterData.afterTrans.length > 16) {
-        	pleaseSelectNotify('１６文字以内で入力してください。');
+        	alert(afterData.afterTrans+'\n１６文字以内で入力してください。');
         	return false;
         }
         
