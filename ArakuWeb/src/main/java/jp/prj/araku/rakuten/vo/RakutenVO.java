@@ -340,6 +340,13 @@ public @Data class RakutenVO {
 	@CsvBindByPosition(position=106)
 	private String membership_program;
 	
+	/**SKU管理番号 40byte*/
+	private String sku_no;
+	/**システム連携用SKU番号 386byte*/
+	private String sys_sku_no;
+	/**SKU情報 1600byte*/
+	private String sku_info;
+	
 	/**配送会社*/
 	private String delivery_company;
 	/**お荷物伝票番号*/
