@@ -23,6 +23,10 @@ $('#btn_down').on('click', function() {
 	$('#frm_down').submit();
 });
 
+$('#btn_today_down').on('click', function() {
+	$('#frm_today').submit();
+});
+
 /*
 ------------------
 grid setting S

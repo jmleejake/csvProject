@@ -3,6 +3,7 @@ package jp.prj.araku.jaiko.inventory.mapper;
 import java.util.ArrayList;
 
 import jp.prj.araku.jaiko.inventory.vo.JaikoPrdInventoryVO;
+import jp.prj.araku.jaiko.inventory.vo.TodayOrderVo;
 
 public interface IJaikoPrdInventoryMapper {
 	ArrayList<JaikoPrdInventoryVO> getJaikoPrdInventory(JaikoPrdInventoryVO vo);
@@ -11,4 +12,5 @@ public interface IJaikoPrdInventoryMapper {
 	int insertJaikoPrdInventoryForWareIn(JaikoPrdInventoryVO vo);
 	int updateJaikoPrdInventory(JaikoPrdInventoryVO vo);
 	int deleteJaikoPrdInventory(String seq_id);
+	ArrayList<TodayOrderVo> getTodayJaikoPrdInventory();
 }

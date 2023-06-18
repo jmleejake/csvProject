@@ -21,27 +21,39 @@
 	<div class="col-sm-4">
 	<!-- oninput="javascript:goUrl();" onpaste="javascript:isValid=true;" -->
 	<input type="text" id="baggage_id" class="form-control" style="width: 300px;" placeholder="問い合わせ番号">
-<!-- 	<input type="text" id="baggage_id" class="form-control" style="width: 300px;" placeholder="ＪＡＮコード" -->
-	onkeyup="javascript:if(window.event.keyCode == 13) {srch();}">
 	</div>
 	<div class="col-sm-4">
 	<button type="button" id="btn_srch" class="btn btn-default" style="width: 120px;">検索</button>
 	</div>
 </div>
+</div>
 
 <div class="well container-fluid">
-<table class="table table-bordered">
-<thead>
-<tr>
-<th>商品名</th>
-<th>現在商品数</th>
-</tr>
-</thead>
-<tbody id="resBody"></tbody>
-</table>
+<h3>JANコード検索</h3>
+
+	<div class="well container-fluid">
+		<div class="col-sm-4">
+		<input type="text" id="jan_cd" class="form-control" style="width: 300px;" placeholder="ＪＡＮコード"
+		onkeyup="javascript:if(window.event.keyCode == 13) {srch();}">
+		</div>
+		<div class="col-sm-4">
+		<button type="button" id="btn_srch2" class="btn btn-default" style="width: 120px;">検索</button>
+		</div>
+	</div>
+	<div class="well container-fluid">
+		<table class="table table-bordered">
+		<thead>
+		<tr>
+		<th>商品名</th>
+		<th>現在商品数</th>
+		</tr>
+		</thead>
+		<tbody id="resBody"></tbody>
+		</table>
+	</div>
 </div>
 </div>
-</div>
+
 </body>
 <script type="text/javascript">
 $(document).ready(function() {
@@ -50,7 +62,10 @@ $(document).ready(function() {
 	
 	$("#btn_srch").on("click", function() {
 		goUrl();
-		// srch();
+	});
+	
+	$("#btn_srch2").on("click", function() {
+		srch();
 	});
 	
 });
@@ -61,7 +76,7 @@ function srch() {
 		, type:"get"
 		, dataType: "json"
 		, contentType: 'application/json'
-		, data:{search_type: 'srch', jan_cd: $('#baggage_id').val()}
+		, data:{search_type: 'srch', jan_cd: $('#jan_cd').val()}
 		, success: function(result){
 			console.log(result);
 			console.log(result.length);

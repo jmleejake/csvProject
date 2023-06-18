@@ -7,6 +7,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -29,6 +31,8 @@ import jp.prj.araku.tanpin.vo.TanpinVO;
 @RequestMapping(value="/araku/prdAnalysis")
 @Controller
 public class TanpinController {
+	private Logger log = LoggerFactory.getLogger("arakuLog");
+	
 	@Value("${FILE_ENCODING}")
 	private String fileEncoding;
 	
@@ -110,6 +114,19 @@ public class TanpinController {
 	public void downloadOrderForm(HttpServletResponse response
 			,@RequestParam(value = "dealer_id") String id) {
 		dao.downloadOrderForm(response, id, fileEncoding);
+	}
+	
+	@RequestMapping(value = "/orderToday", method = RequestMethod.POST)
+	public void downloadTodayOrder(HttpServletResponse response) {
+		try {
+			dao.downloadTodayOrder(response, fileEncoding);
+		} catch (IOException e) {
+			log.error(e.toString());
+		} catch (CsvDataTypeMismatchException e) {
+			log.error(e.toString());
+		} catch (CsvRequiredFieldEmptyException e) {
+			log.error(e.toString());
+		}
 	}
 	
 	/**

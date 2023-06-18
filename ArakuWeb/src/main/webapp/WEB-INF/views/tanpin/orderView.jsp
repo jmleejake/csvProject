@@ -25,6 +25,7 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 	</div>
 	<div class="col-sm-6" >
 	<button type="button" id="btn_down" class="btn btn-info" style="width: 120px;">ダウンロード</button>
+	<button type="button" id="btn_today_down" class="btn btn-info" style="width: 120px;">本日データDL</button>
 	</div>
 </div>
 <div class="well container-fluid">
@@ -37,6 +38,7 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 <form id="frm_down" action="orderDown" method="post">
 	<input type="hidden" name="dealer_id" id="down_id">
 </form>
+<form id="frm_today" action="orderToday" method="post"></form>
 </body>
 <script>
 $(document).ready(function() {

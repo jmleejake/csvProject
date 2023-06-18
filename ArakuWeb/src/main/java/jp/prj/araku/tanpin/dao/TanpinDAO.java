@@ -39,6 +39,8 @@ import jp.prj.araku.jaiko.inventory.mapper.IJaikoPrdInventoryMapper;
 import jp.prj.araku.jaiko.inventory.vo.JaikoPrdInventoryVO;
 import jp.prj.araku.jaiko.product.mapper.IJaikoPrdInfoMapper;
 import jp.prj.araku.jaiko.product.vo.JaikoPrdInfoVO;
+import jp.prj.araku.list.mapper.IListMapper;
+import jp.prj.araku.list.vo.TranslationVO;
 import jp.prj.araku.tablet.mapper.ITabletPrdMapper;
 import jp.prj.araku.tablet.vo.DealerVO;
 import jp.prj.araku.tanpin.mapper.ITanpinMapper;
@@ -1014,5 +1016,52 @@ public class TanpinDAO {
 	 * 20230617
 	 * 賞味期限管理E
 	 * */
+	
+	
+	public void downloadTodayOrder(
+			HttpServletResponse response, String fileEncoding) 
+					throws IOException
+					, CsvDataTypeMismatchException
+					, CsvRequiredFieldEmptyException {
+		IJaikoPrdInventoryMapper invenMapper = sqlSession.getMapper(IJaikoPrdInventoryMapper.class);
+		BufferedWriter writer = null;
+		CSVWriter csvWriter = null;
+		
+		try {
+			String csvFileName = "order_"+ CommonUtil.getDate("YYYYMMdd", 0) + ".csv";
+
+			response.setContentType("text/csv");
+
+			// creates mock data
+			String headerKey = "Content-Disposition";
+			String headerValue = String.format("attachment; filename=\"%s\"",
+					csvFileName);
+			response.setHeader(headerKey, headerValue);
+			response.setCharacterEncoding(fileEncoding);
+			
+			writer = new BufferedWriter(response.getWriter());
+			
+			csvWriter = new CSVWriter(writer
+					, CSVWriter.DEFAULT_SEPARATOR
+					, CSVWriter.NO_QUOTE_CHARACTER
+					, CSVWriter.DEFAULT_ESCAPE_CHARACTER
+					, CSVWriter.DEFAULT_LINE_END);
+			
+			String[] header = {
+			"取引先会社名", "商品名", "現在商品数", "ロート数", "ＪＡＮコード"
+			};
+			ArrayList<ArakuVO> downList = new ArrayList<ArakuVO>();
+			downList.addAll(invenMapper.getTodayJaikoPrdInventory());
+			CommonUtil.executeCSVDownload(csvWriter, writer, header, downList);
+		}finally {
+			if (csvWriter != null) {
+				csvWriter.close();
+			}
+			
+			if (writer != null) {
+				writer.close();
+			}
+		}
+	}
 
 }

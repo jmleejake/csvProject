@@ -150,4 +150,29 @@ from jaiko_prd_info jpi
 inner join jaiko_inventory_info jii on jii.jan_cd = jpi.jan_cd
 </select>
 
+<select id="getTodayJaikoPrdInventory" resultType="TodayOrder">
+select
+  seq_id
+  , prd_cd
+  , brand_nm
+  , prd_nm
+  , jan_cd
+  , now_prd_cnt
+  , prd_qty
+  , prd_case
+  , prd_bara
+  , prd_lot
+  , dealer_id
+  , dealer_nm
+  , sell_prc
+  , date_format(exp_dt, '%Y/%m/%d') exp_dt
+  , date_format(reg_dt, '%Y/%m/%d') reg_dt
+  , date_format(upd_dt, '%Y/%m/%d') upd_dt
+from jaiko_inventory_info
+<where>
+	upd_dt between date_add(now(), interval -1 day) and now()
+</where>
+order by upd_dt desc, seq_id desc
+</select>
+
 </mapper>
