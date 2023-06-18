@@ -20,8 +20,8 @@
 <div class="well container-fluid">
 	<div class="col-sm-4">
 	<!-- oninput="javascript:goUrl();" onpaste="javascript:isValid=true;" -->
-<!-- 	<input type="text" id="baggage_id" class="form-control" style="width: 300px;" placeholder="問い合わせ番号"> -->
-	<input type="text" id="baggage_id" class="form-control" style="width: 300px;" placeholder="ＪＡＮコード"
+	<input type="text" id="baggage_id" class="form-control" style="width: 300px;" placeholder="問い合わせ番号">
+<!-- 	<input type="text" id="baggage_id" class="form-control" style="width: 300px;" placeholder="ＪＡＮコード" -->
 	onkeyup="javascript:if(window.event.keyCode == 13) {srch();}">
 	</div>
 	<div class="col-sm-4">
