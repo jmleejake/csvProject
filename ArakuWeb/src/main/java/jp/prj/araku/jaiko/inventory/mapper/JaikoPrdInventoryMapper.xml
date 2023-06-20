@@ -55,7 +55,7 @@ from jaiko_inventory_info
 	</trim>
 	</when>
 	<otherwise>
-	upd_dt between date_add(now(), interval -1 day) and now()
+	upd_dt > DATE_SUB(now(), INTERVAL 8 HOUR)
 	</otherwise>
 	</choose>
 </where>
@@ -170,7 +170,7 @@ select
   , date_format(upd_dt, '%Y/%m/%d') upd_dt
 from jaiko_inventory_info
 <where>
-	upd_dt between date_add(now(), interval -1 day) and now()
+	upd_dt > DATE_SUB(now(), INTERVAL 8 HOUR)
 </where>
 order by upd_dt desc, seq_id desc
 </select>
