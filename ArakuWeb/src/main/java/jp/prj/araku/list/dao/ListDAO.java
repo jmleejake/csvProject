@@ -449,7 +449,29 @@ public class ListDAO {
 	 * */
 	public ArrayList<OrderSumVO> getOrderSum(OrderSumVO vo) {
 		IListMapper mapper = sqlSession.getMapper(IListMapper.class);
-		return mapper.getOrderSum(vo);
+		IJaikoPrdInfoMapper prdMapper = sqlSession.getMapper(IJaikoPrdInfoMapper.class);
+		ArrayList<OrderSumVO> res = mapper.getOrderSum(vo);
+		for(OrderSumVO sumVo : res) {
+			// 商品情報
+			JaikoPrdInfoVO prdSrch = new JaikoPrdInfoVO();
+			prdSrch.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+			prdSrch.setJan_cd(sumVo.getJan_cd());
+			JaikoPrdInfoVO prdInfo = null;
+			try {
+				prdInfo = prdMapper.getJaikoPrdInfo(prdSrch).get(0);
+				if(null != prdInfo) {
+					sumVo.setPrd_name(prdInfo.getPrd_nm());
+					
+					int prdCnt = Integer.parseInt(null != prdInfo.getPrd_cnt() ? prdInfo.getPrd_cnt() : "0");
+					int total = sumVo.getPrd_sum();
+					if(total > 0 && prdCnt > 0) {
+						sumVo.setPkg_cnt(Math.floorDiv(total, prdCnt));
+						sumVo.setBara_cnt(Math.floorMod(total, prdCnt));
+					}
+				}
+			}catch (Exception e) {}
+		}
+		return res;
 	}
 	
 	public ArrayList<OrderSumVO> deleteOrderSum(ArrayList<OrderSumVO> list) {
@@ -494,7 +516,7 @@ public class ListDAO {
 				ArrayList<JaikoPrdInfoVO> prdInfoList = jaikoPrdMapper.getJaikoPrdInfo(prdVO);
 				if(prdInfoList.size() > 0) {
 					OrderSumVO sumVO = new OrderSumVO();
-					sumVO.setPrd_sum(sum+"");
+					sumVO.setPrd_sum(sum);
 					sumVO.setAfter_trans(prdInfoList.get(0).getPrd_nm());
 					sumVO.setTarget_type(target_type);
 					sumVO.setJan_cd(jan_cd);
@@ -521,7 +543,7 @@ public class ListDAO {
 				if(transRet.size() > 0) {
 					OrderSumVO sumVO = new OrderSumVO();
 					sumVO.setAfter_trans(str);
-					sumVO.setPrd_sum(sum+"");
+					sumVO.setPrd_sum(sum);
 					sumVO.setTarget_type(target_type);
 					listMapper.insertOrderSum(sumVO);
 				}else {
@@ -535,7 +557,7 @@ public class ListDAO {
 					if(subTransRet.size() > 0) {
 						OrderSumVO sumVO = new OrderSumVO();
 						sumVO.setAfter_trans(str);
-						sumVO.setPrd_sum(sum+"");
+						sumVO.setPrd_sum(sum);
 						sumVO.setJan_cd(subTransRet.get(0).getJan_cd());
 						sumVO.setTarget_type(target_type);
 						listMapper.insertOrderSum(sumVO);
@@ -569,7 +591,7 @@ public class ListDAO {
 			if(invenList.size() > 0) {
 				for(JaikoPrdInventoryVO inven : invenList) {
 					int nowCnt = Integer.parseInt(inven.getNow_prd_cnt());
-					int minus = Integer.parseInt(sum.getPrd_sum());
+					int minus = sum.getPrd_sum();
 					
 					JaikoPrdInventoryVO invenUp = new JaikoPrdInventoryVO();
 					invenUp.setJan_cd(sum.getJan_cd());
@@ -619,11 +641,36 @@ public class ListDAO {
 					, CSVWriter.DEFAULT_ESCAPE_CHARACTER
 					, CSVWriter.DEFAULT_LINE_END);
 			
-			String[] header = CommonUtil.orderSumHeader();
+			String[] header = CommonUtil.orderSumHeader2();
+			
 			IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
+			IJaikoPrdInfoMapper prdMapper = sqlSession.getMapper(IJaikoPrdInfoMapper.class);
+			
 			OrderSumVO vo = new OrderSumVO();
 			vo.setTarget_type(targetType);
 			ArrayList<OrderSumVO> list = listMapper.getOrderSum(vo);
+			
+			for(OrderSumVO sumVo : list) {
+				// 商品情報
+				JaikoPrdInfoVO prdSrch = new JaikoPrdInfoVO();
+				prdSrch.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+				prdSrch.setJan_cd(sumVo.getJan_cd());
+				JaikoPrdInfoVO prdInfo = null;
+				try {
+					prdInfo = prdMapper.getJaikoPrdInfo(prdSrch).get(0);
+					if(null != prdInfo) {
+						sumVo.setPrd_name(prdInfo.getPrd_nm());
+						
+						int prdCnt = Integer.parseInt(null != prdInfo.getPrd_cnt() ? prdInfo.getPrd_cnt() : "0");
+						int total = sumVo.getPrd_sum();
+						if(total > 0 && prdCnt > 0) {
+							sumVo.setPkg_cnt(Math.floorDiv(total, prdCnt));
+							sumVo.setBara_cnt(Math.floorMod(total, prdCnt));
+						}
+					}
+				}catch (Exception e) {}
+			}
+						
 			StatefulBeanToCsv<OrderSumVO> beanToCSV = new StatefulBeanToCsvBuilder(writer)
 		            .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
 		            .build();

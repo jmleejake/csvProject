@@ -533,6 +533,27 @@ public class CommonUtil {
 		return header;
 	}
 	
+	/*
+	商品中間マスタ画面にてダウンロード実行時、
+	　以下の項目を出力したいです。
+	
+	JANCODE,商品名,箱数,バラ数,総商品数
+	
+	※JANCODEにひもついている　商品情報Tableの商品名にする。
+	※箱数＝総商品数　÷　商品情報Table.入数にて奇数
+	※バラ数＝総商品数　÷　商品情報Table.入数にて残数
+	*/
+	public static String[] orderSumHeader2() {
+		String[] header = {
+				"ＪＡＮコード"
+				, "商品名"
+				, "箱数"
+				, "バラ数"
+				, "総商品数"
+		};
+		return header;
+	}
+	
 	public static String[] q10YamatoHeader() {
 		String[] header = 
 			{
