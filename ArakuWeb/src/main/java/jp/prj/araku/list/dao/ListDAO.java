@@ -645,6 +645,7 @@ public class ListDAO {
 			
 			IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
 			IJaikoPrdInfoMapper prdMapper = sqlSession.getMapper(IJaikoPrdInfoMapper.class);
+			IJaikoPrdInventoryMapper invenMapper = sqlSession.getMapper(IJaikoPrdInventoryMapper.class);
 			
 			OrderSumVO vo = new OrderSumVO();
 			vo.setTarget_type(targetType);
@@ -668,6 +669,16 @@ public class ListDAO {
 							sumVo.setBara_cnt(Math.floorMod(total, prdCnt));
 						}
 					}
+					
+					JaikoPrdInventoryVO invenVo = new JaikoPrdInventoryVO();
+					invenVo.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+					invenVo.setJan_cd(sumVo.getJan_cd());
+					ArrayList<JaikoPrdInventoryVO> invenList = invenMapper.getJaikoPrdInventory(invenVo);
+					if(invenList.size() > 0) {
+						JaikoPrdInventoryVO invenSrchRes = invenList.get(0);
+						sumVo.setPartner_nm(invenSrchRes.getDealer_nm());
+					}
+					
 				}catch (Exception e) {}
 			}
 						

@@ -545,7 +545,8 @@ public class CommonUtil {
 	*/
 	public static String[] orderSumHeader2() {
 		String[] header = {
-				"ＪＡＮコード"
+				"取引先名"
+				, "ＪＡＮコード"
 				, "商品名"
 				, "箱数"
 				, "バラ数"

@@ -11,24 +11,29 @@ public @Data class OrderSumVO {
 	private String register_date;
 	/**データ修正日*/
 	private String update_date;
-	/**ＪＡＮコード*/
+	
+	/**取引先名*/
 	@CsvBindByPosition(position=0)
+	private String partner_nm;
+	
+	/**ＪＡＮコード*/
+	@CsvBindByPosition(position=1)
 	private String jan_cd;
 	
 	/**商品名*/
-	@CsvBindByPosition(position=1)
+	@CsvBindByPosition(position=2)
 	private String prd_name;
 	
 	/**箱数*/
-	@CsvBindByPosition(position=2)
+	@CsvBindByPosition(position=3)
 	private int pkg_cnt;
 	
 	/**バラ数*/
-	@CsvBindByPosition(position=3)
+	@CsvBindByPosition(position=4)
 	private int bara_cnt;
 	
 	/**総商品数*/
-	@CsvBindByPosition(position=4)
+	@CsvBindByPosition(position=5)
 	private int prd_sum;
 	
 	/**商品名・項目・選択肢 置換後*/

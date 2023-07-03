@@ -375,13 +375,13 @@ $("#btn_down").on("click", function() {
 
 var columnDefs3 = [
 	{headerName: "ＪＡＮコード", field: "jan_cd", width: 150}
-	, {headerName: "商品名", field: "prd_name", width: 250}
-	, {headerName: "箱数", field: "pkg_cnt", width: 100}
-	, {headerName: "バラ数", field: "bara_cnt", width: 100}
-	, {headerName: "総商品数", field: "prd_sum", width: 100}
-//	, {headerName: "置換後名", field: "afterTrans", width: 300}
-//    , {headerName: "総商品数", field: "prd_sum", width: 120}
-//    , {headerName: "商品マスタ反映有無", field: "prd_master_hanei_gbn", width: 200}
+	//, {headerName: "商品名", field: "prd_name", width: 250}
+	//, {headerName: "箱数", field: "pkg_cnt", width: 100}
+	//, {headerName: "バラ数", field: "bara_cnt", width: 100}
+	//, {headerName: "総商品数", field: "prd_sum", width: 100}
+	, {headerName: "置換後名", field: "afterTrans", width: 300}
+    , {headerName: "総商品数", field: "prd_sum", width: 120}
+    , {headerName: "商品マスタ反映有無", field: "prd_master_hanei_gbn", width: 200}
 ];
 
 // rowData 초기화
