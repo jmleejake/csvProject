@@ -7,7 +7,7 @@ var columnDefs = [
     , {headerName: "検索", width: 200, cellRenderer: 'btnRenderer'}
     , {headerName: "検索", width: 200, cellRenderer: 'btnRenderer2'}
     , {headerName: "検索", width: 200, cellRenderer: 'btnRenderer3'}
-    , {headerName: "メモ", field: "memo", width: 100
+    , {headerName: "メモ", field: "memo", width: 300
     	, editable: true
     	, cellEditor: 'agLargeTextCellEditor'
     	, cellEditorParams: {

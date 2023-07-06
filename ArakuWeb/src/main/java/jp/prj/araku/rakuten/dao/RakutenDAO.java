@@ -573,7 +573,21 @@ public class RakutenDAO {
 				prdTransVO.setOrder_gbn("1");
 				prdTransVO.setBefore_trans(vo.getProduct_name());
 				prdTransVO.setAfter_trans(transedName);
-				prdTransVO.setPrd_cnt(unitNo+"");
+				
+				transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+				transVO.setKeyword(vo.getProduct_name());
+				searchRet = listMapper.getTransInfo(transVO);
+				prdTransVO.setJan_cd(searchRet.get(0).getJan_cd()); // 2023-07-04 kim jan_cd 처리
+				
+//				prdTransVO.setPrd_cnt(unitNo+"");
+				if(searchRet.get(0).getPrd_cnt() != null) {  // 2023-07-04 kim NULLチェックが必要
+				      int COUNT = unitNo* Integer.parseInt(searchRet.get(0).getPrd_cnt());
+						prdTransVO.setPrd_cnt(Integer.toString(COUNT)); // 2023-07-04 kim COUNT 처리
+				}else {
+					prdTransVO.setPrd_cnt(unitNo+"");
+				}
+
+				
 				prdTransVO.setPrd_master_hanei_gbn("0");
 				prdTransVO.setSearch_type("translate");
 				prdTransVO.setTrans_target_type(CommonUtil.TRANS_TARGET_R);
@@ -614,7 +628,15 @@ public class RakutenDAO {
 					searchRet = listMapper.getTransInfo(transVO);
 					prdTransVO2.setBefore_trans(searchRet.get(0).getBefore_trans());
 					prdTransVO2.setJan_cd(searchRet.get(0).getJan_cd()); // 2021-07-03 kim
-					prdTransVO2.setPrd_cnt(unitsu1+"");
+				
+					if(searchRet.get(0).getPrd_cnt() != null) {
+						int SUJA = Integer.valueOf(unitsu1)* Integer.parseInt(searchRet.get(0).getPrd_cnt());
+						prdTransVO2.setPrd_cnt(Integer.toString(SUJA)); // 2023-07-04 kim COUNT 처리
+					}else {
+						prdTransVO2.setPrd_cnt(unitsu1+"");
+					}
+
+					
 					prdTransVO2.setPrd_master_hanei_gbn("0");
 					prdTransVO2.setSearch_type("translate");
 					prdTransVO2.setTrans_target_type(CommonUtil.TRANS_TARGET_R);
@@ -642,7 +664,14 @@ public class RakutenDAO {
 				prdTransVO.setOrder_gbn("1");
 				prdTransVO.setBefore_trans(vo.getProduct_name());
 				prdTransVO.setAfter_trans(transedName);
-				prdTransVO.setPrd_cnt(unitNo+"");
+				
+				if(searchRet.get(0).getPrd_cnt() != null) {
+					int SUJA1 = Integer.valueOf(unitNo)* Integer.parseInt(searchRet.get(0).getPrd_cnt());
+					prdTransVO.setPrd_cnt(Integer.toString(SUJA1)); // 2023-07-04 kim COUNT 처리
+				}else {
+					prdTransVO.setPrd_cnt(unitNo+"");
+				}
+				
 				// 2021-07-03 kim S
 				transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
 				transVO.setKeyword(vo.getProduct_name());
@@ -909,7 +938,14 @@ public class RakutenDAO {
 				prdTransVO.setOrder_gbn("1");
 				prdTransVO.setBefore_trans(vo.getProduct_name());
 				prdTransVO.setAfter_trans(transedName);
-				prdTransVO.setPrd_cnt(unitNo+"");
+				
+				if(searchRet.get(0).getPrd_cnt() != null) {
+					int SUJA2 = Integer.valueOf(unitNo)* Integer.parseInt(searchRet.get(0).getPrd_cnt());
+					prdTransVO.setPrd_cnt(Integer.toString(SUJA2)); // 2023-07-04 kim COUNT 처리
+				}else {
+					prdTransVO.setPrd_cnt(unitNo+"");
+				}
+				
 				// 2021-07-03 kim S
 				transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
 				transVO.setKeyword(vo.getProduct_name().trim());
@@ -959,7 +995,14 @@ public class RakutenDAO {
 					}
 					prdTransVO2.setBefore_trans(searchRet.get(0).getBefore_trans());
 					prdTransVO2.setJan_cd(searchRet.get(0).getJan_cd()); // 2021-07-03 kim
-					prdTransVO2.setPrd_cnt(unitsu1+"");
+					
+					if(searchRet.get(0).getPrd_cnt() != null) {
+						int SUJA3 = Integer.valueOf(unitsu1)* Integer.parseInt(searchRet.get(0).getPrd_cnt());
+						prdTransVO2.setPrd_cnt(Integer.toString(SUJA3)); // 2023-07-04 kim COUNT 처리
+					}else {
+						prdTransVO2.setPrd_cnt(unitsu1+"");
+					}
+					
 					prdTransVO2.setPrd_master_hanei_gbn("0");
 					prdTransVO2.setSearch_type("translate");
 					prdTransVO2.setTrans_target_type(CommonUtil.TRANS_TARGET_R);
@@ -987,7 +1030,14 @@ public class RakutenDAO {
 				prdTransVO.setOrder_gbn("1");
 				prdTransVO.setBefore_trans(vo.getProduct_name());
 				prdTransVO.setAfter_trans(transedName);
-				prdTransVO.setPrd_cnt(unitNo+"");
+				
+				if(searchRet.get(0).getPrd_cnt() != null) {
+					int SUJA4 = Integer.valueOf(unitNo)* Integer.parseInt(searchRet.get(0).getPrd_cnt());
+					prdTransVO.setPrd_cnt(Integer.toString(SUJA4)); // 2023-07-04 kim COUNT 처리
+				}else {
+					prdTransVO.setPrd_cnt(unitNo+"");
+				}
+				
 				prdTransVO.setPrd_master_hanei_gbn("0");
 				prdTransVO.setSearch_type("translate");
 				prdTransVO.setTrans_target_type(CommonUtil.TRANS_TARGET_R);
