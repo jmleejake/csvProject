@@ -1,4 +1,20 @@
 ## Araku system Contents update list <csvProject>
+### 2023.07
+<ul>
+<li>
+商品中間マスタ画面にてダウンロード実行時、
+　以下の項目を出力したいです。
+<div>取引先名,JANCODE,商品名,箱数,バラ数,総商品数</div>
+<div>※JANCODEにひもついている　在庫管理Tableの取引先名にする。</div>
+<div>※JANCODEにひもついている　商品情報Tableの商品名にする。</div>
+<div>※箱数＝総商品数　÷　商品情報Table.入数にて奇数</div>
+<div>※バラ数＝総商品数　÷　商品情報Table.入数にて残数</div>
+<div>
+<img src='https://github.com/jmleejake/csvProject/assets/18359068/01455720-014a-48f1-be97-a80531d6ed35' width='300' />	
+</div>
+</li>
+</ul>
+
 ### 2023.06
 <ul>
 <li>
