@@ -92,10 +92,10 @@ var transGridOptions = {
         stopJanCd = afterData.jan_cd;
         ePrdSize = afterData.prd_size;
         
-        if(afterData.afterTrans.length > 16) {
-        	alert(afterData.afterTrans+'\n１６文字以内で入力してください。');
-        	return false;
-        }
+        //if(afterData.afterTrans.length > 16) {
+        //	alert(afterData.afterTrans+'\n１６文字以内で入力してください。');
+        //	return false;
+        //}
         
         if (!(startBeforeTrans == stopBeforeTrans) || 
         		!(startAfterTrans == stopAfterTrans) ||
