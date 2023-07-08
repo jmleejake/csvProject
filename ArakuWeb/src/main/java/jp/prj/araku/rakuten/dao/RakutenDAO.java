@@ -1030,6 +1030,7 @@ public class RakutenDAO {
 				prdTransVO.setOrder_gbn("1");
 				prdTransVO.setBefore_trans(vo.getProduct_name());
 				prdTransVO.setAfter_trans(transedName);
+				prdTransVO.setJan_cd(searchRet.get(0).getJan_cd()); // 2021-07-08 kim
 				
 				if(searchRet.get(0).getPrd_cnt() != null) {
 					int SUJA4 = Integer.valueOf(unitNo)* Integer.parseInt(searchRet.get(0).getPrd_cnt());
@@ -1646,13 +1647,16 @@ public class RakutenDAO {
 //				yVO.setBill_customer_code("048299821004-311");
 				yVO.setMultiple_key("1");
 				
-				yVO.setClient_post_no("3330845");
-				yVO.setClient_add("埼玉県川口市上青木西１丁目19-39");
-				yVO.setClient_building("エレガンス滝澤ビル1F");
-				//2020/01/13  キム お届け先名とご依頼主名がおなじではない場合、ご依頼主名を登録する。
+				//2023/07/8  キム お届け先名とご依頼主名がおなじではない場合、ご依頼主名を登録する。
 				if(tmp.getDelivery_surname().equals(tmp.getOrder_surname()) && tmp.getDelivery_name().equals(tmp.getOrder_name() )) {
+					yVO.setClient_post_no("3330845");
+					yVO.setClient_add("埼玉県川口市上青木西１丁目19-39");
+					yVO.setClient_building("エレガンス滝澤ビル1F");
 					yVO.setClient_name("有限会社ItempiaJapan (R)");
 				}else {
+					yVO.setClient_post_no(tmp.getOrder_post_no1()+tmp.getOrder_post_no2());
+					yVO.setClient_add(tmp.getOrder_add1() +tmp.getOrder_add2() );
+					yVO.setClient_building(tmp.getOrder_add3());
 					yVO.setClient_name(tmp.getOrder_surname() +  " " +  tmp.getOrder_name() + " (R)");
 				}
 //				yVO.setClient_name_kana(tmp.getOrder_surname_kana().replace("\"", "") + " " + tmp.getOrder_name_kana().replace("\"", ""));
