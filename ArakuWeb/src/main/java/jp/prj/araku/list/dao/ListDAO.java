@@ -39,6 +39,7 @@ import jp.prj.araku.list.vo.ExceptionMasterVO;
 import jp.prj.araku.list.vo.ExceptionRegionMasterVO;
 import jp.prj.araku.list.vo.House3MasterVO;
 import jp.prj.araku.list.vo.KeywordSearchInfo;
+import jp.prj.araku.list.vo.OrderSumOriginalVO;
 import jp.prj.araku.list.vo.OrderSumVO;
 import jp.prj.araku.list.vo.PrdCdMasterVO;
 import jp.prj.araku.list.vo.PrdTransVO;
@@ -525,6 +526,47 @@ public class ListDAO {
 			}
 		}else {
 			for(PrdTransVO trans : list) {
+				// 277968-20230707-0616337403
+				if(!"".equals(trans.getOrder_no()) && null == trans.getJan_cd()) {
+					afterTransCntnt.add(trans.getAfter_trans());
+				}
+			}
+			for(String str : afterTransCntnt) {
+				vo1.setSearch_type(CommonUtil.SEARCH_TYPE_SUM);
+				vo1.setAfter_trans(str);
+				list = listMapper.getPrdTrans(vo1);
+				int sum = 0;
+				for(PrdTransVO trans : list) {
+					sum += Integer.parseInt(trans.getPrd_cnt());
+				}
+				TranslationVO transVO = new TranslationVO();
+				transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+				transVO.setKeyword(str);
+				ArrayList<TranslationVO> transRet = listMapper.getTransInfo(transVO);
+				if(transRet.size() > 0) {
+					OrderSumVO sumVO = new OrderSumVO();
+					sumVO.setAfter_trans(str);
+					sumVO.setPrd_sum(sum);
+					sumVO.setTarget_type(target_type);
+					listMapper.insertOrderSum(sumVO);
+				}else {
+					// 2021.06.11 order sum실행시 translation_info에 값이 없으면
+					// translation_sub_info에서 search할수있게 처리
+					SubTranslationVO subTrans = new SubTranslationVO();
+					subTrans.setKeyword(str);
+					ArrayList<SubTranslationVO> subTransRet = listMapper.getSubTransInfo(subTrans);
+					if(subTransRet.size() > 0) {
+						OrderSumVO sumVO = new OrderSumVO();
+						sumVO.setAfter_trans(str);
+						sumVO.setPrd_sum(sum);
+						sumVO.setJan_cd(subTransRet.get(0).getJan_cd());
+						sumVO.setTarget_type(target_type);
+						listMapper.insertOrderSum(sumVO);
+					}
+				}
+			}
+			/*
+			for(PrdTransVO trans : list) {
 				afterTransCntnt.add(trans.getAfter_trans());
 			}
 			
@@ -547,10 +589,8 @@ public class ListDAO {
 					sumVO.setTarget_type(target_type);
 					listMapper.insertOrderSum(sumVO);
 				}else {
-					/**
-					 * 2021.06.11 order sum실행시 translation_info에 값이 없으면
-					 * translation_sub_info에서 search할수있게 처리
-					 * */
+					// 2021.06.11 order sum실행시 translation_info에 값이 없으면
+					// translation_sub_info에서 search할수있게 처리
 					SubTranslationVO subTrans = new SubTranslationVO();
 					subTrans.setKeyword(str);
 					ArrayList<SubTranslationVO> subTransRet = listMapper.getSubTransInfo(subTrans);
@@ -563,7 +603,9 @@ public class ListDAO {
 						listMapper.insertOrderSum(sumVO);
 					}
 				}
+				
 			}
+			*/
 		}
 		OrderSumVO sumVO = new OrderSumVO();
 		sumVO.setTarget_type(target_type);
@@ -613,7 +655,8 @@ public class ListDAO {
 	public void sumDownload(
 			HttpServletResponse response
 			, String fileEncoding
-			, String targetType) 
+			, String targetType
+			, String gbn) 
 			throws IOException
 			, CsvDataTypeMismatchException
 			, CsvRequiredFieldEmptyException {
@@ -641,54 +684,74 @@ public class ListDAO {
 					, CSVWriter.DEFAULT_ESCAPE_CHARACTER
 					, CSVWriter.DEFAULT_LINE_END);
 			
-			String[] header = CommonUtil.orderSumHeader2();
-			
+			String[] header = CommonUtil.orderSumHeader();
 			IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
-			IJaikoPrdInfoMapper prdMapper = sqlSession.getMapper(IJaikoPrdInfoMapper.class);
-			IJaikoPrdInventoryMapper invenMapper = sqlSession.getMapper(IJaikoPrdInventoryMapper.class);
-			
 			OrderSumVO vo = new OrderSumVO();
 			vo.setTarget_type(targetType);
 			ArrayList<OrderSumVO> list = listMapper.getOrderSum(vo);
-			
-			for(OrderSumVO sumVo : list) {
-				// 商品情報
-				JaikoPrdInfoVO prdSrch = new JaikoPrdInfoVO();
-				prdSrch.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
-				prdSrch.setJan_cd(sumVo.getJan_cd());
-				JaikoPrdInfoVO prdInfo = null;
-				try {
-					prdInfo = prdMapper.getJaikoPrdInfo(prdSrch).get(0);
-					if(null != prdInfo) {
-						sumVo.setPrd_name(prdInfo.getPrd_nm());
-						
-						int prdCnt = Integer.parseInt(null != prdInfo.getPrd_cnt() ? prdInfo.getPrd_cnt() : "0");
-						int total = sumVo.getPrd_sum();
-						if(total > 0 && prdCnt > 0) {
-							sumVo.setPkg_cnt(Math.floorDiv(total, prdCnt));
-							sumVo.setBara_cnt(Math.floorMod(total, prdCnt));
+			if("sum".equals(gbn)) {
+				ArrayList<OrderSumOriginalVO> oriList = new ArrayList<>();
+				for(OrderSumVO sumVo : list) {
+					OrderSumOriginalVO oriVo = new OrderSumOriginalVO();
+					oriVo.setJan_cd(sumVo.getJan_cd());
+					oriVo.setAfter_trans(sumVo.getAfter_trans());
+					oriVo.setPrd_sum(sumVo.getPrd_sum());
+					oriVo.setPrd_master_hanei_gbn(sumVo.getPrd_master_hanei_gbn());
+					oriList.add(oriVo);
+				}
+				StatefulBeanToCsv<OrderSumOriginalVO> beanToCSV = new StatefulBeanToCsvBuilder(writer)
+			            .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
+			            .build();
+				
+				csvWriter.writeNext(header);
+				
+				beanToCSV.write(oriList);
+				
+			}else if("jan".equals(gbn)) {
+				header = CommonUtil.orderSumHeader2();
+				
+				IJaikoPrdInfoMapper prdMapper = sqlSession.getMapper(IJaikoPrdInfoMapper.class);
+				IJaikoPrdInventoryMapper invenMapper = sqlSession.getMapper(IJaikoPrdInventoryMapper.class);
+				
+				for(OrderSumVO sumVo : list) {
+					// 商品情報
+					JaikoPrdInfoVO prdSrch = new JaikoPrdInfoVO();
+					prdSrch.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+					prdSrch.setJan_cd(sumVo.getJan_cd());
+					JaikoPrdInfoVO prdInfo = null;
+					try {
+						prdInfo = prdMapper.getJaikoPrdInfo(prdSrch).get(0);
+						if(null != prdInfo) {
+							sumVo.setPrd_name(prdInfo.getPrd_nm());
+							
+							int prdCnt = Integer.parseInt(null != prdInfo.getPrd_cnt() ? prdInfo.getPrd_cnt() : "0");
+							int total = sumVo.getPrd_sum();
+							if(total > 0 && prdCnt > 0) {
+								sumVo.setPkg_cnt(Math.floorDiv(total, prdCnt));
+								sumVo.setBara_cnt(Math.floorMod(total, prdCnt));
+							}
 						}
-					}
-					
-					JaikoPrdInventoryVO invenVo = new JaikoPrdInventoryVO();
-					invenVo.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
-					invenVo.setJan_cd(sumVo.getJan_cd());
-					ArrayList<JaikoPrdInventoryVO> invenList = invenMapper.getJaikoPrdInventory(invenVo);
-					if(invenList.size() > 0) {
-						JaikoPrdInventoryVO invenSrchRes = invenList.get(0);
-						sumVo.setPartner_nm(invenSrchRes.getDealer_nm());
-					}
-					
-				}catch (Exception e) {}
-			}
 						
-			StatefulBeanToCsv<OrderSumVO> beanToCSV = new StatefulBeanToCsvBuilder(writer)
-		            .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
-		            .build();
+						JaikoPrdInventoryVO invenVo = new JaikoPrdInventoryVO();
+						invenVo.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+						invenVo.setJan_cd(sumVo.getJan_cd());
+						ArrayList<JaikoPrdInventoryVO> invenList = invenMapper.getJaikoPrdInventory(invenVo);
+						if(invenList.size() > 0) {
+							JaikoPrdInventoryVO invenSrchRes = invenList.get(0);
+							sumVo.setPartner_nm(invenSrchRes.getDealer_nm());
+						}
+						
+					}catch (Exception e) {}
+				}
+				StatefulBeanToCsv<OrderSumVO> beanToCSV = new StatefulBeanToCsvBuilder(writer)
+			            .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
+			            .build();
+				
+				csvWriter.writeNext(header);
+				
+				beanToCSV.write(list);
+			}
 			
-			csvWriter.writeNext(header);
-			
-			beanToCSV.write(list);
 		}finally {
 			if (csvWriter != null) {
 				csvWriter.close();

@@ -1655,8 +1655,8 @@ public class RakutenDAO {
 					yVO.setClient_name("有限会社ItempiaJapan (R)");
 				}else {
 					yVO.setClient_post_no(tmp.getOrder_post_no1()+tmp.getOrder_post_no2());
-					yVO.setClient_add(tmp.getOrder_add1() +tmp.getOrder_add2() );
-					yVO.setClient_building(tmp.getOrder_add3());
+					yVO.setClient_add(tmp.getOrder_add1() +tmp.getOrder_add2() + tmp.getOrder_add3());
+					//yVO.setClient_building(tmp.getOrder_add3());
 					yVO.setClient_name(tmp.getOrder_surname() +  " " +  tmp.getOrder_name() + " (R)");
 				}
 //				yVO.setClient_name_kana(tmp.getOrder_surname_kana().replace("\"", "") + " " + tmp.getOrder_name_kana().replace("\"", ""));

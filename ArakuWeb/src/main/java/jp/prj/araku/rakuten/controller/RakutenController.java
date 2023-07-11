@@ -644,9 +644,9 @@ public class RakutenController {
 	}
 	
 	@RequestMapping(value="sumDown", method = RequestMethod.POST)
-	public void orderSumDownload(HttpServletResponse response) {
+	public void orderSumDownload(HttpServletResponse response, @RequestParam String gbn) {
 		try {
-			listDao.sumDownload(response, fileEncoding, CommonUtil.TRANS_TARGET_R);
+			listDao.sumDownload(response, fileEncoding, CommonUtil.TRANS_TARGET_R, gbn);
 		} catch (IOException e) {
 			log.error(e.toString());
 		} catch (CsvDataTypeMismatchException e) {
