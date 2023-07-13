@@ -281,6 +281,26 @@ public class RakutenDAO {
 					    }
 					}
 					log.debug("==========================");
+                }else {
+                	// SKU 정보 처리
+                	String skuInfo = vo.getSku_info();
+                	if(null != skuInfo) {
+                		String[] dataArr = skuInfo.split(CommonUtil.SPLIT_BY_COLON);
+                    	String data = null;
+    					if (dataArr.length > 1) {
+    						// 예외적인 경우로 콜론 바로 뒤에 데이터가 있는것이 아니라 콜론 두개 뒤에 있는 경우가 있어 스플릿 결과의 맨 마지막 값을 가져올 수 있도록 처리
+    						data = dataArr[dataArr.length-1];
+    						log.debug(String.format("option value1 :: %s", data));
+    						
+    						transVO.setKeyword(data.trim());
+    						transVO.setBefore_trans(data.trim());
+    						
+    						transList = listMapper.getTransInfo(transVO);
+    						if (transList.size() == 0) {
+    							listMapper.addTransInfo(transVO);
+    					    }
+    					}
+                	}
                 }
             }
             
@@ -480,6 +500,7 @@ public class RakutenDAO {
 			
 			StringBuffer buf = null;
 			String optionContent = vo.getProduct_option();
+			String skuInfo = vo.getSku_info();
 			if(optionContent != null && optionContent.length() > 1) {
 				// 옵션에 대한 처리
 				HashSet<String> cntCheck = new HashSet<>();
@@ -650,7 +671,63 @@ public class RakutenDAO {
 					
 					i++;
 				}
-			} else {
+			}else if(skuInfo != null && skuInfo.length() > 1) {
+				// SKU 정보 처리
+            	if(null != skuInfo) {
+            		String[] dataArr = skuInfo.split(CommonUtil.SPLIT_BY_COLON);
+                	String data = null;
+					if (dataArr.length > 1) {
+						buf = new StringBuffer(transedName);
+						buf.append(" ");
+						
+						// 예외적인 경우로 콜론 바로 뒤에 데이터가 있는것이 아니라 콜론 두개 뒤에 있는 경우가 있어 스플릿 결과의 맨 마지막 값을 가져올 수 있도록 처리
+						data = dataArr[dataArr.length-1];
+						log.debug(String.format("option value1 :: %s", data));
+						
+						transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+						transVO.setKeyword(data);
+						searchRet = listMapper.getTransInfo(transVO);
+						transedName = "";
+						if(searchRet.size() > 0) {
+							transedName = searchRet.get(0).getAfter_trans().trim();
+						}
+						
+						PrdTransVO prdTransVO = new PrdTransVO();
+						prdTransVO.setOrder_no(vo.getOrder_no());
+						prdTransVO.setOrder_gbn("1");
+						prdTransVO.setBefore_trans(vo.getProduct_name());
+						prdTransVO.setAfter_trans(transedName);
+						
+						//buf = new StringBuffer(transedName + "×" + su);
+						buf.append(transedName + "×" + su);
+						
+						transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+						transVO.setKeyword(vo.getProduct_name());
+						searchRet = listMapper.getTransInfo(transVO);
+						prdTransVO.setJan_cd(searchRet.get(0).getJan_cd()); // 2023-07-04 kim jan_cd 처리
+						
+//						prdTransVO.setPrd_cnt(unitNo+"");
+						if(searchRet.get(0).getPrd_cnt() != null) {  // 2023-07-04 kim NULLチェックが必要
+						      int COUNT = unitNo* Integer.parseInt(searchRet.get(0).getPrd_cnt());
+								prdTransVO.setPrd_cnt(Integer.toString(COUNT)); // 2023-07-04 kim COUNT 처리
+						}else {
+							prdTransVO.setPrd_cnt(unitNo+"");
+						}
+
+						
+						prdTransVO.setPrd_master_hanei_gbn("0");
+						prdTransVO.setSearch_type("translate");
+						prdTransVO.setTrans_target_type(CommonUtil.TRANS_TARGET_R);
+						ArrayList<PrdTransVO> prdTransRet = listMapper.getPrdTrans(prdTransVO);
+						if(prdTransRet.size() > 0) {
+							prdTransVO.setSeq_id(prdTransRet.get(0).getSeq_id());
+							listMapper.updatePrdTrans(prdTransVO);
+						}else {
+							listMapper.insertPrdTrans(prdTransVO);
+						}
+					}
+            	}
+			}else {
 				// 옵션이 없는 경우, 상품세트수와 상품개수를 곱하여 치환결과에 반영
 //				buf = new StringBuffer(arr[0] + "*" + (productSetNo*unitNo)); // [MOD-0819]
 //				buf = new StringBuffer(transedName + "*" + unitNo); // [MOD-1011] 
@@ -1655,7 +1732,22 @@ public class RakutenDAO {
 					yVO.setClient_name("有限会社ItempiaJapan (R)");
 				}else {
 					yVO.setClient_post_no(tmp.getOrder_post_no1()+tmp.getOrder_post_no2());
-					yVO.setClient_add(tmp.getOrder_add1() +tmp.getOrder_add2() + tmp.getOrder_add3());
+					// 2019/12/24  キム ヤマト 주소 컬럼에 대하여 전각 16자 이상이면 안되는 사항이 있어 수정. 　⇒　ＳＴＡＲＴ
+					String addStr1 = tmp.getOrder_add1().replace("\"", "") + "" + tmp.getOrder_add2().replace("\"", "") + "" + tmp.getOrder_add3().replace("\"", "");
+					if(addStr1.length() > 16) {
+						yVO.setClient_add(addStr1.substring(0, 16));
+				
+						if(addStr1.length() > 32) {
+							yVO.setClient_building(addStr1.substring(16, 32));
+							//yVO.setClient_company.setDelivery_company1(addStr1.substring(32, addStr1.length()));
+						}else {
+							yVO.setClient_building(addStr1.substring(16, addStr1.length()));
+						}
+					}else {
+						yVO.setClient_add(addStr1);
+					}
+					
+					//yVO.setClient_add(tmp.getOrder_add1() +tmp.getOrder_add2() + tmp.getOrder_add3());
 					//yVO.setClient_building(tmp.getOrder_add3());
 					yVO.setClient_name(tmp.getOrder_surname() +  " " +  tmp.getOrder_name() + " (R)");
 				}

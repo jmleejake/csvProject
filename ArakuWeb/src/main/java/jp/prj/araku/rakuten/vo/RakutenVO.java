@@ -340,12 +340,213 @@ public @Data class RakutenVO {
 	@CsvBindByPosition(position=106)
 	private String membership_program;
 	
-	/**SKU管理番号 40byte*/
-	private String sku_no;
-	/**システム連携用SKU番号 386byte*/
-	private String sys_sku_no;
-	/**SKU情報 1600byte*/
+	/**決済手数料*/
+	@CsvBindByPosition(position=107)
+	private String settlment_fee;
+	
+	/**注文者負担金合計*/
+	@CsvBindByPosition(position=108)
+	private String total_orderer_contribution;
+	
+	/**店舗負担金合計*/
+	@CsvBindByPosition(position=109)
+	private String total_store_contribution;
+	
+	/**外税合計*/
+	@CsvBindByPosition(position=110)
+	private String total_foreign_tax;
+	
+	/**決済手数料税率*/
+	@CsvBindByPosition(position=111)
+	private String settlment_fee_tax_rate;
+	
+	/**ラッピング税率1*/
+	@CsvBindByPosition(position=112)
+	private String wrapping_tax_rate1;
+	
+	/**ラッピング税額1*/
+	@CsvBindByPosition(position=113)
+	private String wrapping_tax_amt1;
+	
+	/**ラッピング税率2*/
+	@CsvBindByPosition(position=114)
+	private String wrapping_tax_rate2;
+	
+	/**ラッピング税額2*/
+	@CsvBindByPosition(position=115)
+	private String wrapping_tax_amt2;
+	
+	/**送付先外税合計*/
+	@CsvBindByPosition(position=116)
+	private String total_non_destination_tax;
+	
+	/**送付先送料税率*/
+	@CsvBindByPosition(position=117)
+	private String shipping_tax_rate;
+	
+	/**送付先代引料税率*/
+	@CsvBindByPosition(position=118)
+	private String destination_cash_on_delivery_tax_rate;
+	
+	/**商品税率*/
+	@CsvBindByPosition(position=119)
+	private String commodity_tax_rate;
+	
+	/**商品毎税込価格*/
+	@CsvBindByPosition(position=120)
+	private String price_incld_tax_per_prd;
+	
+	/**10%税率*/
+	@CsvBindByPosition(position=121)
+	private String tax_rate10;
+	
+	/**10%請求金額*/
+	@CsvBindByPosition(position=122)
+	private String invoice_amt10;
+	
+	/**10%請求額に対する税額*/
+	@CsvBindByPosition(position=123)
+	private String tax_amt10;
+	
+	/**10%合計金額*/
+	@CsvBindByPosition(position=124)
+	private String total_amt10;
+	
+	/**10%決済手数料*/
+	@CsvBindByPosition(position=125)
+	private String settlement_fee10;
+	
+	/**10%クーポン割引額*/
+	@CsvBindByPosition(position=126)
+	private String cpn_discount10;
+	
+	/**10%利用ポイント数*/
+	@CsvBindByPosition(position=127)
+	private String point_use10;
+	
+	/**8%税率*/
+	@CsvBindByPosition(position=128)
+	private String tax_rate8;
+	
+	/**8%請求金額*/
+	@CsvBindByPosition(position=129)
+	private String invoice_amt8;
+	
+	/**8%請求額に対する税額*/
+	@CsvBindByPosition(position=130)
+	private String tax_amt8;
+	
+	/**8%合計金額*/
+	@CsvBindByPosition(position=131)
+	private String total_amt8;
+	
+	/**8%決済手数料*/
+	@CsvBindByPosition(position=132)
+	private String settlement_fee8;
+	
+	/**8%クーポン割引額*/
+	@CsvBindByPosition(position=133)
+	private String cpn_discount8;
+	
+	/**8%利用ポイント数*/
+	@CsvBindByPosition(position=134)
+	private String point_use8;
+	
+	/**0%税率*/
+	@CsvBindByPosition(position=135)
+	private String tax_rate0;
+	
+	/**0%請求金額*/
+	@CsvBindByPosition(position=136)
+	private String invoice_amt0;
+	
+	/**0%請求額に対する税額*/
+	@CsvBindByPosition(position=137)
+	private String tax_amt0;
+	
+	/**0%合計金額*/
+	@CsvBindByPosition(position=138)
+	private String total_amt0;
+	
+	/**0%決済手数料*/
+	@CsvBindByPosition(position=139)
+	private String settlement_fee0;
+	
+	/**0%クーポン割引額*/
+	@CsvBindByPosition(position=140)
+	private String cpn_discount0;
+	
+	/**0%利用ポイント数*/
+	@CsvBindByPosition(position=141)
+	private String point_use0;
+	
+	/**単品配送フラグ*/
+	@CsvBindByPosition(position=142)
+	private String single_item_delivery_flag;
+	
+	/**購入時配送会社*/
+	@CsvBindByPosition(position=143)
+	private String delivery_comp_purchase;
+	
+	/**領収書発行回数*/
+	@CsvBindByPosition(position=144)
+	private String receipts_no;
+	
+	/**領収書初回発行日時*/
+	@CsvBindByPosition(position=145)
+	private String receipt_first_issuance_date;
+	
+	/**領収書最終発行日時*/
+	@CsvBindByPosition(position=146)
+	private String receipt_last_issuance_date;
+	
+	/**支払い期限日*/
+	@CsvBindByPosition(position=147)
+	private String due_date;
+	
+	/**支払い方法変更期限日*/
+	@CsvBindByPosition(position=148)
+	private String payment_method_due_date;
+	
+	/**返金手続き期限日*/
+	@CsvBindByPosition(position=149)
+	private String refund_due_date;
+	
+	/**店舗発行クーポンコード*/
+	@CsvBindByPosition(position=150)
+	private String store_issuance_cpn_cd;
+	
+	/**店舗発行クーポン名*/
+	@CsvBindByPosition(position=151)
+	private String store_issuance_cpn_nm;
+	
+	/**楽天発行クーポンコード*/
+	@CsvBindByPosition(position=152)
+	private String rakuten_issuance_cpn_cd;
+	
+	/**楽天発行クーポン名*/
+	@CsvBindByPosition(position=153)
+	private String rakuten_issuance_cpn_nm;
+	
+	/**警告表示タイプ詳細*/
+	@CsvBindByPosition(position=154)
+	private String alert_display_type_dt;
+	
+	/**SKU管理番号*/
+	@CsvBindByPosition(position=155)
+	private String sku_management_no;
+	
+	/**システム連携用SKU番号*/
+	@CsvBindByPosition(position=156)
+	private String sku_sys_integration_no;
+	
+	/**SKU情報*/
+	@CsvBindByPosition(position=157)
 	private String sku_info;
+
+	
+
+	
 	
 	/**配送会社*/
 	private String delivery_company;

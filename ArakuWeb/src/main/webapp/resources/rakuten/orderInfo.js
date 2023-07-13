@@ -4,7 +4,7 @@
 // specify the columns
 
 var columnDefs = [
-	{headerName: "受注番号", field: "order_no", width: 230}
+	{headerName: "受注番号", field: "order_no", width: 230, editable: true, cellEditor: 'agPopupTextCellEditor'}
 	, {headerName: "受注ステータス", field: "order_status", width: 130}
 	, {headerName: "お届け日指定", field: "delivery_date_sel", width: 130}
 	, {headerName: "合計金額", field: "total_amt", width: 100}
@@ -105,6 +105,9 @@ function setRowData(result) {
 				, tomorrow_hope:result[i].tomorrow_hope
 				, err_text:result[i].err_text
 				, delivery_add1:result[i].delivery_add1
+				, sku_management_no:result[i].sku_management_no
+				, sku_sys_integration_no:result[i].sku_sys_integration_no
+				, sku_info:result[i].sku_info
 				, register_date:result[i].register_date
 				, update_date:result[i].update_date
 		}
