@@ -13,6 +13,123 @@
 <img src='https://github.com/jmleejake/csvProject/assets/18359068/01455720-014a-48f1-be97-a80531d6ed35' width='300' />	
 </div>
 </li>
+<li>
+Rakuten SKU대응
+<div>
+
+```sql
+// 라쿠텐 테이블
+alter table rakuten_info add column settlment_fee varchar(5) comment '決済手数料';
+alter table rakuten_info add column total_orderer_contribution varchar(5) comment '注文者負担金合計';
+alter table rakuten_info add column total_store_contribution varchar(5) comment '店舗負担金合計';
+alter table rakuten_info add column total_foreign_tax varchar(5) comment '外税合計';
+alter table rakuten_info add column settlment_fee_tax_rate varchar(5) comment '決済手数料税率';
+alter table rakuten_info add column wrapping_tax_rate1 varchar(5) comment 'ラッピング税率1';
+alter table rakuten_info add column wrapping_tax_amt1 varchar(5) comment 'ラッピング税額1';
+alter table rakuten_info add column wrapping_tax_rate2 varchar(5) comment 'ラッピング税率2';
+alter table rakuten_info add column wrapping_tax_amt2 varchar(5) comment 'ラッピング税額2';
+alter table rakuten_info add column total_non_destination_tax varchar(5) comment '送付先外税合計';
+alter table rakuten_info add column shipping_tax_rate varchar(5) comment '送付先送料税率';
+alter table rakuten_info add column destination_cash_on_delivery_tax_rate varchar(5) comment '送付先代引料税率';
+alter table rakuten_info add column commodity_tax_rate varchar(5) comment '商品税率';
+alter table rakuten_info add column price_incld_tax_per_prd varchar(5) comment '商品毎税込価格';
+alter table rakuten_info add column tax_rate10 varchar(5) comment '10%税率';
+alter table rakuten_info add column invoice_amt10 varchar(5) comment '10%請求金額';
+alter table rakuten_info add column tax_amt10 varchar(5) comment '10%請求額に対する税額';
+alter table rakuten_info add column total_amt10 varchar(5) comment '10%合計金額';
+alter table rakuten_info add column settlement_fee10 varchar(5) comment '10%決済手数料';
+alter table rakuten_info add column cpn_discount10 varchar(5) comment '10%クーポン割引額';
+alter table rakuten_info add column point_use10 varchar(5) comment '10%利用ポイント数';
+alter table rakuten_info add column tax_rate8 varchar(5) comment '8%税率';
+alter table rakuten_info add column invoice_amt8 varchar(5) comment '8%請求金額';
+alter table rakuten_info add column tax_amt8 varchar(5) comment '8%請求額に対する税額';
+alter table rakuten_info add column total_amt8 varchar(5) comment '8%合計金額';
+alter table rakuten_info add column settlement_fee8 varchar(5) comment '8%決済手数料';
+alter table rakuten_info add column cpn_discount8 varchar(5) comment '8%クーポン割引額';
+alter table rakuten_info add column point_use8 varchar(5) comment '8%利用ポイント数';
+alter table rakuten_info add column tax_rate0 varchar(5) comment '0%税率';
+alter table rakuten_info add column invoice_amt0 varchar(5) comment '0%請求金額';
+alter table rakuten_info add column tax_amt0 varchar(5) comment '0%請求額に対する税額';
+alter table rakuten_info add column total_amt0 varchar(5) comment '0%合計金額';
+alter table rakuten_info add column settlement_fee0 varchar(5) comment '0%決済手数料';
+alter table rakuten_info add column cpn_discount0 varchar(5) comment '0%クーポン割引額';
+alter table rakuten_info add column point_use0 varchar(5) comment '0%利用ポイント数';
+alter table rakuten_info add column single_item_delivery_flag varchar(5) comment '単品配送フラグ';
+alter table rakuten_info add column delivery_comp_purchase varchar(5) comment '購入時配送会社';
+alter table rakuten_info add column receipts_no varchar(5) comment '領収書発行回数';
+alter table rakuten_info add column receipt_first_issuance_date varchar(5) comment '領収書初回発行日時';
+alter table rakuten_info add column receipt_last_issuance_date varchar(5) comment '領収書最終発行日時';
+alter table rakuten_info add column due_date varchar(5) comment '支払い期限日';
+alter table rakuten_info add column payment_method_due_date varchar(5) comment '支払い方法変更期限日';
+alter table rakuten_info add column refund_due_date varchar(5) comment '返金手続き期限日';
+alter table rakuten_info add column store_issuance_cpn_cd varchar(20) comment '店舗発行クーポンコード';
+alter table rakuten_info add column store_issuance_cpn_nm varchar(1000) comment '店舗発行クーポン名';
+alter table rakuten_info add column rakuten_issuance_cpn_cd varchar(5) comment '楽天発行クーポンコード';
+alter table rakuten_info add column rakuten_issuance_cpn_nm varchar(5) comment '楽天発行クーポン名';
+alter table rakuten_info add column alert_display_type_dt varchar(5) comment '警告表示タイプ詳細';
+alter table rakuten_info add column sku_management_no varchar(50) comment 'SKU管理番号';
+alter table rakuten_info add column sku_sys_integration_no varchar(400) comment 'システム連携用SKU番号';
+alter table rakuten_info add column sku_info varchar(2000) comment 'SKU情報';
+
+// 라쿠텐 냉동 테이블
+alter table rakuten_frozen_info add column settlment_fee varchar(5) comment '決済手数料';
+alter table rakuten_frozen_info add column total_orderer_contribution varchar(5) comment '注文者負担金合計';
+alter table rakuten_frozen_info add column total_store_contribution varchar(5) comment '店舗負担金合計';
+alter table rakuten_frozen_info add column total_foreign_tax varchar(5) comment '外税合計';
+alter table rakuten_frozen_info add column settlment_fee_tax_rate varchar(5) comment '決済手数料税率';
+alter table rakuten_frozen_info add column wrapping_tax_rate1 varchar(5) comment 'ラッピング税率1';
+alter table rakuten_frozen_info add column wrapping_tax_amt1 varchar(5) comment 'ラッピング税額1';
+alter table rakuten_frozen_info add column wrapping_tax_rate2 varchar(5) comment 'ラッピング税率2';
+alter table rakuten_frozen_info add column wrapping_tax_amt2 varchar(5) comment 'ラッピング税額2';
+alter table rakuten_frozen_info add column total_non_destination_tax varchar(5) comment '送付先外税合計';
+alter table rakuten_frozen_info add column shipping_tax_rate varchar(5) comment '送付先送料税率';
+alter table rakuten_frozen_info add column destination_cash_on_delivery_tax_rate varchar(5) comment '送付先代引料税率';
+alter table rakuten_frozen_info add column commodity_tax_rate varchar(5) comment '商品税率';
+alter table rakuten_frozen_info add column price_incld_tax_per_prd varchar(5) comment '商品毎税込価格';
+alter table rakuten_frozen_info add column tax_rate10 varchar(5) comment '10%税率';
+alter table rakuten_frozen_info add column invoice_amt10 varchar(5) comment '10%請求金額';
+alter table rakuten_frozen_info add column tax_amt10 varchar(5) comment '10%請求額に対する税額';
+alter table rakuten_frozen_info add column total_amt10 varchar(5) comment '10%合計金額';
+alter table rakuten_frozen_info add column settlement_fee10 varchar(5) comment '10%決済手数料';
+alter table rakuten_frozen_info add column cpn_discount10 varchar(5) comment '10%クーポン割引額';
+alter table rakuten_frozen_info add column point_use10 varchar(5) comment '10%利用ポイント数';
+alter table rakuten_frozen_info add column tax_rate8 varchar(5) comment '8%税率';
+alter table rakuten_frozen_info add column invoice_amt8 varchar(5) comment '8%請求金額';
+alter table rakuten_frozen_info add column tax_amt8 varchar(5) comment '8%請求額に対する税額';
+alter table rakuten_frozen_info add column total_amt8 varchar(5) comment '8%合計金額';
+alter table rakuten_frozen_info add column settlement_fee8 varchar(5) comment '8%決済手数料';
+alter table rakuten_frozen_info add column cpn_discount8 varchar(5) comment '8%クーポン割引額';
+alter table rakuten_frozen_info add column point_use8 varchar(5) comment '8%利用ポイント数';
+alter table rakuten_frozen_info add column tax_rate0 varchar(5) comment '0%税率';
+alter table rakuten_frozen_info add column invoice_amt0 varchar(5) comment '0%請求金額';
+alter table rakuten_frozen_info add column tax_amt0 varchar(5) comment '0%請求額に対する税額';
+alter table rakuten_frozen_info add column total_amt0 varchar(5) comment '0%合計金額';
+alter table rakuten_frozen_info add column settlement_fee0 varchar(5) comment '0%決済手数料';
+alter table rakuten_frozen_info add column cpn_discount0 varchar(5) comment '0%クーポン割引額';
+alter table rakuten_frozen_info add column point_use0 varchar(5) comment '0%利用ポイント数';
+alter table rakuten_frozen_info add column single_item_delivery_flag varchar(5) comment '単品配送フラグ';
+alter table rakuten_frozen_info add column delivery_comp_purchase varchar(5) comment '購入時配送会社';
+alter table rakuten_frozen_info add column receipts_no varchar(5) comment '領収書発行回数';
+alter table rakuten_frozen_info add column receipt_first_issuance_date varchar(5) comment '領収書初回発行日時';
+alter table rakuten_frozen_info add column receipt_last_issuance_date varchar(5) comment '領収書最終発行日時';
+alter table rakuten_frozen_info add column due_date varchar(5) comment '支払い期限日';
+alter table rakuten_frozen_info add column payment_method_due_date varchar(5) comment '支払い方法変更期限日';
+alter table rakuten_frozen_info add column refund_due_date varchar(5) comment '返金手続き期限日';
+alter table rakuten_frozen_info add column store_issuance_cpn_cd varchar(20) comment '店舗発行クーポンコード';
+alter table rakuten_frozen_info add column store_issuance_cpn_nm varchar(1000) comment '店舗発行クーポン名';
+alter table rakuten_frozen_info add column rakuten_issuance_cpn_cd varchar(5) comment '楽天発行クーポンコード';
+alter table rakuten_frozen_info add column rakuten_issuance_cpn_nm varchar(5) comment '楽天発行クーポン名';
+alter table rakuten_frozen_info add column alert_display_type_dt varchar(5) comment '警告表示タイプ詳細';
+alter table rakuten_frozen_info add column sku_management_no varchar(50) comment 'SKU管理番号';
+alter table rakuten_frozen_info add column sku_sys_integration_no varchar(400) comment 'システム連携用SKU番号';
+alter table rakuten_frozen_info add column sku_info varchar(2000) comment 'SKU情報';
+```
+</div>
+<div>src/main/java/jp/prj/araku/rakuten/dao/RakutenDAO.java > csv upload (insert처리) / 치환결과 노출처리</div>
+<div>src/main/java/jp/prj/araku/rakuten/mapper/RakutenMapper.xml > insert쿼리 / select쿼리 수정</div>
+<div>src/main/java/jp/prj/araku/rakuten/vo/RakutenVO.java > csv컬럼 추가 (51건)</div>
+<div>src/main/webapp/resources/rakuten/orderInfo.js > 치환시 row값에서 sku_info값 가져갈수있도록 처리</div>
+</li>
 </ul>
 
 ### 2023.06
