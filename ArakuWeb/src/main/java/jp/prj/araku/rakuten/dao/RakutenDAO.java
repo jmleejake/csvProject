@@ -702,9 +702,10 @@ public class RakutenDAO {
 						buf.append(transedName + "×" + su);
 						
 						transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
-						transVO.setKeyword(vo.getProduct_name());
+						transVO.setKeyword(transedName.trim());
 						searchRet = listMapper.getTransInfo(transVO);
-						prdTransVO.setJan_cd(searchRet.get(0).getJan_cd()); // 2023-07-04 kim jan_cd 처리
+						prdTransVO.setBefore_trans(searchRet.get(0).getBefore_trans());
+						prdTransVO.setJan_cd(searchRet.get(0).getJan_cd()); // 2021-07-03 kim
 						
 //						prdTransVO.setPrd_cnt(unitNo+"");
 						if(searchRet.get(0).getPrd_cnt() != null) {  // 2023-07-04 kim NULLチェックが必要
@@ -739,8 +740,14 @@ public class RakutenDAO {
 				PrdTransVO prdTransVO = new PrdTransVO();
 				prdTransVO.setOrder_no(vo.getOrder_no());
 				prdTransVO.setOrder_gbn("1");
-				prdTransVO.setBefore_trans(vo.getProduct_name());
+				prdTransVO.setBefore_trans(vo.getSku_info());
 				prdTransVO.setAfter_trans(transedName);
+				
+				transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+				transVO.setKeyword(vo.getProduct_name());
+				searchRet = listMapper.getTransInfo(transVO);
+				prdTransVO.setJan_cd(searchRet.get(0).getJan_cd()); // 2023-07-04 kim jan_cd 처리
+				
 				
 				if(searchRet.get(0).getPrd_cnt() != null) {
 					int SUJA1 = Integer.valueOf(unitNo)* Integer.parseInt(searchRet.get(0).getPrd_cnt());
