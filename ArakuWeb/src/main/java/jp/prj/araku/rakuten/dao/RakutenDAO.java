@@ -501,177 +501,11 @@ public class RakutenDAO {
 			StringBuffer buf = null;
 			String optionContent = vo.getProduct_option();
 			String skuInfo = vo.getSku_info();
-			if(optionContent != null && optionContent.length() > 1) {
-				// 옵션에 대한 처리
-				HashSet<String> cntCheck = new HashSet<>();
-				HashMap<String, Integer> map = new HashMap<>();
-				
-				String[] strArr = vo.getProduct_option().split(CommonUtil.SPLIT_BY_NPER);
-				ArrayList<String> list = new ArrayList<>();
-				for (int i=0; i<strArr.length; i++) {
-					// 이전에 에러처리 된 데이터가 있을경우 제거 (옵션이 여러개인 경우 중복제거)
-					err_seq_id = listMapper.getTranslationErr(errVO);
-					if (err_seq_id != null && err_seq_id != "") {
-						errVO.setSeq_id(err_seq_id);
-						listMapper.deleteTranslationErr(errVO);
-					}
-					
-					log.debug(String.format("%d :: %s", i, strArr[i]));
-					
-					//2020.1.16 kim  옵션처리전에 注 표시가 있으면 처리하지 않고 다음 옵션처리함.
-	            	if(null != strArr[i] && !strArr[i].contains("注")) {
-						String[] data = strArr[i].split(CommonUtil.SPLIT_BY_COLON);
-						String value = null;
-						if (data.length > 1) {
-							// 예외적인 경우로 콜론 바로 뒤에 데이터가 있는것이 아니라 콜론 두개 뒤에 있는 경우가 있어 스플릿 결과의 맨 마지막 값을 가져올 수 있도록 처리
-							value = data[data.length-1];
-							log.debug(String.format("option value1 :: %s", value));
-							
-							transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
-							transVO.setKeyword(value.trim());
-							searchRet = listMapper.getTransInfo(transVO);
-							
-							try {
-								list.add(searchRet.get(0).getAfter_trans().trim());
-							} catch (NullPointerException e) {
-								errVO.setErr_text(CommonUtil.TRANS_ERR);
-								listMapper.insertTranslationErr(errVO);
-								continue;
-							}
-						} 
-	            	}
-					/*
-					// [MOD-0826]
-					else {
-						// 콜론이 아닌 일본어자판 컴마로 나뉘어져있는 경우가 있어 처리
-						data = strArr[i].split(CommonUtil.JPCOMMA);
-						for (String value2 : data) {
-							log.debug(String.format("option value2 :: %s", value2));
-							list.add(value2.trim());
-						}
-					}
-					
-					// 거의 없겠다만 콜론과 일본어자판 컴마가 같이 있는 경우도 있어 처리
-					if (data[0].contains(CommonUtil.JPCOMMA)) {
-						data = data[0].split(CommonUtil.JPCOMMA);
-						for (String value3 : data) {
-							log.debug(String.format("option value3 :: %s", value3));
-							list.add(value3.trim());
-						}
-					}
-					*/
-				}
-				log.debug("option list : " + list);
-				
-				for (String str : list) {
-					String trimmed = str.trim();
-					if (cntCheck.add(trimmed)) {
-						map.put(trimmed, 1);
-					} else {
-						// 이미 존재하는 옵션명의 경우 +1후 map에 저장
-						int recnt = map.get(trimmed);
-						map.put(trimmed, recnt+1);
-					}
-				}
-				log.debug("option map : " + map);
-				
-				Set<String> optionNames = map.keySet();
-				buf = new StringBuffer(transedName);
-				buf.append(" ");
-				
-				// 2020/08/19 注文件数が１以上の場合、通常出荷にする。
-				if (unitNo >1) {
-				// 2020/01/27 ネコポス対応の為、注文件数が１以上の場合、通常出荷にする。
-				//if (transedName.contains("全無") && unitNo >1) {
-					buf = new StringBuffer(transedName + "×" + su);
-				}
-				
-				/**
-				 * 2021.02.22 kim 치환시 주문정보를 商品中間マスタ로 insert처리
-				 * */
-				PrdTransVO prdTransVO = new PrdTransVO();
-				prdTransVO.setOrder_no(vo.getOrder_no());
-				prdTransVO.setOrder_gbn("1");
-				prdTransVO.setBefore_trans(vo.getProduct_name());
-				prdTransVO.setAfter_trans(transedName);
-				
-				transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
-				transVO.setKeyword(vo.getProduct_name());
-				searchRet = listMapper.getTransInfo(transVO);
-				prdTransVO.setJan_cd(searchRet.get(0).getJan_cd()); // 2023-07-04 kim jan_cd 처리
-				
-//				prdTransVO.setPrd_cnt(unitNo+"");
-				if(searchRet.get(0).getPrd_cnt() != null) {  // 2023-07-04 kim NULLチェックが必要
-				      int COUNT = unitNo* Integer.parseInt(searchRet.get(0).getPrd_cnt());
-						prdTransVO.setPrd_cnt(Integer.toString(COUNT)); // 2023-07-04 kim COUNT 처리
-				}else {
-					prdTransVO.setPrd_cnt(unitNo+"");
-				}
-
-				
-				prdTransVO.setPrd_master_hanei_gbn("0");
-				prdTransVO.setSearch_type("translate");
-				prdTransVO.setTrans_target_type(CommonUtil.TRANS_TARGET_R);
-				ArrayList<PrdTransVO> prdTransRet = listMapper.getPrdTrans(prdTransVO);
-				if(prdTransRet.size() > 0) {
-					prdTransVO.setSeq_id(prdTransRet.get(0).getSeq_id());
-					listMapper.updatePrdTrans(prdTransVO);
-				}else {
-					listMapper.insertPrdTrans(prdTransVO);
-				}
-				
-				int i = 1;
-				for (String optionName : optionNames) {
-					// 옵션개수, 상품개수를 곱하여 치환결과에 반영
-//					buf.append(optionName + "*" + (map.get(optionName)*productSetNo*unitNo)); // [MOD-0819]
-//					buf.append(optionName + "*" + (map.get(optionName)*unitNo)); // [MOD-1011] 
-					
-					Integer unitsu = map.get(optionName)*unitNo; 
-					// [MOD-1011] 
-					String unitsu1 = unitsu.toString(); 
-					String su1 = CommonUtil.hankakuNumToZenkaku(unitsu1); 
-					buf.append(optionName + "×" +su1); 
-
-					if (optionNames.size() > 1) {
-						buf.append(";");
-					}
-					
-					/**
-					 * 2021.01.09 치환시 주문정보를 商品中間マスタ로 insert처리
-					 * */
-					PrdTransVO prdTransVO2 = new PrdTransVO();
-					prdTransVO2.setOrder_no(vo.getOrder_no());
-					prdTransVO2.setOrder_gbn(i+"");
-					prdTransVO2.setAfter_trans(optionName);
-					
-					transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
-					transVO.setKeyword(optionName.trim());
-					searchRet = listMapper.getTransInfo(transVO);
-					prdTransVO2.setBefore_trans(searchRet.get(0).getBefore_trans());
-					prdTransVO2.setJan_cd(searchRet.get(0).getJan_cd()); // 2021-07-03 kim
-				
-					if(searchRet.get(0).getPrd_cnt() != null) {
-						int SUJA = Integer.valueOf(unitsu1)* Integer.parseInt(searchRet.get(0).getPrd_cnt());
-						prdTransVO2.setPrd_cnt(Integer.toString(SUJA)); // 2023-07-04 kim COUNT 처리
-					}else {
-						prdTransVO2.setPrd_cnt(unitsu1+"");
-					}
-
-					
-					prdTransVO2.setPrd_master_hanei_gbn("0");
-					prdTransVO2.setSearch_type("translate");
-					prdTransVO2.setTrans_target_type(CommonUtil.TRANS_TARGET_R);
-					ArrayList<PrdTransVO> prdTransRet2 = listMapper.getPrdTrans(prdTransVO2);
-					if(prdTransRet2.size() > 0) {
-						prdTransVO2.setSeq_id(prdTransRet2.get(0).getSeq_id());
-						listMapper.updatePrdTrans(prdTransVO2);
-					}else {
-						listMapper.insertPrdTrans(prdTransVO2);
-					}
-					
-					i++;
-				}
-			}else if(skuInfo != null && skuInfo.length() > 1) {
+			
+			//正しいoption名を取得するため。mapに保存しておく。
+			Map<String, String> optionmap = new HashMap<>();
+			
+			if(skuInfo != null && skuInfo.length() > 1) {
 				// SKU 정보 처리
             	if(null != skuInfo) {
             		String[] dataArr = skuInfo.split(CommonUtil.SPLIT_BY_COLON);
@@ -728,6 +562,246 @@ public class RakutenDAO {
 						}
 					}
             	}
+			}else if(optionContent != null && optionContent.length() > 1) {
+				// 옵션에 대한 처리
+				HashSet<String> cntCheck = new HashSet<>();
+				HashMap<String, Integer> map = new HashMap<>();
+				
+				String[] strArr = vo.getProduct_option().split(CommonUtil.SPLIT_BY_NPER);
+				ArrayList<String> list = new ArrayList<>();
+				for (int i=0; i<strArr.length; i++) {
+					// 이전에 에러처리 된 데이터가 있을경우 제거 (옵션이 여러개인 경우 중복제거)
+					err_seq_id = listMapper.getTranslationErr(errVO);
+					if (err_seq_id != null && err_seq_id != "") {
+						errVO.setSeq_id(err_seq_id);
+						listMapper.deleteTranslationErr(errVO);
+					}
+					
+					log.debug(String.format("%d :: %s", i, strArr[i]));
+					
+					//2020.1.16 kim  옵션처리전에 注 표시가 있으면 처리하지 않고 다음 옵션처리함.
+	            	if(null != strArr[i] && !strArr[i].contains("注") && !strArr[i].contains("項目選択")) {
+						String[] data = strArr[i].split(CommonUtil.SPLIT_BY_COLON);
+						String value = null;
+						if (data.length > 1) {
+							// 예외적인 경우로 콜론 바로 뒤에 데이터가 있는것이 아니라 콜론 두개 뒤에 있는 경우가 있어 스플릿 결과의 맨 마지막 값을 가져올 수 있도록 처리
+							value = data[data.length-1];
+							log.debug(String.format("option value1 :: %s", value));
+							
+							transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+							transVO.setKeyword(value.trim());
+							transVO.setBefore_trans(value);
+							searchRet = listMapper.getTransInfo(transVO);
+							
+							try {
+								list.add(searchRet.get(0).getAfter_trans().trim());
+								//list.add(searchRet.get(0).getBefore_trans());
+
+						        //Mapの宣言
+								optionmap.put(searchRet.get(0).getAfter_trans().trim(), value.trim());
+								
+							} catch (NullPointerException e) {
+								errVO.setErr_text(CommonUtil.TRANS_ERR);
+								listMapper.insertTranslationErr(errVO);
+								continue;
+							}
+						} 
+	            	}
+					/*
+					// [MOD-0826]
+					else {
+						// 콜론이 아닌 일본어자판 컴마로 나뉘어져있는 경우가 있어 처리
+						data = strArr[i].split(CommonUtil.JPCOMMA);
+						for (String value2 : data) {
+							log.debug(String.format("option value2 :: %s", value2));
+							list.add(value2.trim());
+						}
+					}
+					
+					// 거의 없겠다만 콜론과 일본어자판 컴마가 같이 있는 경우도 있어 처리
+					if (data[0].contains(CommonUtil.JPCOMMA)) {
+						data = data[0].split(CommonUtil.JPCOMMA);
+						for (String value3 : data) {
+							log.debug(String.format("option value3 :: %s", value3));
+							list.add(value3.trim());
+						}
+					}
+					*/
+				}
+				log.debug("option list : " + list);
+				
+				for (String str : list) {
+					String trimmed = str.trim();
+					if (cntCheck.add(trimmed)) {
+						map.put(trimmed, 1);
+					} else {
+						// 이미 존재하는 옵션명의 경우 +1후 map에 저장
+						int recnt = map.get(trimmed);
+						map.put(trimmed, recnt+1);
+					}
+				}
+				log.debug("option map : " + map);
+				
+				Set<String> optionNames = map.keySet();
+				buf = new StringBuffer(transedName);
+				buf.append(" ");
+				
+				// 2020/08/19 注文件数が１以上の場合、通常出荷にする。
+				if (unitNo >1) {
+				// 2020/01/27 ネコポス対応の為、注文件数が１以上の場合、通常出荷にする。
+				//if (transedName.contains("全無") && unitNo >1) {
+					buf = new StringBuffer(transedName + "×" + su);
+				}
+				log.debug("option Names : " + map);
+				/**
+				 * 2021.02.22 kim 치환시 주문정보를 商品中間マスタ로 insert처리
+				 * */
+				PrdTransVO prdTransVO = new PrdTransVO();
+				prdTransVO.setOrder_no(vo.getOrder_no());
+				prdTransVO.setOrder_gbn("1");
+				prdTransVO.setBefore_trans(vo.getProduct_name());
+				prdTransVO.setAfter_trans(transedName);
+				
+				transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+				transVO.setKeyword(vo.getProduct_name());
+				searchRet = listMapper.getTransInfo(transVO);
+				prdTransVO.setJan_cd(searchRet.get(0).getJan_cd()); // 2023-07-04 kim jan_cd 처리
+				
+//				prdTransVO.setPrd_cnt(unitNo+"");
+				if(searchRet.get(0).getPrd_cnt() != null) {  // 2023-07-04 kim NULLチェックが必要
+				      int COUNT = unitNo* Integer.parseInt(searchRet.get(0).getPrd_cnt());
+						prdTransVO.setPrd_cnt(Integer.toString(COUNT)); // 2023-07-04 kim COUNT 처리
+				}else {
+					prdTransVO.setPrd_cnt(unitNo+"");
+				}
+
+				
+				prdTransVO.setPrd_master_hanei_gbn("0");
+				prdTransVO.setSearch_type("translate");
+				prdTransVO.setTrans_target_type(CommonUtil.TRANS_TARGET_R);
+				ArrayList<PrdTransVO> prdTransRet = listMapper.getPrdTrans(prdTransVO);
+				if(prdTransRet.size() > 0) {
+					prdTransVO.setSeq_id(prdTransRet.get(0).getSeq_id());
+					listMapper.updatePrdTrans(prdTransVO);
+				}else {
+					listMapper.insertPrdTrans(prdTransVO);
+				}
+								
+				int i = 1;
+				for (String optionName : optionNames) {
+					// 옵션개수, 상품개수를 곱하여 치환결과에 반영
+//					buf.append(optionName + "*" + (map.get(optionName)*productSetNo*unitNo)); // [MOD-0819]
+//					buf.append(optionName + "*" + (map.get(optionName)*unitNo)); // [MOD-1011] 
+					
+					Integer unitsu = map.get(optionName)*unitNo; 
+					// [MOD-1011] 
+					String unitsu1 = unitsu.toString(); 
+					String su1 = CommonUtil.hankakuNumToZenkaku(unitsu1); 
+					buf.append(optionName + "×" +su1); 
+
+					if (optionNames.size() > 1) {
+						buf.append(";");
+					}
+					
+					/**
+					 * 2021.01.09 치환시 주문정보를 商品中間マスタ로 insert처리
+					 * */
+					PrdTransVO prdTransVO2 = new PrdTransVO();
+					prdTransVO2.setOrder_no(vo.getOrder_no());
+					prdTransVO2.setOrder_gbn(i+"");
+					prdTransVO2.setAfter_trans(optionName);
+					
+					// Mapからデータを取得する
+					log.debug(String.format("map1 test result:: %s", optionmap.get(optionName)));
+
+					
+					transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+					
+					//正しいoption名を取得する。
+					//transVO.setKeyword(optionName.trim());
+					transVO.setKeyword(optionmap.get(optionName));				
+					searchRet = listMapper.getTransInfo(transVO);
+					prdTransVO2.setBefore_trans(searchRet.get(0).getBefore_trans());
+					prdTransVO2.setJan_cd(searchRet.get(0).getJan_cd()); // 2021-07-03 kim
+				
+					if(searchRet.get(0).getPrd_cnt() != null) {
+						int SUJA = Integer.valueOf(unitsu1)* Integer.parseInt(searchRet.get(0).getPrd_cnt());
+						prdTransVO2.setPrd_cnt(Integer.toString(SUJA)); // 2023-07-04 kim COUNT 처리
+					}else {
+						prdTransVO2.setPrd_cnt(unitsu1+"");
+					}
+
+					
+					prdTransVO2.setPrd_master_hanei_gbn("0");
+					prdTransVO2.setSearch_type("translate");
+					prdTransVO2.setTrans_target_type(CommonUtil.TRANS_TARGET_R);
+					ArrayList<PrdTransVO> prdTransRet2 = listMapper.getPrdTrans(prdTransVO2);
+					if(prdTransRet2.size() > 0) {
+						prdTransVO2.setSeq_id(prdTransRet2.get(0).getSeq_id());
+						listMapper.updatePrdTrans(prdTransVO2);
+					}else {
+						listMapper.insertPrdTrans(prdTransVO2);
+					}
+					
+					i++;
+				}
+//			}else if(skuInfo != null && skuInfo.length() > 1) {
+//				// SKU 정보 처리
+//            	if(null != skuInfo) {
+//            		String[] dataArr = skuInfo.split(CommonUtil.SPLIT_BY_COLON);
+//                	String data = null;
+//					if (dataArr.length > 1) {
+//						buf = new StringBuffer(transedName);
+//						buf.append(" ");
+//						
+//						// 예외적인 경우로 콜론 바로 뒤에 데이터가 있는것이 아니라 콜론 두개 뒤에 있는 경우가 있어 스플릿 결과의 맨 마지막 값을 가져올 수 있도록 처리
+//						data = dataArr[dataArr.length-1];
+//						log.debug(String.format("option value1 :: %s", data));
+//						
+//						transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+//						transVO.setKeyword(data);
+//						searchRet = listMapper.getTransInfo(transVO);
+//						transedName = "";
+//						if(searchRet.size() > 0) {
+//							transedName = searchRet.get(0).getAfter_trans().trim();
+//						}
+//						
+//						PrdTransVO prdTransVO = new PrdTransVO();
+//						prdTransVO.setOrder_no(vo.getOrder_no());
+//						prdTransVO.setOrder_gbn("1");
+//						prdTransVO.setBefore_trans(vo.getProduct_name());
+//						prdTransVO.setAfter_trans(transedName);
+//						
+//						//buf = new StringBuffer(transedName + "×" + su);
+//						buf.append(transedName + "×" + su);
+//						
+//						transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+//						transVO.setKeyword(transedName.trim());
+//						searchRet = listMapper.getTransInfo(transVO);
+//						prdTransVO.setBefore_trans(searchRet.get(0).getBefore_trans());
+//						prdTransVO.setJan_cd(searchRet.get(0).getJan_cd()); // 2021-07-03 kim
+//						
+////						prdTransVO.setPrd_cnt(unitNo+"");
+//						if(searchRet.get(0).getPrd_cnt() != null) {  // 2023-07-04 kim NULLチェックが必要
+//						      int COUNT = unitNo* Integer.parseInt(searchRet.get(0).getPrd_cnt());
+//								prdTransVO.setPrd_cnt(Integer.toString(COUNT)); // 2023-07-04 kim COUNT 처리
+//						}else {
+//							prdTransVO.setPrd_cnt(unitNo+"");
+//						}
+//
+//						
+//						prdTransVO.setPrd_master_hanei_gbn("0");
+//						prdTransVO.setSearch_type("translate");
+//						prdTransVO.setTrans_target_type(CommonUtil.TRANS_TARGET_R);
+//						ArrayList<PrdTransVO> prdTransRet = listMapper.getPrdTrans(prdTransVO);
+//						if(prdTransRet.size() > 0) {
+//							prdTransVO.setSeq_id(prdTransRet.get(0).getSeq_id());
+//							listMapper.updatePrdTrans(prdTransVO);
+//						}else {
+//							listMapper.insertPrdTrans(prdTransVO);
+//						}
+//					}
+//            	}
 			}else {
 				// 옵션이 없는 경우, 상품세트수와 상품개수를 곱하여 치환결과에 반영
 //				buf = new StringBuffer(arr[0] + "*" + (productSetNo*unitNo)); // [MOD-0819]
@@ -740,7 +814,7 @@ public class RakutenDAO {
 				PrdTransVO prdTransVO = new PrdTransVO();
 				prdTransVO.setOrder_no(vo.getOrder_no());
 				prdTransVO.setOrder_gbn("1");
-				prdTransVO.setBefore_trans(vo.getSku_info());
+				prdTransVO.setBefore_trans(vo.getProduct_name());
 				prdTransVO.setAfter_trans(transedName);
 				
 				transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
