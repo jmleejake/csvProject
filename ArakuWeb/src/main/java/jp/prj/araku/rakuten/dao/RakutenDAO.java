@@ -686,7 +686,38 @@ public class RakutenDAO {
 				}else {
 					listMapper.insertPrdTrans(prdTransVO);
 				}
-								
+				
+				/**
+				 * 2023.07.31 その他마스터테이블 (translation_sub_info)를 
+				 * translation_info의 seq_id로 select하여 결과가 있을경우 해당 정보들을 商品中間マスタ로 insert처리
+				 * */
+				if(!"".equals(trans_seq_id)) {
+					SubTranslationVO subTransVO = new SubTranslationVO();
+					subTransVO.setParent_seq_id(trans_seq_id);
+					ArrayList<SubTranslationVO> subTransList = listMapper.getSubTransInfo(subTransVO);
+					if(subTransList.size() > 0) {
+						for(SubTranslationVO subTrans : subTransList) {
+							prdTransVO = new PrdTransVO();
+							prdTransVO.setOrder_no(vo.getOrder_no());
+							prdTransVO.setOrder_gbn("1");
+							prdTransVO.setBefore_trans(subTrans.getBefore_trans());
+							prdTransVO.setAfter_trans(subTrans.getAfter_trans());
+							prdTransVO.setJan_cd(subTrans.getJan_cd()); // 2021-07-03 kim
+							//prdTransVO.setPrd_cnt(sintsu); // 2021-07-03 kim
+							prdTransVO.setPrd_cnt(subTrans.getPrd_cnt()); // 2021-07-03 kim
+							prdTransVO.setPrd_master_hanei_gbn("0");
+							prdTransVO.setSearch_type("translate");
+							prdTransVO.setTrans_target_type(CommonUtil.TRANS_TARGET_R);
+							prdTransRet = listMapper.getPrdTrans(prdTransVO);
+							if(prdTransRet.size() > 0) {
+								prdTransVO.setSeq_id(prdTransRet.get(0).getSeq_id());
+								listMapper.updatePrdTrans(prdTransVO);
+							}else {
+								listMapper.insertPrdTrans(prdTransVO);
+							}
+						}
+					}
+				}
 				int i = 1;
 				for (String optionName : optionNames) {
 					// 옵션개수, 상품개수를 곱하여 치환결과에 반영
@@ -863,7 +894,8 @@ public class RakutenDAO {
 							prdTransVO.setBefore_trans(subTrans.getBefore_trans());
 							prdTransVO.setAfter_trans(subTrans.getAfter_trans());
 							prdTransVO.setJan_cd(subTrans.getJan_cd()); // 2021-07-03 kim
-							prdTransVO.setPrd_cnt(sintsu); // 2021-07-03 kim
+							//prdTransVO.setPrd_cnt(sintsu); // 2021-07-03 kim
+							prdTransVO.setPrd_cnt(subTrans.getPrd_cnt()); // 2021-07-03 kim
 							prdTransVO.setPrd_master_hanei_gbn("0");
 							prdTransVO.setSearch_type("translate");
 							prdTransVO.setTrans_target_type(CommonUtil.TRANS_TARGET_R);
@@ -1119,6 +1151,38 @@ public class RakutenDAO {
 					listMapper.updatePrdTrans(prdTransVO);
 				}else {
 					listMapper.insertPrdTrans(prdTransVO);
+				}
+				
+				/**
+				 * 2023.07.31 その他마스터테이블 (translation_sub_info)를 
+				 * translation_info의 seq_id로 select하여 결과가 있을경우 해당 정보들을 商品中間マスタ로 insert처리
+				 * */
+				if(!"".equals(trans_seq_id)) {
+					SubTranslationVO subTransVO = new SubTranslationVO();
+					subTransVO.setParent_seq_id(trans_seq_id);
+					ArrayList<SubTranslationVO> subTransList = listMapper.getSubTransInfo(subTransVO);
+					if(subTransList.size() > 0) {
+						for(SubTranslationVO subTrans : subTransList) {
+							prdTransVO = new PrdTransVO();
+							prdTransVO.setOrder_no(vo.getOrder_no());
+							prdTransVO.setOrder_gbn("1");
+							prdTransVO.setBefore_trans(subTrans.getBefore_trans());
+							prdTransVO.setAfter_trans(subTrans.getAfter_trans());
+							prdTransVO.setJan_cd(subTrans.getJan_cd()); // 2021-07-03 kim
+							//prdTransVO.setPrd_cnt(sintsu); // 2021-07-03 kim
+							prdTransVO.setPrd_cnt(subTrans.getPrd_cnt()); // 2021-07-03 kim
+							prdTransVO.setPrd_master_hanei_gbn("0");
+							prdTransVO.setSearch_type("translate");
+							prdTransVO.setTrans_target_type(CommonUtil.TRANS_TARGET_R);
+							prdTransRet = listMapper.getPrdTrans(prdTransVO);
+							if(prdTransRet.size() > 0) {
+								prdTransVO.setSeq_id(prdTransRet.get(0).getSeq_id());
+								listMapper.updatePrdTrans(prdTransVO);
+							}else {
+								listMapper.insertPrdTrans(prdTransVO);
+							}
+						}
+					}
 				}
 				
 				int i = 1;
@@ -1856,6 +1920,7 @@ public class RakutenDAO {
 					String strdeliveryname = tmp.getDelivery_name();
 					if (!strdeliveryname.equals(null)) {
 						yVO.setDelivery_name(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
+						log.debug(tmp.getDelivery_surname().replace("\"", "") + " " + tmp.getDelivery_name().replace("\"", ""));
 					}
 				}
 				catch (NullPointerException e){

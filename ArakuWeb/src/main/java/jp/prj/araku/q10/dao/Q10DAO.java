@@ -196,8 +196,25 @@ public class Q10DAO {
 		String transedName = "";
 		String trans_seq_id = ""; // 2021.06.11
 		
-		int unitNo = 0;
+
+		
+		int unitNo = 1;
+		StringBuffer buf = null;
+		
 		for (Q10VO vo : targetList) {
+			// [MOD-1011] 
+			Integer intsu = new Integer (unitNo); 
+			String sintsu = intsu.toString(); 
+			String su = CommonUtil.hankakuNumToZenkaku(sintsu); 
+			unitNo = Integer.parseInt(vo.getQty());
+			
+			try {
+				buf = new StringBuffer(transedName);
+			}catch(NullPointerException e) {
+				buf = new StringBuffer("o ");
+			}; 
+			buf.append(" ");
+			
 			// 이전에 에러처리 된 데이터가 있을경우 제거
 			TranslationErrorVO errVO = new TranslationErrorVO();
 			errVO.setTrans_target_id(vo.getSeq_id());
@@ -235,7 +252,24 @@ public class Q10DAO {
 			prdTransVO.setOrder_gbn("1");
 			prdTransVO.setBefore_trans(vo.getProduct_name());
 			prdTransVO.setAfter_trans(transedName);
-			prdTransVO.setPrd_cnt(vo.getQty());
+			
+			//buf = new StringBuffer(transedName + "×" + su);
+			buf.append(transedName + "×" + su);
+			
+			transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+			transVO.setKeyword(vo.getProduct_name());
+			searchRet = listMapper.getTransInfo(transVO);
+			prdTransVO.setBefore_trans(searchRet.get(0).getBefore_trans());
+			prdTransVO.setJan_cd(searchRet.get(0).getJan_cd()); // 2023-08-11 kim
+			
+//			prdTransVO.setPrd_cnt(unitNo+"");
+			if(searchRet.get(0).getPrd_cnt() != null) {  //  2023-08-11 kim NULLチェックが必要
+			      int COUNT = unitNo* Integer.parseInt(searchRet.get(0).getPrd_cnt());
+			      prdTransVO.setPrd_cnt(Integer.toString(COUNT)); //  2023-08-11 kim　COUNT 처리
+			}else {
+				prdTransVO.setPrd_cnt(unitNo+"");
+			}
+			
 			prdTransVO.setPrd_master_hanei_gbn("0");
 			prdTransVO.setSearch_type("translate");
 			prdTransVO.setTrans_target_type(CommonUtil.TRANS_TARGET_Q);
@@ -262,6 +296,7 @@ public class Q10DAO {
 						prdTransVO.setOrder_gbn("1");
 						prdTransVO.setBefore_trans(subTrans.getBefore_trans());
 						prdTransVO.setAfter_trans(subTrans.getAfter_trans());
+						prdTransVO.setJan_cd(subTrans.getJan_cd()); // 2023-08-11 kim
 						prdTransVO.setPrd_cnt(subTrans.getPrd_cnt());
 						prdTransVO.setPrd_master_hanei_gbn("0");
 						prdTransVO.setSearch_type("translate");
@@ -299,12 +334,14 @@ public class Q10DAO {
 				mapper.updateQ10Info(vo);
 			}
 			
+			//注文商品数
 			unitNo = Integer.parseInt(vo.getQty());
-			Integer intsu = new Integer (unitNo); 
-			String sintsu = intsu.toString(); 
-			String su = CommonUtil.hankakuNumToZenkaku(sintsu);
 			
-			StringBuffer buf = null;
+//			Integer intsu = new Integer (unitNo); 
+//			String sintsu = intsu.toString(); 
+//			String su = CommonUtil.hankakuNumToZenkaku(sintsu);
+//			
+//			StringBuffer buf = null;
 			String optionContent = vo.getOption_info();
 			if(optionContent != null && optionContent.length() > 1) {
 				// 옵션에 대한 처리
@@ -370,6 +407,7 @@ public class Q10DAO {
 				
 				int i = 1;
 				for (String optionName : optionNames) {
+					
 					Integer unitsu = map.get(optionName)*unitNo; 
 					// [MOD-1011] 
 					String unitsu1 = unitsu.toString(); 
@@ -392,8 +430,16 @@ public class Q10DAO {
 					transVO.setKeyword(optionName.trim());
 					searchRet = listMapper.getTransInfo(transVO);
 					prdTransVO2.setBefore_trans(searchRet.get(0).getBefore_trans());
+					prdTransVO2.setJan_cd(searchRet.get(0).getJan_cd()); // 2023-08-11 kim
 					
-					prdTransVO2.setPrd_cnt(unitsu1+"");
+//					prdTransVO2.setPrd_cnt(unitNo+"");
+					if(searchRet.get(0).getPrd_cnt() != null) {  //  2023-08-11 kim NULLチェックが必要
+					      int COUNT = unitNo* Integer.parseInt(searchRet.get(0).getPrd_cnt());
+					      prdTransVO2.setPrd_cnt(Integer.toString(COUNT)); //  2023-08-11 kim　COUNT 처리
+					}else {
+						prdTransVO2.setPrd_cnt(unitNo+"");
+					}
+					
 					prdTransVO2.setPrd_master_hanei_gbn("0");
 					prdTransVO2.setSearch_type("translate");
 					prdTransVO2.setTrans_target_type(CommonUtil.TRANS_TARGET_Q);
@@ -407,7 +453,8 @@ public class Q10DAO {
 					i++;
 				}
 			} else {
-				buf = new StringBuffer(transedName + "×" + su);
+				// buf = new StringBuffer(transedName + "×" + su);
+				buf = new StringBuffer(transedName + "×" + unitNo);
 			}
 			
 			String last = buf.toString();
