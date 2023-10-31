@@ -219,6 +219,7 @@ public class RakutenDAO {
             			*/
     				}
                     log.debug("insertRakutenInfo seq_id :: " + vo.getSeq_id());
+                    log.debug("insertRakutenInfo Order_no :: " + vo.getOrder_no());
                     log.debug("==========================");
         		}
                 
@@ -281,28 +282,61 @@ public class RakutenDAO {
 					    }
 					}
 					log.debug("==========================");
-                }else {
+                } //else {
+                
                 	// SKU 정보 처리
                 	String skuInfo = vo.getSku_info();
                 	if(null != skuInfo) {
-                		String[] dataArr = skuInfo.split(CommonUtil.SPLIT_BY_COLON);
-                    	String data = null;
-    					if (dataArr.length > 1) {
-    						// 예외적인 경우로 콜론 바로 뒤에 데이터가 있는것이 아니라 콜론 두개 뒤에 있는 경우가 있어 스플릿 결과의 맨 마지막 값을 가져올 수 있도록 처리
-    						data = dataArr[dataArr.length-1];
-    						log.debug(String.format("option value1 :: %s", data));
-    						
-    						transVO.setKeyword(data.trim());
-    						transVO.setBefore_trans(data.trim());
-    						
-    						transList = listMapper.getTransInfo(transVO);
-    						if (transList.size() == 0) {
-    							listMapper.addTransInfo(transVO);
-    					    }
-    					}
+                		// SKU 情報分類
+                		if(skuInfo.contains(CommonUtil.SPLIT_BY_NPER)) {
+        					String[] arr1 = skuInfo.split(CommonUtil.SPLIT_BY_NPER);
+        					HashSet<String> set1 = new HashSet<>();
+        					for (int i=0; i<arr1.length; i++) {
+        						log.debug(String.format("[%d] :: %s", i, arr1[i]));
+	        					String[] dataArr1 = arr1[i].split(CommonUtil.SPLIT_BY_COLON);
+	        					String data1 = null;
+	        					if (dataArr1.length > 1) {
+	        						// 예외적인 경우로 콜론 바로 뒤에 데이터가 있는것이 아니라 콜론 두개 뒤에 있는 경우가 있어 스플릿 결과의 맨 마지막 값을 가져올 수 있도록 처리
+	        						data1 = dataArr1[dataArr1.length-1];
+	        						log.debug(String.format("option value1 :: %s", data1));
+	        						set1.add(data1.trim());
+	        					} 
+        					}
+        					
+        					log.debug("final option set : " + set1);
+        					
+        					for (String value : set1) {
+            	                transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+        						transVO.setKeyword(value.trim());
+        						transVO.setBefore_trans(value.trim());
+        						
+        						transList = listMapper.getTransInfo(transVO);
+        						if (transList.size() == 0) {
+        								listMapper.addTransInfo(transVO);
+        					    }
+        					}
+        					log.debug("==========================");
+                		} else {
+ 	                		String[] dataArr = skuInfo.split(CommonUtil.SPLIT_BY_COLON);
+	                    	String data = null;
+	    					if (dataArr.length > 1) {
+	    						// 예외적인 경우로 콜론 바로 뒤에 데이터가 있는것이 아니라 콜론 두개 뒤에 있는 경우가 있어 스플릿 결과의 맨 마지막 값을 가져올 수 있도록 처리
+	    						data = dataArr[dataArr.length-1];
+	    						log.debug(String.format("option value1 :: %s", data));
+	    						
+	    						transVO.setKeyword(data.trim());
+	    						transVO.setBefore_trans(data.trim());
+	    						
+	    						transList = listMapper.getTransInfo(transVO);
+	    						if (transList.size() == 0) {
+	    							listMapper.addTransInfo(transVO);
+	    					    }
+	        					log.debug("==========================");
+	    					}
+                		}
                 	}
-                }
-            }
+                }  
+            //}
             
 		} finally {
 			if (reader != null) {
@@ -508,60 +542,91 @@ public class RakutenDAO {
 			if(skuInfo != null && skuInfo.length() > 1) {
 				// SKU 정보 처리
             	if(null != skuInfo) {
-            		String[] dataArr = skuInfo.split(CommonUtil.SPLIT_BY_COLON);
-                	String data = null;
-					if (dataArr.length > 1) {
-						buf = new StringBuffer(transedName);
-						buf.append(" ");
-						
-						// 예외적인 경우로 콜론 바로 뒤에 데이터가 있는것이 아니라 콜론 두개 뒤에 있는 경우가 있어 스플릿 결과의 맨 마지막 값을 가져올 수 있도록 처리
-						data = dataArr[dataArr.length-1];
-						log.debug(String.format("option value1 :: %s", data));
-						
-						transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
-						transVO.setKeyword(data);
-						searchRet = listMapper.getTransInfo(transVO);
-						transedName = "";
-						if(searchRet.size() > 0) {
-							transedName = searchRet.get(0).getAfter_trans().trim();
-						}
-						
-						PrdTransVO prdTransVO = new PrdTransVO();
-						prdTransVO.setOrder_no(vo.getOrder_no());
-						prdTransVO.setOrder_gbn("1");
-						prdTransVO.setBefore_trans(vo.getProduct_name());
-						prdTransVO.setAfter_trans(transedName);
-						
+            		// SKU 情報分類
+            		if(skuInfo.contains(CommonUtil.SPLIT_BY_NPER)) {
+            		    String[] dataArrsu = skuInfo.split(CommonUtil.SPLIT_BY_NPER);
+            		
+    					if (dataArrsu.length+1 > 1) {
+ 						   buf = new StringBuffer(transedName);
+ 						   buf.append(" ");
+ 						   
+ 						  String[] dataArrAdd = null;
+ 						  String sustr = null;
+    						for (int i = 0; i < dataArrsu.length; i++) {
+    							dataArrAdd = dataArrsu[i].split(CommonUtil.SPLIT_BY_COLON);
+        						for (int j = 0; j < dataArrAdd.length-1; j++) {
+	    							if(dataArrAdd[j].contains("数")) {
+	    								sustr = dataArrAdd[j+1].toString();
+	    							} else if (dataArrAdd[j].contains("カラー")) {
+	    								sustr = dataArrAdd[j+1].toString();
+	    							} 
+	    							
+	    							buf.append(sustr);
+	    							log.debug(String.format("SKUINFO value1 :: %s", sustr));
+        						}
+    						}
+							log.debug(String.format("SKUINFO value :: %s", buf));
+    					}
 						//buf = new StringBuffer(transedName + "×" + su);
-						buf.append(transedName + "×" + su);
+						buf.append("×" + su);
+    					
+            		} else { 
+            			
+            		   String[] dataArr = skuInfo.split(CommonUtil.SPLIT_BY_COLON);
+                	   String data = null;
+					   if (dataArr.length > 1) {
+						   buf = new StringBuffer(transedName);
+						   buf.append(" ");
 						
-						transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
-						transVO.setKeyword(transedName.trim());
-						searchRet = listMapper.getTransInfo(transVO);
-						prdTransVO.setBefore_trans(searchRet.get(0).getBefore_trans());
-						prdTransVO.setJan_cd(searchRet.get(0).getJan_cd()); // 2021-07-03 kim
-						
-//						prdTransVO.setPrd_cnt(unitNo+"");
-						if(searchRet.get(0).getPrd_cnt() != null) {  // 2023-07-04 kim NULLチェックが必要
-						      int COUNT = unitNo* Integer.parseInt(searchRet.get(0).getPrd_cnt());
-								prdTransVO.setPrd_cnt(Integer.toString(COUNT)); // 2023-07-04 kim COUNT 처리
-						}else {
-							prdTransVO.setPrd_cnt(unitNo+"");
+							// 예외적인 경우로 콜론 바로 뒤에 데이터가 있는것이 아니라 콜론 두개 뒤에 있는 경우가 있어 스플릿 결과의 맨 마지막 값을 가져올 수 있도록 처리
+							data = dataArr[dataArr.length-1];
+							log.debug(String.format("option value1 :: %s", data));
+							
+							transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+							transVO.setKeyword(data);
+							searchRet = listMapper.getTransInfo(transVO);
+							transedName = "";
+							if(searchRet.size() > 0) {
+								transedName = searchRet.get(0).getAfter_trans().trim();
+							}
+							
+							PrdTransVO prdTransVO = new PrdTransVO();
+							prdTransVO.setOrder_no(vo.getOrder_no());
+							prdTransVO.setOrder_gbn("1");
+							prdTransVO.setBefore_trans(vo.getProduct_name());
+							prdTransVO.setAfter_trans(transedName);
+							
+							//buf = new StringBuffer(transedName + "×" + su);
+							buf.append(transedName + "×" + su);
+							
+							transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+							transVO.setKeyword(transedName.trim());
+							searchRet = listMapper.getTransInfo(transVO);
+							prdTransVO.setBefore_trans(searchRet.get(0).getBefore_trans());
+							prdTransVO.setJan_cd(searchRet.get(0).getJan_cd()); // 2021-07-03 kim
+							
+	//						prdTransVO.setPrd_cnt(unitNo+"");
+							if(searchRet.get(0).getPrd_cnt() != null) {  // 2023-07-04 kim NULLチェックが必要
+							      int COUNT = unitNo* Integer.parseInt(searchRet.get(0).getPrd_cnt());
+									prdTransVO.setPrd_cnt(Integer.toString(COUNT)); // 2023-07-04 kim COUNT 처리
+							}else {
+								prdTransVO.setPrd_cnt(unitNo+"");
+							}
+	
+							
+							prdTransVO.setPrd_master_hanei_gbn("0");
+							prdTransVO.setSearch_type("translate");
+							prdTransVO.setTrans_target_type(CommonUtil.TRANS_TARGET_R);
+							ArrayList<PrdTransVO> prdTransRet = listMapper.getPrdTrans(prdTransVO);
+							if(prdTransRet.size() > 0) {
+								prdTransVO.setSeq_id(prdTransRet.get(0).getSeq_id());
+								listMapper.updatePrdTrans(prdTransVO);
+							}else {
+								listMapper.insertPrdTrans(prdTransVO);
+							}
 						}
-
-						
-						prdTransVO.setPrd_master_hanei_gbn("0");
-						prdTransVO.setSearch_type("translate");
-						prdTransVO.setTrans_target_type(CommonUtil.TRANS_TARGET_R);
-						ArrayList<PrdTransVO> prdTransRet = listMapper.getPrdTrans(prdTransVO);
-						if(prdTransRet.size() > 0) {
-							prdTransVO.setSeq_id(prdTransRet.get(0).getSeq_id());
-							listMapper.updatePrdTrans(prdTransVO);
-						}else {
-							listMapper.insertPrdTrans(prdTransVO);
-						}
-					}
-            	}
+	            	}
+        		}
 			}else if(optionContent != null && optionContent.length() > 1) {
 				// 옵션에 대한 처리
 				HashSet<String> cntCheck = new HashSet<>();
