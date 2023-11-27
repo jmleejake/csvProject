@@ -39,15 +39,19 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 	<input type="text" name="delivery_tel3" class="form-control" style="width:100px;">
 	</div>
 	</div>
-	<div class="col-sm-4" style="margin-top: 10px;">
+	<div class="col-sm-3" style="margin-top: 10px;">
 	<label>注文番号</label>
 	<input type="text" name="order_no" class="form-control" style="width: 250px;">
 	</div>
-	<div class="col-sm-4" style="margin-top: 10px;">
+	<div class="col-sm-3" style="margin-top: 10px;">
 	<label>お荷物伝票番号</label>
 	<input type="text" name="baggage_claim_no" class="form-control" style="width: 250px;">
 	</div>
-	<div class="col-sm-4" style="margin-top: 10px;">
+	<div class="col-sm-3" style="margin-top: 10px;">
+	<label>商品名</label>
+	<input type="text" name="product_name" class="form-control" style="width: 250px;">
+	</div>
+	<div class="col-sm-3" style="margin-top: 10px;">
 	<button type="button" id="btn_srch" class="btn btn-default" style="width: 120px; margin-top: 18px;">検索</button>
 	</div>
 	</form>

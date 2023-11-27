@@ -134,6 +134,9 @@ left outer join translation_err terr on terr.trans_target_id = ai.seq_id and ter
 	<if test="baggage_claim_no != null and baggage_claim_no != ''">
 	and baggage_claim_no like '%${baggage_claim_no}%'
 	</if>
+	<if test="product_name != null and product_name != ''">
+	and product_name like '%${product_name}%'
+	</if>
 	</trim>
 	</when>
 	<when test="search_type =='weekData'">

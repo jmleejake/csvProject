@@ -6,7 +6,7 @@
 var columnDefs = [
 	{headerName: "注文ID", field: "order_id", width: 200}
 	, {headerName: "出荷予定日", field: "promise_date", width: 130}
-	, {headerName: "商品名", field: "product_name", width: 300
+	, {headerName: "商品名", field: "product_name", width: 300, editable: true
 		// 길이가 긴 항목에 대해서 툴팁 추가.  
 		, tooltip: function(params) {
 			return params.value;

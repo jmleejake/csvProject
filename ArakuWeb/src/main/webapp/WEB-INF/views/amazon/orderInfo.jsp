@@ -26,7 +26,11 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 	<label>注文ID</label>
 	<input type="text" name="order_id" class="form-control" style="width: 250px;">
 	</div>
-	<div class="col-sm-12" style="margin-top: 10px;">
+	<div class="col-sm-6" style="margin-top: 10px;">
+	<label>商品名</label>
+	<input type="text" name="product_name" class="form-control" style="width: 250px;">
+	</div>
+	<div class="col-sm-6" style="margin-top: 10px;">
 	<button type="button" id="btn_srch" class="btn btn-default" style="width: 120px; margin-top: 18px;">検索</button>
 	</div>
 	</form>

@@ -11,7 +11,7 @@ var columnDefs = [
 //	, {headerName: "お荷物伝票番号", field: "baggage_claim_no", width: 170}
 	, {headerName: "名前", field: "delivery_name", width: 120}
 	, {headerName: "電話番号", field: "delivery_tel", width: 120}
-	, {headerName: "商品名", field: "product_name", width: 400
+	, {headerName: "商品名", field: "product_name", width: 400, editable: true
 		// 길이가 긴 항목에 대해서 툴팁 추가.  
 		, tooltip: function(params) {
 			return params.value;

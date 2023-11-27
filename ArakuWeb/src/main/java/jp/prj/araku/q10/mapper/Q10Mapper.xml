@@ -170,6 +170,9 @@ left outer join translation_err terr on terr.trans_target_id = qi.seq_id and ter
 	<if test="invoice_no != null and invoice_no != ''">
 	and invoice_no like '%${invoice_no}%'
 	</if>
+	<if test="product_name != null and product_name != ''">
+	and product_name like '%${product_name}%'
+	</if>
 	</trim>
 	</when>
 	<when test="search_type =='weekData'">
