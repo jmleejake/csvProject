@@ -543,6 +543,11 @@ public class RakutenDAO {
 				// SKU 정보 처리
             	if(null != skuInfo) {
             		// SKU 情報分類
+            		int setSu = 0; // SKUにてセット数をカウントする。
+					String[] dataArrAdd = null; // SKU情報取得
+					String sku_color =""; // SKU color 情報取得
+					String sku_size =""; // SKU size 情報取得
+					
             		if(skuInfo.contains(CommonUtil.SPLIT_BY_NPER)) {
             		    String[] dataArrsu = skuInfo.split(CommonUtil.SPLIT_BY_NPER);
             		
@@ -550,25 +555,109 @@ public class RakutenDAO {
  						   buf = new StringBuffer(transedName);
  						   buf.append(" ");
  						   
- 						  String[] dataArrAdd = null;
- 						  String sustr = null;
+ 						   String sustr = null;
     						for (int i = 0; i < dataArrsu.length; i++) {
     							dataArrAdd = dataArrsu[i].split(CommonUtil.SPLIT_BY_COLON);
         						for (int j = 0; j < dataArrAdd.length-1; j++) {
 	    							if(dataArrAdd[j].contains("数")) {
-	    								sustr = dataArrAdd[j+1].toString();
+	    								String tsustr = dataArrAdd[j+1].toString();
+	    								
+	    								//数字を取得する。
+	    								String[] parts = tsustr.split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");
+	    								setSu = Integer.parseInt(parts[0]);
+	    								
+	    								sustr = ":";
 	    							} else if (dataArrAdd[j].contains("カラー")) {
 	    								sustr = dataArrAdd[j+1].toString();
+	    								sku_color = dataArrAdd[j+1].toString();
+	    							} else if (dataArrAdd[j].contains("サイズ")) {
+	    								sustr = dataArrAdd[j+1].toString();
+	    								sku_size = dataArrAdd[j+1].toString();
 	    							} 
 	    							
-	    							buf.append(sustr);
+	    							buf.append(":"+sustr);
 	    							log.debug(String.format("SKUINFO value1 :: %s", sustr));
         						}
     						}
 							log.debug(String.format("SKUINFO value :: %s", buf));
     					}
-						//buf = new StringBuffer(transedName + "×" + su);
-						buf.append("×" + su);
+						
+                        // ----> start 2023/12/10 start
+						if(setSu != 0) {  // 2023-07-04 kim 0チェックが必要
+							int tcount = Integer.parseInt(su)*setSu;
+							buf.append("×" + tcount);
+						}else {
+							buf.append("×" + su);
+						}
+
+						/**
+						 * 2023.12.10 kim 치환시 주문정보를 商品中間マスタ로 insert처리
+						 * */
+						PrdTransVO prdTransVO = new PrdTransVO();
+						prdTransVO.setOrder_no(vo.getOrder_no());
+						prdTransVO.setOrder_gbn("1");
+						prdTransVO.setBefore_trans(vo.getProduct_name());
+						prdTransVO.setAfter_trans(transedName+":"+ sku_color + sku_size);
+						
+						transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+						transVO.setKeyword(vo.getProduct_name());
+						searchRet = listMapper.getTransInfo(transVO);
+						prdTransVO.setJan_cd(searchRet.get(0).getJan_cd()); // 2023-07-04 kim jan_cd 처리
+						
+//						prdTransVO.setPrd_cnt(unitNo+"");
+						if(setSu != 0) {  // 2023-07-04 kim 0チェックが必要
+							int COUNT = unitNo*setSu;
+							prdTransVO.setPrd_cnt(Integer.toString(COUNT)); // COUNT 처리
+						}else {
+							prdTransVO.setPrd_cnt(unitNo+"");
+						}
+
+						prdTransVO.setPrd_master_hanei_gbn("0");
+						prdTransVO.setSearch_type("translate");
+						prdTransVO.setTrans_target_type(CommonUtil.TRANS_TARGET_R);
+						ArrayList<PrdTransVO> prdTransRet = listMapper.getPrdTrans(prdTransVO);
+						if(prdTransRet.size() > 0) {
+							prdTransVO.setSeq_id(prdTransRet.get(0).getSeq_id());
+							listMapper.updatePrdTrans(prdTransVO);
+						}else {
+							listMapper.insertPrdTrans(prdTransVO);
+						}
+						
+						/**
+						 * 2023.12.10 その他마스터테이블 (translation_sub_info)를 
+						 * translation_info의 seq_id로 select하여 결과가 있을경우 해당 정보들을 商品中間マスタ로 insert처리
+						 * */
+						if(!"".equals(trans_seq_id)) {
+							SubTranslationVO subTransVO = new SubTranslationVO();
+							subTransVO.setParent_seq_id(trans_seq_id);
+							ArrayList<SubTranslationVO> subTransList = listMapper.getSubTransInfo(subTransVO);
+							if(subTransList.size() > 0) {
+								for(SubTranslationVO subTrans : subTransList) {
+									prdTransVO = new PrdTransVO();
+									prdTransVO.setOrder_no(vo.getOrder_no());
+									prdTransVO.setOrder_gbn("1");
+									prdTransVO.setBefore_trans(subTrans.getBefore_trans());
+									prdTransVO.setAfter_trans(subTrans.getAfter_trans());
+									prdTransVO.setJan_cd(subTrans.getJan_cd()); // 2021-07-03 kim
+									//prdTransVO.setPrd_cnt(sintsu); // 2021-07-03 kim
+									prdTransVO.setPrd_cnt(subTrans.getPrd_cnt()); // 2021-07-03 kim
+									prdTransVO.setPrd_master_hanei_gbn("0");
+									prdTransVO.setSearch_type("translate");
+									prdTransVO.setTrans_target_type(CommonUtil.TRANS_TARGET_R);
+									prdTransRet = listMapper.getPrdTrans(prdTransVO);
+									if(prdTransRet.size() > 0) {
+										prdTransVO.setSeq_id(prdTransRet.get(0).getSeq_id());
+										listMapper.updatePrdTrans(prdTransVO);
+									}else {
+										listMapper.insertPrdTrans(prdTransVO);
+									}
+								}
+							}
+						}
+						
+						// ----> end 2023/12/10 end
+						
+						
     					
             		} else { 
             			

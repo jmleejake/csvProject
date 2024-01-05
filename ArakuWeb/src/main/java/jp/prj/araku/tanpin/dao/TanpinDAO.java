@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -324,6 +326,15 @@ public class TanpinDAO {
 				if(Integer.parseInt(vo.getPrd_lot()) < Integer.parseInt(vo.getNow_prd_cnt())) {
 					continue;
 				}
+
+				// 現在在庫数が設定したロット数半分よりおおきい場合、EXCELに書き込みしない。
+				int halfsu = Integer.parseInt(vo.getPrd_lot())/2;
+				// 現在在庫数 > ロット数の半分より大きい場合、-- 2024/01/04 修正者 kim daewon START
+				if (Integer.parseInt(vo.getNow_prd_cnt()) > halfsu) {
+					continue;
+				}
+				//-- 2024/01/04 修正者 kim daewon END
+			   
 				list.add(vo);
 			}
 			
@@ -405,7 +416,7 @@ public class TanpinDAO {
 				for(int i1=0; i1<subList.size(); i1++) {
 					sheet = workbook.createSheet("シート"+(i1+1));
 					// 컬럼너비 세팅
-					sheet.setDefaultColumnWidth(12);
+					sheet.setDefaultColumnWidth(8);
 					// 눈금선 없애기
 					sheet.setDisplayGridlines(false);
 					row = sheet.createRow(0);
@@ -696,7 +707,7 @@ public class TanpinDAO {
 			}else {
 				sheet = workbook.createSheet("シート1");
 				// 컬럼너비 세팅
-				sheet.setDefaultColumnWidth(12);
+				sheet.setDefaultColumnWidth(8);
 				// 컬럼높이 세팅
 				sheet.setDefaultRowHeight((short)(25*20));
 				// 눈금선 없애기
@@ -927,7 +938,45 @@ public class TanpinDAO {
 					cell.setCellValue(innerVO.getPrd_qty());
 					cell.setCellStyle(allLine);
 					cell = row.createCell(4);
-					cell.setCellValue("1");
+					//cell.setCellValue("1");
+					// （現在在庫数＜0　&& 更新日＝本日）	の場合、		
+					// （現在在庫数+ロット数）／箱数 = 数量を設定する。　-- 2024/01/04 修正者 kim daewon START
+					Date datehonzitu = new Date();
+					SimpleDateFormat datakata = new SimpleDateFormat("yyyy/MM/dd");
+					String hozitu = datakata.format(datehonzitu);
+
+					// 現在在庫数が設定したロット数より1/2以下になる場合、
+					int halfsu = Integer.parseInt(innerVO.getPrd_lot())/2;
+					
+					if (Integer.parseInt(innerVO.getNow_prd_cnt()) < 0 && hozitu.equals(innerVO.getUpd_dt()) ) {
+						//現在在庫数を－から＋に変更する。
+						int abstotla = Math.abs(Integer.parseInt(innerVO.getNow_prd_cnt()));
+
+						//現在在庫数+ロット数					
+						int suLot = abstotla +Integer.parseInt(innerVO.getPrd_lot());
+						
+						//（現在在庫数+ロット数）／箱数 
+						double warisan = (double) suLot / Integer.parseInt(innerVO.getPrd_qty());
+						int warisansu = (int) Math.round(warisan);
+						// 在庫数が1より小さい場合、”1”を設定する。
+						if (warisansu < 1) {
+							warisansu = 1;
+							cell.setCellValue(warisansu);
+						} else{
+							cell.setCellValue(Math.round(warisan));
+						}
+						
+						// 現在在庫数 < ロット数の半分より少ない場合、
+					} else if (Integer.parseInt(innerVO.getNow_prd_cnt()) < halfsu) {
+						int sudata = Integer.parseInt(innerVO.getPrd_lot()) /  Integer.parseInt(innerVO.getPrd_qty());
+						cell.setCellValue(Math.round(sudata));
+						
+					} else {
+						
+						cell.setCellValue("1");
+					}
+					// -- 2024/01/04 修正者 kim daewon END
+					
 					cell.setCellStyle(allLine);
 					cell = row.createCell(5);
 					//cell.setCellValue(String.valueOf(prdInfo.get(0).getPrd_unit_prc()));
@@ -980,6 +1029,7 @@ public class TanpinDAO {
 			workbook.write(response.getOutputStream());
 			workbook.close();
 		}catch (IOException e) {}
+		
 	}
 	
 	/**
