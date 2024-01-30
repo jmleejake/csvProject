@@ -263,23 +263,47 @@ public class TanpinDAO {
 					賞味期限
 					登録日
 			 		*/
+					//2024-01-30 start kim daewon
+					//jancode
+					prdInvenSrch.setJan_cd(String.valueOf(tanpin.getPrd_cd()));
+					//入庫数
 					prdInvenSrch.setNow_prd_cnt(String.valueOf(tanpin.getPrd_qty()));
+					//取引先コード
 					prdInvenSrch.setDealer_id(tanpin.getDealer_id());
+					//取引先会社名
 					prdInvenSrch.setDealer_nm(tanpin.getDealer_nm());
-					// prdInvenSrch.setBrand_nm(tanpin.get);
+					//ブランド名
+					prdInvenSrch.setBrand_nm(tanpin.getMaker_nm());
+					//商品名
 					prdInvenSrch.setPrd_nm(tanpin.getPrd_nm());
+					//ケース数
+					prdInvenSrch.setPrd_case("0");
+					//バラ数
+					prdInvenSrch.setPrd_bara("0");
+					//ロット数
+					prdInvenSrch.setPrd_lot("0");
+					//賞味期限
 					prdInvenSrch.setExp_dt(tanpin.getExp_dt());
+					//2024-01-30 end kim daewon
+					
 					prdInvenMapper.insertJaikoPrdInventory(prdInvenSrch);
 					
 					/*
 					商品情報T
-					JANCODE jan_cd
 					商品名 prd_nm
+					JANCODE1 jan_cd
+					商品数1　　Prd_cnt1
+					商品税(抜、込)　Tax_incld
+					商品税率　　Tax_rt
 					単価 prd_unit_prc
 					*/
 					JaikoPrdInfoVO jaikoPrdVo = new JaikoPrdInfoVO();
 					jaikoPrdVo.setPrd_nm(tanpin.getPrd_nm());
-					jaikoPrdVo.setJan_cd(tanpin.getPrd_cd());
+					jaikoPrdVo.setJan_cd1(tanpin.getPrd_cd());
+					//jaikoPrdVo.setJan_cd(tanpin.getPrd_cd());
+					jaikoPrdVo.setPrd_cnt1("1");
+					jaikoPrdVo.setTax_incld("0");
+					jaikoPrdVo.setTax_rt("8");
 					jaikoPrdVo.setPrd_unit_prc(tanpin.getInprice());
 					prdInfoMapper.insertJaikoPrdInfo(jaikoPrdVo);
 					/*
@@ -301,6 +325,33 @@ public class TanpinDAO {
 					expire.setExp_dt(tanpin.getExp_dt());
 					mapper.insertExpireManage(expire);
 				}
+				//2024-01-30 kim daewon start
+				// 商品情報TにJANCODEがない場合、レコードを追加する。
+				JaikoPrdInfoVO prdInfoSrch = new JaikoPrdInfoVO();
+				prdInfoSrch.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+				prdInfoSrch.setJan_cd(tanpin.getPrd_cd());
+				ArrayList<JaikoPrdInfoVO> infoList = prdInfoMapper.getJaikoPrdInfo(prdInfoSrch);
+				if(infoList.size() <= 0) {
+					/*
+					商品情報T
+					商品名 prd_nm
+					JANCODE1 jan_cd
+					商品数1　　Prd_cnt1
+					商品税(抜、込)　Tax_incld
+					商品税率　　Tax_rt
+					単価 prd_unit_prc
+					*/
+					JaikoPrdInfoVO jaikoPrdVo = new JaikoPrdInfoVO();
+					jaikoPrdVo.setPrd_nm(tanpin.getPrd_nm());
+					jaikoPrdVo.setJan_cd1(tanpin.getPrd_cd());
+					//jaikoPrdVo.setJan_cd(tanpin.getPrd_cd());
+					jaikoPrdVo.setPrd_cnt1("1");
+					jaikoPrdVo.setTax_incld("0");
+					jaikoPrdVo.setTax_rt("8");
+					jaikoPrdVo.setPrd_unit_prc(tanpin.getInprice());
+					prdInfoMapper.insertJaikoPrdInfo(jaikoPrdVo);
+				}
+				//2024-01-30 kim daewon end
 			}
 		}
 		return getTanpinInfo("");
