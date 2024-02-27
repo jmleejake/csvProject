@@ -27,6 +27,11 @@ $("#btn_tablet").on("click", function() {
 	location.href = "/araku/tablet/prdMng";
 });
 
+$("#btn_cancel").on("click", function() {
+	console.log("cancel");
+	location.href = "/araku/cancel/cancelMng";
+});
+
 $("#btn_tanpin").on("click", function() {
 	console.log("tanpin");
 	location.href = "/araku/prdAnalysis/prdMng";

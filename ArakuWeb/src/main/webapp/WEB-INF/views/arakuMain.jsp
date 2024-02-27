@@ -25,6 +25,7 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 	
 	<div class="well container-fluid">
 	<button id="btn_tablet" class="btn btn-lg" style="width: 150px;">タブレット</button>
+	<button id="btn_cancel" class="btn btn-lg" style="width: 150px;">キャンセル管理</button>
 	</div>
 	
 	<div class="well container-fluid">

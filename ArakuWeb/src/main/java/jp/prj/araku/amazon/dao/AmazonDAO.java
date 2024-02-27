@@ -145,15 +145,70 @@ public class AmazonDAO {
 		        		//	vo.getProduct_name().replace("'", "");
 		        		//	log.debug(String.format("inserted amazon info seq_id : [%s]", vo.getProduct_name()));
 		        		//}
+		        	    // 상품명을 가져와서 초기 상태로 설정
+		        	    String productName = vo.getProduct_name();
+		        	    
+		            	//読み込みファイルに"''"が含まれていると""に変更する。　'、+82、+81、+
+			        	if (vo.getProduct_name() != null) {
+			        	    // 단일 인용부호 제거
+			        	    if (productName.contains("'")) {
+			        	        productName = productName.replace("'", "");
+				        		log.debug("productName:" + productName);
+			        	    }
+			        	    // '+82' 문자열 제거
+			        	    if (productName.contains("+82")) {
+			        	        productName = productName.replace("+82", "");
+				        		log.debug("productName:" + productName);
+			        	    }
+			        	    // '+81' 문자열 제거
+			        	    if (productName.contains("+81")) {
+			        	        productName = productName.replace("+81", "");
+				        		log.debug("productName:" + productName);
+			        	    }
+			        	    // '+' 문자열 제거
+			        	    if (productName.contains("+")) {
+			        	        productName = productName.replace("+", "");
+			        	    }
+			        	}
+			        	
+			        	vo.setProduct_name(productName);
+		        		log.debug("insert productName:" + vo.getProduct_name());
 		        		int result = mapper.insertAmazonInfo(vo);
 			        	log.debug(String.format("inserted amazon info seq_id : [%d]", result));
+		        	}
+		        	
+
+	        	    // 상품명을 가져와서 초기 상태로 설정
+	        	    String productName = vo.getProduct_name();
+	        	    
+	            	//読み込みファイルに"''"が含まれていると""に変更する。　'、+82、+81、+
+		        	if (vo.getProduct_name() != null) {
+		        	    // 단일 인용부호 제거
+		        	    if (productName.contains("'")) {
+		        	        productName = productName.replace("'", "");
+			        		log.debug("productName:" + productName);
+		        	    }
+		        	    // '+82' 문자열 제거
+		        	    if (productName.contains("+82")) {
+		        	        productName = productName.replace("+82", "");
+			        		log.debug("productName:" + productName);
+		        	    }
+		        	    // '+81' 문자열 제거
+		        	    if (productName.contains("+81")) {
+		        	        productName = productName.replace("+81", "");
+			        		log.debug("productName:" + productName);
+		        	    }
+		        	    // '+' 문자열 제거
+		        	    if (productName.contains("+")) {
+		        	        productName = productName.replace("+", "");
+		        	    }
 		        	}
 		        	
 		        	// 項目・選択肢 (상품옵션) 처리
 	                TranslationVO transVO = new TranslationVO();
 	                transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
-	                transVO.setKeyword(vo.getProduct_name());
-	                transVO.setBefore_trans(vo.getProduct_name());
+	                transVO.setKeyword(productName);
+	                transVO.setBefore_trans(productName);
 	                
 	                ArrayList<TranslationVO> transList = listMapper.getTransInfo(transVO);
 	                if (transList.size() == 0) {

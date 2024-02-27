@@ -3,11 +3,11 @@
  */
 
 var statusColumn = [
-	{headerName: "JANコード", field: "jan_cd", width: 200, editable:true }
-	, {headerName: "商品名", field: "prd_nm", width: 500, editable: true
+	{headerName: "JANコード", field: "jan_cd", width: 300, editable:true }
+	, {headerName: "商品名", field: "prd_nm", width: 800, editable: true
 		, cellEditor: 'agLargeTextCellEditor'
     	, cellEditorParams: {
-            maxLength: '500',
+            maxLength: '800',
             cols: '50',
             rows: '6'
         }
@@ -215,10 +215,10 @@ function showOrder(id, nm) {
 //************************************************
 
 var prdColumn = [
-	{headerName: "JANコード", field: "jan_cd", width: 120}
-	, {headerName: "商品コード", field: "prd_cd", width: 120}
-	, {headerName: "商品名", field: "prd_nm", width: 300}
-	, {headerName: "金額", field: "prd_unit_prc", width: 100, editable:true }
+	{headerName: "JANコード", field: "jan_cd", width: 300, editable:true}
+	, {headerName: "商品コード", field: "prd_cd", width: 120, editable:true}
+	, {headerName: "商品名", field: "prd_nm", width: 800, editable:true}
+	, {headerName: "金額", field: "prd_unit_prc", width: 100, editable:true, valueFormatter: currencyFormatter}
 ];
 
 // specify the data
@@ -230,7 +230,7 @@ var sPrdPrc2, ePrdPrc2;
 // let the grid know which columns and what data to use
 var prdGridOptions = {
 		defaultColDef: {
-			width: 100
+			width: 200
 			, headerCheckboxSelection: isFirstColumn
 			, checkboxSelection: isFirstColumn
 			, resizable: true

@@ -155,12 +155,23 @@ public class RakutenDAO {
         			vo.setDelivery_time(CommonUtil.TOMORROW_MORNING);
         		}
             	
-            	// 데이터 중복체크
+            	// 데이터 중복체크 RakutenInfo
             	RakutenVO searchVO = new RakutenVO();
             	searchVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
             	searchVO.setOrder_no(vo.getOrder_no().trim());
             	
             	ArrayList<RakutenVO> dupCheckList = mapper.getRakutenInfo(searchVO);
+            	
+            	// 데이터 중복체크 RakutenHistoryInfo
+            	RakutenVO searchHisVO = new RakutenVO();
+            	searchHisVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+            	searchHisVO.setOrder_no(vo.getOrder_no().trim());
+            	searchHisVO.setSku_management_no(vo.getSku_management_no().trim());
+            	
+//            	ArrayList<RakutenVO> dupHisCheckList = mapper.getRakutenHistoryList(searchVO);
+            	
+            	//読み込みファイルに"'"が含まれていると""に変更する。
+            	//vo.setProduct_name(vo.getProduct_name().replace("'", ""));
         		
             	boolean isInserted = false;
             	// 이미 존재하는 受注番号가 있으면
@@ -207,8 +218,38 @@ public class RakutenDAO {
         			}
         		}
         		
+//            	// 이미 존재하는 受注番号가 없으면 등록한다.
+//        		if (dupHisCheckList.size() != 1) {
+//        			mapper.insertRakutenHistoryInfo(vo);
+//        		}
+        		
         		if(!isInserted) {
         			try {
+        				
+                	    // 상품명을 가져와서 초기 상태로 설정
+                	    String productName = vo.getProduct_name();
+                	    
+                    	//読み込みファイルに"''"が含まれていると""に変更する。　'、+82、+81、+
+        	        	if (vo.getProduct_name() != null) {
+        	        	    // 단일 인용부호 제거
+        	        	    if (productName.contains("'")) {
+        	        	        productName = productName.replace("'", "");
+        	        	    }
+        	        	    // '+82' 문자열 제거
+        	        	    if (productName.contains("+82")) {
+        	        	        productName = productName.replace("+82", "");
+        	        	    }
+        	        	    // '+81' 문자열 제거
+        	        	    if (productName.contains("+81")) {
+        	        	        productName = productName.replace("+81", "");
+        	        	    }
+        	        	    // '+' 문자열 제거
+        	        	    if (productName.contains("+")) {
+        	        	        productName = productName.replace("+", "");
+        	        	    }
+        	        	}
+        	        	vo.setProduct_name(productName);
+        	        	
             			mapper.insertRakutenInfo(vo);
             		} catch (Exception e) {
             			/* 2020-07-10
@@ -223,11 +264,34 @@ public class RakutenDAO {
                     log.debug("==========================");
         		}
                 
+        	    // 상품명을 가져와서 초기 상태로 설정
+        	    String productName = vo.getProduct_name();
+        	    
+            	//読み込みファイルに"''"が含まれていると""に変更する。　'、+82、+81、+
+	        	if (vo.getProduct_name() != null) {
+	        	    // 단일 인용부호 제거
+	        	    if (productName.contains("'")) {
+	        	        productName = productName.replace("'", "");
+	        	    }
+	        	    // '+82' 문자열 제거
+	        	    if (productName.contains("+82")) {
+	        	        productName = productName.replace("+82", "");
+	        	    }
+	        	    // '+81' 문자열 제거
+	        	    if (productName.contains("+81")) {
+	        	        productName = productName.replace("+81", "");
+	        	    }
+	        	    // '+' 문자열 제거
+	        	    if (productName.contains("+")) {
+	        	        productName = productName.replace("+", "");
+	        	    }
+	        	}
+            	
                 // 項目・選択肢 (상품옵션) 처리
                 TranslationVO transVO = new TranslationVO();
                 transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
-                transVO.setKeyword(vo.getProduct_name());
-                transVO.setBefore_trans(vo.getProduct_name());
+                transVO.setKeyword(productName);
+                transVO.setBefore_trans(productName);
                 
                 ArrayList<TranslationVO> transList = listMapper.getTransInfo(transVO);
                 if (transList.size() == 0) {
@@ -441,6 +505,25 @@ public class RakutenDAO {
 		return mapper.getRakutenInfo(vo);
 	}
 	
+//	public ArrayList<RakutenVO> getRakutenHistoryList(RakutenVO vo) {
+//		log.info("getRakutenHistoryInfo");
+//		// 초기상태일때 2틀간의 데이터를 얻을수있게 처리 (*srch는 검색할때 넘기는 값)
+//		if (!CommonUtil.SEARCH_TYPE_SRCH.equals(vo.getSearch_type())) {
+//			//vo.setStart_date(CommonUtil.getStartDate());
+//		}
+//		// 2021.06.29 라쿠텐 시간검색 추가
+//		if(null != vo.getRegister_date()) {
+//			String[] arr = vo.getRegister_date().split(" ");
+//			String fromDt = vo.getRegister_date()+":00";
+//			String toDt = arr[0].trim()+" 23:59:59";
+//			//vo.setFromDt(fromDt);
+//			//vo.setToDt(toDt);
+//		}
+//		log.debug("{}", vo);
+//		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
+//		return mapper.getRakutenHistoryList(vo);
+//	}
+	
 	public void deleteRakutenInfo(ArrayList<RakutenVO> list) {
 		log.info("deleteRakutenInfo");
 		log.debug("{}", list);
@@ -462,6 +545,17 @@ public class RakutenDAO {
 		 * */
 		//listMapper.deletePrdTrans(null);
 	}
+	
+//	public void deleteRakutenHistoryInfo(ArrayList<RakutenVO> list) {
+//		log.info("deleteRakutenInfo");
+//		log.debug("{}", list);
+//		IRakutenMapper mapper = sqlSession.getMapper(IRakutenMapper.class);
+//		// IListMapper listMapper = sqlSession.getMapper(IListMapper.class);
+//		for (RakutenVO vo : list) {
+//			mapper.deleteRakutenHistoryInfo(vo.getSeq_id());
+//		}
+//	}
+//	
 	
 	@Transactional
 	public ArrayList<String> executeTranslate(ArrayList<RakutenVO> targetList) {
@@ -673,10 +767,10 @@ public class RakutenDAO {
 							
 							transVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
 							transVO.setKeyword(data);
-							searchRet = listMapper.getTransInfo(transVO);
+							ArrayList<TranslationVO> searchRetr = listMapper.getTransInfo(transVO);
 							transedName = "";
 							if(searchRet.size() > 0) {
-								transedName = searchRet.get(0).getAfter_trans().trim();
+								transedName = searchRetr.get(0).getAfter_trans().trim();
 							}
 							
 							PrdTransVO prdTransVO = new PrdTransVO();
@@ -2691,7 +2785,7 @@ public class RakutenDAO {
             while (iterator.hasNext()) {
             	NewYamatoVO vo = iterator.next();
             	
-            	// 데이터가 있는지 체크
+            	// 데이터가 있는지 체크 RakutenInfo
             	RakutenVO searchVO = new RakutenVO();
             	searchVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
             	searchVO.setOrder_no(vo.getCustomer_no());
@@ -2712,6 +2806,28 @@ public class RakutenDAO {
                 	// お荷物伝票番号값 update
                 	mapper.updateRakutenInfo(searchVO);
             	}
+            	
+              	// 데이터가 있는지 체크
+            	RakutenVO searchHisVO = new RakutenVO();
+            	searchHisVO.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+            	searchHisVO.setOrder_no(vo.getCustomer_no());
+            	
+//            	/*
+//            	 * お客様管理番号(customer_no) 값을 키로 해서
+//            	 * 伝票番号(slip_no) 값을 갱신
+//            	 * */
+//            	ArrayList<RakutenVO> searchRetHisList = mapper.getRakutenHistoryList(searchHisVO);
+//            	
+//            	if (searchRetHisList.size() > 0) {
+//            		RakutenVO searchHisRet = searchRetHisList.get(0);
+//           		
+//            		searchHisVO.setSeq_id(searchHisRet.getSeq_id());
+//                	searchHisVO.setBaggage_claim_no(vo.getSlip_no().trim());
+//                	searchHisVO.setDelivery_company("1001");
+//                	
+//                	// お荷物伝票番号값 update
+//                	mapper.updateRakutenHistoryInfo(searchHisVO);
+//            	}
             }
             
 		} finally {

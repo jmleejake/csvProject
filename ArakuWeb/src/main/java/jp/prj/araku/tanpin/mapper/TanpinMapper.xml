@@ -45,10 +45,10 @@ values(
 <select id="getTanpinInfo" parameterType="Tanpin" resultType="Tanpin">
 <choose>
 	<when test="select_type == 'maker'">
-	select distinct maker_cd, maker_nm, seq_id, update_date
+	select distinct maker_cd, maker_nm
 	</when>
 	<when test="select_type == 'dealer'">
-	select distinct dealer_id, dealer_nm, seq_id, update_date
+	select distinct dealer_id, dealer_nm
 	</when>
 	<otherwise>
 	select
@@ -102,7 +102,18 @@ from
 	</trim>
 	</if>
 </where>
-order by seq_id desc, update_date desc 
+<!--order by seq_id desc, update_date desc   --> 
+    <choose>
+        <when test="select_type == 'maker'">
+            order by maker_cd desc
+        </when>
+        <when test="select_type == 'dealer'">
+            order by dealer_id desc
+        </when>
+        <otherwise>
+            order by seq_id desc, update_date desc
+        </otherwise>
+    </choose>
 </select>
 
 <update id="updateTanpinInfo" parameterType="Tanpin">

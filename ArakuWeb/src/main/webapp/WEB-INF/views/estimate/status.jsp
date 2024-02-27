@@ -58,7 +58,7 @@ data-toggle='modal' data-target='#create'>作成</button>
 
 <!-- Modal S -->
 <div class="modal fade" id="create" role="dialog">
-	<div class="modal-dialog">
+	<div class="modal-dialog" style="width:1320px;">
 		<div class="modal-content">
 			<div class="modal-body">
 				<div class="container-fluid">
@@ -88,10 +88,10 @@ data-toggle='modal' data-target='#create'>作成</button>
 						<form id="frm_prd">
 						<input type="hidden" name="search_type" value="srch">
 						<div class="col-sm-4" >
-						<input type="text" name="jan_cd" class="form-control" style="width: 200px;" placeholder="JANコード">
+						<input type="text" name="jan_cd" class="form-control" style="width: 300px;" placeholder="JANコード">
 						</div>
 						<div class="col-sm-4" >
-						<input type="text" name="prd_nm" class="form-control" style="width: 200px;" placeholder="商品名">
+						<input type="text" name="prd_nm" class="form-control" style="width: 300px;" placeholder="商品名">
 						</div>
 						</form>
 						<div class="col-sm-4">
@@ -102,7 +102,7 @@ data-toggle='modal' data-target='#create'>作成</button>
 					<div class="row">
 					<button id="prd_commit" type="button" class="btn btn-success" style="width: 120px; margin-bottom: 10px;">登録</button>
 					</div>
-					<div id="prdGrid" style="width:auto; height: 300px;" class="ag-theme-balham"></div>
+					<div id="prdGrid" style="width:auto; height: 400px;" class="ag-theme-balham"></div>
 					</div>
 				</div>
 			</div><!-- body -->
