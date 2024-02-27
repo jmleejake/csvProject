@@ -72,7 +72,7 @@ insert into jaiko_prd_info (prd_cd, brand_nm, prd_nm, jan_cd, prd_cnt
 , prd_unit_prc, tax_incld, tax_rt, std_info
 , partner_id, partner_nm, dsku, dasin
 , jan_cd1, prd_cnt1, jan_cd2, prd_cnt2, jan_cd3, prd_cnt3)
-values (#{prd_cd}, #{brand_nm}, #{prd_nm}, #{jan_cd}, #{prd_cnt}
+values (#{prd_cd}, #{brand_nm}, #{prd_nm}, #{jan_cd1}, #{prd_cnt}
 , #{prd_unit_prc}, #{tax_incld}, #{tax_rt}, #{std_info}
 , #{partner_id}, #{partner_nm}, #{dsku}, #{dasin}
 , #{jan_cd1}, #{prd_cnt1}, #{jan_cd2}, #{prd_cnt2}, #{jan_cd3}, #{prd_cnt3})
@@ -97,8 +97,8 @@ set
   <if test="prd_nm != null and prd_nm != ''">
   , prd_nm = #{prd_nm}
   </if>
-  <if test="jan_cd != null and jan_cd != ''">
-  , jan_cd = #{jan_cd}
+  <if test="jan_cd1 != null and jan_cd1 != ''">
+  , jan_cd = #{jan_cd1}
   </if>
   <if test="prd_cnt != null and prd_cnt != ''">
   , prd_cnt = #{prd_cnt}
