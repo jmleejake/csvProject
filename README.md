@@ -1,4 +1,26 @@
 ## Araku system Contents update list <csvProject>
+### 2024.03
+<ul>
+<li>
+아라쿠 로그인 기능
+ <div>
+	 
+```sql
+drop table araku_user_info;
+create table araku_user_info (
+seq_id bigint unsigned primary key auto_increment comment '区分ID'
+, user_id varchar(20) comment 'ユーザーID'
+, user_pass varchar(20) comment 'パスワード'
+, reg_user_id varchar(20) comment '登録者'
+, reg_dt datetime default now() comment '登録日付'
+, upd_user_id varchar(20) default null comment '更新者'
+, upd_dt datetime default now() comment '更新日付'
+, last_login_dt datetime default now() comment '最近ローグイン日付'
+) default charset = utf8 comment 'ユーザー情報';
+```
+</div>
+</li>
+</ul>
 ### 2023.07
 <ul>
 <li>
