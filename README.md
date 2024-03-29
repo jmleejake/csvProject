@@ -21,6 +21,7 @@ seq_id bigint unsigned primary key auto_increment comment '区分ID'
 </div>
 </li>
 </ul>
+
 ### 2023.07
 <ul>
 <li>
