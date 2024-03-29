@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.prj.araku.user.mapper.IArakuUserDao">
+
+<select id="getArakuUser" parameterType="ArakuUser" resultType="ArakuUser">
+select
+  user_id
+  , user_pass
+  , date_format(reg_dt, '%Y-%m-%d %H:%i:%s') reg_dt
+  , date_format(upd_dt, '%Y-%m-%d %H:%i:%s') upd_dt
+  , date_format(last_login_dt, '%Y-%m-%d %H:%i:%s') last_login_dt
+from araku_user_info
+where 
+  user_id = #{user_id}
+<if test="user_pass != null and user_pass != ''">
+and 
+  user_pass = #{user_pass}
+</if>
+</select>
+
+<update id="updateArakuUser" parameterType="ArakuUser">
+update araku_user_info
+set
+  upd_user_id = #{user_id}
+  , last_login_dt = now()
+where
+  user_id = #{user_id}
+</update>
+
+</mapper>

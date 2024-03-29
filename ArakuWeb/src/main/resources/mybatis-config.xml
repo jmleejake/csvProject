@@ -44,6 +44,7 @@
 		<typeAlias type="jp.prj.araku.jaiko.warehouse.vo.JaikoWareTempVO" alias="WareTemp" />
 		<typeAlias type="jp.prj.araku.tanpin.vo.ExpireManageVo" alias="ExpireManage" />
 		<typeAlias type="jp.prj.araku.jaiko.inventory.vo.TodayOrderVo" alias="TodayOrder"/>
+		<typeAlias type="jp.prj.araku.user.vo.ArakuUserVO" alias="ArakuUser"/>
 	</typeAliases>
 	<mappers>
 		<mapper resource="jp/prj/araku/list/mapper/ListMapper.xml" />
@@ -65,5 +66,6 @@
 		<mapper resource="jp/prj/araku/product/mapper/EstimateMapper.xml" />
 		<mapper resource="jp/prj/araku/jaiko/sales/mapper/JaikoSalesMapper.xml" />
 		<mapper resource="jp/prj/araku/angular/mapper/TodoMapper.xml" />
+		<mapper resource="jp/prj/araku/user/mapper/ArakuUserMapper.xml" />
 	</mappers>
 </configuration>

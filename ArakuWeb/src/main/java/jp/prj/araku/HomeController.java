@@ -3,12 +3,19 @@ package jp.prj.araku;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import javax.servlet.http.HttpSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import jp.prj.araku.user.dao.ArakuUserDao;
 
 /**
  * Handles requests for the application home page.
@@ -16,6 +23,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping(value = "/araku")
 @Controller
 public class HomeController {
+	
+	@Autowired
+	ArakuUserDao dao;
 	
 	private Logger log = LoggerFactory.getLogger("arakuLog");
 	
@@ -25,7 +35,9 @@ public class HomeController {
 	@RequestMapping(value = "")
 	public String home(Locale locale) {
 		log.debug("Welcome araku mainpage! The client locale is {}.", locale);
-		return "arakuMain";
+//		return "arakuMain";
+		
+		return "arakuLogin";
 	}
 	
 	@RequestMapping(value = "/translationView")
@@ -68,6 +80,24 @@ public class HomeController {
 		}
 		model.addAttribute("idList", idList);
 		return "menu/transResult";
+	}
+	
+	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	public String loginCheck(HttpSession session
+			, ModelMap model
+			, @RequestParam(value = "user_id") String user_id
+			, @RequestParam(value = "user_pass") String user_pass) {
+		log.debug("id: {} pass: {}",user_id,user_pass);
+		String ret = "";
+		int procRet = dao.processLogin(session, user_id, user_pass);
+		log.debug("jaiko login {}",procRet);
+		if(procRet == 1 || procRet == 2) {
+			model.addAttribute("type", procRet);
+			ret = "redirect:/araku";
+		}else if(procRet == 3) {
+			ret = "arakuMain";
+		}
+		return ret;
 	}
 	
 }
