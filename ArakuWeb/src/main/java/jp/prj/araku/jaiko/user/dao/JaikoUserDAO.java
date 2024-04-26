@@ -31,6 +31,7 @@ public class JaikoUserDAO {
 			vo.setUser_pass(user_pass);
 			if(null != mapper.getJaikoUser(vo)) {
 				session.setAttribute("login", 3);
+				mapper.updateJaikoUser(vo);
 				return 3;
 			}else {
 				return 2;

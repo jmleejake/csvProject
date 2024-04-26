@@ -3,6 +3,7 @@ package jp.prj.araku;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -33,11 +34,17 @@ public class HomeController {
 	 * Simply selects the home view to render by returning its name.
 	 */
 	@RequestMapping(value = "")
-	public String home(Locale locale) {
+	public String home(HttpServletRequest request, Locale locale, Model model) {
 		log.debug("Welcome araku mainpage! The client locale is {}.", locale);
-//		return "arakuMain";
-		
-		return "arakuLogin";
+		HttpSession session = request.getSession();
+		String userId = (String) session.getAttribute("arakuId");
+		log.debug("arakuId : {}", userId);
+		if(userId == null) {
+			return "arakuLogin";
+		}else {
+			model.addAttribute("authList", dao.getUserAuth(userId));
+			return "arakuMain";
+		}
 	}
 	
 	@RequestMapping(value = "/translationView")
@@ -95,6 +102,7 @@ public class HomeController {
 			model.addAttribute("type", procRet);
 			ret = "redirect:/araku";
 		}else if(procRet == 3) {
+			model.addAttribute("authList", dao.getUserAuth(user_id));
 			ret = "arakuMain";
 		}
 		return ret;

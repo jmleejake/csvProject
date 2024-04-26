@@ -45,6 +45,7 @@
 		<typeAlias type="jp.prj.araku.tanpin.vo.ExpireManageVo" alias="ExpireManage" />
 		<typeAlias type="jp.prj.araku.jaiko.inventory.vo.TodayOrderVo" alias="TodayOrder"/>
 		<typeAlias type="jp.prj.araku.user.vo.ArakuUserVO" alias="ArakuUser"/>
+		<typeAlias type="jp.prj.araku.user.vo.ArakuAuthVO" alias="ArakuAuth"/>
 	</typeAliases>
 	<mappers>
 		<mapper resource="jp/prj/araku/list/mapper/ListMapper.xml" />

@@ -30,4 +30,10 @@ where
   user_id = #{user_id}
 </update>
 
+<select id="selectArakuAuth" resultType="ArakuAuth">
+select menu_id
+from araku_user_auth
+where user_id = #{user_id}
+</select>
+
 </mapper>
