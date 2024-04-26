@@ -29,12 +29,16 @@
 	
 	<mvc:interceptors>
 		<mvc:interceptor>
-			<mvc:mapping path="/araku/**"/>
-			<beans:bean id="arakuLoginInterceptor" class="jp.prj.araku.interceptor.ArakuLoginInterceptor" />
+			<mvc:mapping path="/jaiko/**"/>
+			<mvc:exclude-mapping path="/jaiko"/>
+			<mvc:exclude-mapping path="/jaiko/user/login"/>
+			<beans:bean id="jaikoLoginInterceptor" class="jp.prj.araku.jaiko.interceptor.JaikoLoginInterceptor" />
 		</mvc:interceptor>
 		<mvc:interceptor>
-			<mvc:mapping path="/jaiko/**"/>
-			<beans:bean id="jaikoLoginInterceptor" class="jp.prj.araku.jaiko.interceptor.JaikoLoginInterceptor" />
+			<mvc:mapping path="/araku/**"/>
+			<mvc:exclude-mapping path="/araku"/>
+			<mvc:exclude-mapping path="/araku/login"/>
+			<beans:bean id="arakuLoginInterceptor" class="jp.prj.araku.interceptor.ArakuLoginInterceptor" />
 		</mvc:interceptor>
 	</mvc:interceptors>
 	
