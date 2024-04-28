@@ -38,6 +38,27 @@ function pleaseSelectNotify(msg) {
 	});
 }
 
+function successNotify(msg) {
+	$.notify({
+		// options
+		message: msg
+	},{
+		// settings
+		placement: {
+    		from: "top",
+    		align: "left"
+		},
+		z_index: 1031,
+    	delay: 2000,
+    	timer: 1000,
+    	animate: {
+    		enter: 'animated fadeInDown',
+    		exit: 'animated fadeOutUp'
+    	},
+		type: 'success'
+	});
+}
+
 function alertInit() {
 	alertify.set({
 		labels : {

@@ -44,6 +44,67 @@ public class ArakuUserDao {
 	
 	public List<ArakuAuthVO> getUserAuth(String user_id) {
 		IArakuUserDao mapper = sqlSession.getMapper(IArakuUserDao.class);
-		return mapper.selectArakuAuth(user_id);
+		ArakuAuthVO searchVo = new ArakuAuthVO();
+		searchVo.setUser_id(user_id);
+		return mapper.selectArakuUserAuth(searchVo);
+	}
+	
+	public List<ArakuAuthVO> getArakuAuth() {
+		IArakuUserDao mapper = sqlSession.getMapper(IArakuUserDao.class);
+		List<ArakuAuthVO> list = mapper.selectArakuAuth();
+		
+		for(ArakuAuthVO auth : list) {
+			String[] arr = auth.getMenu_id().split(",");
+			auth.setRak("N");
+			auth.setAma("N");
+			auth.setQ10("N");
+			auth.setYah("N");
+			auth.setTab("N");
+			auth.setCan("N");
+			auth.setTan("N");
+			auth.setAdm("N");
+			if(arr.length > 0) {
+				for(String id : arr) {
+					switch (id) {
+					case "rak":
+						auth.setRak("Y");
+						break;
+					case "ama":
+						auth.setAma("Y");
+						break;
+					case "q10":
+						auth.setQ10("Y");
+						break;
+					case "yah":
+						auth.setYah("Y");
+						break;
+					case "tab":
+						auth.setTab("Y");
+						break;
+					case "can":
+						auth.setCan("Y");
+						break;
+					case "tan":
+						auth.setTan("Y");
+						break;
+					case "adm":
+						auth.setAdm("Y");
+						break;
+					}
+				}
+			}
+		}
+		return list;
+	}
+	
+	public String modifyUserAuth(ArakuAuthVO auth) {
+		IArakuUserDao mapper = sqlSession.getMapper(IArakuUserDao.class);
+		List<ArakuAuthVO> list = mapper.selectArakuUserAuth(auth);
+		if(list.size() > 0) {
+			mapper.deleteUserAuth(auth);
+		}else {
+			mapper.insertUserAuth(auth);
+		}
+		return "SUCC";
 	}
 }

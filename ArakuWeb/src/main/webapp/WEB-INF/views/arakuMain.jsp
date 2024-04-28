@@ -17,6 +17,9 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 	<div class="well container-fluid">
 	<div>
 	<img src="<%=svrInfo %>/resources/img/kana-a.png" alt="Brand" style="width:50px;">
+	<button type="button" class="btn btn-default btn-sm" onclick="location.href='/araku/logout';">
+      <span class="glyphicon glyphicon-log-out"></span>
+    </button>
 	</div>
 	<c:forEach var="item" items="${authList }">
 	<c:if test="${item.menu_id eq 'rak' }">
@@ -52,6 +55,14 @@ String svrInfo = "http://"+request.getServerName()+":"+request.getLocalPort();
 	<button id="btn_prdAnal" class="btn btn-lg" style="width: 150px;">商品分析</button>
 	<button id="btn_order" class="btn btn-lg" style="width: 150px;">発注書</button>
 	<button id="btn_estimate" class="btn btn-lg" style="width: 150px;">見積書</button>
+	</div>
+	</c:if>
+	</c:forEach>
+	
+	<c:forEach var="item" items="${authList }">
+	<c:if test="${item.menu_id eq 'adm' }">
+	<div class="well container-fluid">
+	<button id="btn_admin" class="btn btn-lg" style="width: 150px;">ADMIN</button>
 	</div>
 	</c:if>
 	</c:forEach>

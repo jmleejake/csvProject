@@ -51,3 +51,8 @@ $('#btn_estimate').on('click', function() {
 	console.log('estimate paper');
 	location.href = "/araku/prdAnalysis/estimate";
 });
+
+$('#btn_admin').on('click', function() {
+	console.log('admin setting');
+	location.href = "/araku/user/list";
+});

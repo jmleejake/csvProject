@@ -9,5 +9,8 @@ import jp.prj.araku.user.vo.ArakuAuthVO;
 public interface IArakuUserDao {
 	ArakuUserVO getArakuUser(ArakuUserVO vo);
 	int updateArakuUser(ArakuUserVO vo);
-	List<ArakuAuthVO> selectArakuAuth(String user_id);
+	List<ArakuAuthVO> selectArakuUserAuth(ArakuAuthVO vo);
+	List<ArakuAuthVO> selectArakuAuth();
+	int deleteUserAuth(ArakuAuthVO vo);
+	int insertUserAuth(ArakuAuthVO vo);
 }

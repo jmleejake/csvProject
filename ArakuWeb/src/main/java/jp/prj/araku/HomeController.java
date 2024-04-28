@@ -15,8 +15,10 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import jp.prj.araku.user.dao.ArakuUserDao;
+import jp.prj.araku.user.vo.ArakuAuthVO;
 
 /**
  * Handles requests for the application home page.
@@ -106,6 +108,24 @@ public class HomeController {
 			ret = "arakuMain";
 		}
 		return ret;
+	}
+	
+	@RequestMapping(value = "/user/list")
+	public String showArkauUserList(Model model) {
+		model.addAttribute("authList", dao.getArakuAuth());
+		return "user/userAuthSetting";
+	}
+	
+	@RequestMapping(value = "/logout")
+	public String loginCheck(HttpSession session) {
+		session.invalidate();
+		return "redirect:/araku";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/user/modify-exec", method = RequestMethod.POST)
+	public String modifyUserAuth(ArakuAuthVO auth) {
+		return dao.modifyUserAuth(auth);
 	}
 	
 }

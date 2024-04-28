@@ -30,10 +30,32 @@ where
   user_id = #{user_id}
 </update>
 
-<select id="selectArakuAuth" resultType="ArakuAuth">
+<select id="selectArakuUserAuth" resultType="ArakuAuth">
 select menu_id
 from araku_user_auth
 where user_id = #{user_id}
+<if test="menu_id != null and menu_id != ''">
+and menu_id = #{menu_id}
+</if>
 </select>
+
+<select id="selectArakuAuth" resultType="ArakuAuth">
+select aui.user_id, aui.user_name, group_concat(auth.menu_id) as menu_id, aui.last_login_dt
+from araku_auth auth
+left join araku_user_auth renketsu on renketsu.menu_id = auth.menu_id
+inner join araku_user_info aui on aui.user_id = renketsu.user_id
+where aui.user_id is not null
+group by aui.user_id
+</select>
+
+<delete id="deleteUserAuth">
+delete from araku_user_auth
+where user_id = #{user_id}
+and menu_id = #{menu_id}
+</delete>
+
+<insert id="insertUserAuth">
+insert into ARAKU_USER_AUTH (MENU_ID, USER_ID) VALUES (#{menu_id}, #{user_id});
+</insert>
 
 </mapper>
