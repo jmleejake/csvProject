@@ -48,10 +48,31 @@ public class CommonUtil {
 	
 	public static final String ORDER_STATUS_COMPLETE = "出荷準備済";
 	public static final String TOMORROW_MORNING = "午前中";
-	public static final String TIMEMAP1 = "14：00～16：00";
-	public static final String TIMEMAP2 = "16：00～18：00";
-	public static final String TIMEMAP3 = "18：00～20：00";
-	public static final String TIMEMAP4 = "19：00～21：00";
+	
+	//2024/05/18 やまと時間指定のバグ対応。　時間の拡張性が純化するため改善する。　Start
+	public static final Map<String, String> TIME_MAP = new HashMap<>();
+
+	static {
+	    TIME_MAP.put("14:00-16:00", "1416");
+	    TIME_MAP.put("16:00-18:00", "1618");
+	    TIME_MAP.put("18:00-20:00", "1820");
+	    TIME_MAP.put("19:00-21:00", "1921");
+	    TIME_MAP.put("14：00～16：00", "1416");
+	    TIME_MAP.put("16：00～18：00", "1618");
+	    TIME_MAP.put("18：00～20：00", "1820");
+	    TIME_MAP.put("19：00～21：00", "1921");
+	    // 新しいフォーマットを追加
+	}
+
+	public static String normalizeTimeFormat(String input) {
+	    return input.replace("：", ":").replace("～", "-");
+	}
+//	public static final String TIMEMAP1 = "14：00～16：00";
+//	public static final String TIMEMAP2 = "16：00～18：00";
+//	public static final String TIMEMAP3 = "18：00～20：00";
+//	public static final String TIMEMAP4 = "19：00～21：00";
+	//2024/05/18 やまと時間指定のバグ対応。　時間の拡張性が純化するため改善する。　End
+	
 	public static final String YA_TOMORROW_MORNING_CODE = "0812";
 	public static final String YA_TOMORROW_TIMEMAP1 = "1416";
 	public static final String YA_TOMORROW_TIMEMAP2 = "1618";

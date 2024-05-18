@@ -507,6 +507,7 @@ public class ListDAO {
 				vo1.setSearch_type(CommonUtil.SEARCH_TYPE_JAN_SUM);
 				vo1.setJan_cd(jan_cd);
 				list = listMapper.getPrdTrans(vo1);
+				log.debug("sumType : " + target_type + "//"  + "Jan_cd : " + jan_cd);
 				int sum = 0;
 				for(PrdTransVO trans : list) {
 					sum += Integer.parseInt(trans.getPrd_cnt());

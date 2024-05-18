@@ -2073,18 +2073,28 @@ public class RakutenDAO {
 					yVO.setEstimate_delivery_date(CommonUtil.getDate("YYYY/MM/dd", 1));
 					yVO.setDelivery_time(CommonUtil.YA_TOMORROW_MORNING_CODE);
 				}
-				if (strComment.contains(CommonUtil.TIMEMAP1)) {
-					yVO.setDelivery_time(CommonUtil.YA_TOMORROW_TIMEMAP1);
-				}	
-				if (strComment.contains(CommonUtil.TIMEMAP2)) {
-					yVO.setDelivery_time(CommonUtil.YA_TOMORROW_TIMEMAP2);
+//				if (strComment.contains(CommonUtil.TIMEMAP1)) {
+//					yVO.setDelivery_time(CommonUtil.YA_TOMORROW_TIMEMAP1);
+//				}	
+//				if (strComment.contains(CommonUtil.TIMEMAP2)) {
+//					yVO.setDelivery_time(CommonUtil.YA_TOMORROW_TIMEMAP2);
+//				}
+//				if (strComment.contains(CommonUtil.TIMEMAP3)) {
+//					yVO.setDelivery_time(CommonUtil.YA_TOMORROW_TIMEMAP3);
+//				}
+//				if (strComment.contains(CommonUtil.TIMEMAP4)) {
+//					yVO.setDelivery_time(CommonUtil.YA_TOMORROW_TIMEMAP4);
+//				}
+//				
+				//2024/05/18 やまと時間指定のバグ対応。　時間の拡張性が純化するため改善する。
+				String normalizedComment = CommonUtil.normalizeTimeFormat(strComment);
+				for (Map.Entry<String, String> entry : CommonUtil.TIME_MAP.entrySet()) {
+				    if (normalizedComment.contains(entry.getKey())) {
+				        yVO.setDelivery_time(entry.getValue());
+				        break;
+				    }
 				}
-				if (strComment.contains(CommonUtil.TIMEMAP3)) {
-					yVO.setDelivery_time(CommonUtil.YA_TOMORROW_TIMEMAP3);
-				}
-				if (strComment.contains(CommonUtil.TIMEMAP4)) {
-					yVO.setDelivery_time(CommonUtil.YA_TOMORROW_TIMEMAP4);
-				}
+				
 				
 				// 20200116 kim 時間帯指定：午前中で、お届け予定日が空白の場合、次の日付を設定する。
 				if ("1".equals(tmp.getTomorrow_hope())) {
@@ -3404,18 +3414,28 @@ public class RakutenDAO {
 									gsaVO.setDelivery_dt(CommonUtil.getDate("YYYY/MM/dd", 1));
 									gsaVO.setDelivery_tm(CommonUtil.SA_TOMORROW_MORNING_CODE);
 								}
-								if (strComment.contains(CommonUtil.TIMEMAP1)) {
-									gsaVO.setDelivery_tm(CommonUtil.SA_TOMORROW_TIMEMAP1);
-								}	
-								if (strComment.contains(CommonUtil.TIMEMAP2)) {
-									gsaVO.setDelivery_tm(CommonUtil.SA_TOMORROW_TIMEMAP2);
+								
+//								if (strComment.contains(CommonUtil.TIMEMAP1)) {
+//									gsaVO.setDelivery_tm(CommonUtil.SA_TOMORROW_TIMEMAP1);
+//								}	
+//								if (strComment.contains(CommonUtil.TIMEMAP2)) {
+//									gsaVO.setDelivery_tm(CommonUtil.SA_TOMORROW_TIMEMAP2);
+//								}
+//								if (strComment.contains(CommonUtil.TIMEMAP3)) {
+//									gsaVO.setDelivery_tm(CommonUtil.SA_TOMORROW_TIMEMAP3);
+//								}
+//								if (strComment.contains(CommonUtil.TIMEMAP4)) {
+//									gsaVO.setDelivery_tm(CommonUtil.SA_TOMORROW_TIMEMAP4);
+//								}
+								//2024/05/18 やまと時間指定のバグ対応。　時間の拡張性が純化するため改善する。
+								String normalizedComment = CommonUtil.normalizeTimeFormat(strComment);
+								for (Map.Entry<String, String> entry : CommonUtil.TIME_MAP.entrySet()) {
+								    if (normalizedComment.contains(entry.getKey())) {
+								    	gsaVO.setDelivery_tm(entry.getValue());
+								        break;
+								    }
 								}
-								if (strComment.contains(CommonUtil.TIMEMAP3)) {
-									gsaVO.setDelivery_tm(CommonUtil.SA_TOMORROW_TIMEMAP3);
-								}
-								if (strComment.contains(CommonUtil.TIMEMAP4)) {
-									gsaVO.setDelivery_tm(CommonUtil.SA_TOMORROW_TIMEMAP4);
-								}
+								
 								// 2020/09/01  キム 사가와  배송날짜를 설정함. 　⇒　END
 								
 								// あす楽希望이 1인 경우
@@ -3474,17 +3494,25 @@ public class RakutenDAO {
 								gsaVO.setDelivery_dt(CommonUtil.getDate("YYYY/MM/dd", 1));
 								gsaVO.setDelivery_tm(CommonUtil.SA_TOMORROW_MORNING_CODE);
 							}
-							if (strComment.contains(CommonUtil.TIMEMAP1)) {
-								gsaVO.setDelivery_tm(CommonUtil.SA_TOMORROW_TIMEMAP1);
-							}	
-							if (strComment.contains(CommonUtil.TIMEMAP2)) {
-								gsaVO.setDelivery_tm(CommonUtil.SA_TOMORROW_TIMEMAP2);
-							}
-							if (strComment.contains(CommonUtil.TIMEMAP3)) {
-								gsaVO.setDelivery_tm(CommonUtil.SA_TOMORROW_TIMEMAP3);
-							}
-							if (strComment.contains(CommonUtil.TIMEMAP4)) {
-								gsaVO.setDelivery_tm(CommonUtil.SA_TOMORROW_TIMEMAP4);
+//							if (strComment.contains(CommonUtil.TIMEMAP1)) {
+//								gsaVO.setDelivery_tm(CommonUtil.SA_TOMORROW_TIMEMAP1);
+//							}	
+//							if (strComment.contains(CommonUtil.TIMEMAP2)) {
+//								gsaVO.setDelivery_tm(CommonUtil.SA_TOMORROW_TIMEMAP2);
+//							}
+//							if (strComment.contains(CommonUtil.TIMEMAP3)) {
+//								gsaVO.setDelivery_tm(CommonUtil.SA_TOMORROW_TIMEMAP3);
+//							}
+//							if (strComment.contains(CommonUtil.TIMEMAP4)) {
+//								gsaVO.setDelivery_tm(CommonUtil.SA_TOMORROW_TIMEMAP4);
+//							}
+							//2024/05/18 やまと時間指定のバグ対応。　時間の拡張性が純化するため改善する。
+							String normalizedComment = CommonUtil.normalizeTimeFormat(strComment);
+							for (Map.Entry<String, String> entry : CommonUtil.TIME_MAP.entrySet()) {
+							    if (normalizedComment.contains(entry.getKey())) {
+							    	gsaVO.setDelivery_tm(entry.getValue());
+							        break;
+							    }
 							}
 							// 2020/09/01  キム 사가와  배송날짜를 설정함. 　⇒　END
 							

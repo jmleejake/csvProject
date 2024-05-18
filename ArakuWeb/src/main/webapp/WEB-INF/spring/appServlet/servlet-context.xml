@@ -27,15 +27,4 @@
 	
 	<context:component-scan base-package="jp.prj.araku" />
 	
-	<mvc:interceptors>
-		<mvc:interceptor>
-			<mvc:mapping path="/araku/**"/>
-			<beans:bean id="arakuLoginInterceptor" class="jp.prj.araku.interceptor.ArakuLoginInterceptor" />
-		</mvc:interceptor>
-		<mvc:interceptor>
-			<mvc:mapping path="/jaiko/**"/>
-			<beans:bean id="jaikoLoginInterceptor" class="jp.prj.araku.jaiko.interceptor.JaikoLoginInterceptor" />
-		</mvc:interceptor>
-	</mvc:interceptors>
-	
 </beans:beans>

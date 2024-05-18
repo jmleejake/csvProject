@@ -28,6 +28,15 @@ public class HomeController {
 		return "arakuMain";
 	}
 	
+	/**
+	 * Simply selects the home view to render by returning its name. kim 2023/11/10
+	 */
+	@RequestMapping(value = "/",method = RequestMethod.GET)
+	public String home(Locale locale,Model mode) {
+		log.debug("Welcome araku mainpage! The client kim locale is {}.", locale);
+		return "arakuMain";
+	}
+	
 	@RequestMapping(value = "/translationView")
 	public String translationView() {
 		log.debug("Welcome to translationView");
