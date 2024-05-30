@@ -458,18 +458,20 @@ public class Q10DAO {
 			}
 			
 			String last = buf.toString();
-			String finalStr = null;
-			try {
-				finalStr = last.substring(0, last.lastIndexOf(";"));
-			} catch (StringIndexOutOfBoundsException e) {
-				finalStr = last;
-			}
-			log.debug("final String : " + finalStr);
+			
+			// 商品名に「；」があると次の商品名の内容が切られるため修正する　2024/05/30 kim
+//			String finalStr = null;
+//			try {
+//				finalStr = last.substring(0, last.lastIndexOf(";"));
+//			} catch (StringIndexOutOfBoundsException e) {
+//				finalStr = last;
+//			}
+//			log.debug("final String : " + finalStr);
 			
 			TranslationResultVO resultVO = new TranslationResultVO();
 			resultVO.setTrans_target_id(vo.getSeq_id());
 			resultVO.setTrans_target_type(CommonUtil.TRANS_TARGET_Q);
-			resultVO.setResult_text(finalStr);
+			resultVO.setResult_text(last);
 			
 			// 이미 치환된 결과가 있는 trans_target_id이면 update, 아니면 insert
 			ArrayList<Q10VO> transResult = mapper.getTransResult(resultVO);
