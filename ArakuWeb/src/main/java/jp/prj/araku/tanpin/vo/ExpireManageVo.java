@@ -1,5 +1,7 @@
 package jp.prj.araku.tanpin.vo;
 
+import java.util.ArrayList;
+
 import jp.prj.araku.util.ArakuVO;
 import lombok.Data;
 
@@ -23,4 +25,7 @@ public class ExpireManageVo extends ArakuVO {
 	private int prd_qty;
 	/** 賞味期限*/
 	private String exp_dt;
+	
+	private String search_type;
+	private ArrayList<String> seq_id_list;
 }

@@ -952,6 +952,14 @@ public class RakutenDAO {
 							prdTransVO.setAfter_trans(subTrans.getAfter_trans());
 							prdTransVO.setJan_cd(subTrans.getJan_cd()); // 2021-07-03 kim
 							//prdTransVO.setPrd_cnt(sintsu); // 2021-07-03 kim
+							if(subTrans.getPrd_cnt() != null) {
+								int SUJA = Integer.valueOf(unitNo) * Integer.parseInt(subTrans.getPrd_cnt());
+								
+								prdTransVO.setPrd_cnt(Integer.toString(SUJA));
+							}else {
+								prdTransVO.setPrd_cnt(unitNo+"");
+							}
+							
 							prdTransVO.setPrd_cnt(subTrans.getPrd_cnt()); // 2021-07-03 kim
 							prdTransVO.setPrd_master_hanei_gbn("0");
 							prdTransVO.setSearch_type("translate");

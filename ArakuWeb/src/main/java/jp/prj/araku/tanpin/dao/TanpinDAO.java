@@ -7,8 +7,12 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,10 +31,12 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ibm.icu.math.BigDecimal;
 import com.opencsv.CSVWriter;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
@@ -48,6 +54,7 @@ import jp.prj.araku.tablet.vo.DealerVO;
 import jp.prj.araku.tanpin.mapper.ITanpinMapper;
 import jp.prj.araku.tanpin.vo.ExpireManageVo;
 import jp.prj.araku.tanpin.vo.TanpinVO;
+import jp.prj.araku.tanpin.vo.AllmartManageVo;
 import jp.prj.araku.util.ArakuVO;
 import jp.prj.araku.util.CommonUtil;
 
@@ -227,17 +234,163 @@ public class TanpinDAO {
 				prdInvenSrch.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
 				prdInvenSrch.setJan_cd(tanpin.getPrd_cd());
 				ArrayList<JaikoPrdInventoryVO> invenList = prdInvenMapper.getJaikoPrdInventory(prdInvenSrch);
+				
+				
+				//単品商品管理Table
+				TanpinVO tanpinSrch = new TanpinVO();
+				tanpinSrch.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+				tanpinSrch.setPrd_cd(tanpin.getPrd_cd());
+				ArrayList<TanpinVO> tanpinList = mapper.getTanpinInfo(tanpinSrch);			
+				
+				//ALLmart価格管理Table
+				AllmartManageVo allmartmngSrch = new AllmartManageVo();
+				allmartmngSrch.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+				allmartmngSrch.setProduct_code(tanpin.getPrd_cd());
+				List<AllmartManageVo> allmartList = mapper.selectAllmartManage(allmartmngSrch);	
+				
+				
+				//商品管理Table
+				JaikoPrdInfoVO prdInfoSrch = new JaikoPrdInfoVO();
+				prdInfoSrch.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+				prdInfoSrch.setJan_cd(tanpin.getPrd_cd());
+				ArrayList<JaikoPrdInfoVO> prdInfoList = prdInfoMapper.getJaikoPrdInfo(prdInfoSrch);
+				
+				//賞味期限管理Table
+				ExpireManageVo expireSrch = new ExpireManageVo();
+				expireSrch.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+				expireSrch.setJan_cd(tanpin.getPrd_cd());
+				expireSrch.setExp_dt(tanpin.getExp_dt());
+				ArrayList<ExpireManageVo> expireList = mapper.getExpireManage(expireSrch);
+				
+				//商品管理Table　更新
+				if(prdInfoList.size() > 0) {
+					prdInfoSrch = prdInfoList.get(0);
+					if(tanpinList.size() > 0) {
+						tanpinSrch = tanpinList.get(0);
+						String prdInfoSeqId = prdInfoSrch.getSeq_id();
+						String jancodeId = tanpinSrch.getPrd_cd();
+						String prdInfoUpdate = tanpinSrch.getUpdate_date();
+						String prdUnitPrc = tanpinSrch.getInprice();
+						
+						prdInfoSrch = new JaikoPrdInfoVO();
+						prdInfoSrch.setSeq_id(prdInfoSeqId);
+						prdInfoSrch.setUpd_dt(prdInfoUpdate);	  // 更新日を更新する。		
+						prdInfoSrch.setJan_cd(jancodeId);
+						prdInfoSrch.setPrd_unit_prc(prdUnitPrc);  // 商品価格を更新する。
+						//prdInfoSrch.setProduct_image_url("'/resources/img/shouhin/" + jancodeId + ".png'");
+						
+						prdInfoMapper.updateJaikoPrdInfo(prdInfoSrch);
+					}
+					// 商品情報TにJANCODEがない場合、レコードを追加する。
+					JaikoPrdInfoVO prdInfodataSrch = new JaikoPrdInfoVO();
+					prdInfodataSrch.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+					prdInfodataSrch.setJan_cd(tanpin.getPrd_cd());
+					//prdInfodataSrch.setUpd_user_id(user_Id);
+					ArrayList<JaikoPrdInfoVO> infodataList = prdInfoMapper.getJaikoPrdInfo(prdInfodataSrch);
+					if(infodataList.size() <= 0) {
+						/*
+						商品情報T
+						商品名 prd_nm
+						JANCODE1 jan_cd
+						商品数1　　Prd_cnt1
+						商品税(抜、込)　Tax_incld
+						商品税率　　Tax_rt
+						単価 prd_unit_prc
+						*/
+						JaikoPrdInfoVO jaikoPrdVo = new JaikoPrdInfoVO();
+						jaikoPrdVo.setPrd_nm(tanpin.getPrd_nm());
+						jaikoPrdVo.setJan_cd1(tanpin.getPrd_cd());
+						jaikoPrdVo.setJan_cd(tanpin.getPrd_cd());
+						jaikoPrdVo.setPrd_cnt1("1");
+						jaikoPrdVo.setTax_incld("0");
+						jaikoPrdVo.setTax_rt("8");
+						jaikoPrdVo.setPrd_unit_prc(tanpin.getInprice());
+						
+						prdInfoMapper.insertJaikoPrdInfo(jaikoPrdVo);
+					}
+				}
+				
+				//Allmart価格管理Table更新
+				if(allmartList.size() > 0) {
+					
+					allmartmngSrch = allmartList.get(0);
+					String prdProductCode = tanpin.getPrd_cd();
+					String prdUnitPrice = tanpin.getInprice();
+				
+					// BigDecimalに変換
+					BigDecimal unitPrice = new BigDecimal(prdUnitPrice);
+					BigDecimal multiplier = new BigDecimal("1.3"); // 1.3をBigDecimalとして定義
+
+					// BigDecimal同士の掛け算を行う
+					BigDecimal newUnitPrice = unitPrice.multiply(multiplier);
+
+					// BigDecimalをdoubleに変換
+					double doubleUnitPrice = newUnitPrice.doubleValue();
+					double roundedUp = Math.ceil(doubleUnitPrice); // 切り上げ
+
+					// doubleをStringに変換
+					String unitPriceString = Double.toString(roundedUp);
+					
+					AllmartManageVo allmartmng = new AllmartManageVo();
+					allmartmng.setProduct_id(allmartmngSrch.getProduct_id());
+					allmartmng.setDepartment_id(allmartmngSrch.getDepartment_id());
+					allmartmng.setGroup_code(allmartmngSrch.getGroup_code());
+					allmartmng.setProduct_code(prdProductCode);
+					allmartmng.setProduct_name(allmartmngSrch.getProduct_name());					
+					allmartmng.setUnit_price(unitPriceString);
+					allmartmng.setTax_category(allmartmngSrch.getTax_category());
+					
+					// 現在の日付を取得し、フォーマットを設定する
+					LocalDate currentDate = LocalDate.now();
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+					String formattedDate = currentDate.format(formatter);
+
+					// update_dateに現在の日付を設定する
+					allmartmng.setUpdate_date(formattedDate);
+					
+					// Login情報を設定する。
+					allmartmng.setLogin_id("admin");
+
+				    // まず、更新を試みます。
+				    int updateCount = mapper.updateAllmartManage(allmartmng);
+				    
+				    // 更新された行がなければ、挿入を行います。
+				    if (updateCount == 0) {
+				        mapper.insertAllmartManage(allmartmng);
+				    }
+				}
+				
+				//賞味期間管理Table　更新
+				ExpireManageVo expireData = new ExpireManageVo();
+				if(expireList.size() <= 0) {
+					expireData.setSeq_id(tanpin.getSeq_id());
+					expireData.setRegister_date(tanpin.getRegister_date());
+					expireData.setJan_cd(tanpin.getPrd_cd());
+					expireData.setPrd_nm(tanpin.getPrd_nm());
+					expireData.setPrd_qty(tanpin.getPrd_qty());
+					expireData.setExp_dt(tanpin.getExp_dt());
+
+					mapper.insertExpireManage(expireData);
+				}
+				
+				//在庫管理Table　更新
 				if(invenList.size() > 0) {
 					prdInvenSrch = invenList.get(0);
 					
 					int nowPrdCnt = 0;
 					String prdInvenSeqId = prdInvenSrch.getSeq_id();
+					String prdInvenUpdate = prdInvenSrch.getUpd_dt();
+					
 					if(null != prdInvenSrch.getNow_prd_cnt() && !"".equals(prdInvenSrch.getNow_prd_cnt())) {
 						nowPrdCnt = Integer.parseInt(prdInvenSrch.getNow_prd_cnt());
 					}
 					prdInvenSrch = new JaikoPrdInventoryVO();
 					prdInvenSrch.setSeq_id(prdInvenSeqId);
 					prdInvenSrch.setNow_prd_cnt(String.valueOf(tanpin.getPrd_qty() + nowPrdCnt));
+					prdInvenSrch.setDealer_id(tanpin.getDealer_id());
+					prdInvenSrch.setDealer_nm(tanpin.getDealer_nm());				
+					prdInvenSrch.setUpd_dt(prdInvenUpdate);
+					
 					prdInvenMapper.updateJaikoPrdInventory(prdInvenSrch);
 				}else {
 					// 재고관리 테이블에 관련 JANCODE 가 없을 경우
@@ -277,7 +430,7 @@ public class TanpinDAO {
 					//商品名
 					prdInvenSrch.setPrd_nm(tanpin.getPrd_nm());
 					//ケース数
-					prdInvenSrch.setPrd_case("0");
+					prdInvenSrch.setPrd_case("1");
 					//バラ数
 					prdInvenSrch.setPrd_bara("0");
 					//ロット数
@@ -319,19 +472,19 @@ public class TanpinDAO {
 					ExpireManageVo expire = new ExpireManageVo();
 					expire.setJan_cd(tanpin.getPrd_cd());
 					expire.setPrd_nm(tanpin.getPrd_nm());
-					expire.setPartner_id(tanpin.getDealer_id());
-					expire.setPartner_nm(tanpin.getDealer_nm());
+//					expire.setPartner_id(tanpin.getDealer_id());
+//					expire.setPartner_nm(tanpin.getDealer_nm());
 					expire.setPrd_qty(tanpin.getPrd_qty());
 					expire.setExp_dt(tanpin.getExp_dt());
 					mapper.insertExpireManage(expire);
 				}
 				//2024-01-30 kim daewon start
 				// 商品情報TにJANCODEがない場合、レコードを追加する。
-				JaikoPrdInfoVO prdInfoSrch = new JaikoPrdInfoVO();
-				prdInfoSrch.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
-				prdInfoSrch.setJan_cd(tanpin.getPrd_cd());
-				ArrayList<JaikoPrdInfoVO> infoList = prdInfoMapper.getJaikoPrdInfo(prdInfoSrch);
-				if(infoList.size() <= 0) {
+				JaikoPrdInfoVO prdInfodataSrch = new JaikoPrdInfoVO();
+				prdInfodataSrch.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+				prdInfodataSrch.setJan_cd(tanpin.getPrd_cd());
+				ArrayList<JaikoPrdInfoVO> infodataList = prdInfoMapper.getJaikoPrdInfo(prdInfodataSrch);
+				if(infodataList.size() <= 0) {
 					/*
 					商品情報T
 					商品名 prd_nm
@@ -344,7 +497,7 @@ public class TanpinDAO {
 					JaikoPrdInfoVO jaikoPrdVo = new JaikoPrdInfoVO();
 					jaikoPrdVo.setPrd_nm(tanpin.getPrd_nm());
 					jaikoPrdVo.setJan_cd1(tanpin.getPrd_cd());
-					//jaikoPrdVo.setJan_cd(tanpin.getPrd_cd());
+					jaikoPrdVo.setJan_cd(tanpin.getPrd_cd());
 					jaikoPrdVo.setPrd_cnt1("1");
 					jaikoPrdVo.setTax_incld("0");
 					jaikoPrdVo.setTax_rt("8");
@@ -1084,6 +1237,78 @@ public class TanpinDAO {
 	}
 	
 	/**
+	 * 20240627
+	 * Allmart価格管理S
+	 * */
+//	public List<AllmartManageVo> getAllmartManage(AllmartManageVo vo) {
+//		ITanpinMapper mapper = sqlSession.getMapper(ITanpinMapper.class);
+//		return mapper.selectAllmartManage(vo);
+//	}
+
+	public ArrayList<AllmartManageVo> getAllmartManage(String select_type) {
+		AllmartManageVo vo = new AllmartManageVo();
+		vo.setSelect_type(select_type);
+		
+		return getAllmartManage(vo);
+	}
+	public ArrayList<AllmartManageVo> getAllmartManage(AllmartManageVo vo) {
+		ITanpinMapper mapper = sqlSession.getMapper(ITanpinMapper.class);
+		
+		if(null != vo.getEnd_date() && !"".equals(vo.getEnd_date())) {
+			vo.setEnd_date(vo.getEnd_date());
+		}
+		ArrayList<AllmartManageVo> ret = mapper.getAllmartManageT(vo);
+		for(AllmartManageVo tmp : ret) {
+			if(null != tmp.getUnit_price()) {
+				tmp.setUpdate_date(tmp.getUnit_price());
+			}
+		}
+		return ret;
+	}
+//	public List<ExpireManageVo> addAllmartManage(AllmartManageVo vo) {
+//		ITanpinMapper mapper = sqlSession.getMapper(ITanpinMapper.class);
+//		mapper.insertAllmartManage(vo);
+//		return mapper.selectAllmartManage(null);
+//	}
+	
+	public List<AllmartManageVo> modifyAllmartManage(List<AllmartManageVo> list) {
+		ITanpinMapper mapper = sqlSession.getMapper(ITanpinMapper.class);
+	    
+		for(AllmartManageVo allprice : list) {
+			
+			// 現在の日付を取得し、フォーマットを設定する
+			LocalDate currentDate = LocalDate.now();
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+			String formattedDate = currentDate.format(formatter);
+
+			// update_dateに現在の日付を設定する
+			allprice.setUpdate_date(formattedDate);
+			
+			// Login情報を設定する。
+			allprice.setLogin_id("admin");
+			mapper.updateAllmartManage(allprice);
+		}
+		return mapper.selectAllmartManage(null);
+	}
+	
+	public List<AllmartManageVo> removeAllmartManage(List<AllmartManageVo> list) {
+		ITanpinMapper mapper = sqlSession.getMapper(ITanpinMapper.class);
+		Map<String, Object> params = new HashMap<>();
+	    
+		for(AllmartManageVo allprice : list) {
+			params.put("product_code", allprice.getProduct_code());
+		    params.put("user_id", "admin");
+			//mapper.deleteAllmartManage(allprice.getProduct_code());
+			mapper.deleteAllmartManage(params);
+		}
+		return mapper.selectAllmartManage(null);
+	}
+	/**
+	 * 20240627
+	 * Allmart価格管理E
+	 * */
+	
+	/**
 	 * 20230617
 	 * 賞味期限管理S
 	 * */
@@ -1118,6 +1343,223 @@ public class TanpinDAO {
 	 * 賞味期限管理E
 	 * */
 	
+	public void downloadAllmart(
+			HttpServletResponse response, String[] id_list, String fileEncoding) 
+					throws IOException
+					, CsvDataTypeMismatchException
+					, CsvRequiredFieldEmptyException {
+		ITanpinMapper infoAllmartMapper = sqlSession.getMapper(ITanpinMapper.class);
+		BufferedWriter writer = null;
+		CSVWriter csvWriter = null;
+		
+		log.debug("product_id_list : " + id_list);
+		
+		
+		try {
+			
+			AllmartManageVo Allm = new AllmartManageVo();
+			ArrayList<String> product_id_list = new ArrayList<>();
+			for(String productId : id_list) {
+				product_id_list.add(productId);
+			}
+			Allm.setProduct_id_list(product_id_list);
+			
+			String csvFileName = "Allmart_"+ CommonUtil.getDate("YYYYMMdd", 0) + ".csv";
+
+			response.setContentType("text/csv");
+
+			// creates mock data
+			String headerKey = "Content-Disposition";
+			String headerValue = String.format("attachment; filename=\"%s\"",
+					csvFileName);
+			response.setHeader(headerKey, headerValue);
+			response.setCharacterEncoding(fileEncoding);
+			
+			writer = new BufferedWriter(response.getWriter());
+			
+			csvWriter = new CSVWriter(writer
+					, CSVWriter.DEFAULT_SEPARATOR
+					, CSVWriter.NO_QUOTE_CHARACTER
+					, CSVWriter.DEFAULT_ESCAPE_CHARACTER
+					, CSVWriter.DEFAULT_LINE_END);
+			
+			String[] header = {
+			"商品ID", "部門ID", "グループコード", "商品コード", "商品名", "商品単価", "税区分"
+			};
+			
+			ArrayList<AllmartManageVo> searchList = infoAllmartMapper.getAllmartManageDL(Allm);
+			ArrayList<AllmartManageVo> list = new ArrayList<>();
+			for(AllmartManageVo dlvo : searchList) {
+				list.add(dlvo);
+			}
+			CommonUtil.executeAllmartCSVDownload(csvWriter, writer, header, list);
+		}finally {
+			if (csvWriter != null) {
+				csvWriter.close();
+			}
+			
+			if (writer != null) {
+				writer.close();
+			}
+		}
+	}
+
+	public void insertAllmartManageExe( 
+	        MultipartFile file, 
+	        String fileEncoding) throws IOException {
+	    ITanpinMapper mapper = sqlSession.getMapper(ITanpinMapper.class);
+	    
+	    log.debug("encoding : " + fileEncoding);
+	    log.debug("contentType: " + file.getContentType());
+	    log.debug("name: " + file.getName());
+	    log.debug("original name: " + file.getOriginalFilename());
+	    log.debug("size: " + file.getSize());
+	    
+	    BufferedReader reader = null;
+	    
+	    try  {
+	        reader = new BufferedReader(
+	                new InputStreamReader(file.getInputStream(), fileEncoding));
+
+	        String line = "";
+	        int cnt = 0;
+	        
+	        while ((line = reader.readLine()) != null) {
+	            // コンマ区切りで行を分割
+	            String[] arr = line.split(",");
+	            
+	            // ヘッダー行をスキップ
+	            if(cnt == 0) {
+	                cnt++;
+	                continue;
+	            }
+	            
+	            // データをAllmartManageVoにマッピング
+	            AllmartManageVo vo = new AllmartManageVo();
+	            vo.setProduct_id(arr[0].replaceAll("\"", "")); // ダブルクォートを削除
+	            vo.setDepartment_id(arr[1].replaceAll("\"", ""));
+	            vo.setGroup_code(arr[2].replaceAll("\"", ""));
+	            vo.setProduct_code(arr[3].replaceAll("\"", ""));
+	            vo.setProduct_name(arr[4].replaceAll("\"", ""));
+	            vo.setUnit_price(arr[5].replaceAll("\"", ""));
+	            vo.setTax_category(arr[6].replaceAll("\"", ""));
+	            
+				// 現在の日付を取得し、フォーマットを設定する
+				LocalDate currentDate = LocalDate.now();
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+				String formattedDate = currentDate.format(formatter);
+
+				// 登録日に現在の日付を設定する
+				vo.setInsert_date(formattedDate);
+				
+				// Login情報を設定する。
+				vo.setLogin_id("admin");
+				
+	            // データベースに挿入
+	            try {
+	            	
+					//ALLmart価格管理Table
+					AllmartManageVo allmartmngSrch = new AllmartManageVo();
+					allmartmngSrch.setSearch_type(CommonUtil.SEARCH_TYPE_SRCH);
+					allmartmngSrch.setProduct_code(vo.getProduct_code());
+					allmartmngSrch.setLogin_id("admin");
+					List<AllmartManageVo> allmartList = mapper.selectAllmartManage(allmartmngSrch);	
+					
+					if(allmartList.size() <= 0) {
+						mapper.insertAllmartManage(vo);
+					}
+//	            	String[] product_id_list = { vo.getProduct_id() }; // getProduct_id()を配列に変換する
+//	            	log.debug("product_id: " + product_id_list[0]);
+//	            	String adc = vo.getProduct_id();
+//	            	
+//	            	List<String> productIds = Arrays.asList(adc);
+//	            	List<AllmartManageVo> results = mapper.getAllmartManageT(productIds);
+//	            	    
+//	                //List<AllmartManageVo> existingRecords = mapper.getAllmartManageT(vo.getProduct_id());
+//	                
+//	                if (results.isEmpty()) {
+//	                    mapper.insertAllmartManage(vo);
+//	                } else {
+//	                    // すでにデータが存在する場合の処理
+//	                    // 何か特別な処理が必要であればここに記述する
+//	                    // 例えば、ログを出力するなど
+//	                    log.debug("Record already exists: " + vo);
+//	                }
+	            } catch (DataIntegrityViolationException e) {
+	                // データの整合性違反などの例外処理
+	                //System.err.println("Error inserting record: " + vo);
+	                //e.printStackTrace();
+	            	continue;
+	            }
+	            
+	            cnt++;
+	        }
+	        
+	    } finally {
+	        if (reader != null) {
+	            reader.close();
+	        }
+	    }
+	}
+
+	
+	/**
+	 * 계산식에 의해 VO를 세팅 (insert, update시 사용)
+	 * @param vo
+	 * @param ｉｆ (2020-07-28)
+	 * @return
+	 */
+	public AllmartManageVo setData(AllmartManageVo vo, boolean ｉｆ) {
+//		int iPrd_config = Integer.parseInt(vo.getPrd_config()); // 商品構成
+//    	int iPrd_price = Integer.parseInt(vo.getPrd_price()); // 1個当たり仕入金額(税別)
+//    	int iPrd_pkg = Integer.parseInt(vo.getPrd_pkg()); // 包装(箱+印刷+他)
+//    	int iShip_cost = Integer.parseInt(vo.getShip_cost()); // 送料
+//    	String  iAdd_ship_cost = vo.getAdd_ship_cost(); // 追加送料
+//    	
+//        if(StringUtils.isEmpty(iAdd_ship_cost)) {
+//        		iAdd_ship_cost = "0";
+//          }
+// 	    
+//    	// 合計仕入価格 = 【（商品構成×1個当たり仕入金額(税別)）×1.08＋　包装(箱+印刷+他)　＋送料+追加送料　】  ★
+//    	//double dTtl_price = ((iPrd_config*iPrd_price)+iPrd_pkg+iShip_cost+iAdd_ship_cost)*1.08;
+//    	double dTtl_price = ((iPrd_config*iPrd_price)*1.08+iPrd_pkg+iShip_cost+ Integer.parseInt(iAdd_ship_cost));
+//    	// 販売価格★
+//    	int iSales_price = Integer.parseInt(vo.getSales_price()); 
+//    	// 販売手数料（10%）
+//    	//int iSales_comm_ratio =   Integer.parseInt(vo.getSales_comm_ratio());
+//    	int  iSales_comm_ratio = 10;
+//    	
+//    	// 販売手数料（10%）
+//    	double dSales_comm_ratio = iSales_price / iSales_comm_ratio;
+//    	// 販売手数料金額 = 販売価格 * 販売手数料
+//    	double dSales_comm_price = dSales_comm_ratio;
+//    	// 利益 = 販売価格 - 合計仕入価格 - 販売手数料金額  ★
+//    	double dBenefit = iSales_price - dTtl_price - dSales_comm_price;
+//    	// 利益率 = 利益 / 販売価格
+//    	double dBenefit_ratio = dBenefit / iSales_price;
+//    	
+//    	long lTtl_price = Math.round(dTtl_price);   // 合計仕入価格★
+//    	long lSales_comm_ratio = Math.round(iSales_comm_ratio);  // 販売手数料（10%）
+//    	long lSales_comm_price = Math.round(dSales_comm_price);  // 販売手数料金額
+//    	long lBenefit = Math.round(dBenefit);  // 利益★
+//    	int  lBenefit_ratio = (int)(dBenefit_ratio*100);  // 利益率
+//    	
+//    	vo.setTtl_price("￥"+lTtl_price+""); // 合計仕入価格★
+//    	vo.setAdd_ship_cost("￥"+iAdd_ship_cost+""); // 追加送料
+//    	
+//    	vo.setSales_comm_ratio(lSales_comm_ratio+"%"); // 販売手数料（10%）
+//    	vo.setSales_comm_price("￥"+lSales_comm_price+""); // 販売手数料金額
+//    	vo.setBenefit("￥"+lBenefit+"");  // 利益 ★
+//    	vo.setBenefit_ratio(lBenefit_ratio+"%");   // 利益率
+//    	
+//    	vo.setTtl_price(lTtl_price+""); // 合計仕入価格
+//    	vo.setSales_comm_ratio(lSales_comm_ratio+""); // 販売手数料（10%）
+//    	vo.setSales_comm_price(lSales_comm_price+""); // 販売手数料金額
+//    	vo.setBenefit(lBenefit+"");  // 利益
+//    	vo.setBenefit_ratio(lBenefit_ratio+"");   // 利益率
+    	
+    	return vo;
+	}
 	
 	public void downloadTodayOrder(
 			HttpServletResponse response, String fileEncoding) 

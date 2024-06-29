@@ -27,6 +27,7 @@ import jp.prj.araku.tablet.dao.TabletPrdDAO;
 import jp.prj.araku.tanpin.dao.TanpinDAO;
 import jp.prj.araku.tanpin.vo.ExpireManageVo;
 import jp.prj.araku.tanpin.vo.TanpinVO;
+import jp.prj.araku.tanpin.vo.AllmartManageVo;
 
 @RequestMapping(value="/araku/prdAnalysis")
 @Controller
@@ -135,6 +136,39 @@ public class TanpinController {
 	 * */
 	
 	/**
+	 * 20211120
+	 * ALLMART価格管理画面E
+	 * */
+	@RequestMapping(value = "/allMng")
+	public String showallManage(Model model) {
+		return "tanpin/martManage";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/getAllMng")
+	public List<AllmartManageVo> getAllmartManage(HttpServletRequest req,AllmartManageVo vo) {
+		return dao.getAllmartManage(vo);
+	}
+	
+//	@ResponseBody
+//	@RequestMapping(value = "/addAllMng", method=RequestMethod.POST)
+//	public List<AllmartManageVo> addAllmartManage(AllmartManageVo vo) {
+//		return dao.addAllmartManage(vo);
+//	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/modAllMng", method=RequestMethod.POST)
+	public List<AllmartManageVo> modifyAllmartManage(@RequestBody List<AllmartManageVo> list) {
+		return dao.modifyAllmartManage(list);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/delAllmart", method=RequestMethod.POST)
+	public List<AllmartManageVo> removeAllmartManage(@RequestBody List<AllmartManageVo> list) {
+		return dao.removeAllmartManage(list);
+	}
+	
+	/**
 	 * 20230617
 	 * 賞味期限管理S
 	 * */
@@ -170,4 +204,39 @@ public class TanpinController {
 	 * 20230617
 	 * 賞味期限管理E
 	 * */
+	
+	@RequestMapping(value="/prdAllFileUp", method=RequestMethod.POST)
+//	public String manipulateAllmartInfo(
+//			HttpServletRequest req, MultipartFile file) throws IOException {
+	public String manipulateAllmartInfo(
+			 MultipartFile upload) throws IOException {
+        // ログを追加してアップロードファイルの情報を確認
+        log.debug("Received file: " + upload.getOriginalFilename());
+        
+        // アップロードされたファイルを処理するコード
+        try {
+			dao.insertAllmartManageExe(upload, fileEncoding);
+        // ファイル処理コード
+	    } catch (Exception e) {
+	        log.debug("Error processing file: " + e.getMessage(), e);
+	        throw e;
+	    }
+        
+		return "redirect:allMng";
+	}
+	
+	@RequestMapping(value="/downAllmart", method=RequestMethod.POST)
+	public void downloadAllmartInfo(
+			HttpServletResponse response,
+			@RequestParam(value="id_lst") String id_lst) {
+		id_lst = id_lst.replace("[", "");
+		id_lst = id_lst.replace("]", "");
+		String[] product_id_list = id_lst.split(",");
+		try {
+			dao.downloadAllmart(response, product_id_list, fileEncoding);
+		} catch (IOException e) {
+		} catch (CsvDataTypeMismatchException e) {
+		} catch (CsvRequiredFieldEmptyException e) {
+		}
+	}
 }

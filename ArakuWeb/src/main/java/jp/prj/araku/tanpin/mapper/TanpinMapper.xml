@@ -116,6 +116,41 @@ from
     </choose>
 </select>
 
+<update id="updateAllmartManage" parameterType="AllmartManage">
+    update allmartprice
+    <set>
+        <if test="product_id != null and product_id != ''">
+            product_id = #{product_id},
+        </if>
+        <if test="department_id != null and department_id != ''">
+            department_id = #{department_id},
+        </if>
+        <if test="group_code != null and group_code != ''">
+            group_code = #{group_code},
+        </if>
+        <if test="product_name != null and product_name != ''">
+            product_name = #{product_name},
+        </if>
+        <if test="unit_price != null and unit_price != ''">
+            unit_price = #{unit_price},
+        </if>
+        <if test="tax_category != null and tax_category != ''">
+            tax_category = #{tax_category},
+        </if>
+        <!-- product_code の更新は避ける -->
+        <if test="insert_date != null and insert_date != ''">
+			insert_date = str_to_date(#{insert_date}, '%Y/%m/%d'),
+		</if>
+		<if test="update_date != null and update_date != ''">
+		    update_date = str_to_date(#{update_date}, '%Y/%m/%d'),
+		</if>
+		<if test="login_id != null and login_id !=''">
+			login_id = #{login_id}
+		</if>
+    </set>
+    where product_id = #{product_id}
+</update>
+
 <update id="updateTanpinInfo" parameterType="Tanpin">
 update
 	tanpin_info
@@ -203,6 +238,26 @@ from expire_manage
 order by seq_id desc, jan_cd desc
 </select>
 
+<select id="getExpireManage" parameterType="ExpireManage" resultType="ExpireManage">
+select 
+	seq_id, jan_cd, prd_nm, partner_id, partner_nm, prd_qty
+	, date_format(register_date, '%Y/%m/%d') register_date
+	, date_format(update_date, '%Y/%m/%d') update_date
+	, date_format(exp_dt, '%Y/%m/%d') exp_dt
+from expire_manage
+<where>
+	<if test="prd_nm != null and prd_nm !=''">
+		prd_nm like '%${prd_nm}%'
+	</if>
+	<if test="jan_cd != null and jan_cd !=''">
+		jan_cd like '%${jan_cd}%'
+	</if>
+	<if test="exp_dt != null and exp_dt !=''">
+		exp_dt like '%${exp_dt}%'
+	</if>
+</where>
+</select>
+
 <update id="updateExpireManage" parameterType="ExpireManage">
 	update expire_manage
 	set update_date = now()
@@ -235,4 +290,112 @@ delete from expire_manage
 where seq_id = #{seq_id}
 </delete>
 
+<insert id="insertAllmartManage" parameterType="AllmartManage" useGeneratedKeys="true" keyProperty="product_id" keyColumn="product_id">
+insert into allmartprice 
+(product_id, department_id, group_code, product_code, product_name, unit_price, tax_category, insert_date, update_date, login_id )
+values
+(#{product_id}, #{department_id}, #{group_code}, #{product_code}, #{product_name}, #{unit_price}, #{tax_category}, #{insert_date}, #{update_date}, #{login_id})
+</insert>
+
+<select id="selectAllmartManage" parameterType="AllmartManage" resultType="AllmartManage">
+select 
+	product_id, department_id, group_code, product_code, product_name, unit_price, tax_category
+from allmartprice
+<where>
+	<if test="product_id != null and product_id !=''">
+		product_id like '%${product_id}%'
+	</if>
+	<if test="department_id != null and department_id !=''">
+		department_id like '%${department_id}%'
+	</if>
+	<if test="group_code != null and group_code !=''">
+		group_code like '%${group_code}%'
+	</if>
+	<if test="product_code != null and product_code !=''">
+		product_code like '%${product_code}%'
+	</if>
+	<if test="product_name != null and product_name !=''">
+		product_name like '%${product_name}%'
+	</if>
+	<if test="unit_price != null and unit_price !=''">
+		unit_price like '%${unit_price}%'
+	</if>
+	<if test="tax_category != null and tax_category !=''">
+		tax_category like '%${tax_category}%'
+	</if>
+	<if test="search_type =='srch'">
+		<trim prefixOverrides="AND |OR ">
+			<if test="prd_nm != null and prd_nm !=''">
+			and product_name like '%${prd_nm}%'
+			</if>
+			<if test="start_date != null and start_date !='' and end_date != null and end_date !=''">
+			and update_date between str_to_date(#{start_date}, '%Y/%m/%d') and str_to_date(#{end_date}, '%Y/%m/%d')
+			</if>
+		</trim>
+	</if>
+	<if test="login_id != null and login_id !=''">
+			and login_id = #{login_id}
+	</if>
+</where>
+</select>
+
+<select id="getAllmartManageDL" parameterType="AllmartManage" resultType="AllmartManage">
+select 
+	product_id, department_id, group_code, product_code, product_name, unit_price, tax_category
+from allmartprice
+<where>
+	<if test="product_id_list != null">
+		product_id in
+		<foreach item="item" index="index" collection="product_id_list"
+			open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+</where>
+</select>
+
+<select id="getAllmartManageT" parameterType="AllmartManage" resultType="AllmartManage">
+select 
+	product_id, department_id, group_code, product_code, product_name, unit_price, tax_category
+from allmartprice
+<where>
+	<if test="product_id_list != null">
+		product_id in
+		<foreach item="item" index="index" collection="product_id_list"
+			open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+    <if test="search_type =='srch'">
+		<trim prefixOverrides="AND |OR ">
+			<if test="prd_nm != null and prd_nm !=''">
+				and product_name like '%${prd_nm}%'
+			</if>
+			<if test="jan_cd != null and jan_cd !=''">
+				and product_code like '%${jan_cd}%'
+			</if>
+			<if test="start_date != null and start_date !='' and end_date != null and end_date !=''">
+				and update_date between str_to_date(#{start_date}, '%Y/%m/%d') and str_to_date(#{end_date}, '%Y/%m/%d')
+			</if>
+		</trim>
+	</if>
+</where>
+</select>
+
+<insert id="insertAllmartManageT" parameterType="AllmartManage">
+    insert into allmartprice (product_id, department_id, group_code, product_code, product_name, unit_price, tax_category)
+    values (#{product_id}, #{department_id}, #{group_code}, #{product_code}, #{product_name}, #{unit_price}, #{tax_category})
+</insert>
+
+<delete id="deleteAllmartManage" parameterType="map">
+    DELETE FROM allmartprice
+    <where>
+        <if test="product_code != null and product_code != ''">
+            product_code = #{product_code}
+        </if>
+        <if test="user_id != null and user_id != ''">
+            AND login_id = #{user_id}
+        </if>
+    </where>
+</delete>
 </mapper>

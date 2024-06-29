@@ -45,6 +45,11 @@ $(document).ready(function() {
 				</li>
 			</ul>
 			<ul class="nav navbar-nav">
+				<li id="allprice" class="nav-item">
+				<a class="nav-link" href="allMng">ALLMART価格管理</a>
+				</li>
+			</ul>
+			<ul class="nav navbar-nav">
 				<li id="expire" class="nav-item">
 				<a class="nav-link" href="expMng">賞味期限管理</a>
 				</li>

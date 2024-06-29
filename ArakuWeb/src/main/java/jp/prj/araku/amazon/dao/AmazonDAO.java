@@ -102,7 +102,32 @@ public class AmazonDAO {
 		        	vo.setDays_past_promise(arr[6]);
 		        	vo.setBuyer_email(arr[7]);
 		        	vo.setBuyer_name(arr[8]);
-		        	vo.setBuyer_phone_number(arr[9]);
+	                 //Phone numberを正しく修正します。 2024/05/24 kim
+	                 try {
+	                       // 電話番号にていらない部分を取り除く
+	                       String phonenum = arr[9];
+	                       
+	                       if (phonenum != null) {
+	                           // 不要な文字を一度に除去
+	                           phonenum = phonenum.replace("'", "").replace("+82", "").replace("+81", "").replace("+", "");
+
+	                           // Phoneの桁数が12桁以上になる場合、後ろから12桁を取得する
+	                           if (phonenum.length() > 13) {
+	                               phonenum = phonenum.substring(phonenum.length() - 13);
+	                           }
+	                       }
+
+	                       vo.setBuyer_phone_number(phonenum);
+
+	                  } catch (Exception e) {
+	                     /* 2020-07-10
+	                     // 에러 발생시 에러리스트에 넣은후 다음 레코드로 진행
+	                     log.debug("[ERR]: " + vo.getOrder_no());
+	                     errList.add(vo);
+	                     continue;
+	                     */
+	                }
+		        	//vo.setBuyer_phone_number(arr[9]);
 		        	vo.setSku(arr[10]);
 		        	vo.setProduct_name(arr[11]);
 		        	vo.setQuantity_purchased(arr[12]);
@@ -114,7 +139,29 @@ public class AmazonDAO {
 		        	vo.setShip_address2(arr[18]);
 		        	vo.setShip_address3(arr[19]);
 		        	vo.setShip_city(arr[20]);
-		        	vo.setShip_state(arr[21]);
+		            //shipStateを正しく修正します。
+		            try {
+		               // 住所にていらない部分を取り除く
+		               String shipState = arr[21]; 
+		               if (shipState != null) {
+		                 // 不要な文字を一度に変更
+		                shipState = shipState.replace("日本", "");
+
+		               }
+		               // 都がマスタに登録してないなら、エラーメッセージを画面に表示する。
+		               // 日本东京都　⇒　東京都では
+		               //マスタを取得して存在しない場合、画面表示して進めるようにする。画面はSUB画面にして修正する。
+		               ///
+		               vo.setShip_state(shipState);
+		            } catch (Exception e) {
+		              /* 2020-07-10
+		              // 에러 발생시 에러리스트에 넣은후 다음 레코드로 진행
+		              log.debug("[ERR]: " + vo.getOrder_no());
+		              errList.add(vo);
+		              continue;
+		              */
+		           }
+		            //vo.setShip_state(arr[21]);
 		        	vo.setShip_postal_code(arr[22]);
 		        	vo.setShip_country(arr[23]);
 		        	vo.setPayment_method(arr[24]);
@@ -155,20 +202,20 @@ public class AmazonDAO {
 			        	        productName = productName.replace("'", "");
 				        		log.debug("productName:" + productName);
 			        	    }
-			        	    // '+82' 문자열 제거
-			        	    if (productName.contains("+82")) {
-			        	        productName = productName.replace("+82", "");
-				        		log.debug("productName:" + productName);
-			        	    }
-			        	    // '+81' 문자열 제거
-			        	    if (productName.contains("+81")) {
-			        	        productName = productName.replace("+81", "");
-				        		log.debug("productName:" + productName);
-			        	    }
-			        	    // '+' 문자열 제거
-			        	    if (productName.contains("+")) {
-			        	        productName = productName.replace("+", "");
-			        	    }
+//			        	    // '+82' 문자열 제거
+//			        	    if (productName.contains("+82")) {
+//			        	        productName = productName.replace("+82", "");
+//				        		log.debug("productName:" + productName);
+//			        	    }
+//			        	    // '+81' 문자열 제거
+//			        	    if (productName.contains("+81")) {
+//			        	        productName = productName.replace("+81", "");
+//				        		log.debug("productName:" + productName);
+//			        	    }
+//			        	    // '+' 문자열 제거
+//			        	    if (productName.contains("+")) {
+//			        	        productName = productName.replace("+", "");
+//			        	    }
 			        	}
 			        	
 			        	vo.setProduct_name(productName);
@@ -188,20 +235,20 @@ public class AmazonDAO {
 		        	        productName = productName.replace("'", "");
 			        		log.debug("productName:" + productName);
 		        	    }
-		        	    // '+82' 문자열 제거
-		        	    if (productName.contains("+82")) {
-		        	        productName = productName.replace("+82", "");
-			        		log.debug("productName:" + productName);
-		        	    }
-		        	    // '+81' 문자열 제거
-		        	    if (productName.contains("+81")) {
-		        	        productName = productName.replace("+81", "");
-			        		log.debug("productName:" + productName);
-		        	    }
-		        	    // '+' 문자열 제거
-		        	    if (productName.contains("+")) {
-		        	        productName = productName.replace("+", "");
-		        	    }
+//		        	    // '+82' 문자열 제거
+//		        	    if (productName.contains("+82")) {
+//		        	        productName = productName.replace("+82", "");
+//			        		log.debug("productName:" + productName);
+//		        	    }
+//		        	    // '+81' 문자열 제거
+//		        	    if (productName.contains("+81")) {
+//		        	        productName = productName.replace("+81", "");
+//			        		log.debug("productName:" + productName);
+//		        	    }
+//		        	    // '+' 문자열 제거
+//		        	    if (productName.contains("+")) {
+//		        	        productName = productName.replace("+", "");
+//		        	    }
 		        	}
 		        	
 		        	// 項目・選択肢 (상품옵션) 처리

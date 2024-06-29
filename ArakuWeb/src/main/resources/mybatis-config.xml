@@ -43,6 +43,7 @@
 		<typeAlias type="jp.prj.araku.jaiko.partner.vo.JaikoWareTantou" alias="WareTantou" />
 		<typeAlias type="jp.prj.araku.jaiko.warehouse.vo.JaikoWareTempVO" alias="WareTemp" />
 		<typeAlias type="jp.prj.araku.tanpin.vo.ExpireManageVo" alias="ExpireManage" />
+		<typeAlias type="jp.prj.araku.tanpin.vo.AllmartManageVo" alias="AllmartManage" />
 		<typeAlias type="jp.prj.araku.jaiko.inventory.vo.TodayOrderVo" alias="TodayOrder"/>
 	</typeAliases>
 	<mappers>

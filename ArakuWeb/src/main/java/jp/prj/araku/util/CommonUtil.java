@@ -20,6 +20,8 @@ import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
+import jp.prj.araku.tanpin.vo.AllmartManageVo;
+
 public class CommonUtil {
 	public static final String SEARCH_TYPE_SRCH = "srch";
 	public static final String SEARCH_TYPE_SAGAWA = "saga";
@@ -27,6 +29,7 @@ public class CommonUtil {
 	public static final String SEARCH_TYPE_SCREEN = "screen";
 	public static final String SEARCH_TYPE_SUM = "sum";
 	public static final String SEARCH_TYPE_JAN_SUM = "jan";
+	public static final String SEARCH_TYPE_ALL = "alldata";
 	
 	public static final String UPDATE_TYPE_TWOMORE="twomore";
 	
@@ -43,12 +46,12 @@ public class CommonUtil {
 	public static final String TRANS_TARGET_A = "A"; /*A:アマゾン*/
 	public static final String TRANS_TARGET_Q = "Q"; /*Q:qoo10*/
 	public static final String TRANS_TARGET_Y = "Y"; /*Y:yahoo*/
+	public static final String TRANS_TARGET_C = "C"; /*C:キャンセル対応*/	
 	public static final String TRANS_TARGET_TA = "TA"; /*TA:tablet*/
 	public static final String TRANS_ERR = "ERR"; /*エラーテキスト*/
 	
 	public static final String ORDER_STATUS_COMPLETE = "出荷準備済";
 	public static final String TOMORROW_MORNING = "午前中";
-	
 	//2024/05/18 やまと時間指定のバグ対応。　時間の拡張性が純化するため改善する。　Start
 	public static final Map<String, String> TIME_MAP = new HashMap<>();
 
@@ -72,7 +75,7 @@ public class CommonUtil {
 //	public static final String TIMEMAP3 = "18：00～20：00";
 //	public static final String TIMEMAP4 = "19：00～21：00";
 	//2024/05/18 やまと時間指定のバグ対応。　時間の拡張性が純化するため改善する。　End
-	
+
 	public static final String YA_TOMORROW_MORNING_CODE = "0812";
 	public static final String YA_TOMORROW_TIMEMAP1 = "1416";
 	public static final String YA_TOMORROW_TIMEMAP2 = "1618";
@@ -118,7 +121,26 @@ public class CommonUtil {
 			, ArrayList<ArakuVO> list) 
 					throws CsvDataTypeMismatchException
 					, CsvRequiredFieldEmptyException {
+		
 		StatefulBeanToCsv<ArakuVO> beanToCSV = new StatefulBeanToCsvBuilder(writer)
+	            .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
+	            .build();
+		
+		csvWriter.writeNext(header);
+		
+		beanToCSV.write(list);
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static void executeAllmartCSVDownload(
+			CSVWriter csvWriter
+			, BufferedWriter writer
+			, String[] header
+			, ArrayList<AllmartManageVo> list) 
+					throws CsvDataTypeMismatchException
+					, CsvRequiredFieldEmptyException {
+		
+		StatefulBeanToCsv<AllmartManageVo> beanToCSV = new StatefulBeanToCsvBuilder(writer)
 	            .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
 	            .build();
 		
@@ -141,189 +163,241 @@ public class CommonUtil {
 	}
 	
 	public static String[] deliveryCompanyHeader(String type) {
-		String[] ret = {};
-		if("YAMA".equals(type)) {
-			String[] arr1 = {
-					"お客様管理番号"
-					, "送り状種類"
-					, "クール区分"
-					, "伝票番号"
-					, "出荷予定日"
-					, "お届け予定日"
-					, "配達時間帯"
-					, "お届け先コード"
-					, "お届け先電話番号"
-					, "お届け先電話番号枝番"
-					, "お届け先郵便番号"
-					, "お届け先住所"
-					, "お届け先アパートマンション名"
-					, "お届け先会社・部門１"
-					, "お届け先会社・部門２"
-					, "お届け先名"
-					, "お届け先名(ｶﾅ)"
-					, "敬称"
-					, "ご依頼主コード"
-					, "ご依頼主電話番号"
-					, "ご依頼主郵便番号"
-					, "ご依頼主住所"
-					, "ご依頼主アパートマンション"
-					, "ご依頼主名"
-					, "ご依頼主名(ｶﾅ)"
-					, "品名コード１"
-					, "品名１"
-					, "品名コード２"
-					, "品名２"
-					, "荷扱い１"
-					, "荷扱い２"
-					, "記事"
-					, "ｺﾚｸﾄ代金引換額（税込)"
-					, "内消費税額等"
-					, "止置き"
-					, "営業所コード"
-					, "発行枚数"
-					, "個数口表示フラグ"
-					, "請求先顧客コード"
-					, "請求先分類コード"
-					, "運賃管理番号"
-					, "クロネコwebコレクトデータ登録"
-					, "クロネコwebコレクト加盟店番号"
-					, "クロネコwebコレクト申込受付番号１"
-					, "クロネコwebコレクト申込受付番号２"
-					, "クロネコwebコレクト申込受付番号３"
-					, "お届け予定ｅメール利用区分"
-					, "お届け予定ｅメールe-mailアドレス"
-					, "入力機種"
-					, "お届け予定ｅメールメッセージ"
-					, "お届け完了ｅメール利用区分"
-					, "お届け完了ｅメールe-mailアドレス"
-					, "お届け完了ｅメールメッセージ"
-					, "クロネコ収納代行利用区分"
-					, "予備"
-					, "収納代行請求金額(税込)"
-					, "収納代行内消費税額等"
-					, "収納代行請求先郵便番号"
-					, "収納代行請求先住所"
-					, "収納代行請求先住所（アパートマンション名）"
-					, "収納代行請求先会社・部門名１"
-					, "収納代行請求先会社・部門名２"
-					, "収納代行請求先名(漢字)"
-					, "収納代行請求先名(カナ)"
-					, "収納代行問合せ先名(漢字)"
-					, "収納代行問合せ先郵便番号"
-					, "収納代行問合せ先住所"
-					, "収納代行問合せ先住所（アパートマンション名）"
-					, "収納代行問合せ先電話番号"
-					, "収納代行管理番号"
-					, "収納代行品名"
-					, "収納代行備考"
-					, "複数口くくりキー"
-					, "検索キータイトル1"
-					, "検索キー1"
-					, "検索キータイトル2"
-					, "検索キー2"
-					, "検索キータイトル3"
-					, "検索キー3"
-					, "検索キータイトル4"
-					, "検索キー4"
-					, "検索キータイトル5"
-					, "検索キー5"
-					, "予備"
-					, "予備"
-					, "投函予定メール利用区分"
-					, "投函予定メールe-mailアドレス"
-					, "投函予定メールメッセージ"
-					, "投函完了メール（お届け先宛）利用区分"
-					, "投函完了メール（お届け先宛）e-mailアドレス"
-					, "投函完了メール（お届け先宛）メールメッセージ"
-					, "投函完了メール（ご依頼主宛）利用区分"
-					, "投函完了メール（ご依頼主宛）e-mailアドレス"
-					, "投函完了メール（ご依頼主宛）メールメッセージ"
-				};
-			ret = arr1;
-		} else if("SAGA".equals(type)) {
-			String[] arr2 = {
-					"住所録コード"
-					, "お届け先電話番号"
-					, "お届け先郵便番号"
-					, "お届け先住所１（必須）"
-					, "お届け先住所２"
-					, "お届け先住所３"
-					, "お届け先名称１（必須）"
-					, "お届け先名称２"
-					, "お客様管理ナンバー"
-					, "お客様コード"
-					, "部署・担当者"
-					, "荷送人電話番号"
-					, "ご依頼主電話番号"
-					, "ご依頼主郵便番号"
-					, "ご依頼主住所１"
-					, "ご依頼主住所２"
-					, "ご依頼主名称１"
-					, "ご依頼主名称２"
-					, "荷姿コード"
-					, "品名１"
-					, "品名２"
-					, "品名３"
-					, "品名４"
-					, "品名５"
-					, "出荷個数"
-					, "便種（スピードで選択）"
-					, "便種（商品）"
-					, "配達日"
-					, "配達指定時間帯"
-					, "配達指定時間（時分）"
-					, "代引金額"
-					, "消費税"
-					, "決済種別"
-					, "保険金額"
-					, "保険金額印字"
-					, "指定シール①"
-					, "指定シール②"
-					, "指定シール③"
-					, "営業店止め"
-					, "ＳＲＣ区分"
-					, "営業店コード"
-					, "元着区分"
-			};
-			ret = arr2;
-		} else if("CLICK".equals(type)) {
-			String[] arr3 = {
-					"お届け先郵便番号"
-					,"お届け先氏名"
-					,"お届け先敬称"
-					,"お届け先住所1行目"
-					,"お届け先住所2行目"
-					,"お届け先住所3行目"
-					,"お届け先住所4行目"
-					,"内容品"
-				};
-			ret = arr3;
-		}else if("GSAGA".equals(type)) {
-			String[] arr4= {
-					"Seller CODE"
-					,"PICKUP_DATE"
-					,"ORDER_NO"
-					,"CONSIGNEE_NAME"
-					,"YOMIGANA"
-					,"CONSIGNEE_ADDRESS1"
-					,"CONSIGNEE_ADDRESS2"
-					,"CONSIGNEE_POSTALCODE"
-					,"CONSIGNEE_PHONENO"
-					,"CONSIGNEE_MAILADDRESS"
-					,"DELIVERY_DATE"
-					,"DELIVERY_TIME"
-					,"PKG"
-					,"WEIGHT"
-					,"ITEM_CODE"
-					,"ITEM_NAME"
-					,"ITEM_PCS"
-					,"UNIT_PRICE"
-					,"ITEM_ORIGIN"
-
-			};
-			ret = arr4;
-		}
-		return ret;
+	    String[] ret = {};
+	    if ("YAMA".equals(type)) {
+	        String[] arr1 = {
+	            "お客様管理番号",
+	            "送り状種類",
+	            "クール区分",
+	            "伝票番号",
+	            "出荷予定日",
+	            "お届け予定日",
+	            "配達時間帯",
+	            "お届け先コード",
+	            "お届け先電話番号",
+	            "お届け先電話番号枝番",
+	            "お届け先郵便番号",
+	            "お届け先住所",
+	            "お届け先アパートマンション名",
+	            "お届け先会社・部門１",
+	            "お届け先会社・部門２",
+	            "お届け先名",
+	            "お届け先名(ｶﾅ)",
+	            "敬称",
+	            "ご依頼主コード",
+	            "ご依頼主電話番号",
+	            "ご依頼主郵便番号",
+	            "ご依頼主住所",
+	            "ご依頼主アパートマンション",
+	            "ご依頼主名",
+	            "ご依頼主名(ｶﾅ)",
+	            "品名コード１",
+	            "品名１",
+	            "品名コード２",
+	            "品名２",
+	            "荷扱い１",
+	            "荷扱い２",
+	            "記事",
+	            "ｺﾚｸﾄ代金引換額（税込)",
+	            "内消費税額等",
+	            "止置き",
+	            "営業所コード",
+	            "発行枚数",
+	            "個数口表示フラグ",
+	            "請求先顧客コード",
+	            "請求先分類コード",
+	            "運賃管理番号",
+	            "クロネコwebコレクトデータ登録",
+	            "クロネコwebコレクト加盟店番号",
+	            "クロネコwebコレクト申込受付番号１",
+	            "クロネコwebコレクト申込受付番号２",
+	            "クロネコwebコレクト申込受付番号３",
+	            "お届け予定ｅメール利用区分",
+	            "お届け予定ｅメールe-mailアドレス",
+	            "入力機種",
+	            "お届け予定ｅメールメッセージ",
+	            "お届け完了ｅメール利用区分",
+	            "お届け完了ｅメールe-mailアドレス",
+	            "お届け完了ｅメールメッセージ",
+	            "クロネコ収納代行利用区分",
+	            "予備",
+	            "収納代行請求金額(税込)",
+	            "収納代行内消費税額等",
+	            "収納代行請求先郵便番号",
+	            "収納代行請求先住所",
+	            "収納代行請求先住所（アパートマンション名）",
+	            "収納代行請求先会社・部門名１",
+	            "収納代行請求先会社・部門名２",
+	            "収納代行請求先名(漢字)",
+	            "収納代行請求先名(カナ)",
+	            "収納代行問合せ先名(漢字)",
+	            "収納代行問合せ先郵便番号",
+	            "収納代行問合せ先住所",
+	            "収納代行問合せ先住所（アパートマンション名）",
+	            "収納代行問合せ先電話番号",
+	            "収納代行管理番号",
+	            "収納代行品名",
+	            "収納代行備考",
+	            "複数口くくりキー",
+	            "検索キータイトル1",
+	            "検索キー1",
+	            "検索キータイトル2",
+	            "検索キー2",
+	            "検索キータイトル3",
+	            "検索キー3",
+	            "検索キータイトル4",
+	            "検索キー4",
+	            "検索キータイトル5",
+	            "検索キー5",
+	            "予備",
+	            "予備",
+	            "投函予定メール利用区分",
+	            "投函予定メールe-mailアドレス",
+	            "投函予定メールメッセージ",
+	            "投函完了メール（お届け先宛）利用区分",
+	            "投函完了メール（お届け先宛）e-mailアドレス",
+	            "投函完了メール（お届け先宛）メールメッセージ",
+	            "投函完了メール（ご依頼主宛）利用区分",
+	            "投函完了メール（ご依頼主宛）e-mailアドレス",
+	            "投函完了メール（ご依頼主宛）メールメッセージ"
+	        };
+	        ret = arr1;
+	    } else if ("SAGA".equals(type)) {
+	        String[] arr2 = {
+	            "住所録コード",
+	            "お届け先電話番号",
+	            "お届け先郵便番号",
+	            "お届け先住所１（必須）",
+	            "お届け先住所２",
+	            "お届け先住所３",
+	            "お届け先名称１（必須）",
+	            "お届け先名称２",
+	            "お客様管理ナンバー",
+	            "お客様コード",
+	            "部署・担当者",
+	            "荷送人電話番号",
+	            "ご依頼主電話番号",
+	            "ご依頼主郵便番号",
+	            "ご依頼主住所１",
+	            "ご依頼主住所２",
+	            "ご依頼主名称１",
+	            "ご依頼主名称２",
+	            "荷姿コード",
+	            "品名１",
+	            "品名２",
+	            "品名３",
+	            "品名４",
+	            "品名５",
+	            "出荷個数",
+	            "便種（スピードで選択）",
+	            "便種（商品）",
+	            "配達日",
+	            "配達指定時間帯",
+	            "配達指定時間（時分）",
+	            "代引金額",
+	            "消費税",
+	            "決済種別",
+	            "保険金額",
+	            "保険金額印字",
+	            "指定シール①",
+	            "指定シール②",
+	            "指定シール③",
+	            "営業店止め",
+	            "ＳＲＣ区分",
+	            "営業店コード",
+	            "元着区分"
+	        };
+	        ret = arr2;
+	    } else if ("CLICK".equals(type)) {
+	        String[] arr3 = {
+	            "お届け先郵便番号",
+	            "お届け先氏名",
+	            "お届け先敬称",
+	            "お届け先住所1行目",
+	            "お届け先住所2行目",
+	            "お届け先住所3行目",
+	            "お届け先住所4行目",
+	            "内容品"
+	        };
+	        ret = arr3;
+	    } else if ("GSAGA".equals(type)) {
+	        String[] arr4 = {
+	            "Seller CODE",
+	            "PICKUP_DATE",
+	            "ORDER_NO",
+	            "CONSIGNEE_NAME",
+	            "YOMIGANA",
+	            "CONSIGNEE_ADDRESS1",
+	            "CONSIGNEE_ADDRESS2",
+	            "CONSIGNEE_POSTALCODE",
+	            "CONSIGNEE_PHONENO",
+	            "CONSIGNEE_MAILADDRESS",
+	            "DELIVERY_DATE",
+	            "DELIVERY_TIME",
+	            "PKG",
+	            "WEIGHT",
+	            "ITEM_CODE",
+	            "ITEM_NAME",
+	            "ITEM_PCS",
+	            "UNIT_PRICE",
+	            "ITEM_ORIGIN"
+	        };
+	        ret = arr4;
+	    } else if ("BOSS".equals(type)) {
+	        String[] arr5 = {
+	            "モール注文番号",
+	            "モール注文日時",
+	            "ショップID",
+	            "店舗様用メモ",
+	            "注文者氏名",
+	            "注文者国名",
+	            "注文者郵便番号",
+	            "都道府県",
+	            "市区町村",
+	            "町名・番地以降",
+	            "注文者メールアドレス",
+	            "注文者電話番号",
+	            "決済方法区分",
+	            "注文備考",
+	            "カスタマー備考",
+	            "送付先氏名",
+	            "送付先国名",
+	            "送付先郵便番号",
+	            "送付先都道府県",
+	            "送付先市区町村",
+	            "送付先町名・番地以降",
+	            "送付先電話番号",
+	            "配送方法",
+	            "お届け指定日",
+	            "お届け指定時間帯",
+	            "配送サービス種別",
+	            "配送備考",
+	            "倉庫備考",
+	            "配送料",
+	            "配送料税率",
+	            "決済手数料",
+	            "決済手数料税率",
+	            "ラッピング手数料",
+	            "ラッピング手数料税率",
+	            "ポイント利用額",
+	            "クーポン利用額",
+	            "ギフト備考",
+	            "SKUコード",
+	            "商品名",
+	            "注文個数",
+	            "商品単価",
+	            "消費税",
+	            "税率",
+	            "税込別",
+	            "ギフト・のし",
+	            "のしパターン",
+	            "同梱不可",
+	            "項目選択肢",
+	            "ー　"
+	        };
+	        ret = arr5;
+	    }
+	    return ret;
 	}
 	
 	public static String[] rakutenHeader() {
