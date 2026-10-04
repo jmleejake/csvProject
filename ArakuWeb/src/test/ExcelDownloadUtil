@@ -1,0 +1,27 @@
+package com.km.adm.util;
+
+import com.km.adm.config.ExcelHeader;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ExcelDownloadUtil {
+	public static List<String> generateHeaders(Class<?> clazz, String[] dataKeys) {
+		List<String> headers = new ArrayList<>();
+		Field[] fields = clazz.getDeclaredFields();
+
+		for (String key : dataKeys) {
+			for (Field field : fields) {
+				if (key.equals(field.getName())) {
+					ExcelHeader excelHeader = field.getAnnotation(ExcelHeader.class);
+					if (excelHeader != null) {
+						headers.add(excelHeader.value());
+					}else{
+						headers.add(field.getName());
+					}
+				}
+			}
+		}
+		return headers;
+	}
+}
