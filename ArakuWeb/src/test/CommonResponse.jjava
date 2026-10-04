@@ -1,0 +1,47 @@
+package com.km.adm.common;
+
+import java.util.Arrays;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class CommonResponse<T> {
+	
+	/**
+	 * 성공 여부
+	 */
+	private String status;
+
+	private List<String> messages;
+
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private T body;
+
+	public CommonResponse(String status, String message) {
+		super();
+		this.status = status;
+		this.messages = Arrays.asList(message);
+	}
+
+	public CommonResponse(String status, String message, T body) {
+		super();
+		this.status = status;
+		this.messages = Arrays.asList(message);
+		this.body = body;
+	}
+
+	public CommonResponse(String status, List<String> messages) {
+		super();
+		this.status = status;
+		this.messages = messages;
+	}
+}
