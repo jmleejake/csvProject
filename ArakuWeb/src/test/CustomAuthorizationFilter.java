@@ -210,7 +210,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 								LogBpsResultVo bpsResult = LogBpsResultVo.builder()
 									.systemCode("ERP")
 									.bpsTypeCode("BACK")
-									.frontUrl(request.getHeader("FRONT-URL"))
+									.frontUrl(request.getHeader("FRONT-URL")) // config.headers["FRONT-URL"] = window?.location?.pathname || "";
 									.requestUrl(uriPath)
 									.requestHeader(headerJson)
 									.requestParam(requestParam)
