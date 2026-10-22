@@ -18,6 +18,9 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+/**
+* goodsFlowShippingTracking
+*/
 @Slf4j
 public class RestUtil {
 
