@@ -19,7 +19,11 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 /**
-* goodsFlowShippingTracking
+goodsFlowShippingTracking
+getShinhanToken
+getShinhanTransaction
+kmToErpModifyShippingAddress
+// 굿스플로 API 호출 (운송장번호 등록)
 */
 @Slf4j
 public class RestUtil {
