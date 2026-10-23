@@ -30,8 +30,6 @@ jake
 
 jmlee5@lgupluspartners.co.kr
 
-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
-
 ## entraid 연동
 * entraid 연동방식 구상
 
@@ -55,76 +53,106 @@ ID/PW를 그대로 넘기는 ROPC는 Microsoft 문서에서도 "레거시용, �
 5. 시스템관리자가 지금 있는 /api/user/confirm 플로우로 confirm_yn=true 처리 → 그 다음부터 정상 로그인
 
 ## querypie EC2 DB접속
+```bash
 psql -U postgres -d postgres -h dev-aisoc-postgres.cxegieo0kbv2.ap-northeast-2.rds.amazonaws.com
+```
 
 ## querypie EC2 프론트엔드 기동하기
 - 깃설치
+```bash
 sudo yum install -y git
+```
 
 - 노드설치
+```bash
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 source ~/.bashrc
 nvm install 20
 node -v
+```
 
 - 깃 클론
+```bash
 git clone https://github.com/lgu-ciso/AISOC_WEB_FE.git aisoc-web-fe
-
-yeoseonsoo
-
-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
+```
 
 - 소스폴더 접근
+```bash
 cd aisoc-web
+```
 
 
 - 서비스 기동
+```bash
 npm install
 cp .env.example .env.local
+```
 
+```bash
 nohup npm run dev > aisoc-fe.log 2>&1 &
+```
 
 - 로그 조회
+```bash
 tail -f aisoc-fe.log
+```
 
 - 서비스 중단
+```bash
 ps aux | grep "next dev"
 
 kill <PID>
+```
 
 ## querypie EC2 백엔드 기동하기
 
 - ec2 터미널에서 폴더삭제 하는법
+```bash
 rm -rf <폴더명>
+```
 
 - 자바 설치
+```bash
 sudo dnf install -y java-17-amazon-corretto-devel git
+```
 
 - maven 설치
+```bash
 sudo yum install -y maven
+```
 
 - 초기화쿼리 실행
+```bash
 psql -h dev-aisoc-postgres.cxegieo0kbv2.ap-northeast-2.rds.amazonaws.com -U postgres -d postgres -f src/main/resources/schema.sql
+```
 
 - 깃 클론
+```bash
 git clone https://github.com/lgu-ciso/AISOC_WEB_BE.git aisoc-web-be
+```
 
-yeoseonsoo
-
-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
 
 - 빌드
+```bash
 cd aisoc-web-be
 mvn -B clean package -DskipTests
+```
 
 - 서비스 기동
+```bash
 export JASYPT_ENCRYPTOR_PASSWORD=dbvmfvkxmsj
 export SPRING_PROFILES_ACTIVE=dev
 nohup java -jar target/aisoc.jar > aisoc-be.log 2>&1 &
+```
 
 - 서비스 확인
+```bash
 ps -ef |grep java
+```
+
+```bash
 ss -an |grep 8081
+```
 
 ## web과 agent연동에 대한 고찰
 - 전제: 요구사항 P-02 / 전체현황표를 보면 Investigation / Hunting / MCP / Web이 애초에 4개 분리된 개발 트랙이야. 
