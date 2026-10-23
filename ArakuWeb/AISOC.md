@@ -104,6 +104,18 @@ ps aux | grep "next dev"
 kill <PID>
 ```
 
+- 운영시 세팅 예시
+
+지속적으로 운영할 거면 앞서 말씀드린 pm2가 더 낫습니다:
+종료/재시작도 pm2 stop aisoc-web / pm2 restart aisoc-web으로 간단합니다. 지금은 테스트용으로 빨리 띄우는 거면 nohup, 운영 서버로 계속 띄워둘 거면 pm2 쓰시는 걸 추천해요.
+```bash
+npm install -g pm2
+pm2 start npm --name aisoc-web -- run dev
+pm2 logs aisoc-web      # 로그 확인
+pm2 save
+pm2 startup             # 재부팅 시 자동 실행
+```
+
 ## querypie EC2 백엔드 기동하기
 
 - ec2 터미널에서 폴더삭제 하는법
@@ -153,6 +165,125 @@ ps -ef |grep java
 ```bash
 ss -an |grep 8081
 ```
+
+- 운영시 세팅 예시
+
+ pm2는 Node.js 전용이 아니라 임의의 프로세스를 관리할 수 있어서 Java/Spring Boot jar도 돌릴 수 있습니다.
+
+```bash
+pm2 start java --name aisoc-no-okta --interpreter none -- -jar target/aisoc-*.jar
+```
+
+환경변수(JASYPT_ENCRYPTOR_PASSWORD, SPRING_PROFILES_ACTIVE)는 미리 export 해두거나
+
+ecosystem config 파일의 env에 넣어줘야 함
+
+또는 pm2 start ecosystem.config.js처럼 설정 파일로 관리하는 방법도 가능합니다.
+
+- pm2 세팅방법
+0. 사전 준비 (pm2 자체는 Node.js 기반이라 Node가 설치되어 있어야 함)
+```bash
+node -v    # 없으면 설치 필요
+sudo npm install -g pm2
+```
+
+1. ecosystem.config.js 작성 (프로젝트 루트, 예: /home/ec2-user/aisoc-no-okta/ecosystem.config.js)
+```bash
+module.exports = {
+  apps: [
+    {
+      name: 'aisoc-no-okta',
+      script: 'java',
+      args: '-jar target/aisoc-no-okta-0.0.1-SNAPSHOT.jar',
+      cwd: '/home/ec2-user/aisoc-no-okta',
+      interpreter: 'none',
+      env: {
+        JASYPT_ENCRYPTOR_PASSWORD: '실제비밀번호',
+        SPRING_PROFILES_ACTIVE: 'dev',
+      },
+      autorestart: true,
+      restart_delay: 5000,
+      max_restarts: 10,
+    },
+  ],
+};
+```
+- args의 jar 파일명은 mvn package 후 target/ 밑 실제 생성된 이름으로 맞춰야 함.
+- interpreter: 'none'을 꼭 넣어야 pm2가 java를 node 스크립트로 해석하지 않고 그대로 실행함.
+- 비밀번호를 파일에 평문으로 두기 싫으면 env를 빼고 쉘에서 export JASYPT_ENCRYPTOR_PASSWORD=... 먼저 해둔 뒤 pm2를 실행하는 방법도 가능.
+
+2. 기동
+```bash
+cd /home/ec2-user/aisoc-no-okta
+pm2 start ecosystem.config.js
+```
+
+3. 부팅 시 자동 시작 설정
+```bash
+pm2 save              # 현재 프로세스 목록 저장
+pm2 startup           # OS 재부팅 시 pm2 자체를 띄우는 systemd 유닛 생성 (출력된 명령어를 그대로 한번 더 실행해야 함)
+```
+
+4. 관리 명령어
+```bash
+pm2 status                    # 상태 확인
+pm2 logs aisoc-no-okta        # 로그 확인
+pm2 restart aisoc-no-okta     # 재시작 (재배포 시)
+pm2 stop aisoc-no-okta
+pm2 delete aisoc-no-okta
+```
+
+- systemd 세팅방법
+systemd로 등록하는 방법입니다.
+
+1. 서비스 유닛 파일 생성
+```bash
+sudo vi /etc/systemd/system/aisoc-no-okta.service
+```
+
+```bash
+[Unit]
+Description=aisoc-no-okta Spring Boot App
+After=network.target
+
+[Service]
+Type=simple
+User=ec2-user
+WorkingDirectory=/home/ec2-user/aisoc-no-okta
+Environment="JASYPT_ENCRYPTOR_PASSWORD=실제비밀번호"
+Environment="SPRING_PROFILES_ACTIVE=dev"
+ExecStart=/usr/bin/java -jar /home/ec2-user/aisoc-no-okta/target/aisoc-no-okta-0.0.1-SNAPSHOT.jar
+Restart=on-failure
+RestartSec=5
+SuccessExitStatus=143
+
+[Install]
+WantedBy=multi-user.target
+```
+
+- ExecStart의 jar 파일명은 실제 target/ 밑에 생성된 이름으로 맞춰야 함 (mvn package 후 ls target/*.jar로 확인).
+- java 경로는 which java로 확인해서 넣기.
+- 비밀번호를 유닛 파일에 평문으로 두기 싫으면 EnvironmentFile=/home/ec2-user/aisoc-no-okta/.env 로 분리해서 별도 파일(퍼미션 600)로 관리하는 것도 가능.
+
+2. 등록 및 실행
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable aisoc-no-okta     # 부팅 시 자동 시작
+sudo systemctl start aisoc-no-okta
+sudo systemctl status aisoc-no-okta
+```
+
+3. 로그 확인
+```bash
+sudo journalctl -u aisoc-no-okta -f
+```
+
+4. 재배포 시(새 jar 올린 뒤)
+```bash
+sudo systemctl restart aisoc-no-okta
+```
+
+pm2와 비교하면 OS에 통합돼서 부팅 자동시작·로그(journalctl) 연동이 기본 제공되는 게 장점이고, 대신 설정 파일이 pm2 ecosystem.config.js보다 약간 더 번거롭습니다.
 
 ## web과 agent연동에 대한 고찰
 - 전제: 요구사항 P-02 / 전체현황표를 보면 Investigation / Hunting / MCP / Web이 애초에 4개 분리된 개발 트랙이야. 
