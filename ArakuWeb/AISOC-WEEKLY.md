@@ -6,7 +6,8 @@
 - DashboardMapper.xml, HealthMapper.xml/LogMapper.xml/UserMapper.xml 작성
 - pom.xml에 lombok/commons-codec/commons-csv/poi-ooxml/p6spy 의존성 추가
 - schema.sql에 table_0001~`table_0006` 전체 스키마 반영
-- 더 이상 쓰지 않는 레거시 9개 파일(ExternalTodo*, SampleItem*, ItemController 등) 삭제, schema.sql에서 external_todo 테이블 제거
+- 더 이상 쓰지 않는 레거시 9개 파일(ExternalTodo*, SampleItem*, ItemController 등) 삭제,
+schema.sql에서 external_todo 테이블 제거
 - 프로젝트 상위 폴더의 불필요한 aisoc/aisoc-fe/관련 zip 삭제 (나머지는 참고자료라 보존)
 - README.md 신규 작성
 - application.yml 기본 프로필 dev→local, mybatis.type-aliases-package 오류 수정
@@ -28,7 +29,10 @@
 
 목요일 (10/22) — 코드/설정 수정
 - DashboardController.getActivityLogList() → getUserWeeklyAccessUrlList() 메소드명 변경
-- application.yml 변경사항 반영: jasypt.encryptor.password 기본값 제거(환경변수 필수화), server.port: 8080 블록 제거, README 동기화
+- application.yml 변경사항 반영:
+jasypt.encryptor.password 기본값 제거(환경변수 필수화),
+server.port: 8080 블록 제거,
+README 동기화
 
 금요일 (10/23) — 오늘
 - 이번 주 질문 전체 정리 요청 (지금 이 답변)
@@ -97,7 +101,8 @@ RestUtil.java 생성, README 업데이트, 제목 변경(# AISOC_WEB_BE) 작업�
 - 결과를 db-check-app.zip에 반영
 
 10/8, 10/12 (백엔드 디버깅 병행)
-- ActivityLogInterceptor 생성자 오류, 권한-메뉴 매핑 조회 쿼리 등 백엔드(aisoc) 쪽 디버깅 질문들 (아이소크웹과 연동되는 백엔드 작업)
+- ActivityLogInterceptor 생성자 오류,
+권한-메뉴 매핑 조회 쿼리 등 백엔드(aisoc) 쪽 디버깅 질문들 (아이소크웹과 연동되는 백엔드 작업)
 
 10/12
 - 권한관리: 최초 접근 시 권한목록 첫 항목 자동 클릭 + 미매핑/매핑 목록 10개 초과 시 스크롤 처리
