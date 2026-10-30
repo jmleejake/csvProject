@@ -1,4 +1,60 @@
 # AISOC 주간보고
+### 10/26(월) ~ 10/30(금)
+```bash
+10/26 (월) - 에이전트 관련 내용 web적용 준비
+DDL 전달받아 내용체크
+
+10/27 (화) — 커스텀 대시보드 + 모니터링 대시보드 신설
+agent-web.html 전달받아 해당 내용을 aisoc-web으로 이식하는것으로 작업 진행!
+
+- 프런트: app/(authed)/custom-dashboard/ 신규 — 대시보드 목록/상세 페이지
+, 위젯 빌더 모달(WidgetBuilderModal), 위젯 카드/피커
+, 위젯 타입별 렌더러(KPI/Note/List/Metric/Links) 및 편집기(editors/*)
+, useCdashQuery 훅.
+- 백엔드: CdashController/CdashDataController
+, CdashMapper/CdashDataMapper(+XML), Cdash*Service
+, CdashScreenRegistry/CdashSourceRegistry/CdashSpecValidator/CdashException 등 커스텀 대시보드 전용 패키지 신설.
+- 모니터링 대시보드 DTO 다수 신설(DashboardMonitoringSummaryResDto, DashboardMonitoringRecentResDto
+, DashboardHuntingStatusDto, DashboardInvestigationStatusDto, DashboardLlmUsageDto 등)
+— 현황/추이/상세 화면 기반 작업.
+- schema.sql 변경(백업 파일 schema.sql.bak.20261027162058 생성
+— table_0007/table_0008 커스텀 대시보드 테이블 추가 추정).
+
+10/28 (수) — 검토 대기(Review) 화면 + 조사(Investigation) 목록 백엔드
+
+- 프런트: review/page.tsx + FindingDetailModal(검토대기 Finding 상세/승인·반려)
+, HuntingDetailModal(모니터링 대시보드용 Hunting 상세)
+, Sidebar.tsx 메뉴 갱신.
+- 백엔드: DashboardController(검토대기 API)
+, InvestigationController/InvestigationMapper(조사 목록)
+, FindingReviewReqDto/DashboardReviewFinding*Dto/DashboardReviewInvestigationDto
+/DashboardHypothesisDto/DashboardCaseEvidenceDto 등 DTO 다수
+, MenuResDto, WebConfig/AppConst, UserService/UserMapper 수정.
+- application-{local,dev,prod}.yml 프로필 설정 변경.
+
+10/29 (목) — MCP Tools / 조사전략 / Hunting 요청 등록
+
+- 프런트: tools/page.tsx + McpToolDetailModal/ToggleSwitch/mcpToolActive.ts(MCP Tool 관리)
+, strategies/(조사전략 관리 메뉴 신설) StrategyForm/BasicToolsEditor/FollowupToolsEditor/strategyActive.ts
+, hunting/HuntRequestForm.tsx(Hunting 요청 등록), InvestigationDetailModal
+, 공용 confirmToast.tsx/lib/types.ts 갱신.
+- 백엔드: McpToolController/McpToolService/McpToolMapper
+, InvestigationStrategyController/Service/Mapper(신규), HuntingController/Service/Mapper
+, 관련 DTO 전부(Strategy*/McpTool*/Hunting*) 신설. 거의 모든 MyBatis Mapper XML 동시 수정.
+- schema.sql 추가 변경(MCP Tool table_5001, 조사전략 table_1004, M008/M009 메뉴·권한 seed 등).
+
+10/30 (금, 오늘) — 마무리 및 문서화
+
+- strategies/StrategyDetailModal.tsx 추가
+, strategies/page.tsx/investigation/page.tsx/logs/page.tsx/app/(authed)/page.tsx 소소한 수정.
+- aisoc-web/README.md, aisoc-no-okta/README.md 문서 정리 — 패키지구조/주요 API/데이터베이스 섹션 최신화
+, schema.sql → schema-web.sql(table_0001~0008) / schema-agent.sql(table_0010+) 분리 반영
+, M001(커스텀 대시보드)·M000A005~008(모니터링 대시보드 API) 권한 코드 문서화.
+
+한 줄 요약: 화~목 3일간 커스텀 대시보드 → 검토대기/조사 목록 → MCP Tools/조사전략/Hunting 요청까지
+신규 화면 5~6개를 백엔드·프런트 풀스택으로 순차 구축했고, 금요일은 마무리 수정과 README 문서화로 마감했습니다.
+```
+
 ### 10/19(월) ~ 10/23(금)
 - BE
 ```bash
