@@ -1,4 +1,45 @@
 # AISOC 주간보고
+### 11/2(월) ~ 11/6(금)
+```bach
+11/2(월) — Entra ID OIDC 로그인 통합
+- Entra ID(Azure AD) OIDC 로그인 통합 작업 계속 진행 (계획 승인 후 구현)
+- "오늘 작업후에 달라진 package구조나 내용들 aisoc-web / aisoc-no-okta의 readme.md에 반영해줘"
+
+11/3(화) — 테스트 중 서버 운영 질문 + 새 기능 요청
+- Entra ID 로그인 테스트 중: nohup으로 띄운 서비스의 로그 보는 법, PID로 프로세스 종료하는 법 질문
+- "모니터링 대시보드 - 표시 항목 선택" 기능 요청 (메인 대시보드 표시 항목 체크박스 선택) → 계획 승인, 구현
+
+11/4(수) — 커스텀 대시보드 데이터소스 확장
+- "커스텀 대시보드 > 위젯추가 > 데이터소스 및 그룹기준에
+지난주에 신규 추가된 investigation이랑 hunting에 대해서도 추가해주면 좋을것같아"
+→ 계획 승인, 백엔드(CdashSourceRegistry/CdashDataMapper/CdashDataService)·프론트(catalog.ts/types.ts) 양쪽 구현
+
+11/5(목) — 배포 전환, UI 수정, 방화벽/아키텍처 Q&A
+- "백엔드랑 프론트엔드를 https로 리눅스 환경에서 백그라운드 실행하려면 어떻게 해야돼?
+nohup 했더니 잘 안되는것 같아서 그거말고 다른 방법 찾아줘"
+→ systemd 서비스 전환 (env 파일, 실제 경로/keystore 경로, npm 경로 확인 등 후속 질문 포함, 최종 정상 기동 확인)
+- "HuntRequestForm.tsx 조회기간이 최대 30일 제한인데 캘린더에서 30일 → min/max 적용 완료
+- "리눅스에서 공인 IP 확인하는법"
+- 방화벽 신청 관련: 사설 IP 192.168.1.10, 백엔드 3000포트 기준으로 Entra ID용 방화벽(아웃바운드)을 어떻게 신청하면 되는지
+"302 리다이렉트 응답받는게 백엔드 springboot인데 3000포트가 인바운"
+/ "사용자가 백엔드를 브라우저를 통해 바라본다는게 이해가 안된다"
+— OIDC 리다이렉트 흐름(브라우저 직접 접근 이유) 설명
+- Entra ID + 로컬 테이블(table_0001) SSO 병합 설계 제안 후
+"이미 login.microsoft 페이지에 접근하면 어떻게 처리해야 하는지" 질문 → 기존
+  핸들러(createEntraLoginSession)로 이미 자연스럽게 처리됨을 설명
+
+11/6(금, 오늘) — 실제 접속 오류 "회사계정으로 로그인 클릭 시 .../oauth2/authorization/entra로 이동ss-origin, 응답 시간 초과 에러
+— cross domain 처리가 필요한지"
+→ CORS 무관, 실제로는 타임아웃(포트 불일치 또는 인바운드 방화벽 누락 가능
+
+# 백엔드가 실제 어느 포트에서 listen 중인지
+sudo ss -tlnp | grep java
+# 현재 NEXT_PUBLIC_API_BASE_URL 값 (프론트 .env 또는 systemd 환경변수 확인)
+grep -r NEXT_PUBLIC_API_BASE_URL /home/ec2-user/aisoc-web-fe/.env* 2>/dev/null
+
+- (지금) 11/2~11/6 질문 정리 요청
+```
+
 ### 10/26(월) ~ 10/30(금)
 ```bash
 10/26 (월) - 에이전트 관련 내용 web적용 준비
