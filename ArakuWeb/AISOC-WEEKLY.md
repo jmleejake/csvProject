@@ -12,7 +12,9 @@
 11/4(수) — 커스텀 대시보드 데이터소스 확장
 - "커스텀 대시보드 > 위젯추가 > 데이터소스 및 그룹기준에
 지난주에 신규 추가된 investigation이랑 hunting에 대해서도 추가해주면 좋을것같아"
-→ 계획 승인, 백엔드(CdashSourceRegistry/CdashDataMapper/CdashDataService)·프론트(catalog.ts/types.ts) 양쪽 구현
+→ 계획 승인,
+- 백엔드(CdashSourceRegistry/CdashDataMapper/CdashDataService)
+- 프론트(catalog.ts/types.ts) 양쪽 구현
 
 11/5(목) — 배포 전환, UI 수정, 방화벽/아키텍처 Q&A
 - "백엔드랑 프론트엔드를 https로 리눅스 환경에서 백그라운드 실행하려면 어떻게 해야돼?
@@ -20,16 +22,18 @@ nohup 했더니 잘 안되는것 같아서 그거말고 다른 방법 찾아줘"
 → systemd 서비스 전환 (env 파일, 실제 경로/keystore 경로, npm 경로 확인 등 후속 질문 포함, 최종 정상 기동 확인)
 - "HuntRequestForm.tsx 조회기간이 최대 30일 제한인데 캘린더에서 30일 → min/max 적용 완료
 - "리눅스에서 공인 IP 확인하는법"
-- 방화벽 신청 관련: 사설 IP 192.168.1.10, 백엔드 3000포트 기준으로 Entra ID용 방화벽(아웃바운드)을 어떻게 신청하면 되는지
+- 방화벽 신청 관련: 사설 IP 192.168.1.10, 백엔드 3000포트 기준으로
+ Entra ID용 방화벽(아웃바운드)을 어떻게 신청하면 되는지
 "302 리다이렉트 응답받는게 백엔드 springboot인데 3000포트가 인바운"
 / "사용자가 백엔드를 브라우저를 통해 바라본다는게 이해가 안된다"
-— OIDC 리다이렉트 흐름(브라우저 직접 접근 이유) 설명
+- OIDC 리다이렉트 흐름(브라우저 직접 접근 이유) 설명
 - Entra ID + 로컬 테이블(table_0001) SSO 병합 설계 제안 후
 "이미 login.microsoft 페이지에 접근하면 어떻게 처리해야 하는지" 질문 → 기존
   핸들러(createEntraLoginSession)로 이미 자연스럽게 처리됨을 설명
 
-11/6(금, 오늘) — 실제 접속 오류 "회사계정으로 로그인 클릭 시 .../oauth2/authorization/entra로 이동ss-origin, 응답 시간 초과 에러
-— cross domain 처리가 필요한지"
+11/6(금, 오늘) — 실제 접속 오류 "회사계정으로 로그인 클릭 시
+ .../oauth2/authorization/entra로 이동ss-origin, 응답 시간 초과 에러
+- cross domain 처리가 필요한지"
 → CORS 무관, 실제로는 타임아웃(포트 불일치 또는 인바운드 방화벽 누락 가능
 
 # 백엔드가 실제 어느 포트에서 listen 중인지
@@ -57,9 +61,9 @@ agent-web.html 전달받아 해당 내용을 aisoc-web으로 이식하는것으�
 , CdashScreenRegistry/CdashSourceRegistry/CdashSpecValidator/CdashException 등 커스텀 대시보드 전용 패키지 신설.
 - 모니터링 대시보드 DTO 다수 신설(DashboardMonitoringSummaryResDto, DashboardMonitoringRecentResDto
 , DashboardHuntingStatusDto, DashboardInvestigationStatusDto, DashboardLlmUsageDto 등)
-— 현황/추이/상세 화면 기반 작업.
+- 현황/추이/상세 화면 기반 작업.
 - schema.sql 변경(백업 파일 schema.sql.bak.20261027162058 생성
-— table_0007/table_0008 커스텀 대시보드 테이블 추가 추정).
+- table_0007/table_0008 커스텀 대시보드 테이블 추가 추정).
 
 10/28 (수) — 검토 대기(Review) 화면 + 조사(Investigation) 목록 백엔드
 
@@ -112,11 +116,13 @@ schema.sql에서 external_todo 테이블 제거
 - README를 위 변경사항에 맞춰 동기화
 
 화요일 (10/20)
-- "빌드랑 컴파일이 정상적으로 되는지 확인해줘" → 샌드박스에 JDK17/Maven 포터블 설치해서 mvn compile 실행, BUILD SUCCESS 확인
+- "빌드랑 컴파일이 정상적으로 되는지 확인해줘"
+ → 샌드박스에 JDK17/Maven 포터블 설치해서 mvn compile 실행, BUILD SUCCESS 확인
 (의심했던 lombok 1.18.46도 실제 존재해서 문제없음)
 - Entra ID 연동 관련 질문: 연동 시 필요한 것, 표준 방식(OIDC 리다이렉트 vs ROPC),
 로그인 폼에서 로컬 테이블 미존재 시 Entra ID 연동하는 아이디어 검토
-→ 아직 가이드 문서가 없어서 구현은 보류하기로 결정 (스키마의 entra_object_id/entra_upn/confirm_yn은 이미 준비돼 있음)
+→ 아직 가이드 문서가 없어서 구현은 보류하기로 결정
+ (스키마의 entra_object_id/entra_upn/confirm_yn은 이미 준비돼 있음)
 
 수요일 (10/21) — EC2 배포 관련 Q&A
 - GitHub에 올라간 소스를 EC2에서 기동하는 절차 안내 (Java/Maven 설치, clone, build, DB 스키마 적용,
@@ -125,7 +131,8 @@ schema.sql에서 external_todo 테이블 제거
 - mvn: command not found 해결 (OS별 Maven 설치 명령 안내)
 
 목요일 (10/22) — 코드/설정 수정
-- DashboardController.getActivityLogList() → getUserWeeklyAccessUrlList() 메소드명 변경
+- DashboardController.getActivityLogList()
+ → getUserWeeklyAccessUrlList() 메소드명 변경
 - application.yml 변경사항 반영:
 jasypt.encryptor.password 기본값 제거(환경변수 필수화),
 server.port: 8080 블록 제거,
@@ -141,7 +148,8 @@ README 동기화
 초기화된 사용자가 로그인 시 tempPassYn=Y면 비밀번호 변경 모달 팝업 처리
 - 대시보드 연결상태 체크 호출 간격을 30초 → 5분으로 변경
 - /users 목록에 /logs와 동일한 페이징 적용
-- 로그인 returnUrl 적용 (미인증 상태로 특정 경로 접근 시 /login?returnUrl=...로 리다이렉트 후 로그인 완료 시 원래 경로로 복귀)
+- 로그인 returnUrl 적용 (미인증 상태로 특정 경로 접근 시
+ /login?returnUrl=...로 리다이렉트 후 로그인 완료 시 원래 경로로 복귀)
 - /users에 백엔드 검색 결과 노출, 생성일자/마지막로그인일자/승인일자 선택 + From/To 기간검색 추가,
 초기화/검색 버튼 추가, CSV/JSON/XLSX 다운로드 버튼 추가(백엔드 /api/user/list/export 기준)
 
@@ -189,12 +197,14 @@ RestUtil.java 생성, README 업데이트, 제목 변경(# AISOC_WEB_BE) 작업�
 - 로그인 연동 중 "userId를 서버에서 못받는" 문제 디버깅 질문 (이때는 미해결)
 
 10/6
-- (별도로 aisoc-no-okta.zip 분석 요청 — 백엔드 프로젝트 쪽 질문이라 aisoc-web 히스토리와는 무관)
+- (별도로 aisoc-no-okta.zip 분석 요청 - 백엔드 프로젝트 쪽 질문이라 aisoc-web 히스토리와는 무관)
 
 10/7
 - 스프링부트(localhost:8081) 세션 기반 인터셉터 권한 체크 구조로 바꿀 때 React 쪽 변경사항 문의 + 로그인 화면 연결 요청
 - UserService/UserController/UserVo 코드 공유하며 로그인 세션 디버깅
-(JSESSIONID는 생기는데 값이 null → 세션 setAttribute 확인 → 쿼리 로그 → 최종 로그인 응답 JSON 확인까지 단계별 디버깅)
+(JSESSIONID는 생기는데 값이 null
+ → 세션 setAttribute 확인
+ → 쿼리 로그 → 최종 로그인 응답 JSON 확인까지 단계별 디버깅)
 - 결과를 db-check-app.zip에 반영
 
 10/8, 10/12 (백엔드 디버깅 병행)
@@ -209,7 +219,8 @@ RestUtil.java 생성, README 업데이트, 제목 변경(# AISOC_WEB_BE) 작업�
 - 사용자 화면 검색필터 추가(통합검색: 아이디/이름/이메일/entra id, 승인여부, 활성여부)
 + 권한관리 검색필터(메뉴명) + 메뉴/API 리스트에서 permissionCode 제거
 - 권한관리 매핑/미매핑 다중선택 일괄 적용 기능
-- 활동로그 상세모달: session id/userid/front url/request url/header/param/body/ip/status/생성일 노출 + JSON 필드 예쁘게 파싱
+- 활동로그 상세모달: session id/userid/front url/request url/header/param/body/ip/status/생성일 노출
+ + JSON 필드 예쁘게 파싱
 - 날짜필터 From/To + 시간 선택, 기본값 당일 0~23시, 30개씩 페이징 + 10/30/50/100 선택
 - 페이징 최초 조회 시 0번 페이지로 떨어져 offset이 음수가 되는 버그 수정
 - (병행) MyBatis 날짜 파라미터 처리, Postgres 페이징 쿼리 구현 등 백엔드 질문
@@ -226,7 +237,8 @@ RestUtil.java 생성, README 업데이트, 제목 변경(# AISOC_WEB_BE) 작업�
 10/16
 - 메인화면 개편: "Backend Sample" 문구 삭제, API base URL 영역 삭제, 카드보드 형태로 전환
 (① API/DB 연결상태 신호등 — /api/health, /api/db-check,
-② 로그인 사용자 주간 URL 호출 막대그래프 — /api/dashboard/user/week, apexchart 사용), 메뉴명 "메인"→"대시보드"로 변경
+② 로그인 사용자 주간 URL 호출 막대그래프
+- /api/dashboard/user/week, apexchart 사용), 메뉴명 "메인"→"대시보드"로 변경
 - 로그아웃 버튼 왼쪽에 비밀번호 변경 기능 추가(/api/user/pass/change, currentPass/changePass 파라미터)
 - /api/items CSV/JSON/XLSX export 기능 재요청 (중간에 "잠깐만" 중단 후 재진행)
 ```
