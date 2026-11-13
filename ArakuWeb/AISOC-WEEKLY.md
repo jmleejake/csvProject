@@ -1,4 +1,61 @@
 # AISOC 주간보고
+
+### 11/9(월) ~ 11/13(금)
+```bash
+11/9(월)
+
+- aisoc-web 주석 한글화: server.mjs, app/api/[...path]/route.ts, proxy.ts, lib/api.ts, lib/types.ts, app/login/page.tsx 등
+영문 주석을 전부 한글로 번역 (로직 변경 없음).
+- 미해결 이슈 확인: "회사계정으로 로그인" 클릭 시 ERR_CONNECTION_TIMED_OUT 발생 건 — 원인 미확정 상태로 사용자 회신 대기 중이었음.
+
+11/10(화)
+
+- UserMapper.xml의 updateUser 쿼리 수정 (confirm/passChange/init/tempPassChange 타입별 version 증가 로직 추가 등).
+- UserService.createEntraLoginSession: Entra 최초 로그인 시 신규 유저 등록과 동시에 VIEWER 권한 매핑도 함께 insert하도록 보강.
+- Entra(SSO) 계정의 일반 ID/PW 로그인 차단: SSO로 생성된 계정은 password_hash가 없어 ID/PW 폼으로는 로그인 불가
+— 이를 버그가 아닌 설계상 동작으로 확인하고, 전용 안내 메시지("회사 계정으로 로그인 버튼 이용 요청")를 던지도록 수정.
+프론트 수정 없이 기존 에러 메시지 렌더링 로직으로 처리됨.
+
+11/11(수)
+
+- SSO 사용자에게 "비밀번호 변경" 버튼 숨김: UserSession에 sso 필드 추가
+→ Entra 로그인 시 true로 세팅
+→ 프론트 AuthInfo.sso로 전달
+→ (authed)/layout.tsx 헤더에서 조건부 렌더링.
+- .env.production.local의 API Base URL을 운영 퍼블릭 IP(13.209.123.164:3000)로 수정.
+- Hunting/MCP 헬스체크 실연동: 기존 더미 응답(/api/ht/health, /api/mcp/health)을
+실제 백엔드 상태 체크로 교체(TestService 메서드 추가, YAML 헬스 URL 오타 2건 수정 포함).
+
+11/12(목)
+
+- EC2(systemd) 환경에서 Entra ID SSO 테스트 중 DEPTH_ZERO_SELF_SIGNED_CERT 에러 최초 보고.
+이 시점엔 트레이스 로그 없이 일반적 원인 후보만 제시하고 로그 공유 요청.
+
+11/13(금) — 가장 작업량 많은 날
+
+- DEPTH_ZERO_SELF_SIGNED_CERT 근본 원인 해결: Next.js rewrite 프록시(httpxy)가
+secure 옵션 미지원으로 rejectUnauthorized를 강제 true 처리하는 게 원인
+→ 효과 없던 NODE_TLS_REJECT_UNAUTHORIZED=0 제거, 대신 NODE_EXTRA_CA_CERTS로 백엔드 self-signed cert를 신뢰 CA로 등록.
+- 2차: SAN 누락 에러 → cert에 subjectAltName 없어서 발생, IP SAN 추가하여 재발급 안내.
+- 3차: ECONNREFUSED → keystore alias 불일치
+→ key-alias: aisoc 설정값과 keystore export 시 -name 값 불일치가 원인, alias 맞춰서 재생성.
+- Entra Redirect URI 확인: 실제 등록해야 할 콜백 경로는 /oauth2/authorization/entra가 아니라 /login/oauth2/code/entra임을 확인.
+- aisoc-web README.md 개발 내용 반영: TLS 설명 최신화,
+커스텀 대시보드/MonitoringItemPicker 등 미문서화 기능 추가,
+start:https 포트 설명 오류 수정.
+- aisoc-no-okta README.md 개발 내용 반영 + schema.sql 파일 분리: README를 실제 코드와 전면 대조(설정 YAML 누락 항목 추가 등),
+이후 사용자 요청으로 schema.sql을 schema-web.sql(table_0001~0008) / schema-agent.sql(table_0010 이상)
+두 물리 파일로 분리, README·DB_DESC.md도 함께 갱신.
+- 로그인 포트 증상 진단(수정 보류): ID/PW 로그인이 백엔드로 안 가는 것처럼 보이는 증상 — 프록시 구조상 정상 동작이며,
+.env.local의 자기참조 포트(8081)가 실제 원인 후보로 추정됨. 사용자가 직접 원인을 찾아 추가 수정은 하지 않음.
+
+미해결/후속 확인 필요 (11/13 기준)
+
+- Entra 앱 등록에 올바른 Redirect URI 반영 후 실제 로그인 테스트 결과 미확인.
+- .env.production.local의 퍼블릭 IP와 트레이스 로그상 프라이빗 IP 차이는 완전히 규명되지 않음(현재 설정과는 일치 확인됨).
+- aisoc-web 로그인 포트 증상 — .env.local 값/백엔드 실행 프로필 조정 필요 시 추가 확인 필요.
+```
+
 ### 11/2(월) ~ 11/6(금)
 ```bach
 11/2(월) — Entra ID OIDC 로그인 통합
