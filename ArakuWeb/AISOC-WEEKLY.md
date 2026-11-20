@@ -1,5 +1,26 @@
 # AISOC 주간보고
 
+### 11/16(월) ~ 11/20(금)
+```bash
+11/17
+- Entra ID "디바이스 조인" 개념 문의 답변 (Entra Joined/Registered/Hybrid Joined 차이,
+Conditional Access 연관성, dsregcmd /status 확인법 안내)
+- aisoc-web /hunting 페이지 "헌팅 요청" 탭 숨김 처리 (SHOW_REQUEST_TAB 플래그로 UI만 숨기고 로직은 보존, 초기 탭 "실행 결과"로 변경)
+- server.mjs의 HTTPS_KEY_PATH/HTTPS_CERT_PATH 경로 의미(실행 cwd 기준 상대경로) 질의응답
+
+11/18
+- 분류매핑(table_1006) 관리 기능 설계 및 구현 — 목업("관리 > 분류매핑") 화면을 실제 기능으로 구현
+  - 백엔드: 기존 InvestigationStrategyController/Service/Mapper에 메서드 추가 방식, DTO 5개,
+엔드포인트 4개(list/detail/save/active), table_1006 LEFT JOIN table_1004로 "조사전략" 태그 서버 조인 구현
+  - 프론트엔드: /mappings 신규 라우트, MappingForm.tsx, 토글 헬퍼, README 갱신
+
+11/19
+- 분류매핑 메뉴 노출 seed 추가(schema-web.sql에 M010, 권한 3종 부여)
+- 전날 구현한 분류매핑 기능 최종 검증 — 백엔드는 정적 코드 리뷰(java/mvn 미설치 환경이라 런타임 검증 불가),
+프론트엔드는 tsc/eslint/npm run build 전부 통과 확인
+- 작업 중 JMWORK.md를 실수로 덮어써서 기존 이력을 날렸다가, 세션 트랜스크립트에서 11/17 마지막 버전을 복구해 원상 복구
+```
+
 ### 11/9(월) ~ 11/13(금)
 ```bash
 11/9(월)
