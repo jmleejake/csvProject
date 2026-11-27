@@ -1,5 +1,41 @@
 # AISOC 주간보고
 
+### 11/23(월) ~ 11/27(금)
+```bash
+11/23(월)
+- Finding 검토 결정(승인/반려) → Hunting API 실제 연동 구현(성공/실패 응답별 처리, 실패 시 롤백).
+- 로컬 테스트 중 버그 3건 발견·수정: .next 캐시 문제(login 404), operation_id 타입 캐스트 누락
+, httpcore5 버전 불일치로 인한 런타임 에러.
+- Hunting decision 재전송(resend) 리팩토링 — 기존 operation_id 있으면 재사용.
+- 미해결: 실제 Hunting 토큰 미반영, 재빌드/재테스트 미확인.
+
+11/24(화)
+- Hunting 결정 상태 조회 시 인증 헤더 안 보내던 버그 수정.
+- table_3006.evidence 필드 스펙 문서화
+, FindingDetailModal의 근거(evidence)를 raw JSON → 표 형태로 렌더링
+, 요약/근거 탭 분리.
+- 모달 4종(Finding/Hunting/Investigation/Log) 공통 UI 확장(전체화면 + X닫기 버튼).
+- 대시보드 Investigation/Hunting 영역을 목업 기준으로 개편("최근 Hunting 일일 보고서 7일" 신규).
+
+11/25(수)
+- HuntingDetailModal에 "일일보고서" 탭 신규(IOC 대조/TI 보고서 구조화 렌더링 포함).
+- Investigation 목록/상세 화면을 목업 컬럼 구조로 재구성(처리 경로, agent 판정 불일치 힌트 등).
+이때 "추적조사/증거그래프"는 스키마에 데이터가 없어 의도적으로 보류.
+
+11/26(목)
+- Investigation "추적조사" 기능 백엔드 착수: run_kind/origin_run_id 스키마
+, table_1007(증거그래프)/table_1008(추적결과) 신규 테이블, 추적조사 목록 API·증거그래프/추적상세 API 구현.
+- 프론트는 기본조사 탭에 "추적여부" 컬럼과 탭 골격만 추가, 실제 그래프 연동은 다음날로 이어짐.
+
+11/27(금)
+- Investigation 추적조사/증거그래프 프론트 마무리: 그래프 렌더러(nvestigationDetailModal에 증거그래프 섹션
+, 신규 TraceDetailModal 구현, 탭 간 왕복 네비게이션까지 전체 완료.
+모달 패턴 통일: 전체 5개 모달 패널 폭 조정
+, UserDetailModal/McplModal/StrategyForm/MappingForm을 동일한 "우측 패널 + 배경클릭 닫힘 없음" 패턴으로 통일.
+- PasswordChangeModal 배경 클릭 닫힘 방지.
+- eslint 10 업그레이드 검토했으나 eslint-config-next 호환성 문제
+```
+
 ### 11/16(월) ~ 11/20(금)
 ```bash
 11/17
